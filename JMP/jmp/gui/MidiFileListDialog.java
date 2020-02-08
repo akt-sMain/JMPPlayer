@@ -394,11 +394,11 @@ public class MidiFileListDialog extends JMPFrame {
 		    list.add(sKey);
 		}
 	    }
-
-	    ImageIcon folderIcon = new ImageIcon(ResourceManager.getInstance().getFileFolderIcon());
-	    ImageIcon midiIcon = new ImageIcon(ResourceManager.getInstance().getFileMidiIcon());
-	    ImageIcon wavIcon = new ImageIcon(ResourceManager.getInstance().getFileWavIcon());
-	    ImageIcon otherIcon = new ImageIcon(ResourceManager.getInstance().getFileOtherIcon());
+	    
+	    ImageIcon folderIcon = convertImageIcon(ResourceManager.getInstance().getFileFolderIcon());
+	    ImageIcon midiIcon = convertImageIcon(ResourceManager.getInstance().getFileMidiIcon());
+	    ImageIcon wavIcon = convertImageIcon(ResourceManager.getInstance().getFileWavIcon());
+	    ImageIcon otherIcon = convertImageIcon(ResourceManager.getInstance().getFileOtherIcon());
 
 	    for (String name : list) {
 		File f = midiFileMap.get(name);
@@ -437,6 +437,10 @@ public class MidiFileListDialog extends JMPFrame {
 		updateList(file);
 	    }
 	}
+    }
+    
+    private ImageIcon convertImageIcon(Image img) {
+    	return img == null ? null : new ImageIcon(img);
     }
 
     public void loadPlayList(String path) {

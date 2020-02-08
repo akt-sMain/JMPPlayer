@@ -16,7 +16,8 @@ public class FileListTableModel extends DefaultTableModel {
     @Override
     public Class<?> getColumnClass(int columnIndex) {
 	if (columnIndex == 0) {
-	    return getValueAt(0, columnIndex).getClass();
+		Object obj = getValueAt(0, columnIndex);
+	    return obj == null ? super.getColumnClass(columnIndex) : obj.getClass();
 	}
 	return super.getColumnClass(columnIndex);
     }
