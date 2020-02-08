@@ -8,43 +8,43 @@ public class CallbackPackage {
     private int callMillsCount = -1;
 
     public CallbackPackage(long callMills) {
-	callMillsCount = (int) (callMills / TaskOfTimer.CYCLIC_TIME);
+        callMillsCount = (int) (callMills / TaskOfTimer.CYCLIC_TIME);
     }
 
     public CallbackPackage(int callMillsCount) {
-	this.setCallMillsCount(callMillsCount);
+        this.setCallMillsCount(callMillsCount);
     }
 
     public void setCallMillsCount(int callMillsCount) {
-	this.callMillsCount = callMillsCount;
+        this.callMillsCount = callMillsCount;
     }
 
     public void addCallbackFunction(ICallbackFunction callbackFunction) {
-	callbackFunctions.add(callbackFunction);
+        callbackFunctions.add(callbackFunction);
     }
 
     public void callback() {
-	currentCount++;
-	if (currentCount >= callMillsCount) {
-	    // コールバック
-	    for (int i = 0; i < callbackFunctions.size(); i++) {
-		ICallbackFunction func = callbackFunctions.get(i);
-		func.callback();
+        currentCount++;
+        if (currentCount >= callMillsCount) {
+            // コールバック
+            for (int i = 0; i < callbackFunctions.size(); i++) {
+                ICallbackFunction func = callbackFunctions.get(i);
+                func.callback();
 
-		if (func.isDeleteConditions(currentCount) == true) {
-		    // 削除
-		    callbackFunctions.remove(i);
-		}
-	    }
+                if (func.isDeleteConditions(currentCount) == true) {
+                    // 削除
+                    callbackFunctions.remove(i);
+                }
+            }
 
-	    currentCount = 0;
-	}
+            currentCount = 0;
+        }
     }
 
     public boolean isDeleteConditions() {
-	if (callbackFunctions == null) {
-	    return true;
-	}
-	return (callbackFunctions.isEmpty() == true) || (callbackFunctions.size() == 0);
+        if (callbackFunctions == null) {
+            return true;
+        }
+        return (callbackFunctions.isEmpty() == true) || (callbackFunctions.size() == 0);
     }
 }

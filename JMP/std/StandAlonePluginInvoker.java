@@ -12,11 +12,11 @@ import jmp.JMPLoader;
  */
 public class StandAlonePluginInvoker {
     public static void exec(String args[], IPlugin plugin) {
-	exec(args, null, plugin);
+        exec(args, null, plugin);
     }
 
     public static void exec(String args[], ConfigDatabase config, IPlugin plugin) {
-	boolean res = JMPLoader.invoke(config, plugin);
-	System.exit(res ? 0 : 1);
+        boolean res = JMPLoader.invoke(config, plugin);
+        System.exit(res ? 0 : 1);
     }
 }

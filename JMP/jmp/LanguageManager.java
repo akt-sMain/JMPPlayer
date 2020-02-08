@@ -13,7 +13,7 @@ import jlib.IUpdateLanguageListener;
  * 言語マネージャー
  *
  */
-public class LanguageManager implements ILanguageManager{
+public class LanguageManager implements ILanguageManager {
     /** 言語テーブル名 */
     public static final String LANGUAGE_FILE_NAME = "language.lang";
 
@@ -33,7 +33,7 @@ public class LanguageManager implements ILanguageManager{
      * コンストラクタ
      */
     private LanguageManager() {
-	/* 空のインスタンス生成 */
+        /* 空のインスタンス生成 */
     }
 
     /**
@@ -42,32 +42,32 @@ public class LanguageManager implements ILanguageManager{
      * @return シングルトンインスタンス
      */
     public static LanguageManager getInstanse() {
-	return singleton;
+        return singleton;
     }
 
     @Override
     public void registerListener(IUpdateLanguageListener listener) {
-	if (register.contains(listener) == false) {
-	    register.add(listener);
-	}
+        if (register.contains(listener) == false) {
+            register.add(listener);
+        }
     }
 
     public boolean initFunc() {
-	register = new ArrayList<IUpdateLanguageListener>();
-	languageTable = new LanguageTable();
-	if (false == readingLanguageFile()) {
-	    initializeFlag = false;
-	    return false;
-	}
-	return true;
+        register = new ArrayList<IUpdateLanguageListener>();
+        languageTable = new LanguageTable();
+        if (false == readingLanguageFile()) {
+            initializeFlag = false;
+            return false;
+        }
+        return true;
     }
 
     public boolean endFunc() {
-	return true;
+        return true;
     }
 
     public String getLangFilePath() {
-	return Utility.pathCombin(Platform.getCurrentPath(false), LANGUAGE_FILE_NAME);
+        return Utility.pathCombin(Platform.getCurrentPath(false), LANGUAGE_FILE_NAME);
     }
 
     /**
@@ -76,19 +76,19 @@ public class LanguageManager implements ILanguageManager{
      * @return 可否
      */
     public boolean readingLanguageFile() {
-	boolean ret = true; // 可否
-	try {
-	    languageTable.reading(getLangFilePath());
-	}
-	catch (Exception e) {
-	    ret = false;
-	}
+        boolean ret = true; // 可否
+        try {
+            languageTable.reading(getLangFilePath());
+        }
+        catch (Exception e) {
+            ret = false;
+        }
 
-	return ret;
+        return ret;
     }
 
     public List<String> getTitleHeader() {
-	return languageTable.getTitleHeader();
+        return languageTable.getTitleHeader();
     }
 
     /**
@@ -98,7 +98,7 @@ public class LanguageManager implements ILanguageManager{
      * @return
      */
     public String getTitle(int index) {
-	return languageTable.getTitle(index);
+        return languageTable.getTitle(index);
     }
 
     /**
@@ -108,7 +108,7 @@ public class LanguageManager implements ILanguageManager{
      * @return
      */
     public int getIndex(String title) {
-	return languageTable.getIndex(title);
+        return languageTable.getIndex(title);
     }
 
     /**
@@ -119,8 +119,8 @@ public class LanguageManager implements ILanguageManager{
      * @return 文字列
      */
     public String getLanguageStr(String id) {
-	int langIndex = getCurrentLanguage();
-	return getLanguageStr(id, langIndex);
+        int langIndex = getCurrentLanguage();
+        return getLanguageStr(id, langIndex);
     }
 
     /**
@@ -131,11 +131,11 @@ public class LanguageManager implements ILanguageManager{
      * @return
      */
     public String getLanguageStr(String id, int langIndex) {
-	// ID表示モードの場合はIDを返す
-//	if (CoreAccessor.getSystemManager().isVisibleLangID() == true) {
-//	    return id;
-//	}
-	return languageTable.getLanguageStr(id, langIndex);
+        // ID表示モードの場合はIDを返す
+        // if (CoreAccessor.getSystemManager().isVisibleLangID() == true) {
+        // return id;
+        // }
+        return languageTable.getLanguageStr(id, langIndex);
     }
 
     /**
@@ -144,20 +144,20 @@ public class LanguageManager implements ILanguageManager{
      * @return
      */
     public String getCurLanguageName() {
-	return getTitle(getCurrentLanguage());
+        return getTitle(getCurrentLanguage());
     }
 
     public void updateLanguage() {
-	for (IUpdateLanguageListener l : register) {
-	    l.updateLanguage();
-	}
+        for (IUpdateLanguageListener l : register) {
+            l.updateLanguage();
+        }
     }
 
     public int getCurrentLanguage() {
-	return currentLanguage;
+        return currentLanguage;
     }
 
     public void setCurrentLanguage(int currentLanguage) {
-	this.currentLanguage = currentLanguage;
+        this.currentLanguage = currentLanguage;
     }
 }

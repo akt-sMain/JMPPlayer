@@ -13,7 +13,7 @@ import jlib.IDataManager;
 import jlib.manager.JMPCoreAccessor;
 import jmp.gui.HistoryDialog;
 
-public class DataManager implements IDataManager{
+public class DataManager implements IDataManager {
 
     public static final String[] ExtentionForMIDI = { "mid", "midi" };
     public static final String[] ExtentionForWAV = { "wav" };
@@ -31,7 +31,7 @@ public class DataManager implements IDataManager{
     private HistoryDialog historyDialog = null;
 
     public HistoryDialog getHistoryDialog() {
-	return historyDialog;
+        return historyDialog;
     }
 
     // 固有変数
@@ -43,169 +43,170 @@ public class DataManager implements IDataManager{
      * コンストラクタ
      */
     DataManager() {
-	// アクセッサに登録
-	JMPCoreAccessor.register(this);
+        // アクセッサに登録
+        JMPCoreAccessor.register(this);
     }
 
-//    public static DataManager getInstance() {
-//	return singleton;
-//    }
+    // public static DataManager getInstance() {
+    // return singleton;
+    // }
 
     public boolean initFunc() {
-	if (initializeFlag == false) {
-	    initializeFlag = true;
-	}
+        if (initializeFlag == false) {
+            initializeFlag = true;
+        }
 
-	historyModel = new DefaultListModel<String>();
-	history = new JList<String>(historyModel);
-	historyDialog = new HistoryDialog();
-	if (database == null) {
-	    database = new ConfigDatabase();
-	    readingConfigFile();
-	    makedConfigDatabaseFlag = false;
-	}
-	else {
-	    makedConfigDatabaseFlag = true;
-	}
-	readingHistoryFile();
+        historyModel = new DefaultListModel<String>();
+        history = new JList<String>(historyModel);
+        historyDialog = new HistoryDialog();
+        if (database == null) {
+            database = new ConfigDatabase();
+            readingConfigFile();
+            makedConfigDatabaseFlag = false;
+        }
+        else {
+            makedConfigDatabaseFlag = true;
+        }
+        readingHistoryFile();
 
-	return true;
+        return true;
     }
 
     public boolean endFunc() {
-	if (initializeFlag == false) {
-	    return false;
-	}
-	historyDialog.setVisible(false);
-	if (makedConfigDatabaseFlag == false) {
-	    outputConfigFile();
-	}
-	outputHistoryFile();
-	historyDialog.dispose();
-	return true;
+        if (initializeFlag == false) {
+            return false;
+        }
+        historyDialog.setVisible(false);
+        if (makedConfigDatabaseFlag == false) {
+            outputConfigFile();
+        }
+        outputHistoryFile();
+        historyDialog.dispose();
+        return true;
     }
 
     public void setConfigDatabase(ConfigDatabase db) {
-	database = db;
+        database = db;
     }
 
     public void initializeConfigDatabase() {
-	database.initialize();
+        database.initialize();
     }
 
     public boolean isAutoPlay() {
-	String sValue = getConfigParam(ConfigDatabase.CFG_KEY_AUTOPLAY);
-	return Utility.tryParseBoolean(sValue, false);
+        String sValue = getConfigParam(ConfigDatabase.CFG_KEY_AUTOPLAY);
+        return Utility.tryParseBoolean(sValue, false);
     }
 
     public void setAutoPlay(boolean isAutoPlay) {
-	setConfigParam(ConfigDatabase.CFG_KEY_AUTOPLAY, isAutoPlay ? "TRUE" : "FALSE");
+        setConfigParam(ConfigDatabase.CFG_KEY_AUTOPLAY, isAutoPlay ? "TRUE" : "FALSE");
     }
 
     public boolean isLoopPlay() {
-	String sValue = getConfigParam(ConfigDatabase.CFG_KEY_LOOPPLAY);
-	return Utility.tryParseBoolean(sValue, false);
+        String sValue = getConfigParam(ConfigDatabase.CFG_KEY_LOOPPLAY);
+        return Utility.tryParseBoolean(sValue, false);
     }
 
     public void setLoopPlay(boolean isLoopPlay) {
-	setConfigParam(ConfigDatabase.CFG_KEY_LOOPPLAY, isLoopPlay ? "TRUE" : "FALSE");
+        setConfigParam(ConfigDatabase.CFG_KEY_LOOPPLAY, isLoopPlay ? "TRUE" : "FALSE");
     }
 
     public boolean isShowStartupDeviceSetup() {
-	String sValue = getConfigParam(ConfigDatabase.CFG_KEY_SHOW_STARTUP_DEVICE_SETUP);
-	return Utility.tryParseBoolean(sValue, false);
+        String sValue = getConfigParam(ConfigDatabase.CFG_KEY_SHOW_STARTUP_DEVICE_SETUP);
+        return Utility.tryParseBoolean(sValue, false);
     }
 
     public void setShowStartupDeviceSetup(boolean isShow) {
-	setConfigParam(ConfigDatabase.CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, isShow ? "TRUE" : "FALSE");
+        setConfigParam(ConfigDatabase.CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, isShow ? "TRUE" : "FALSE");
     }
 
     private boolean readingConfigFile() {
-	String path = Platform.getCurrentPath() + CONFIG_FILE;
-	return database.reading(path);
+        String path = Platform.getCurrentPath() + CONFIG_FILE;
+        return database.reading(path);
     }
 
     private boolean readingHistoryFile() {
-	boolean ret = true;
-	String path = Platform.getCurrentPath() + HISTORY_FILE;
+        boolean ret = true;
+        String path = Platform.getCurrentPath() + HISTORY_FILE;
 
-	File file = new File(path);
-	if (file.exists() == false) {
-	    return false;
-	}
+        File file = new File(path);
+        if (file.exists() == false) {
+            return false;
+        }
 
-	try {
-	    List<String> textContents = Utility.getTextFileContents(path);
+        try {
+            List<String> textContents = Utility.getTextFileContents(path);
 
-	    for (String line : textContents) {
-		historyModel.addElement(line);
-	    }
-	}
-	catch (Exception e) {
-	    ret = false;
-	}
-	return ret;
+            for (String line : textContents) {
+                historyModel.addElement(line);
+            }
+        }
+        catch (Exception e) {
+            ret = false;
+        }
+        return ret;
     }
 
     private boolean outputConfigFile() {
-	String path = Platform.getCurrentPath() + CONFIG_FILE;
-	return database.output(path);
+        String path = Platform.getCurrentPath() + CONFIG_FILE;
+        return database.output(path);
     }
 
     private boolean outputHistoryFile() {
-	boolean ret = true;
-	String path = Platform.getCurrentPath() + HISTORY_FILE;
+        boolean ret = true;
+        String path = Platform.getCurrentPath() + HISTORY_FILE;
 
-	List<String> list = new LinkedList<String>();
-	for (int i=0; i<historyModel.getSize(); i++) {
-	    list.add(historyModel.get(i));
-	}
+        List<String> list = new LinkedList<String>();
+        for (int i = 0; i < historyModel.getSize(); i++) {
+            list.add(historyModel.get(i));
+        }
 
-	try {
-	    Utility.outputTextFile(path, list);
-	}
-	catch (Exception e) {
-	    ret = false;
-	}
-	return ret;
+        try {
+            Utility.outputTextFile(path, list);
+        }
+        catch (Exception e) {
+            ret = false;
+        }
+        return ret;
     }
 
     @Override
     public void setConfigParam(String key, String value) {
-	database.setConfigParam(key, value);
+        database.setConfigParam(key, value);
     }
 
     @Override
     public String getConfigParam(String key) {
-	return database.getConfigParam(key);
+        return database.getConfigParam(key);
     }
 
     public static final int MAX_HISTORY_SIZE = 50;
+
     public void addHistory(String path) {
-	historyModel.add(0, path);
+        historyModel.add(0, path);
 
-	int size = history.getModel().getSize();
-	if (size > MAX_HISTORY_SIZE) {
-	    historyModel.remove(size - 1);
-	}
+        int size = history.getModel().getSize();
+        if (size > MAX_HISTORY_SIZE) {
+            historyModel.remove(size - 1);
+        }
 
-	getHistoryDialog().update();
+        getHistoryDialog().update();
     }
 
     public JList<String> getHistory() {
-	return history;
+        return history;
     }
 
     public void clearHistory() {
-	historyModel.removeAllElements();
-	getHistoryDialog().update();
+        historyModel.removeAllElements();
+        getHistoryDialog().update();
     }
 
     public int getTranspose() {
-	return transpose;
+        return transpose;
     }
 
     public void setTranspose(int transpose) {
-	this.transpose = transpose;
+        this.transpose = transpose;
     }
 }

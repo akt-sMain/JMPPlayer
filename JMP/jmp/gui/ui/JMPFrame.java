@@ -7,28 +7,28 @@ import jlib.IJmpWindow;
 public class JMPFrame extends JFrame implements IJMPComponentUI, IJmpWindow {
 
     public JMPFrame() {
-	super();
+        super();
 
-	_init();
+        _init();
     }
 
     private void _init() {
-	getContentPane().setBackground(getJmpBackColor());
+        getContentPane().setBackground(getJmpBackColor());
     }
 
     @Override
     public void showWindow() {
-	setVisible(true);
+        setVisible(true);
     }
 
     @Override
     public void hideWindow() {
-	setVisible(false);
+        setVisible(false);
     }
 
     @Override
     public boolean isWindowVisible() {
-	return isVisible();
+        return isVisible();
     }
 
 }

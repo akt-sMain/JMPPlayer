@@ -22,31 +22,31 @@ public class TaskOfTimer extends Thread implements ITask {
 
     @Override
     public void run() {
-	while (isRunnable) {
+        while (isRunnable) {
 
-	    for (int i = 0; i < callbackPackages.size(); i++) {
-		CallbackPackage cp = callbackPackages.get(i);
-		cp.callback();
+            for (int i = 0; i < callbackPackages.size(); i++) {
+                CallbackPackage cp = callbackPackages.get(i);
+                cp.callback();
 
-		if (cp.isDeleteConditions() == true) {
-		    // コールバック関数の削除
-		    cp = null;
-		    callbackPackages.remove(i);
-		}
-	    }
-	    Utility.threadSleep(CYCLIC_TIME);
-	}
+                if (cp.isDeleteConditions() == true) {
+                    // コールバック関数の削除
+                    cp = null;
+                    callbackPackages.remove(i);
+                }
+            }
+            Utility.threadSleep(CYCLIC_TIME);
+        }
 
-	// コールバック関数のクリア
-	callbackPackages.clear();
+        // コールバック関数のクリア
+        callbackPackages.clear();
     }
 
     @Override
     public void exit() {
-	isRunnable = false;
+        isRunnable = false;
     }
 
     public void addCallbackPackage(CallbackPackage pakage) {
-	callbackPackages.add(pakage);
+        callbackPackages.add(pakage);
     }
 }

@@ -17,24 +17,24 @@ public class ControlButtonUI extends BasicButtonUI {
 
     @Override
     public void paint(Graphics g, JComponent c) {
-	super.paint(g, c);
+        super.paint(g, c);
 
-	paintMark(g, (c.getWidth() - MARK_SIZE) / 2, (c.getHeight() - MARK_SIZE) / 2, MARK_SIZE, MARK_SIZE);
+        paintMark(g, (c.getWidth() - MARK_SIZE) / 2, (c.getHeight() - MARK_SIZE) / 2, MARK_SIZE, MARK_SIZE);
     }
 
     @Override
     protected void paintText(Graphics g, AbstractButton b, Rectangle textRect, String text) {
-	// ※テキスト表示はマスクする。
-	// super.paintText(g, b, textRect, text);
+        // ※テキスト表示はマスクする。
+        // super.paintText(g, b, textRect, text);
     }
 
     protected void paintMark(Graphics g, int x, int y, int w, int h) {
-	for (IButtonMarkPaint mp : painters) {
-	    mp.paintMark(g, x, y, w, h);
-	}
+        for (IButtonMarkPaint mp : painters) {
+            mp.paintMark(g, x, y, w, h);
+        }
     }
 
     public void addMarkPainter(IButtonMarkPaint markPainter) {
-	painters.add(markPainter);
+        painters.add(markPainter);
     }
 }

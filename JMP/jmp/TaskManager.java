@@ -23,69 +23,69 @@ public class TaskManager {
     }
 
     public static TaskManager getInstance() {
-	return singleton;
+        return singleton;
     }
 
     public boolean initFunc() {
-	// 更新タスク登録
-	taskOfUpdate = new TaskOfUpdate();
-	tasks.add(taskOfUpdate);
+        // 更新タスク登録
+        taskOfUpdate = new TaskOfUpdate();
+        tasks.add(taskOfUpdate);
 
-	// タイマータスク登録
-	taskOfTimer = new TaskOfTimer();
-	tasks.add(taskOfTimer);
+        // タイマータスク登録
+        taskOfTimer = new TaskOfTimer();
+        tasks.add(taskOfTimer);
 
-	// シーケンスタスク登録
-	taskOfSequence = new TaskOfSequence();
-	tasks.add(taskOfSequence);
+        // シーケンスタスク登録
+        taskOfSequence = new TaskOfSequence();
+        tasks.add(taskOfSequence);
 
-	// MIDIイベントタスク登録
-	taskOfMidiEvent = new TaskOfMidiEvent();
-	tasks.add(taskOfMidiEvent);
+        // MIDIイベントタスク登録
+        taskOfMidiEvent = new TaskOfMidiEvent();
+        tasks.add(taskOfMidiEvent);
 
-	/* Threadインスタンスのstart処理 */
-	for (ITask task : tasks) {
-	    if (task instanceof Thread) {
-		Thread th = (Thread) task;
-		th.start();
-	    }
-	}
-	return true;
+        /* Threadインスタンスのstart処理 */
+        for (ITask task : tasks) {
+            if (task instanceof Thread) {
+                Thread th = (Thread) task;
+                th.start();
+            }
+        }
+        return true;
     }
 
     public boolean endFunc() {
-	return true;
+        return true;
     }
 
     public TaskOfUpdate getTaskOfUpdate() {
-	return taskOfUpdate;
+        return taskOfUpdate;
     }
 
     public TaskOfTimer getTaskOfTimer() {
-	return taskOfTimer;
+        return taskOfTimer;
     }
 
     public TaskOfSequence getTaskOfSequence() {
-	return taskOfSequence;
+        return taskOfSequence;
     }
 
     public TaskOfMidiEvent getTaskOfMidiEvent() {
-	return taskOfMidiEvent;
+        return taskOfMidiEvent;
     }
 
     public void taskExit() {
-	for (ITask t : tasks) {
-	    t.exit();
-	}
+        for (ITask t : tasks) {
+            t.exit();
+        }
     }
 
     public void join() throws InterruptedException {
-	// Threadインスタンスのjoin処理
-	for (ITask task : tasks) {
-	    if (task instanceof Thread) {
-		Thread th = (Thread) task;
-		th.join();
-	    }
-	}
+        // Threadインスタンスのjoin処理
+        for (ITask task : tasks) {
+            if (task instanceof Thread) {
+                Thread th = (Thread) task;
+                th.join();
+            }
+        }
     }
 }

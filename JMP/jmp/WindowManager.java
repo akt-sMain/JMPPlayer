@@ -16,33 +16,33 @@ public class WindowManager implements IWindowManager {
     private boolean initializeFlag = false;
 
     WindowManager() {
-	database = new WindowDatabase();
+        database = new WindowDatabase();
 
-	JMPCoreAccessor.register(this);
+        JMPCoreAccessor.register(this);
     }
 
     public boolean initFunc() {
-	boolean result = true;
-	if (initializeFlag == false) {
-	    initializeFlag = true;
-	}
-	return result;
+        boolean result = true;
+        if (initializeFlag == false) {
+            initializeFlag = true;
+        }
+        return result;
     }
 
     public boolean endFunc() {
-	if (initializeFlag == false) {
-	    return false;
-	}
-	return true;
+        if (initializeFlag == false) {
+            return false;
+        }
+        return true;
     }
 
     public boolean register(String name, IJmpWindow window) {
-	return database.setWindow(name, window);
+        return database.setWindow(name, window);
     }
 
     @Override
     public IJmpWindow getWindow(String name) {
-	return database.getWindow(name);
+        return database.getWindow(name);
     }
 
 }

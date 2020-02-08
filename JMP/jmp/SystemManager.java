@@ -28,74 +28,74 @@ import jmp.task.ICallbackFunction;
 public class SystemManager implements ISystemManager {
 
     public class CommonRegister {
-	public static final String COMMON_REGKEY_PLAYER_BACK_COLOR = "player_back_color";
+        public static final String COMMON_REGKEY_PLAYER_BACK_COLOR = "player_back_color";
 
-	public static final String COMMON_REGKEY_CH_COLOR_FORMAT = "ch_color_%d";
+        public static final String COMMON_REGKEY_CH_COLOR_FORMAT = "ch_color_%d";
 
-	public static final String COMMON_REGKEY_EXTENSION_MIDI = "extension_midi";
-	public static final String COMMON_REGKEY_EXTENSION_WAV = "extension_wav";
+        public static final String COMMON_REGKEY_EXTENSION_MIDI = "extension_midi";
+        public static final String COMMON_REGKEY_EXTENSION_WAV = "extension_wav";
 
-	private HashMap<String, String> map;
+        private HashMap<String, String> map;
 
-	public CommonRegister() {
-	    map = new HashMap<String, String>();
-	}
+        public CommonRegister() {
+            map = new HashMap<String, String>();
+        }
 
-	public void load() {
-	}
+        public void load() {
+        }
 
-	public void init() {
-	    add(COMMON_REGKEY_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(Color.DARK_GRAY));
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 1), "#8ec21f");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 2), "#3dc21f");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 3), "#1fc253");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 4), "#1fc2a4");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 5), "#1f8ec2");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 6), "#1f3dc2");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 7), "#531fc2");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 8), "#a41fc2");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 9), "#ffc0cb");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 10), "#c21f3d");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 11), "#c2531f");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 12), "#c2a41f");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 13), "#3d00c2");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 14), "#ffff29");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 15), "#bbff29");
-	    add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 16), "#f98608");
+        public void init() {
+            add(COMMON_REGKEY_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(Color.DARK_GRAY));
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 1), "#8ec21f");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 2), "#3dc21f");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 3), "#1fc253");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 4), "#1fc2a4");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 5), "#1f8ec2");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 6), "#1f3dc2");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 7), "#531fc2");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 8), "#a41fc2");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 9), "#ffc0cb");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 10), "#c21f3d");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 11), "#c2531f");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 12), "#c2a41f");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 13), "#3d00c2");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 14), "#ffff29");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 15), "#bbff29");
+            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 16), "#f98608");
 
-	    add(COMMON_REGKEY_EXTENSION_MIDI, genExtensionsStr(DataManager.ExtentionForMIDI));
-	    add(COMMON_REGKEY_EXTENSION_WAV, genExtensionsStr(DataManager.ExtentionForWAV));
-	}
+            add(COMMON_REGKEY_EXTENSION_MIDI, genExtensionsStr(DataManager.ExtentionForMIDI));
+            add(COMMON_REGKEY_EXTENSION_WAV, genExtensionsStr(DataManager.ExtentionForWAV));
+        }
 
-	private String genExtensionsStr(String... ex) {
-	    String ret = "";
-	    for (int i = 0; i < ex.length; i++) {
-		if (i > 0) {
-		    ret += ",";
-		}
-		ret += ex[i];
-	    }
-	    return ret;
-	}
+        private String genExtensionsStr(String... ex) {
+            String ret = "";
+            for (int i = 0; i < ex.length; i++) {
+                if (i > 0) {
+                    ret += ",";
+                }
+                ret += ex[i];
+            }
+            return ret;
+        }
 
-	public void add(String key, String value) {
-	    map.put(key, value);
-	}
+        public void add(String key, String value) {
+            map.put(key, value);
+        }
 
-	public boolean setValue(String key, String value) {
-	    if (map.containsKey(key) == true) {
-		map.put(key, value);
-		return true;
-	    }
-	    return false;
-	}
+        public boolean setValue(String key, String value) {
+            if (map.containsKey(key) == true) {
+                map.put(key, value);
+                return true;
+            }
+            return false;
+        }
 
-	public String getValue(String key) {
-	    if (map.containsKey(key) == true) {
-		return map.get(key);
-	    }
-	    return "";
-	}
+        public String getValue(String key) {
+            if (map.containsKey(key) == true) {
+                return map.get(key);
+            }
+            return "";
+        }
     }
 
     /** 例外メッセージのテンポラリ */
@@ -120,109 +120,109 @@ public class SystemManager implements ISystemManager {
     private LicenseReaderDialog licenseDialog = null;
 
     SystemManager() {
-	// アクセッサに登録
-	JMPCoreAccessor.register(this);
+        // アクセッサに登録
+        JMPCoreAccessor.register(this);
     }
 
     public boolean initFunc() {
-	boolean result = true;
-	TempResisterEx = null;
+        boolean result = true;
+        TempResisterEx = null;
 
-	// 共通レジスタのインスタンス生成
-	cReg = new CommonRegister();
-	cReg.init();
-	cReg.load();
+        // 共通レジスタのインスタンス生成
+        cReg = new CommonRegister();
+        cReg.init();
+        cReg.load();
 
-	// ルックアンドフィールの設定
-	setupLookAndFeel();
+        // ルックアンドフィールの設定
+        setupLookAndFeel();
 
-	File dataDir = new File(getDataFileLocationPath());
-	if (dataDir.exists() == false) {
-	    // データフォルダ作成
-	    dataDir.mkdirs();
-	}
-	File resDir = new File(getResFileLocationPath());
-	if (resDir.exists() == false) {
-	    // resフォルダ作成
-	    resDir.mkdirs();
-	}
+        File dataDir = new File(getDataFileLocationPath());
+        if (dataDir.exists() == false) {
+            // データフォルダ作成
+            dataDir.mkdirs();
+        }
+        File resDir = new File(getResFileLocationPath());
+        if (resDir.exists() == false) {
+            // resフォルダ作成
+            resDir.mkdirs();
+        }
 
-	/* ライセンス確認ダイアログのインスタンス生成 */
-	licenseDialog = new LicenseReaderDialog();
+        /* ライセンス確認ダイアログのインスタンス生成 */
+        licenseDialog = new LicenseReaderDialog();
 
-	/* アクティベート状況の確認 */
-	if (Utility.isExsistFile(getActivateFileLocationPath()) == true) {
-	    JMPFlags.ActivateFlag = true;
-	}
-	else {
-	    JMPFlags.ActivateFlag = false;
-	}
+        /* アクティベート状況の確認 */
+        if (Utility.isExsistFile(getActivateFileLocationPath()) == true) {
+            JMPFlags.ActivateFlag = true;
+        }
+        else {
+            JMPFlags.ActivateFlag = false;
+        }
 
-	/* スタンドアロンモード or デバッグモードの際はアクティベートする */
-	if (JMPFlags.DebugMode == true || JMPCore.StandAlonePlugin != null) {
-	    JMPFlags.ActivateFlag = true;
-	}
+        /* スタンドアロンモード or デバッグモードの際はアクティベートする */
+        if (JMPFlags.DebugMode == true || JMPCore.StandAlonePlugin != null) {
+            JMPFlags.ActivateFlag = true;
+        }
 
-	/* ライセンス確認 */
-	if (JMPFlags.ActivateFlag == false) {
-	    getLicenseDialog().start();
-	}
+        /* ライセンス確認 */
+        if (JMPFlags.ActivateFlag == false) {
+            getLicenseDialog().start();
+        }
 
-	if (JMPFlags.ActivateFlag == false) {
-	    // アクティベートされなかった場合は終了する
-	    result = false;
-	}
+        if (JMPFlags.ActivateFlag == false) {
+            // アクティベートされなかった場合は終了する
+            result = false;
+        }
 
-	if (initializeFlag == false) {
-	    initializeFlag = true;
-	}
-	return result;
+        if (initializeFlag == false) {
+            initializeFlag = true;
+        }
+        return result;
     }
 
     public boolean endFunc() {
-	/* アクティベート処理 */
-	boolean activateOutFlag = false;
-	if (JMPFlags.ActivateFlag == true) {
-	    activateOutFlag = true;
-	}
-	if (JMPFlags.DebugMode == true || JMPCore.StandAlonePlugin != null) {
-	    // デバッグ・スタンドアロン実行は発行しない
-	    activateOutFlag = false;
-	}
-	// ライセンス発行
-	if (activateOutFlag == true) {
-	    if (Utility.isExsistFile(getActivateFileLocationPath()) == false) {
-		try {
-		    String text = "ライセンス認証のためのファイルです。" + Platform.getNewLine() + "このファイルを削除してもソフトウェアの動作には影響ありません。";
-		    Utility.outputTextFile(getActivateFileLocationPath(), text);
-		}
-		catch (FileNotFoundException e) {
-		    e.printStackTrace();
-		}
-		catch (UnsupportedEncodingException e) {
-		    e.printStackTrace();
-		}
-	    }
-	}
-	return true;
+        /* アクティベート処理 */
+        boolean activateOutFlag = false;
+        if (JMPFlags.ActivateFlag == true) {
+            activateOutFlag = true;
+        }
+        if (JMPFlags.DebugMode == true || JMPCore.StandAlonePlugin != null) {
+            // デバッグ・スタンドアロン実行は発行しない
+            activateOutFlag = false;
+        }
+        // ライセンス発行
+        if (activateOutFlag == true) {
+            if (Utility.isExsistFile(getActivateFileLocationPath()) == false) {
+                try {
+                    String text = "ライセンス認証のためのファイルです。" + Platform.getNewLine() + "このファイルを削除してもソフトウェアの動作には影響ありません。";
+                    Utility.outputTextFile(getActivateFileLocationPath(), text);
+                }
+                catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return true;
     }
 
     public LicenseReaderDialog getLicenseDialog() {
-	return licenseDialog;
+        return licenseDialog;
     };
 
     public boolean setCommonRegisterValue(String key, String value) {
-	if (cReg == null) {
-	    return false;
-	}
-	return cReg.setValue(key, value);
+        if (cReg == null) {
+            return false;
+        }
+        return cReg.setValue(key, value);
     }
 
     public String getCommonRegisterValue(String key) {
-	if (cReg == null) {
-	    return "";
-	}
-	return cReg.getValue(key);
+        if (cReg == null) {
+            return "";
+        }
+        return cReg.getValue(key);
     }
 
     /**
@@ -231,9 +231,9 @@ public class SystemManager implements ISystemManager {
      * @return パス
      */
     public String getDataFileLocationPath() {
-	String path = "";
-	path = Utility.stringsCombin(Platform.getCurrentPath(), Platform.getSeparator(), DATA_DIR_NAME);
-	return path;
+        String path = "";
+        path = Utility.stringsCombin(Platform.getCurrentPath(), Platform.getSeparator(), DATA_DIR_NAME);
+        return path;
     }
 
     /**
@@ -242,9 +242,9 @@ public class SystemManager implements ISystemManager {
      * @return
      */
     public String getResFileLocationPath() {
-	String path = "";
-	path = Utility.stringsCombin(Platform.getCurrentPath(), Platform.getSeparator(), RES_DIR_NAME);
-	return path;
+        String path = "";
+        path = Utility.stringsCombin(Platform.getCurrentPath(), Platform.getSeparator(), RES_DIR_NAME);
+        return path;
     }
 
     /**
@@ -253,46 +253,46 @@ public class SystemManager implements ISystemManager {
      * @return
      */
     public String getActivateFileLocationPath() {
-	String path = "";
-	path = Utility.stringsCombin(Platform.getCurrentPath(), Platform.getSeparator(), "activate");
-	return path;
+        String path = "";
+        path = Utility.stringsCombin(Platform.getCurrentPath(), Platform.getSeparator(), "activate");
+        return path;
     }
 
     /**
      * ルックアンドフィールの設定
      */
     private void setupLookAndFeel() {
-	String lf = "";
-	switch (Platform.getRunPlatform()) {
-	    case WINDOWS:
-		lf = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
-		break;
+        String lf = "";
+        switch (Platform.getRunPlatform()) {
+            case WINDOWS:
+                lf = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+                break;
 
-	    case MAC:
-		lf = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
-		break;
+            case MAC:
+                lf = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
+                break;
 
-	    case LINUX:
-	    case SUN_OS:
-	    case OTHER:
-	    default:
-		lf = "javax.swing.plaf.metal.MetalLookAndFeel";
-		break;
-	}
+            case LINUX:
+            case SUN_OS:
+            case OTHER:
+            default:
+                lf = "javax.swing.plaf.metal.MetalLookAndFeel";
+                break;
+        }
 
-	try {
-	    UIManager.setLookAndFeel(lf);
-	}
-	catch (Exception e) {
-	    System.out.println("lferror");
+        try {
+            UIManager.setLookAndFeel(lf);
+        }
+        catch (Exception e) {
+            System.out.println("lferror");
 
-	    // 念のためMetalを再設定
-	    try {
-		UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-	    }
-	    catch (Exception e2) {
-	    }
-	}
+            // 念のためMetalを再設定
+            try {
+                UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            }
+            catch (Exception e2) {
+            }
+        }
     }
 
     /**
@@ -301,7 +301,7 @@ public class SystemManager implements ISystemManager {
      * @return メインウィンドウ
      */
     public IJmpMainWindow getMainWindow() {
-	return mainWindow;
+        return mainWindow;
     }
 
     /**
@@ -312,55 +312,55 @@ public class SystemManager implements ISystemManager {
      * @return 結果
      */
     public boolean registerMainWindow(IJmpMainWindow mainWindow) {
-	boolean ret = false;
-	if (this.mainWindow == null) {
-	    // 未登録時のみ
-	    this.mainWindow = mainWindow;
-	    ret = true;
-	}
-	return ret;
+        boolean ret = false;
+        if (this.mainWindow == null) {
+            // 未登録時のみ
+            this.mainWindow = mainWindow;
+            ret = true;
+        }
+        return ret;
     }
 
     @Override
     public String getPluginName(IPlugin plugin) {
-	// プラグインマネージャーに問い合わせ
-	return JMPCore.getPluginManager().getPluginName(plugin);
+        // プラグインマネージャーに問い合わせ
+        return JMPCore.getPluginManager().getPluginName(plugin);
     }
 
     public void showErrorMessageDialog(String message) {
-	if (SystemManager.TempResisterEx != null) {
-	    String stackTrace = function.Error.getMsg(SystemManager.TempResisterEx);
-	    showMessageDialog(Utility.stringsCombin(message, Platform.getNewLine(), Platform.getNewLine(), stackTrace),
-		    "エラー", JOptionPane.ERROR_MESSAGE);
-	}
-	else {
-	    showMessageDialog(message, "エラー", JOptionPane.ERROR_MESSAGE);
-	}
-	SystemManager.TempResisterEx = null;
+        if (SystemManager.TempResisterEx != null) {
+            String stackTrace = function.Error.getMsg(SystemManager.TempResisterEx);
+            showMessageDialog(Utility.stringsCombin(message, Platform.getNewLine(), Platform.getNewLine(), stackTrace),
+                    "エラー", JOptionPane.ERROR_MESSAGE);
+        }
+        else {
+            showMessageDialog(message, "エラー", JOptionPane.ERROR_MESSAGE);
+        }
+        SystemManager.TempResisterEx = null;
     }
 
     public void showInformationMessageDialog(String message) {
-	showMessageDialog(message, "メッセージ", JOptionPane.INFORMATION_MESSAGE);
+        showMessageDialog(message, "メッセージ", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void showMessageDialog(String message, int option) {
-	showMessageDialog(message, "メッセージ", option);
+        showMessageDialog(message, "メッセージ", option);
     }
 
     public void showMessageDialog(String message, String title, int option) {
-	TaskManager.getInstance().getTaskOfSequence().queuing(new ICallbackFunction() {
-	    @Override
-	    public void callback() {
-		IJmpMainWindow win = getMainWindow();
-		Component parent = null;
-		if (win instanceof Component) {
-		    parent = (Component) win;
-		}
-		else {
-		    parent = null;
-		}
-		JOptionPane.showMessageDialog(parent, message, title, option);
-	    }
-	});
+        TaskManager.getInstance().getTaskOfSequence().queuing(new ICallbackFunction() {
+            @Override
+            public void callback() {
+                IJmpMainWindow win = getMainWindow();
+                Component parent = null;
+                if (win instanceof Component) {
+                    parent = (Component) win;
+                }
+                else {
+                    parent = null;
+                }
+                JOptionPane.showMessageDialog(parent, message, title, option);
+            }
+        });
     }
 }

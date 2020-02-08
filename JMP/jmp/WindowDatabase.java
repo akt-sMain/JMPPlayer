@@ -10,28 +10,28 @@ public class WindowDatabase {
     private HashMap<String, IJmpWindow> database = null;
 
     public WindowDatabase() {
-	database = new HashMap<String, IJmpWindow>();
-	database.clear();
+        database = new HashMap<String, IJmpWindow>();
+        database.clear();
     }
 
     public boolean setWindow(String name, IJmpWindow window) {
-	boolean ret = true;
-	if (database.containsKey(name) == false) {
-	    database.put(name, window);
-	}
-	else {
-	    ret = false;
-	}
-	return ret;
+        boolean ret = true;
+        if (database.containsKey(name) == false) {
+            database.put(name, window);
+        }
+        else {
+            ret = false;
+        }
+        return ret;
     }
 
     public IJmpWindow getWindow(String name) {
-	if (database.containsKey(name) == true) {
-	    return database.get(name);
-	}
-	else {
-	    return null;
-	}
+        if (database.containsKey(name) == true) {
+            return database.get(name);
+        }
+        else {
+            return null;
+        }
     }
 
 }

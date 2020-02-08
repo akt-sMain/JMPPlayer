@@ -6,11 +6,11 @@ import javax.sound.midi.Sequence;
 public class JMPSequence extends Sequence {
 
     public JMPSequence(float divisionType, int resolution) throws InvalidMidiDataException {
-	super(divisionType, resolution);
+        super(divisionType, resolution);
     }
 
     public JMPSequence(float divisionType, int resolution, int numTracks) throws InvalidMidiDataException {
-	super(divisionType, resolution, numTracks);
+        super(divisionType, resolution, numTracks);
     }
 
 }

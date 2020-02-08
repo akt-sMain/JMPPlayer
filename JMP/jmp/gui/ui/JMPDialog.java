@@ -12,100 +12,100 @@ import jlib.IJmpWindow;
 public class JMPDialog extends JDialog implements IJMPComponentUI, IJmpWindow {
 
     public JMPDialog() {
-	_init();
+        _init();
     }
 
     public JMPDialog(Frame owner) {
-	super(owner);
-	_init();
+        super(owner);
+        _init();
     }
 
     public JMPDialog(Dialog owner) {
-	super(owner);
-	_init();
+        super(owner);
+        _init();
     }
 
     public JMPDialog(Window owner) {
-	super(owner);
-	_init();
+        super(owner);
+        _init();
     }
 
     public JMPDialog(Frame owner, boolean modal) {
-	super(owner, modal);
-	_init();
+        super(owner, modal);
+        _init();
     }
 
     public JMPDialog(Frame owner, String title) {
-	super(owner, title);
-	_init();
+        super(owner, title);
+        _init();
     }
 
     public JMPDialog(Dialog owner, boolean modal) {
-	super(owner, modal);
-	_init();
+        super(owner, modal);
+        _init();
     }
 
     public JMPDialog(Dialog owner, String title) {
-	super(owner, title);
-	_init();
+        super(owner, title);
+        _init();
     }
 
     public JMPDialog(Window owner, ModalityType modalityType) {
-	super(owner, modalityType);
-	_init();
+        super(owner, modalityType);
+        _init();
     }
 
     public JMPDialog(Window owner, String title) {
-	super(owner, title);
-	_init();
+        super(owner, title);
+        _init();
     }
 
     public JMPDialog(Frame owner, String title, boolean modal) {
-	super(owner, title, modal);
-	_init();
+        super(owner, title, modal);
+        _init();
     }
 
     public JMPDialog(Dialog owner, String title, boolean modal) {
-	super(owner, title, modal);
-	_init();
+        super(owner, title, modal);
+        _init();
     }
 
     public JMPDialog(Window owner, String title, ModalityType modalityType) {
-	super(owner, title, modalityType);
-	_init();
+        super(owner, title, modalityType);
+        _init();
     }
 
     public JMPDialog(Frame owner, String title, boolean modal, GraphicsConfiguration gc) {
-	super(owner, title, modal, gc);
-	_init();
+        super(owner, title, modal, gc);
+        _init();
     }
 
     public JMPDialog(Dialog owner, String title, boolean modal, GraphicsConfiguration gc) {
-	super(owner, title, modal, gc);
-	_init();
+        super(owner, title, modal, gc);
+        _init();
     }
 
     public JMPDialog(Window owner, String title, ModalityType modalityType, GraphicsConfiguration gc) {
-	super(owner, title, modalityType, gc);
-	_init();
+        super(owner, title, modalityType, gc);
+        _init();
     }
 
     private void _init() {
-	getContentPane().setBackground(getJmpBackColor());
+        getContentPane().setBackground(getJmpBackColor());
     }
 
     @Override
     public void showWindow() {
-	setVisible(true);
+        setVisible(true);
     }
 
     @Override
     public void hideWindow() {
-	setVisible(false);
+        setVisible(false);
     }
 
     @Override
     public boolean isWindowVisible() {
-	return isVisible();
+        return isVisible();
     }
 }

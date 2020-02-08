@@ -21,38 +21,38 @@ public class TaskOfSequence extends Thread implements ITask {
 
     @Override
     public void run() {
-	while (isRunnable) {
+        while (isRunnable) {
 
-	    for (int i = 0; i < callbackQue.size(); i++) {
-		// ExecutorService service = Executors.newCachedThreadPool();
-		// ICallbackFunction cp = callbackQue.get(i);
-		// CallableTask task = new CallableTask(cp);
-		// service.submit(task);
-		// service.shutdown();
+            for (int i = 0; i < callbackQue.size(); i++) {
+                // ExecutorService service = Executors.newCachedThreadPool();
+                // ICallbackFunction cp = callbackQue.get(i);
+                // CallableTask task = new CallableTask(cp);
+                // service.submit(task);
+                // service.shutdown();
 
-		ICallbackFunction cp = callbackQue.get(i);
-		if (cp != null) {
-		    cp.callback();
-		    cp = null;
-		}
+                ICallbackFunction cp = callbackQue.get(i);
+                if (cp != null) {
+                    cp.callback();
+                    cp = null;
+                }
 
-		// コールバック関数の削除
-		callbackQue.remove(i);
-	    }
-	    Utility.threadSleep(CYCLIC_TIME);
-	}
+                // コールバック関数の削除
+                callbackQue.remove(i);
+            }
+            Utility.threadSleep(CYCLIC_TIME);
+        }
 
-	// コールバック関数のクリア
-	callbackQue.clear();
+        // コールバック関数のクリア
+        callbackQue.clear();
     }
 
     public void queuing(ICallbackFunction callbackFunction) {
-	callbackQue.add(callbackFunction);
+        callbackQue.add(callbackFunction);
     }
 
     @Override
     public void exit() {
-	isRunnable = false;
+        isRunnable = false;
     }
 
 }

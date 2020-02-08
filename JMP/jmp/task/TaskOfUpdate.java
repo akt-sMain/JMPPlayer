@@ -26,28 +26,28 @@ public class TaskOfUpdate extends Thread implements ITask {
 
     @Override
     public void run() {
-	SystemManager system = JMPCore.getSystemManager();
-	PluginManager pm = JMPCore.getPluginManager();
+        SystemManager system = JMPCore.getSystemManager();
+        PluginManager pm = JMPCore.getPluginManager();
 
-	IJmpMainWindow win = system.getMainWindow();
-	while (isRunnable) {
-	    win.update();
-	    pm.update();
+        IJmpMainWindow win = system.getMainWindow();
+        while (isRunnable) {
+            win.update();
+            pm.update();
 
-	    // スタンドアロンプラグインが閉じられているか確認
-	    IPlugin plg = JMPCore.StandAlonePlugin;
-	    if (plg != null) {
-		if (plg.isOpen() == false) {
-		    JMPLoader.exit();
-		}
-	    }
+            // スタンドアロンプラグインが閉じられているか確認
+            IPlugin plg = JMPCore.StandAlonePlugin;
+            if (plg != null) {
+                if (plg.isOpen() == false) {
+                    JMPLoader.exit();
+                }
+            }
 
-	    Utility.threadSleep(CyclicRepaintTime);
-	}
+            Utility.threadSleep(CyclicRepaintTime);
+        }
     }
 
     @Override
     public void exit() {
-	isRunnable = false;
+        isRunnable = false;
     }
 }

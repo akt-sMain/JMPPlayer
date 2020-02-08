@@ -21,127 +21,128 @@ public class WavPlayer extends Player {
     }
 
     public void setClip(Clip c) {
-	if (clip != null) {
-	    // クリップの破棄
-	    try {
-		clip.stop();
-		clip.close();
-		clip = null;
-	    }
-	    catch (Exception e) {
-		e.printStackTrace();
-	    }
-	}
-	clip = c;
+        if (clip != null) {
+            // クリップの破棄
+            try {
+                clip.stop();
+                clip.close();
+                clip = null;
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        clip = c;
     }
 
     @Override
     public void play() {
-	if (isValid() == false) {
-	    return;
-	}
-	clip.start();
+        if (isValid() == false) {
+            return;
+        }
+        clip.start();
     }
 
     @Override
     public void stop() {
-	if (isValid() == false) {
-	    return;
-	}
-	clip.stop();
+        if (isValid() == false) {
+            return;
+        }
+        clip.stop();
     }
 
     @Override
     public boolean isRunnable() {
-	if (isValid() == false) {
-	    return false;
-	}
-	return clip.isRunning();
+        if (isValid() == false) {
+            return false;
+        }
+        return clip.isRunning();
     }
 
     @Override
     public void setPosition(long pos) {
-	if (isValid() == false) {
-	    return;
-	}
-	clip.setFramePosition((int) pos);
+        if (isValid() == false) {
+            return;
+        }
+        clip.setFramePosition((int) pos);
     }
 
     @Override
     public long getPosition() {
-	if (isValid() == false) {
-	    return 0;
-	}
-	return clip.getFramePosition();
+        if (isValid() == false) {
+            return 0;
+        }
+        return clip.getFramePosition();
     }
 
     @Override
     public long getLength() {
-	if (isValid() == false) {
-	    return 0;
-	}
-	return clip.getFrameLength();
+        if (isValid() == false) {
+            return 0;
+        }
+        return clip.getFrameLength();
     }
 
     @Override
     public boolean isValid() {
-	if (clip == null) {
-	    return false;
-	}
-	return true;
+        if (clip == null) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public int getPositionSecond() {
-	if (isValid() == false) {
-	    return 0;
-	}
-	long pos = clip.getFramePosition();
-	float flame = clip.getFormat().getSampleRate();
-	int time = (int)(pos/flame);
-	return time;
+        if (isValid() == false) {
+            return 0;
+        }
+        long pos = clip.getFramePosition();
+        float flame = clip.getFormat().getSampleRate();
+        int time = (int) (pos / flame);
+        return time;
     }
 
     @Override
     public int getLengthSecond() {
-	if (isValid() == false) {
-	    return 0;
-	}
-	long length = clip.getFrameLength();
-	float flame = clip.getFormat().getSampleRate();
-	int time = (int)(length/flame);
-	return time;
+        if (isValid() == false) {
+            return 0;
+        }
+        long length = clip.getFrameLength();
+        float flame = clip.getFormat().getSampleRate();
+        int time = (int) (length / flame);
+        return time;
     }
 
     @Override
     public void setVolume(float volume) {
-	if (isValid() == false) {
-	    return;
-	}
+        if (isValid() == false) {
+            return;
+        }
     }
 
     @Override
     public float getVolume() {
-	if (isValid() == false) {
-	    return 0;
-	}
-	return 0;
-//	FloatControl control = (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
-//	float range = control.getMaximum() - control.getMinimum();
-//	float volume = control.getValue() - control.getMinimum();
-	//int pos = (int) ((volume * volumeSlider.getMaximum()) / range);
-	//return pos;
+        if (isValid() == false) {
+            return 0;
+        }
+        return 0;
+        // FloatControl control =
+        // (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
+        // float range = control.getMaximum() - control.getMinimum();
+        // float volume = control.getValue() - control.getMinimum();
+        // int pos = (int) ((volume * volumeSlider.getMaximum()) / range);
+        // return pos;
     }
 
     @Override
     public boolean loadFile(File file) throws Exception {
-	loadWavFile(file);
-	return true;
+        loadWavFile(file);
+        return true;
     }
 
     @Override
     public boolean saveFile(File file) throws Exception {
-	return false;
+        return false;
     }
 
     /**
@@ -155,8 +156,8 @@ public class WavPlayer extends Player {
      * @throws LineUnavailableException
      */
     protected Clip createClip(String path) throws LineUnavailableException, IOException, UnsupportedAudioFileException {
-	File file = new File(path);
-	return createClip(file);
+        File file = new File(path);
+        return createClip(file);
     }
 
     /**
@@ -170,28 +171,28 @@ public class WavPlayer extends Player {
      * @throws UnsupportedAudioFileException
      */
     protected Clip createClip(File file) throws LineUnavailableException, IOException, UnsupportedAudioFileException {
-	Clip clip = null;
+        Clip clip = null;
 
-	// オーディオ入力ストリーム取得
-	AudioInputStream ais = AudioSystem.getAudioInputStream(file);
-	// オーディオフォーマット取得
-	AudioFormat audioFormat = ais.getFormat();
-	DataLine.Info dataLine = new DataLine.Info(Clip.class, audioFormat);
-	clip = (Clip) AudioSystem.getLine(dataLine);
-	clip.open(ais);
-	return clip;
+        // オーディオ入力ストリーム取得
+        AudioInputStream ais = AudioSystem.getAudioInputStream(file);
+        // オーディオフォーマット取得
+        AudioFormat audioFormat = ais.getFormat();
+        DataLine.Info dataLine = new DataLine.Info(Clip.class, audioFormat);
+        clip = (Clip) AudioSystem.getLine(dataLine);
+        clip.open(ais);
+        return clip;
     }
 
     protected void loadWavFile(File file) throws Exception {
-	try {
-	    Clip clip = createClip(file);
-	    setClip(clip);
-	}
-	catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
-	    throw e;
-	}
-	finally {
-	}
+        try {
+            Clip clip = createClip(file);
+            setClip(clip);
+        }
+        catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+            throw e;
+        }
+        finally {
+        }
     }
 
 }
