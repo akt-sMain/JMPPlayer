@@ -415,7 +415,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 // FileNameExtensionFilter filter = new
                 // FileNameExtensionFilter("PLUGIN SETUP Files(*.JMS)",
                 // PluginManager.SETUP_FILE_EX);
-                filechooser.setFileFilter(createFileFilter("PLUGIN ZIP Files", "zip"));
+                filechooser.setFileFilter(createFileFilter("PLUGIN ZIP Files", PluginManager.PLUGIN_ZIP_EX));
                 File dir = new File(Platform.getCurrentPath());
                 filechooser.setCurrentDirectory(dir);
                 int selected = filechooser.showOpenDialog(getParent());
@@ -428,7 +428,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                                 // CoreAccessor.getPluginManager().readingSetupFile(path);
                                 catchLoadItem(path);
                             }
-                            else if (Utility.checkExtension(path, "zip") == true) {
+                            else if (Utility.checkExtension(path, PluginManager.PLUGIN_ZIP_EX) == true) {
                                 // CoreAccessor.getPluginManager().readingPluginZipPackage(path);
                                 catchLoadItem(path);
                             }
@@ -448,7 +448,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 JFileChooser filechooser = new JFileChooser();
                 filechooser.setFileFilter(createFileFilter("PLUGIN SETUP Files", PluginManager.SETUP_FILE_EX));
 
-                File dir = new File(JMPCore.getPluginManager().getPluginDirPath());
+                File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
                 filechooser.setCurrentDirectory(dir);
                 int selected = filechooser.showOpenDialog(getParent());
                 switch (selected) {
@@ -555,7 +555,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         configMenu.add(mnExecuteBatFile);
         removeAllPluginMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                File dir = new File(JMPCore.getPluginManager().getPluginDirPath());
+                File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
                 for (File f : dir.listFiles()) {
 
                     if (Utility.checkExtension(f.getPath(), PluginManager.SETUP_FILE_EX) == false) {
@@ -1071,7 +1071,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             SystemManager system = JMPCore.getSystemManager();
 
             String path = files.get(0).getPath();
-            if (Utility.checkExtension(path, "zip") == true) {
+            if (Utility.checkExtension(path, PluginManager.PLUGIN_ZIP_EX) == true) {
                 // プラグインロード
                 if (JMPCore.getPluginManager().readingPluginZipPackage(path, true) == true) {
                     system.showInformationMessageDialog("プラグインロード成功。");

@@ -34,18 +34,12 @@ public class PluginManager {
     // 定数
     // ---------------------------------------------
 
-    /** プラグインディレクトリ名 */
-    public static final String PLUGIN_DIR_NAME = "plugins";
-
-    /** プラグインディレクトリ名 */
-    public static final String JAR_DIR_NAME = "jar";
-
-    /** ZIPパッケージディレクトリ名 */
-    public static final String ZIP_DIR_NAME = "zip";
-
     // ---------------------------------------------
     // セットアップ用の定義
     // ---------------------------------------------
+
+    /** zipファイル拡張子 */
+    public static final String PLUGIN_ZIP_EX = "zip";
 
     /** setupファイル拡張子 */
     public static final String SETUP_FILE_EX = "jms";
@@ -151,28 +145,16 @@ public class PluginManager {
         }
         else {
 
-            File jarDir = new File(getJarDirPath());
-            if (jarDir.exists() == false) {
-                // Jarフォルダ作成
-                jarDir.mkdirs();
-            }
-
-            File plgDir = new File(getPluginDirPath());
-            if (plgDir.exists() == false) {
-                // Pluginフォルダ作成
-                plgDir.mkdirs();
-            }
-
             // 起動時に削除予定のプラグインを削除する
             removePlugin();
 
             if (JMPFlags.NonPluginLoadFlag == false) {
-                File zipDir = new File(getZipDirPath());
+                File zipDir = new File(JMPCore.getSystemManager().getZipDirPath());
                 if (zipDir.exists() == false) {
                     zipDir.mkdirs();
                 }
                 for (File f : zipDir.listFiles()) {
-                    if (Utility.checkExtension(f.getPath(), "zip") == false) {
+                    if (Utility.checkExtension(f.getPath(), PLUGIN_ZIP_EX) == false) {
                         continue;
                     }
                     if (readingPluginZipPackage(f.getPath(), false) == true) {
@@ -241,7 +223,7 @@ public class PluginManager {
     }
 
     public void generatePluginZipPackage(String dirPath) {
-        File pluginDir = new File(getPluginDirPath());
+        File pluginDir = new File(JMPCore.getSystemManager().getJmsDirPath());
         for (File f : pluginDir.listFiles()) {
             if (Utility.checkExtension(f, SETUP_FILE_EX) == true) {
                 JmsProperty jms = getJmsProparty(f);
@@ -319,7 +301,7 @@ public class PluginManager {
                     String param = sLine[1].trim();
                     if (key.equalsIgnoreCase(SETUP_KEYNAME_PLUGIN) == true) {
                         String src = Utility.stringsCombin(file.getParent(), Platform.getSeparator(), param);
-                        String dst = Utility.stringsCombin(getJarDirPath(), Platform.getSeparator(), param);
+                        String dst = Utility.stringsCombin(JMPCore.getSystemManager().getJarDirPath(), Platform.getSeparator(), param);
                         Utility.copyFile(src, dst);
 
                         // Jar名を保持（jar名をパス名にする）
@@ -368,7 +350,7 @@ public class PluginManager {
             String src = file.getPath();
 
             String jmsName = Utility.getFileNameNotExtension(file) + "." + SETUP_FILE_EX;
-            String dst = Utility.stringsCombin(getPluginDirPath(), Platform.getSeparator(), jmsName);
+            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getJmsDirPath(), Platform.getSeparator(), jmsName);
             Utility.copyFile(src, dst);
 
             // 最後にプラグインを追加
@@ -424,7 +406,7 @@ public class PluginManager {
 
     private void readingPlugin() {
         /* プラグインディレクトリの存在を確認 */
-        File dir = new File(getPluginDirPath());
+        File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
         if (dir.exists() == false) {
             if (dir.mkdir() == false) {
                 return;
@@ -477,7 +459,7 @@ public class PluginManager {
                     String key = sLine[0].trim();
                     String param = sLine[1].trim();
                     if (key.equalsIgnoreCase(SETUP_KEYNAME_PLUGIN) == true) {
-                        String plgPath = Utility.stringsCombin(getJarDirPath(), Platform.getSeparator(), param);
+                        String plgPath = Utility.stringsCombin(JMPCore.getSystemManager().getJarDirPath(), Platform.getSeparator(), param);
 
                         // プラグインファイルを保持
                         pluginFile = new File(plgPath);
@@ -527,7 +509,7 @@ public class PluginManager {
 
     public void removePlugin() {
         /* プラグインディレクトリの存在を確認 */
-        File dir = new File(getPluginDirPath());
+        File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
         if (dir.exists() == false) {
             return;
         }
@@ -609,18 +591,6 @@ public class PluginManager {
             Error.copyMsg(e);
         }
         return ret;
-    }
-
-    public String getPluginDirPath() {
-        return Utility.stringsCombin(Platform.getCurrentPath(), PLUGIN_DIR_NAME);
-    }
-
-    public String getJarDirPath() {
-        return Utility.stringsCombin(Platform.getCurrentPath(), JAR_DIR_NAME);
-    }
-
-    public String getZipDirPath() {
-        return Utility.stringsCombin(Platform.getCurrentPath(), ZIP_DIR_NAME);
     }
 
     public boolean addPlugin(String name, IPlugin plugin) {
