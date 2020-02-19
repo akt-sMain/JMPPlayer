@@ -48,7 +48,7 @@ public class JMPLoader {
                         break;
                     }
 
-                    String path = JMPCore.getPluginManager().getPluginDirPath();
+                    String path = JMPCore.getSystemManager().getJmsDirPath();
                     path += Platform.getSeparator() + args[i];
 
                     jms = new File(path);

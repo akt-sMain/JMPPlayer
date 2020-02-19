@@ -102,10 +102,22 @@ public class SystemManager implements ISystemManager {
     public static Exception TempResisterEx = null;
 
     /** データディレクトリ名 */
+    public static final String PLUGINS_DIR_NAME = "plugins";
+
+    /** データディレクトリ名 */
     public static final String DATA_DIR_NAME = "data";
 
     /** リソースディレクトリ名 */
     public static final String RES_DIR_NAME = "res";
+
+    /** JMSディレクトリ名 */
+    public static final String JMS_DIR_NAME = "jms";
+
+    /** JARディレクトリ名 */
+    public static final String JAR_DIR_NAME = "jar";
+
+    /** ZIPパッケージディレクトリ名 */
+    public static final String ZIP_DIR_NAME = "zip";
 
     // 初期化フラグ
     private boolean initializeFlag = false;
@@ -136,6 +148,11 @@ public class SystemManager implements ISystemManager {
         // ルックアンドフィールの設定
         setupLookAndFeel();
 
+        File pluginsDir = new File(getPluginsDirPath());
+        if (pluginsDir.exists() == false) {
+            // プラグインフォルダ作成
+            pluginsDir.mkdirs();
+        }
         File dataDir = new File(getDataFileLocationPath());
         if (dataDir.exists() == false) {
             // データフォルダ作成
@@ -145,6 +162,16 @@ public class SystemManager implements ISystemManager {
         if (resDir.exists() == false) {
             // resフォルダ作成
             resDir.mkdirs();
+        }
+        File jarDir = new File(getJarDirPath());
+        if (jarDir.exists() == false) {
+            // Jarフォルダ作成
+            jarDir.mkdirs();
+        }
+        File jmsDir = new File(getJmsDirPath());
+        if (jmsDir.exists() == false) {
+            // jmsフォルダ作成
+            jmsDir.mkdirs();
         }
 
         /* ライセンス確認ダイアログのインスタンス生成 */
@@ -232,7 +259,7 @@ public class SystemManager implements ISystemManager {
      */
     public String getDataFileLocationPath() {
         String path = "";
-        path = Utility.stringsCombin(Platform.getCurrentPath(), Platform.getSeparator(), DATA_DIR_NAME);
+        path = Utility.stringsCombin(getPluginsDirPath(), Platform.getSeparator(), DATA_DIR_NAME);
         return path;
     }
 
@@ -243,8 +270,24 @@ public class SystemManager implements ISystemManager {
      */
     public String getResFileLocationPath() {
         String path = "";
-        path = Utility.stringsCombin(Platform.getCurrentPath(), Platform.getSeparator(), RES_DIR_NAME);
+        path = Utility.stringsCombin(getPluginsDirPath(), Platform.getSeparator(), RES_DIR_NAME);
         return path;
+    }
+
+    public String getPluginsDirPath() {
+        return Utility.stringsCombin(Platform.getCurrentPath(), PLUGINS_DIR_NAME);
+    }
+
+    public String getJmsDirPath() {
+        return Utility.stringsCombin(getPluginsDirPath(), Platform.getSeparator(), JMS_DIR_NAME);
+    }
+
+    public String getJarDirPath() {
+        return Utility.stringsCombin(getPluginsDirPath(), Platform.getSeparator(), JAR_DIR_NAME);
+    }
+
+    public String getZipDirPath() {
+        return Utility.stringsCombin(Platform.getCurrentPath(), ZIP_DIR_NAME);
     }
 
     /**
