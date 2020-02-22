@@ -9,7 +9,7 @@ import javax.swing.JList;
 
 import function.Platform;
 import function.Utility;
-import jlib.IDataManager;
+import jlib.manager.IDataManager;
 import jlib.manager.JMPCoreAccessor;
 import jmp.gui.HistoryDialog;
 

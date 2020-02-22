@@ -14,7 +14,7 @@ import function.Platform;
 import function.Utility;
 import jlib.IJmpMainWindow;
 import jlib.IPlugin;
-import jlib.ISystemManager;
+import jlib.manager.ISystemManager;
 import jlib.manager.JMPCoreAccessor;
 import jmp.gui.LicenseReaderDialog;
 import jmp.task.ICallbackFunction;

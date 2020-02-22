@@ -1,14 +1,15 @@
 package jmp;
 
 import jlib.IJmpWindow;
-import jlib.IWindowManager;
+import jlib.manager.IWindowManager;
 import jlib.manager.JMPCoreAccessor;
 
 public class WindowManager implements IWindowManager {
 
-    public static final String WINDOW_NAME_MAIN = "MAIN";
-    public static final String WINDOW_NAME_FILE_LIST = "FILE_LIST";
-    public static final String WINDOW_NAME_HISTORY = "HISTORY";
+    public static final String[] WINDOW_NAMELIST = { "MAIN", "FILE_LIST", "HISTORY" };
+    public static final String WINDOW_NAME_MAIN = WINDOW_NAMELIST[0];
+    public static final String WINDOW_NAME_FILE_LIST = WINDOW_NAMELIST[1];
+    public static final String WINDOW_NAME_HISTORY = WINDOW_NAMELIST[2];
 
     private WindowDatabase database = null;
 
@@ -43,6 +44,11 @@ public class WindowManager implements IWindowManager {
     @Override
     public IJmpWindow getWindow(String name) {
         return database.getWindow(name);
+    }
+
+    @Override
+    public String[] getWindowNameList() {
+        return WINDOW_NAMELIST;
     }
 
 }

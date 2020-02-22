@@ -40,7 +40,6 @@ import function.Platform;
 import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.IJmpMainWindow;
-import jlib.manager.PlayerAccessor;
 import jmp.ConfigDatabase;
 import jmp.DataManager;
 import jmp.JMPCore;
@@ -49,6 +48,7 @@ import jmp.ResourceManager;
 import jmp.WindowManager;
 import jmp.gui.ui.FileListTableModel;
 import jmp.gui.ui.JMPFrame;
+import jmp.player.PlayerAccessor;
 
 public class MidiFileListDialog extends JMPFrame {
 

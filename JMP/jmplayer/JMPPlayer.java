@@ -40,8 +40,6 @@ import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.IJmpMainWindow;
 import jlib.IPlugin;
-import jlib.Player;
-import jlib.manager.PlayerAccessor;
 import jmp.DataManager;
 import jmp.JMPCore;
 import jmp.JMPFlags;
@@ -59,6 +57,8 @@ import jmp.gui.ui.ControlButtonUI;
 import jmp.gui.ui.IButtonMarkPaint;
 import jmp.gui.ui.IJMPComponentUI;
 import jmp.gui.ui.SequencerSliderUI;
+import jmp.player.Player;
+import jmp.player.PlayerAccessor;
 import jmp.task.CallbackPackage;
 import jmp.task.ICallbackFunction;
 
@@ -220,7 +220,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         playButton.setBackground(CONTROL_BTN_BACKGROUND);
         playButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                playerAccessor.getCurrent().playStop();
+                JMPCore.getSoundManager().togglePlayStop();
                 repaint();
             }
         });
@@ -237,7 +237,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     return;
                 }
 
-                playerAccessor.getCurrent().endPosition();
+                JMPCore.getSoundManager().endPosition();
             }
         });
         next2Button.setBounds(351, 10, 64, 64);
@@ -249,7 +249,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         prevButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                playerAccessor.getCurrent().rewind();
+                JMPCore.getSoundManager().rewind();
             }
         });
         prevButton.setBounds(102, 10, 64, 64);
@@ -262,7 +262,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
             @Override
             public void mousePressed(MouseEvent e) {
-                playerAccessor.getCurrent().fastForward();
+                JMPCore.getSoundManager().fastForward();
             }
         });
         nextButton.setBounds(268, 10, 64, 64);

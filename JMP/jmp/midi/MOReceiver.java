@@ -6,9 +6,9 @@ import javax.sound.midi.ShortMessage;
 
 import jlib.IMidiEventListener;
 import jlib.IMidiFilter;
-import jlib.Player;
-import jlib.manager.PlayerAccessor;
 import jmp.JMPCore;
+import jmp.player.Player;
+import jmp.player.PlayerAccessor;
 
 public class MOReceiver implements Receiver {
     Receiver abstractReciever = null;

@@ -8,7 +8,7 @@ import javax.swing.JSlider;
 import javax.swing.plaf.basic.BasicSliderUI;
 
 import function.Utility;
-import jlib.manager.PlayerAccessor;
+import jmp.player.PlayerAccessor;
 import jmplayer.JMPPlayer;
 
 public class SequencerSliderUI extends BasicSliderUI {

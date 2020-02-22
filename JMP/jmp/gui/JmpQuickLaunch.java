@@ -12,8 +12,8 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import function.Utility;
-import jlib.manager.PlayerAccessor;
 import jmp.JMPCore;
+import jmp.SoundManager;
 import jmp.SystemManager.CommonRegister;
 
 public class JmpQuickLaunch extends JPanel implements MouseListener {
@@ -138,9 +138,9 @@ public class JmpQuickLaunch extends JPanel implements MouseListener {
 
     public void paintPlayStopMark(Graphics g, int x, int y, int width, int height) {
         Graphics2D g2d = (Graphics2D) g.create();
-        PlayerAccessor playerAccessor = PlayerAccessor.getInstance();
+        SoundManager sm = JMPCore.getSoundManager();
         Color bdColor = Color.GRAY;
-        if (playerAccessor.isValid() == true && playerAccessor.getCurrent().isRunnable() == true) {
+        if (sm.isPlay() == true) {
             int offsetW = (width / 2) - 4;
             x += 2;
 
@@ -201,23 +201,23 @@ public class JmpQuickLaunch extends JPanel implements MouseListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        PlayerAccessor pa = PlayerAccessor.getInstance();
+        SoundManager sm = JMPCore.getSoundManager();
         int x = startX();
         int y = startY();
         if ((x < e.getX()) && (e.getX() < x + SIZE) && (y < e.getY()) && (e.getY() < y + SIZE)) {
-            pa.getCurrent().initPosition();
+            sm.initPosition();
             return;
         }
 
         x += (SIZE + (MERGIN * 2));
         if ((x < e.getX()) && (e.getX() < x + SIZE) && (y < e.getY()) && (e.getY() < y + SIZE)) {
-            pa.getCurrent().playStop();
+            sm.togglePlayStop();
             return;
         }
 
         x += (SIZE + (MERGIN * 2));
         if ((x < e.getX()) && (e.getX() < x + SIZE) && (y < e.getY()) && (e.getY() < y + SIZE)) {
-            pa.getCurrent().endPosition();
+            sm.endPosition();
             return;
         }
     }

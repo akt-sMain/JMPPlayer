@@ -15,10 +15,10 @@ import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 
 import jlib.IMidiFilter;
-import jlib.Player;
 import jlib.mdx.MidiUtility;
 import jmp.ConfigDatabase;
 import jmp.JMPCore;
+import jmp.JMPFlags;
 import jmp.gui.SelectSynthsizerDialog;
 import jmp.gui.SelectSynthsizerDialogListener;
 import jmp.midi.JMPSequencer;
@@ -183,101 +183,104 @@ public class MidiPlayer extends Player implements IMidiFilter {
         return sequencer;
     }
 
-    public boolean init() throws MidiUnavailableException {
-        return init(false);
-    }
-
-    public boolean init(boolean isAutoConnect) throws MidiUnavailableException {
-        // Midiシーケンサー取得
-        sequencer = new JMPSequencer(MidiSystem.getSequencer(false));
-        if (sequencer.isOpen() == true) {
-            sequencer.close();
-        }
-
-        // sequencer.addMetaEventListener(new MetaEventListener() {
-        //
-        // @Override
-        // public void meta(MetaMessage meta) {
-        // System.out.println("" + meta.getType());
-        // }
-        // });
-
-        sequencer.open();
-
-        // シンセサイザー選択ダイアログ表示
-        selectSynthsizerDialog = new SelectSynthsizerDialog(true, true);
-        selectSynthsizerDialog.setCommitListener(new SelectSynthsizerDialogListener() {
-
-            @Override
-            public void commitMidiOut(Receiver rec) throws MidiUnavailableException {
-                updateMidiOut(rec);
+    @Override
+    public boolean open() {
+        boolean result = true;
+        try {
+            // Midiシーケンサー取得
+            sequencer = new JMPSequencer(MidiSystem.getSequencer(false));
+            if (sequencer.isOpen() == true) {
+                sequencer.close();
             }
 
-            @Override
-            public void commitMidiIn(Transmitter trans) throws MidiUnavailableException {
-                updateMidiIn(trans);
-            }
-        });
+            // sequencer.addMetaEventListener(new MetaEventListener() {
+            //
+            // @Override
+            // public void meta(MetaMessage meta) {
+            // System.out.println("" + meta.getType());
+            // }
+            // });
 
-        if (isAutoConnect == false) {
-            selectSynthsizerDialog.start();
-            if (selectSynthsizerDialog.isOkActionClose() == false) {
-                return false;
-            }
+            sequencer.open();
 
-            // SelectSoundFontDIalog dialog = new SelectSoundFontDIalog();
-            // dialog.start();
-        }
-        else {
-            String outName = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIOUT);
-            Receiver inReciever = null;
-            MidiDevice.Info recInfo = null;
+            // シンセサイザー選択ダイアログ表示
+            selectSynthsizerDialog = new SelectSynthsizerDialog(true, true);
+            selectSynthsizerDialog.setCommitListener(new SelectSynthsizerDialogListener() {
 
-            String inName = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIIN);
-            Transmitter outTransmitter = null;
-            MidiDevice.Info transInfo = null;
-
-            for (MidiDevice.Info info : getMidiDeviceInfo(false, true)) {
-                if (info.getName().equals(outName) == true) {
-                    recInfo = info;
-                    break;
+                @Override
+                public void commitMidiOut(Receiver rec) throws MidiUnavailableException {
+                    updateMidiOut(rec);
                 }
-            }
-            for (MidiDevice.Info info : getMidiDeviceInfo(true, false)) {
-                if (info.getName().equals(inName) == true) {
-                    transInfo = info;
-                    break;
-                }
-            }
 
-            MidiDevice inDev = null;
-            if (recInfo != null) {
-                inDev = MidiSystem.getMidiDevice(recInfo);
-                if (inDev.isOpen() == false) {
-                    inDev.open();
+                @Override
+                public void commitMidiIn(Transmitter trans) throws MidiUnavailableException {
+                    updateMidiIn(trans);
                 }
-                inReciever = inDev.getReceiver();
+            });
+
+            if (JMPFlags.StartupAutoConectSynth == false) {
+                selectSynthsizerDialog.start();
+                if (selectSynthsizerDialog.isOkActionClose() == false) {
+                    return false;
+                }
+
+                // SelectSoundFontDIalog dialog = new SelectSoundFontDIalog();
+                // dialog.start();
             }
             else {
-                inReciever = MidiSystem.getReceiver();
-            }
+                String outName = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIOUT);
+                Receiver inReciever = null;
+                MidiDevice.Info recInfo = null;
 
-            MidiDevice outDev = null;
-            if (transInfo != null) {
-                outDev = MidiSystem.getMidiDevice(transInfo);
-                if (outDev.isOpen() == false) {
-                    outDev.open();
+                String inName = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIIN);
+                Transmitter outTransmitter = null;
+                MidiDevice.Info transInfo = null;
+
+                for (MidiDevice.Info info : getMidiDeviceInfo(false, true)) {
+                    if (info.getName().equals(outName) == true) {
+                        recInfo = info;
+                        break;
+                    }
                 }
-                outTransmitter = outDev.getTransmitter();
-            }
-            else {
-                outTransmitter = MidiSystem.getTransmitter();
-            }
+                for (MidiDevice.Info info : getMidiDeviceInfo(true, false)) {
+                    if (info.getName().equals(inName) == true) {
+                        transInfo = info;
+                        break;
+                    }
+                }
 
-            updateMidiOut(inReciever);
-            updateMidiIn(outTransmitter);
+                MidiDevice inDev = null;
+                if (recInfo != null) {
+                    inDev = MidiSystem.getMidiDevice(recInfo);
+                    if (inDev.isOpen() == false) {
+                        inDev.open();
+                    }
+                    inReciever = inDev.getReceiver();
+                }
+                else {
+                    inReciever = MidiSystem.getReceiver();
+                }
+
+                MidiDevice outDev = null;
+                if (transInfo != null) {
+                    outDev = MidiSystem.getMidiDevice(transInfo);
+                    if (outDev.isOpen() == false) {
+                        outDev.open();
+                    }
+                    outTransmitter = outDev.getTransmitter();
+                }
+                else {
+                    outTransmitter = MidiSystem.getTransmitter();
+                }
+
+                updateMidiOut(inReciever);
+                updateMidiIn(outTransmitter);
+            }
         }
-        return true;
+        catch (MidiUnavailableException e) {
+            result = false;
+        }
+        return result;
     }
 
     private static MOReceiver s_MOReceiver = null;
@@ -316,7 +319,8 @@ public class MidiPlayer extends Player implements IMidiFilter {
         currentTransmitter.setReceiver(s_MIReceiver);
     }
 
-    public void close() {
+    @Override
+    public boolean close() {
         if (sequencer != null) {
             if (sequencer.isRunning() == true || sequencer.isRecording() == true) {
                 // 念のためシーケンサーを停止
@@ -335,6 +339,7 @@ public class MidiPlayer extends Player implements IMidiFilter {
             }
             // sequencer = null;
         }
+        return true;
     }
 
     @Override

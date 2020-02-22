@@ -8,7 +8,7 @@ package jmp;
  */
 public class JMPFlags {
     /** デバッグモード */
-    public static boolean DebugMode = false;
+    public static boolean DebugMode = true;
 
     /** アクティベートフラグ */
     public static boolean ActivateFlag = false;

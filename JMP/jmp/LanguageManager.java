@@ -5,8 +5,8 @@ import java.util.List;
 
 import function.Platform;
 import function.Utility;
-import jlib.ILanguageManager;
 import jlib.IUpdateLanguageListener;
+import jlib.manager.ILanguageManager;
 
 /**
  *

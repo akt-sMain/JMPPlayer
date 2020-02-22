@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequencer;
 import javax.sound.sampled.FloatControl;
 import javax.swing.DefaultListModel;
@@ -14,11 +13,11 @@ import javax.swing.JList;
 import function.Utility;
 import jlib.IJmpMainWindow;
 import jlib.IMidiEventListener;
-import jlib.ISoundManager;
-import jlib.Player;
+import jlib.manager.ISoundManager;
 import jlib.manager.JMPCoreAccessor;
-import jlib.manager.PlayerAccessor;
 import jmp.player.MidiPlayer;
+import jmp.player.Player;
+import jmp.player.PlayerAccessor;
 import jmp.player.WavPlayer;
 
 /**
@@ -61,6 +60,7 @@ public class SoundManager implements ISoundManager {
         WavPlayer.setSupportExtentions(DataManager.ExtentionForWAV);
         PlayerAccessor.getInstance().register(WavPlayer);
 
+        // デフォルトはMIDIプレイヤーにする
         PlayerAccessor.getInstance().change(MidiPlayer);
 
         // Port lineIn;
@@ -82,7 +82,7 @@ public class SoundManager implements ISoundManager {
 
         /* プレイヤーロード */
         try {
-            if (playerInitialize() == false) {
+            if (PlayerAccessor.getInstance().open() == false) {
                 return false;
             }
         }
@@ -102,15 +102,9 @@ public class SoundManager implements ISoundManager {
             return false;
         }
 
-        MidiPlayer.stop();
-        WavPlayer.stop();
-
-        MidiPlayer.close();
+        stop();
+        PlayerAccessor.getInstance().close();
         return true;
-    }
-
-    public boolean playerInitialize() throws MidiUnavailableException {
-        return MidiPlayer.init(JMPFlags.StartupAutoConectSynth);
     }
 
     /**
@@ -126,9 +120,9 @@ public class SoundManager implements ISoundManager {
         PlayerAccessor accessor = PlayerAccessor.getInstance();
         Player player = accessor.getCurrent();
         if (player != null && player.isValid() == true) {
-            player.stop();
-            player.initPosition();
-            player.play();
+            stop();
+            initPosition();
+            play();
         }
     }
 
@@ -259,6 +253,9 @@ public class SoundManager implements ISoundManager {
     @Override
     public boolean isPlay() {
         PlayerAccessor accessor = PlayerAccessor.getInstance();
+        if (accessor.isValid() == false) {
+            return false;
+        }
         return accessor.getCurrent().isRunnable();
     }
 
@@ -271,7 +268,7 @@ public class SoundManager implements ISoundManager {
 
         if (accessor.getCurrent().getPosition() >= accessor.getCurrent().getLength()) {
             // 最初から再生
-            accessor.getCurrent().initPosition();
+            initPosition();
         }
         accessor.getCurrent().play();
     }
@@ -283,6 +280,60 @@ public class SoundManager implements ISoundManager {
             return;
         }
         accessor.getCurrent().stop();
+    }
+
+    @Override
+    public void setPosition(long pos) {
+        PlayerAccessor accessor = PlayerAccessor.getInstance();
+        if (accessor.getCurrent().isValid() == false) {
+            return;
+        }
+        accessor.getCurrent().setPosition(pos);
+    }
+
+    @Override
+    public long getPosition() {
+        PlayerAccessor accessor = PlayerAccessor.getInstance();
+        if (accessor.getCurrent().isValid() == false) {
+            return 0;
+        }
+        return accessor.getCurrent().getPosition();
+    }
+
+    @Override
+    public long getLength() {
+        PlayerAccessor accessor = PlayerAccessor.getInstance();
+        if (accessor.getCurrent().isValid() == false) {
+            return 0;
+        }
+        return accessor.getCurrent().getLength();
+    }
+
+    @Override
+    public int getPositionSecond() {
+        PlayerAccessor accessor = PlayerAccessor.getInstance();
+        if (accessor.getCurrent().isValid() == false) {
+            return 0;
+        }
+        return accessor.getCurrent().getPositionSecond();
+    }
+
+    @Override
+    public int getLengthSecond() {
+        PlayerAccessor accessor = PlayerAccessor.getInstance();
+        if (accessor.getCurrent().isValid() == false) {
+            return 0;
+        }
+        return accessor.getCurrent().getLengthSecond();
+    }
+
+    @Override
+    public boolean isSupportedExtension(String extension) {
+        PlayerAccessor accessor = PlayerAccessor.getInstance();
+        if (accessor.getCurrent().isValid() == false) {
+            return false;
+        }
+        return accessor.getCurrent().isSupportedExtension(extension);
     }
 
     @Override

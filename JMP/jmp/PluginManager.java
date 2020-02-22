@@ -301,7 +301,8 @@ public class PluginManager {
                     String param = sLine[1].trim();
                     if (key.equalsIgnoreCase(SETUP_KEYNAME_PLUGIN) == true) {
                         String src = Utility.stringsCombin(file.getParent(), Platform.getSeparator(), param);
-                        String dst = Utility.stringsCombin(JMPCore.getSystemManager().getJarDirPath(), Platform.getSeparator(), param);
+                        String dst = Utility.stringsCombin(JMPCore.getSystemManager().getJarDirPath(),
+                                Platform.getSeparator(), param);
                         Utility.copyFile(src, dst);
 
                         // Jar名を保持（jar名をパス名にする）
@@ -350,7 +351,8 @@ public class PluginManager {
             String src = file.getPath();
 
             String jmsName = Utility.getFileNameNotExtension(file) + "." + SETUP_FILE_EX;
-            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getJmsDirPath(), Platform.getSeparator(), jmsName);
+            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getJmsDirPath(), Platform.getSeparator(),
+                    jmsName);
             Utility.copyFile(src, dst);
 
             // 最後にプラグインを追加
@@ -459,7 +461,8 @@ public class PluginManager {
                     String key = sLine[0].trim();
                     String param = sLine[1].trim();
                     if (key.equalsIgnoreCase(SETUP_KEYNAME_PLUGIN) == true) {
-                        String plgPath = Utility.stringsCombin(JMPCore.getSystemManager().getJarDirPath(), Platform.getSeparator(), param);
+                        String plgPath = Utility.stringsCombin(JMPCore.getSystemManager().getJarDirPath(),
+                                Platform.getSeparator(), param);
 
                         // プラグインファイルを保持
                         pluginFile = new File(plgPath);

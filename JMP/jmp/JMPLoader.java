@@ -7,7 +7,7 @@ import javax.sound.midi.Sequencer;
 import function.Platform;
 import function.Utility;
 import jlib.IPlugin;
-import jlib.manager.PlayerAccessor;
+import jmp.player.PlayerAccessor;
 import jmp.task.ICallbackFunction;
 import jmp.task.TaskOfSequence;
 import jmplayer.JMPPlayer;

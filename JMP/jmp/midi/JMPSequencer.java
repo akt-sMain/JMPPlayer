@@ -14,9 +14,9 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 
-import jlib.manager.PlayerAccessor;
 import jmp.JMPCore;
 import jmp.SoundManager;
+import jmp.player.PlayerAccessor;
 
 public class JMPSequencer implements Sequencer {
 
