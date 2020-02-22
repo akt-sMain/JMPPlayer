@@ -415,7 +415,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 // FileNameExtensionFilter filter = new
                 // FileNameExtensionFilter("PLUGIN SETUP Files(*.JMS)",
                 // PluginManager.SETUP_FILE_EX);
-                filechooser.setFileFilter(createFileFilter("PLUGIN ZIP Files", PluginManager.PLUGIN_ZIP_EX));
+                filechooser.setFileFilter(createFileFilter("PLUGIN Files", PluginManager.PLUGIN_ZIP_EX));
                 File dir = new File(Platform.getCurrentPath());
                 filechooser.setCurrentDirectory(dir);
                 int selected = filechooser.showOpenDialog(getParent());

@@ -39,10 +39,10 @@ public class PluginManager {
     // ---------------------------------------------
 
     /** zipファイル拡張子 */
-    public static final String PLUGIN_ZIP_EX = "zip";
+    public static final String PLUGIN_ZIP_EX = MakeJmpLib.PKG_ZIP_EX;
 
     /** setupファイル拡張子 */
-    public static final String SETUP_FILE_EX = "jms";
+    public static final String SETUP_FILE_EX = MakeJmpLib.PKG_SETUP_EX;
 
     /** setup プラグインキー名 */
     public static final String SETUP_KEYNAME_PLUGIN = "PLUGIN";
