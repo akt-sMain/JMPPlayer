@@ -5,6 +5,9 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -21,6 +24,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import function.Platform;
 import function.Utility;
+import lib.MakeJmpConfig;
 import lib.MakeJmpLib;
 
 public class MakeJmpPackege extends JFrame {
@@ -33,6 +37,7 @@ public class MakeJmpPackege extends JFrame {
     private JTextField textFieldOutput;
     private JTextField textFieldResPath;
     private JCheckBox chckbxAddBlankData;
+    private JButton btnRead;
 
     /**
      * Launch the application.
@@ -231,11 +236,11 @@ public class MakeJmpPackege extends JFrame {
                 export();
             }
         });
-        btnExport.setBounds(493, 320, 91, 21);
+        btnExport.setBounds(493, 304, 91, 21);
         contentPane.add(btnExport);
 
         textFieldOutput = new JTextField();
-        textFieldOutput.setBounds(20, 321, 461, 19);
+        textFieldOutput.setBounds(20, 305, 461, 19);
         contentPane.add(textFieldOutput);
         textFieldOutput.setColumns(10);
 
@@ -291,6 +296,27 @@ public class MakeJmpPackege extends JFrame {
         textFieldResPath.setTransferHandler(new DropFileHandler(new ResDEvent()));
         textFieldOutput.setTransferHandler(new DropFileHandler(new OutputDEvent()));
 
+        JButton btnWrite = new JButton("Write");
+        btnWrite.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String name = textFieldPluginName.getText();
+                String path = Platform.getCurrentPath(true) + name + "." + MakeJmpConfig.EX;
+                saveFileMkj(path);
+            }
+        });
+        btnWrite.setBounds(20, 345, 91, 21);
+        contentPane.add(btnWrite);
+
+        btnRead = new JButton("Read");
+        btnRead.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                File ret = Utility.OpenLoadFileDialog(null, new File(Platform.getCurrentPath()));
+                loadFileMkj(ret.getPath());
+            }
+        });
+        btnRead.setBounds(123, 345, 91, 21);
+        contentPane.add(btnRead);
+
         loadFileJar(jar);
         loadFileData(data);
         loadFileRes(res);
@@ -329,6 +355,33 @@ public class MakeJmpPackege extends JFrame {
         textFieldOutput.setText(path);
     }
 
+    public void loadFileMkj(String path) {
+        MakeJmpConfig cfg = new MakeJmpConfig();
+        try {
+            cfg.read(new File(path));
+            loadFileJar(cfg.getJar());
+            loadFileRes(cfg.getRes());
+            loadFileData(cfg.getData());
+            chckbxAddBlankData.setSelected(cfg.isAddData());
+            if (chckbxAddBlankData.isSelected() == true) {
+                textFieldDataPath.setEnabled(false);
+            }
+            loadFileOutput(cfg.getOutput());
+        }
+        catch (IOException e) {
+        }
+    }
+
+    public void saveFileMkj(String path) {
+        MakeJmpConfig cfg = new MakeJmpConfig(textFieldJarPath.getText(), textFieldResPath.getText(),
+                chckbxAddBlankData.isSelected(), textFieldDataPath.getText(), textFieldOutput.getText());
+        try {
+            cfg.write(new File(path));
+        }
+        catch (FileNotFoundException | UnsupportedEncodingException e) {
+        }
+    }
+
     public interface DropFileEvent {
         abstract void catchDropEvent(File file);
     }
@@ -362,6 +415,14 @@ public class MakeJmpPackege extends JFrame {
     }
 
     public class OutputDEvent implements DropFileEvent {
+
+        @Override
+        public void catchDropEvent(File file) {
+            loadFileOutput(file.getAbsolutePath());
+        }
+    }
+
+    public class mkjDEvent implements DropFileEvent {
 
         @Override
         public void catchDropEvent(File file) {
