@@ -1,5 +1,5 @@
 package jlib;
 
 public interface IUpdateLanguageListener {
-	abstract void updateLanguage();
+    abstract void updateLanguage();
 }

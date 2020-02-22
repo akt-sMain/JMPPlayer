@@ -10,52 +10,56 @@ import java.io.File;
  */
 public interface IPlugin {
 
-	/**
-	 * プラグイン初期化
-	 */
-	abstract void initialize();
+    /**
+     * プラグイン初期化
+     */
+    abstract void initialize();
 
-	/**
-	 * プラグイン終了
-	 */
-	abstract void exit();
+    /**
+     * プラグイン終了
+     */
+    abstract void exit();
 
-	/**
-	 * プラグインオープン処理
-	 */
-	abstract void open();
+    /**
+     * プラグインオープン処理
+     */
+    abstract void open();
 
-	/**
-	 * プラグインクローズ処理
-	 */
-	abstract void close();
+    /**
+     * プラグインクローズ処理
+     */
+    abstract void close();
 
-	/**
-	 * 更新処理
-	 */
-	default void update() {}
+    /**
+     * 更新処理
+     */
+    default void update() {
+    }
 
-	/**
-	 * プラグイン有効状態
-	 *
-	 * @return 有効状態
-	 */
-	default boolean isEnable() {
-		return true;
-	}
+    /**
+     * プラグイン有効状態
+     *
+     * @return 有効状態
+     */
+    default boolean isEnable() {
+        return true;
+    }
 
-	/**
-	 * プラグインのオープン状態か判定
-	 * @return 状態
-	 */
-	default boolean isOpen() {
-		return true;
-	}
+    /**
+     * プラグインのオープン状態か判定
+     * 
+     * @return 状態
+     */
+    default boolean isOpen() {
+        return true;
+    }
 
-	/**
-	 * ファイルロード
-	 *
-	 * @param file ファイル
-	 */
-	default void loadFile(File file) {};
+    /**
+     * ファイルロード
+     *
+     * @param file
+     *            ファイル
+     */
+    default void loadFile(File file) {
+    };
 }
