@@ -305,24 +305,7 @@ public class SystemManager implements ISystemManager {
      * ルックアンドフィールの設定
      */
     private void setupLookAndFeel() {
-        String lf = "";
-        switch (Platform.getRunPlatform()) {
-            case WINDOWS:
-                lf = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
-                break;
-
-            case MAC:
-                lf = "com.sun.java.swing.plaf.mac.MacLookAndFeel";
-                break;
-
-            case LINUX:
-            case SUN_OS:
-            case OTHER:
-            default:
-                lf = "javax.swing.plaf.metal.MetalLookAndFeel";
-                break;
-        }
-
+        String lf = UIManager.getSystemLookAndFeelClassName();
         try {
             UIManager.setLookAndFeel(lf);
         }
