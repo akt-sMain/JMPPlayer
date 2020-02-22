@@ -13,6 +13,7 @@ import javax.swing.JList;
 import function.Utility;
 import jlib.IJmpMainWindow;
 import jlib.IMidiEventListener;
+import jlib.IPlayer;
 import jlib.manager.ISoundManager;
 import jlib.manager.JMPCoreAccessor;
 import jmp.player.MidiPlayer;
@@ -116,9 +117,13 @@ public class SoundManager implements ISoundManager {
         return MidiPlayer.getSequencer();
     }
 
-    public void initPlay() {
+    public IPlayer getCurrentPlayer() {
         PlayerAccessor accessor = PlayerAccessor.getInstance();
-        Player player = accessor.getCurrent();
+        return accessor.getCurrent();
+    }
+
+    public void initPlay() {
+        IPlayer player = getCurrentPlayer();
         if (player != null && player.isValid() == true) {
             stop();
             initPosition();
@@ -165,8 +170,8 @@ public class SoundManager implements ISoundManager {
 
         String path = playListModel.getElementAt(index);
         try {
-            PlayerAccessor accessor = PlayerAccessor.getInstance();
-            accessor.getCurrent().stop();
+            IPlayer player = getCurrentPlayer();
+            player.stop();
             if (isLoadOnly == false) {
                 // 自動再生フラグ
                 JMPFlags.LoadToPlayFlag = true;
@@ -252,88 +257,88 @@ public class SoundManager implements ISoundManager {
 
     @Override
     public boolean isPlay() {
-        PlayerAccessor accessor = PlayerAccessor.getInstance();
-        if (accessor.isValid() == false) {
+        IPlayer player = getCurrentPlayer();
+        if (player.isValid() == false) {
             return false;
         }
-        return accessor.getCurrent().isRunnable();
+        return player.isRunnable();
     }
 
     @Override
     public void play() {
-        PlayerAccessor accessor = PlayerAccessor.getInstance();
-        if (accessor.getCurrent().isValid() == false) {
+        IPlayer player = getCurrentPlayer();
+        if (player.isValid() == false) {
             return;
         }
 
-        if (accessor.getCurrent().getPosition() >= accessor.getCurrent().getLength()) {
+        if (player.getPosition() >= player.getLength()) {
             // 最初から再生
             initPosition();
         }
-        accessor.getCurrent().play();
+        player.play();
     }
 
     @Override
     public void stop() {
-        PlayerAccessor accessor = PlayerAccessor.getInstance();
-        if (accessor.getCurrent().isValid() == false) {
+        IPlayer player = getCurrentPlayer();
+        if (player.isValid() == false) {
             return;
         }
-        accessor.getCurrent().stop();
+        player.stop();
     }
 
     @Override
     public void setPosition(long pos) {
-        PlayerAccessor accessor = PlayerAccessor.getInstance();
-        if (accessor.getCurrent().isValid() == false) {
+        IPlayer player = getCurrentPlayer();
+        if (player.isValid() == false) {
             return;
         }
-        accessor.getCurrent().setPosition(pos);
+        player.setPosition(pos);
     }
 
     @Override
     public long getPosition() {
-        PlayerAccessor accessor = PlayerAccessor.getInstance();
-        if (accessor.getCurrent().isValid() == false) {
+        IPlayer player = getCurrentPlayer();
+        if (player.isValid() == false) {
             return 0;
         }
-        return accessor.getCurrent().getPosition();
+        return player.getPosition();
     }
 
     @Override
     public long getLength() {
-        PlayerAccessor accessor = PlayerAccessor.getInstance();
-        if (accessor.getCurrent().isValid() == false) {
+        IPlayer player = getCurrentPlayer();
+        if (player.isValid() == false) {
             return 0;
         }
-        return accessor.getCurrent().getLength();
+        return player.getLength();
     }
 
     @Override
     public int getPositionSecond() {
-        PlayerAccessor accessor = PlayerAccessor.getInstance();
-        if (accessor.getCurrent().isValid() == false) {
+        IPlayer player = getCurrentPlayer();
+        if (player.isValid() == false) {
             return 0;
         }
-        return accessor.getCurrent().getPositionSecond();
+        return player.getPositionSecond();
     }
 
     @Override
     public int getLengthSecond() {
-        PlayerAccessor accessor = PlayerAccessor.getInstance();
-        if (accessor.getCurrent().isValid() == false) {
+        IPlayer player = getCurrentPlayer();
+        if (player.isValid() == false) {
             return 0;
         }
-        return accessor.getCurrent().getLengthSecond();
+        return player.getLengthSecond();
     }
 
     @Override
     public boolean isSupportedExtension(String extension) {
-        PlayerAccessor accessor = PlayerAccessor.getInstance();
-        if (accessor.getCurrent().isValid() == false) {
+        IPlayer player = getCurrentPlayer();
+        if (player.isValid() == false) {
             return false;
         }
-        return accessor.getCurrent().isSupportedExtension(extension);
+        return player.isSupportedExtension(extension);
     }
 
     @Override

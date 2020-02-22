@@ -667,12 +667,14 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     if (tickPos >= tickLength) {
                         if (dm.isLoopPlay() == true) {
                             if (dm.isAutoPlay() == true) {
-                                if (sm.isValidPlayListNext() == true) {
-                                    // 次の曲
-                                    sm.playNext();
-                                }
-                                else {
-                                    sm.playForList(0);
+                                if (sm.isValidPlayList() == true) {
+                                    if (sm.isValidPlayListNext() == true) {
+                                        // 次の曲
+                                        sm.playNext();
+                                    }
+                                    else {
+                                        sm.playForList(0);
+                                    }
                                 }
                             }
                             else {
@@ -681,9 +683,11 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                             }
                         }
                         else if (dm.isAutoPlay() == true) {
-                            if (sm.isValidPlayListNext() == true) {
-                                // 次の曲
-                                sm.playNext();
+                            if (sm.isValidPlayList() == true) {
+                                if (sm.isValidPlayListNext() == true) {
+                                    // 次の曲
+                                    sm.playNext();
+                                }
                             }
                         }
                     }
