@@ -23,9 +23,8 @@ import javax.swing.border.EmptyBorder;
 
 import function.Utility;
 import jmp.ConfigDatabase;
-import jmp.JMPCore;
 import jmp.JMPFlags;
-import jmp.ResourceManager;
+import jmp.core.JMPCore;
 import jmp.gui.ui.JMPDialog;
 import jmp.player.MidiPlayer;
 
@@ -79,7 +78,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
         setBounds(100, 100, 460, 271);
         getContentPane().setLayout(new BorderLayout());
 
-        Image jmpIcon = ResourceManager.getInstance().getJmpImageIcon();
+        Image jmpIcon = JMPCore.getResourceManager().getJmpImageIcon();
         if (jmpIcon != null) {
             setIconImage(jmpIcon);
         }

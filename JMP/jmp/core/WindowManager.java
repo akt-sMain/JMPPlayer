@@ -1,10 +1,11 @@
-package jmp;
+package jmp.core;
 
 import jlib.IJmpWindow;
 import jlib.manager.IWindowManager;
 import jlib.manager.JMPCoreAccessor;
+import jmp.WindowDatabase;
 
-public class WindowManager implements IWindowManager {
+public class WindowManager extends AbstractManager implements IWindowManager {
 
     public static final String[] WINDOW_NAMELIST = { "MAIN", "FILE_LIST", "HISTORY" };
     public static final String WINDOW_NAME_MAIN = WINDOW_NAMELIST[0];
@@ -13,15 +14,15 @@ public class WindowManager implements IWindowManager {
 
     private WindowDatabase database = null;
 
-    // 初期化フラグ
-    private boolean initializeFlag = false;
+    WindowManager(int pri) {
+        super(pri, "window");
 
-    WindowManager() {
         database = new WindowDatabase();
 
         JMPCoreAccessor.register(this);
     }
 
+    @Override
     public boolean initFunc() {
         boolean result = true;
         if (initializeFlag == false) {
@@ -30,6 +31,7 @@ public class WindowManager implements IWindowManager {
         return result;
     }
 
+    @Override
     public boolean endFunc() {
         if (initializeFlag == false) {
             return false;

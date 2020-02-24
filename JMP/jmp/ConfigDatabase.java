@@ -4,13 +4,14 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import function.Utility;
 
 public class ConfigDatabase {
 
     // 設定データベース
-    private HashMap<String, String> database = null;
+    private Map<String, String> database = null;
     public static final String CFG_KEY_MIDILIST = "MIDILIST";
     public static final String CFG_KEY_MIDIOUT = "MIDIOUT";
     public static final String CFG_KEY_MIDIIN = "MIDIIN";

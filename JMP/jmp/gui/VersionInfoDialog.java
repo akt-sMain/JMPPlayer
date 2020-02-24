@@ -11,8 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
-import jmp.JMPCore;
-import jmp.ResourceManager;
+import jmp.core.JMPCore;
 import jmp.gui.ui.JMPDialog;
 
 public class VersionInfoDialog extends JMPDialog {
@@ -77,7 +76,7 @@ public class VersionInfoDialog extends JMPDialog {
         JLabel iconLabel = new JLabel("");
         iconLabel.setBounds(23, 10, 64, 64);
 
-        Image image = ResourceManager.getInstance().getJmpImageIcon();
+        Image image = JMPCore.getResourceManager().getJmpImageIcon();
         if (image != null) {
             iconLabel.setIcon(new ImageIcon(image));
         }

@@ -12,10 +12,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
-import jmp.JMPCore;
 import jmp.JMPFlags;
-import jmp.ResourceManager;
-import jmp.WindowManager;
+import jmp.core.JMPCore;
+import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 
 public class HistoryDialog extends JMPDialog {
@@ -36,7 +35,7 @@ public class HistoryDialog extends JMPDialog {
 
         contentPanel.setBackground(getJmpBackColor());
 
-        Image jmpIcon = ResourceManager.getInstance().getJmpImageIcon();
+        Image jmpIcon = JMPCore.getResourceManager().getJmpImageIcon();
         if (jmpIcon != null) {
             setIconImage(jmpIcon);
         }

@@ -4,7 +4,7 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 
 import jlib.IMidiEventListener;
-import jmp.JMPCore;
+import jmp.core.JMPCore;
 
 public class MIReceiver implements Receiver {
 

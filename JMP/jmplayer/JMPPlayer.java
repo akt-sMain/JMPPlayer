@@ -18,7 +18,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
@@ -40,16 +39,14 @@ import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.IJmpMainWindow;
 import jlib.IPlugin;
-import jmp.DataManager;
-import jmp.JMPCore;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
-import jmp.PluginManager;
-import jmp.ResourceManager;
-import jmp.SoundManager;
-import jmp.SystemManager;
-import jmp.TaskManager;
-import jmp.WindowManager;
+import jmp.core.DataManager;
+import jmp.core.JMPCore;
+import jmp.core.PluginManager;
+import jmp.core.SoundManager;
+import jmp.core.SystemManager;
+import jmp.core.WindowManager;
 import jmp.gui.JmpQuickLaunch;
 import jmp.gui.MidiFileListDialog;
 import jmp.gui.VersionInfoDialog;
@@ -182,7 +179,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         getContentPane().setLayout(null);
         setBounds(20, 20, 442, 199);
 
-        Image jmpIcon = ResourceManager.getInstance().getJmpImageIcon();
+        Image jmpIcon = JMPCore.getResourceManager().getJmpImageIcon();
         if (jmpIcon != null) {
             setIconImage(jmpIcon);
         }
@@ -504,14 +501,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         JMenuItem mntmPcreset = new JMenuItem("PCリセット");
         mntmPcreset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                for (int i = 0; i < 16; i++) {
-                    try {
-                        JMPCore.getSoundManager().sendProgramChange(i, 0, 0);
-                    }
-                    catch (InvalidMidiDataException e1) {
-                        e1.printStackTrace();
-                    }
-                }
+                JMPCore.getSoundManager().resetMidiEvent();
             }
         });
         configMenu.add(mntmPcreset);
@@ -532,7 +522,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 mnExecuteBatFile.removeAll();
 
                 File current = new File(Platform.getCurrentPath(false));
-                System.out.println(current.getPath());
                 for (File f : current.listFiles()) {
                     if (Utility.checkExtension(f, "bat") == true) {
                         JMenuItem item = new JMenuItem(Utility.getFileNameAndExtension(f));
@@ -540,7 +529,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                executeBatFile(f.getAbsolutePath());
+                                JMPCore.getSystemManager().executeBatFile(f.getAbsolutePath());
                             }
                         });
                         mnExecuteBatFile.add(item);
@@ -694,7 +683,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 }
             }
         });
-        TaskManager.getInstance().getTaskOfTimer().addCallbackPackage(commonCallbackPkg);
+        JMPCore.getTaskManager().getTaskOfTimer().addCallbackPackage(commonCallbackPkg);
     }
 
     // private Color getCtrlBorderColor() {
@@ -728,7 +717,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 Graphics2D g2d = (Graphics2D) g.create();
                 if (playerAccessor.isValid() == true && playerAccessor.getCurrent().isRunnable() == true) {
                     // 停止ボタン
-                    Image img = ResourceManager.getInstance().getBtnStopIcon();
+                    Image img = JMPCore.getResourceManager().getBtnStopIcon();
                     if (img != null) {
                         g.drawImage(img, 0, 0, null);
                         return;
@@ -754,7 +743,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 }
                 else {
                     // 再生ボタン
-                    Image img = ResourceManager.getInstance().getBtnPlayIcon();
+                    Image img = JMPCore.getResourceManager().getBtnPlayIcon();
                     if (img != null) {
                         g.drawImage(img, 0, 0, null);
                         return;
@@ -788,7 +777,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         nextUI.addMarkPainter(new IButtonMarkPaint() {
             @Override
             public void paintMark(Graphics g, int x, int y, int width, int height) {
-                Image img = ResourceManager.getInstance().getBtnNextIcon();
+                Image img = JMPCore.getResourceManager().getBtnNextIcon();
                 if (img != null) {
                     g.drawImage(img, 0, 0, null);
                     return;
@@ -824,7 +813,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         prevUI.addMarkPainter(new IButtonMarkPaint() {
             @Override
             public void paintMark(Graphics g, int x, int y, int width, int height) {
-                Image img = ResourceManager.getInstance().getBtnPrevIcon();
+                Image img = JMPCore.getResourceManager().getBtnPrevIcon();
                 if (img != null) {
                     g.drawImage(img, 0, 0, null);
                     return;
@@ -862,7 +851,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         next2UI.addMarkPainter(new IButtonMarkPaint() {
             @Override
             public void paintMark(Graphics g, int x, int y, int width, int height) {
-                Image img = ResourceManager.getInstance().getBtnNext2Icon();
+                Image img = JMPCore.getResourceManager().getBtnNext2Icon();
                 if (img != null) {
                     g.drawImage(img, 0, 0, null);
                     return;
@@ -902,7 +891,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         prev2UI.addMarkPainter(new IButtonMarkPaint() {
             @Override
             public void paintMark(Graphics g, int x, int y, int width, int height) {
-                Image img = ResourceManager.getInstance().getBtnPrev2Icon();
+                Image img = JMPCore.getResourceManager().getBtnPrev2Icon();
                 if (img != null) {
                     g.drawImage(img, 0, 0, null);
                     return;
@@ -1098,17 +1087,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         }
     }
 
-    private void executeBatFile(String path) {
-        try {
-            if (Utility.isExsistFile(path) == true) {
-                Utility.invokeProcess(path);
-            }
-        }
-        catch (Exception e1) {
-            e1.printStackTrace();
-        }
-    }
-
     private FileNameExtensionFilter createFileFilter(String exName, String... ex) {
         String exs = "";
         for (int i = 0; i < ex.length; i++) {
@@ -1166,7 +1144,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
         /* ファイルロード */
         // Sequenceタスクに委託
-        TaskManager.getInstance().getTaskOfSequence().queuing(new ICallbackFunction() {
+        JMPCore.getTaskManager().getTaskOfSequence().queuing(new ICallbackFunction() {
             @Override
             public void callback() {
                 boolean status = true;
@@ -1285,7 +1263,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 return true;
             }
         });
-        TaskManager.getInstance().getTaskOfTimer().addCallbackPackage(pkg);
+        JMPCore.getTaskManager().getTaskOfTimer().addCallbackPackage(pkg);
     }
 
     /**

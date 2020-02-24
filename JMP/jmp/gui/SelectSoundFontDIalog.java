@@ -20,7 +20,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import function.Platform;
-import jmp.JMPCore;
+import jmp.core.JMPCore;
 import jmp.gui.ui.JMPDialog;
 
 public class SelectSoundFontDIalog extends JMPDialog {

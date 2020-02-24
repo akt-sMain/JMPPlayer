@@ -1,4 +1,4 @@
-package jmp;
+package jmp.core;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -11,17 +11,15 @@ import function.Platform;
 import function.Utility;
 import jlib.manager.IDataManager;
 import jlib.manager.JMPCoreAccessor;
+import jmp.ConfigDatabase;
 import jmp.gui.HistoryDialog;
 
-public class DataManager implements IDataManager {
+public class DataManager extends AbstractManager implements IDataManager {
 
     public static final String[] ExtentionForMIDI = { "mid", "midi" };
     public static final String[] ExtentionForWAV = { "wav" };
     public static final String CONFIG_FILE = "config.txt";
     public static final String HISTORY_FILE = "history.txt";
-
-    // 初期化フラグ
-    private boolean initializeFlag = false;
 
     // 作成済みの設定値を反映した場合、ファイルに出力しない
     private boolean makedConfigDatabaseFlag = false;
@@ -42,14 +40,12 @@ public class DataManager implements IDataManager {
     /**
      * コンストラクタ
      */
-    DataManager() {
+    DataManager(int pri) {
+        super(pri, "data");
+
         // アクセッサに登録
         JMPCoreAccessor.register(this);
     }
-
-    // public static DataManager getInstance() {
-    // return singleton;
-    // }
 
     public boolean initFunc() {
         if (initializeFlag == false) {

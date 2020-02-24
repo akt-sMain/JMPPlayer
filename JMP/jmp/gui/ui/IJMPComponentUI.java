@@ -3,9 +3,9 @@ package jmp.gui.ui;
 import java.awt.Color;
 
 import function.Utility;
-import jmp.JMPCore;
-import jmp.SystemManager;
-import jmp.SystemManager.CommonRegister;
+import jmp.core.JMPCore;
+import jmp.core.SystemManager;
+import jmp.core.SystemManager.CommonRegister;
 
 public interface IJMPComponentUI {
     default Color getJmpBackColor() {

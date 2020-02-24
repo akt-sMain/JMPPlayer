@@ -7,6 +7,10 @@ import javax.sound.midi.Sequencer;
 import function.Platform;
 import function.Utility;
 import jlib.IPlugin;
+import jmp.core.DataManager;
+import jmp.core.JMPCore;
+import jmp.core.PluginManager;
+import jmp.core.TaskManager;
 import jmp.player.PlayerAccessor;
 import jmp.task.ICallbackFunction;
 import jmp.task.TaskOfSequence;
@@ -98,14 +102,9 @@ public class JMPLoader {
      * @return
      */
     public static boolean invoke(ConfigDatabase config, IPlugin standAlonePlugin) {
-        TaskManager taskManager = TaskManager.getInstance();
-        LanguageManager langManager = LanguageManager.getInstanse();
 
         // スタンドアロンプラグイン設定
         JMPCore.StandAlonePlugin = standAlonePlugin;
-
-        // リソース生成
-        ResourceManager.getInstance().make();
 
         // 設定値を先行して登録する
         JMPCore.getDataManager().setConfigDatabase(config);
@@ -115,9 +114,6 @@ public class JMPLoader {
 
         /* 起動準備 */
         if (result == true) {
-
-            // 言語初期化
-            langManager.initFunc();
 
             // シンセ情報表示
             if (JMPFlags.DebugMode == true) {
@@ -141,8 +137,9 @@ public class JMPLoader {
                 JMPCore.StandAlonePlugin.open();
             }
 
-            // タスク登録
-            taskManager.initFunc();
+            // タスク開始
+            TaskManager taskManager = JMPCore.getTaskManager();
+            taskManager.taskStart();
 
             // アプリ全般のコールバック関数を登録
             JMPPlayer.registerCallbackPackage();
@@ -151,7 +148,7 @@ public class JMPLoader {
             if (JMPFlags.RequestFileLoadFlag == true) {
                 File f = new File(RequestFile);
                 if (f.canRead() == true) {
-                    TaskManager.getInstance().getTaskOfSequence().queuing(new ICallbackFunction() {
+                    taskManager.getTaskOfSequence().queuing(new ICallbackFunction() {
                         @Override
                         public void callback() {
                             try {
@@ -184,11 +181,6 @@ public class JMPLoader {
             }
         }
 
-        // if (res == true)
-        // res = langManager.endFunc();
-        // System.out.println(">> lang exit... " + (res == true ? "success" :
-        // "fail"));
-
         boolean endResult = JMPCore.endFunc();
         if (result == false) {
             endResult = result;
@@ -211,7 +203,7 @@ public class JMPLoader {
         dm.getHistoryDialog().setVisible(false);
 
         // タスクの終了
-        TaskManager.getInstance().taskExit();
+        JMPCore.getTaskManager().taskExit();
     }
 
 }

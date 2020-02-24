@@ -1,15 +1,16 @@
-package jmp;
+package jmp.core;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import jlib.manager.IManager;
 import jmp.task.ITask;
 import jmp.task.TaskOfMidiEvent;
 import jmp.task.TaskOfSequence;
 import jmp.task.TaskOfTimer;
 import jmp.task.TaskOfUpdate;
 
-public class TaskManager {
+public class TaskManager extends AbstractManager implements IManager{
 
     private TaskOfUpdate taskOfUpdate;
     private TaskOfTimer taskOfTimer;
@@ -17,15 +18,11 @@ public class TaskManager {
     private TaskOfMidiEvent taskOfMidiEvent;
     private static List<ITask> tasks = new ArrayList<ITask>();
 
-    private static TaskManager singleton = new TaskManager();
-
-    private TaskManager() {
+    TaskManager(int pri) {
+        super(pri, "task");
     }
 
-    public static TaskManager getInstance() {
-        return singleton;
-    }
-
+    @Override
     public boolean initFunc() {
         // 更新タスク登録
         taskOfUpdate = new TaskOfUpdate();
@@ -42,17 +39,10 @@ public class TaskManager {
         // MIDIイベントタスク登録
         taskOfMidiEvent = new TaskOfMidiEvent();
         tasks.add(taskOfMidiEvent);
-
-        /* Threadインスタンスのstart処理 */
-        for (ITask task : tasks) {
-            if (task instanceof Thread) {
-                Thread th = (Thread) task;
-                th.start();
-            }
-        }
         return true;
     }
 
+    @Override
     public boolean endFunc() {
         return true;
     }
@@ -71,6 +61,16 @@ public class TaskManager {
 
     public TaskOfMidiEvent getTaskOfMidiEvent() {
         return taskOfMidiEvent;
+    }
+
+    public void taskStart() {
+        /* Threadインスタンスのstart処理 */
+        for (ITask task : tasks) {
+            if (task instanceof Thread) {
+                Thread th = (Thread) task;
+                th.start();
+            }
+        }
     }
 
     public void taskExit() {

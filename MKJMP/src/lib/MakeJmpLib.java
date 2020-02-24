@@ -10,7 +10,7 @@ import function.Utility;
 
 public class MakeJmpLib {
 
-    public static final String PKG_SETUP_EX = "jmp";
+    public static final String PKG_SETUP_EX = "jms";
 
     public static final String PKG_ZIP_EX = "jmz";
 

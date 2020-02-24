@@ -3,10 +3,10 @@ package jmp.task;
 import function.Utility;
 import jlib.IJmpMainWindow;
 import jlib.IPlugin;
-import jmp.JMPCore;
 import jmp.JMPLoader;
-import jmp.PluginManager;
-import jmp.SystemManager;
+import jmp.core.JMPCore;
+import jmp.core.PluginManager;
+import jmp.core.SystemManager;
 
 /**
  * 更新タスク

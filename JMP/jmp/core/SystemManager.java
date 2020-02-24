@@ -1,4 +1,4 @@
-package jmp;
+package jmp.core;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -16,6 +16,7 @@ import jlib.IJmpMainWindow;
 import jlib.IPlugin;
 import jlib.manager.ISystemManager;
 import jlib.manager.JMPCoreAccessor;
+import jmp.JMPFlags;
 import jmp.gui.LicenseReaderDialog;
 import jmp.task.ICallbackFunction;
 
@@ -25,7 +26,7 @@ import jmp.task.ICallbackFunction;
  * @author abs
  *
  */
-public class SystemManager implements ISystemManager {
+public class SystemManager extends AbstractManager implements ISystemManager {
 
     public class CommonRegister {
         public static final String COMMON_REGKEY_PLAYER_BACK_COLOR = "player_back_color";
@@ -119,9 +120,6 @@ public class SystemManager implements ISystemManager {
     /** ZIPパッケージディレクトリ名 */
     public static final String ZIP_DIR_NAME = "zip";
 
-    // 初期化フラグ
-    private boolean initializeFlag = false;
-
     /** メインウィンドウ */
     public IJmpMainWindow mainWindow = null;
 
@@ -131,7 +129,9 @@ public class SystemManager implements ISystemManager {
     /** ライセンス表示ダイアログ */
     private LicenseReaderDialog licenseDialog = null;
 
-    SystemManager() {
+    SystemManager(int pri) {
+        super(pri, "system");
+
         // アクセッサに登録
         JMPCoreAccessor.register(this);
     }
@@ -374,7 +374,7 @@ public class SystemManager implements ISystemManager {
     }
 
     public void showMessageDialog(String message, String title, int option) {
-        TaskManager.getInstance().getTaskOfSequence().queuing(new ICallbackFunction() {
+        JMPCore.getTaskManager().getTaskOfSequence().queuing(new ICallbackFunction() {
             @Override
             public void callback() {
                 IJmpMainWindow win = getMainWindow();
@@ -388,5 +388,14 @@ public class SystemManager implements ISystemManager {
                 JOptionPane.showMessageDialog(parent, message, title, option);
             }
         });
+    }
+
+    public void executeBatFile(String path) {
+        try {
+            if (Utility.isExsistFile(path) == true) {
+                Utility.invokeProcess(path);
+            }
+        }
+        catch (Exception e1) {}
     }
 }

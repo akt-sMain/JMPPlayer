@@ -8,30 +8,21 @@ import javax.imageio.ImageIO;
 
 import function.Utility;
 
-public class ResourceManager {
+public class Resource {
 
-    private Image jmpImageIcon = null;
-    private Image fileOtherIcon = null;
-    private Image fileMidiIcon = null;
-    private Image fileWavIcon = null;
-    private Image fileFolderIcon = null;
-    private Image btnPlayIcon = null;
-    private Image btnStopIcon = null;
-    private Image btnNextIcon = null;
-    private Image btnNext2Icon = null;
-    private Image btnPrevIcon = null;
-    private Image btnPrev2Icon = null;
+    public Image jmpImageIcon = null;
+    public Image fileOtherIcon = null;
+    public Image fileMidiIcon = null;
+    public Image fileWavIcon = null;
+    public Image fileFolderIcon = null;
+    public Image btnPlayIcon = null;
+    public Image btnStopIcon = null;
+    public Image btnNextIcon = null;
+    public Image btnNext2Icon = null;
+    public Image btnPrevIcon = null;
+    public Image btnPrev2Icon = null;
 
-    private static ResourceManager instance = new ResourceManager();
-
-    private ResourceManager() {
-    }
-
-    public static ResourceManager getInstance() {
-        return instance;
-    }
-
-    public void make() {
+    public Resource() {
         jmpImageIcon = readImage("iconPNG.png");
         fileOtherIcon = readImage("file_icon_other.png", true);
         fileMidiIcon = readImage("file_icon_MIDI.png", true);
@@ -74,47 +65,4 @@ public class ResourceManager {
         return img;
     }
 
-    public Image getJmpImageIcon() {
-        return jmpImageIcon;
-    }
-
-    public Image getFileOtherIcon() {
-        return fileOtherIcon;
-    }
-
-    public Image getFileMidiIcon() {
-        return fileMidiIcon;
-    }
-
-    public Image getFileWavIcon() {
-        return fileWavIcon;
-    }
-
-    public Image getFileFolderIcon() {
-        return fileFolderIcon;
-    }
-
-    public Image getBtnPlayIcon() {
-        return btnPlayIcon;
-    }
-
-    public Image getBtnStopIcon() {
-        return btnStopIcon;
-    }
-
-    public Image getBtnNextIcon() {
-        return btnNextIcon;
-    }
-
-    public Image getBtnNext2Icon() {
-        return btnNext2Icon;
-    }
-
-    public Image getBtnPrevIcon() {
-        return btnPrevIcon;
-    }
-
-    public Image getBtnPrev2Icon() {
-        return btnPrev2Icon;
-    }
 }

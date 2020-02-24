@@ -1,9 +1,10 @@
-package jmp;
+package jmp.core;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequencer;
 import javax.sound.sampled.FloatControl;
@@ -16,6 +17,7 @@ import jlib.IMidiEventListener;
 import jlib.IPlayer;
 import jlib.manager.ISoundManager;
 import jlib.manager.JMPCoreAccessor;
+import jmp.JMPFlags;
 import jmp.player.MidiPlayer;
 import jmp.player.Player;
 import jmp.player.PlayerAccessor;
@@ -27,7 +29,7 @@ import jmp.player.WavPlayer;
  * @author abs
  *
  */
-public class SoundManager implements ISoundManager {
+public class SoundManager extends AbstractManager implements ISoundManager {
     private DefaultListModel<String> playListModel = new DefaultListModel<>();
     private JList<String> playList = new JList<String>(playListModel);
 
@@ -35,16 +37,16 @@ public class SoundManager implements ISoundManager {
     public static MidiPlayer MidiPlayer = null;
     public static WavPlayer WavPlayer = null;
 
-    // 初期化フラグ
-    private boolean initializeFlag = false;
-
     FloatControl volumeCtrl;
 
-    SoundManager() {
+    SoundManager(int pri) {
+        super(pri, "sound");
+
         // アクセッサに登録
         JMPCoreAccessor.register(this);
     }
 
+    @Override
     public boolean initFunc() {
         if (JMPCore.getDataManager().isShowStartupDeviceSetup() == false) {
             // 自動接続フラグを立てる
@@ -98,6 +100,7 @@ public class SoundManager implements ISoundManager {
         return true;
     }
 
+    @Override
     public boolean endFunc() {
         if (initializeFlag == false) {
             return false;
@@ -392,5 +395,18 @@ public class SoundManager implements ISoundManager {
             return 0.0f;
         }
         return volumeCtrl.getMinimum();
+    }
+
+    public void resetMidiEvent() {
+        for (int i = 0; i < 16; i++) {
+            resetProgramChange(i); //プログラムチェンジリセット
+        }
+    }
+
+    public void resetProgramChange(int ch) {
+        try {
+            JMPCore.getSoundManager().sendProgramChange(ch, 0, 0);
+        }
+        catch (InvalidMidiDataException e1) {}
     }
 }

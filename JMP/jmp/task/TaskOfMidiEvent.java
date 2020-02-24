@@ -9,8 +9,8 @@ import javax.sound.midi.MidiMessage;
 
 import function.Utility;
 import jlib.IMidiEventListener;
-import jmp.JMPCore;
-import jmp.PluginManager;
+import jmp.core.JMPCore;
+import jmp.core.PluginManager;
 
 public class TaskOfMidiEvent extends Thread implements ITask {
 

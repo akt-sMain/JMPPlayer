@@ -1,27 +1,21 @@
-package jmp;
+package jmp.core;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import function.Platform;
 import function.Utility;
 import jlib.IUpdateLanguageListener;
 import jlib.manager.ILanguageManager;
+import jmp.LanguageTable;
 
 /**
  *
  * 言語マネージャー
  *
  */
-public class LanguageManager implements ILanguageManager {
+public class LanguageManager extends AbstractManager implements ILanguageManager {
     /** 言語テーブル名 */
     public static final String LANGUAGE_FILE_NAME = "language.lang";
-
-    /* シングルトンインスタンス */
-    private static LanguageManager singleton = new LanguageManager();
-
-    // 初期化フラグ
-    protected boolean initializeFlag = false;
 
     private LanguageTable languageTable = null;
 
@@ -32,17 +26,8 @@ public class LanguageManager implements ILanguageManager {
     /**
      * コンストラクタ
      */
-    private LanguageManager() {
-        /* 空のインスタンス生成 */
-    }
-
-    /**
-     * シングルトンインスタンス取得
-     *
-     * @return シングルトンインスタンス
-     */
-    public static LanguageManager getInstanse() {
-        return singleton;
+    LanguageManager(int pri) {
+        super(pri, "language");
     }
 
     @Override
@@ -50,20 +35,6 @@ public class LanguageManager implements ILanguageManager {
         if (register.contains(listener) == false) {
             register.add(listener);
         }
-    }
-
-    public boolean initFunc() {
-        register = new ArrayList<IUpdateLanguageListener>();
-        languageTable = new LanguageTable();
-        if (false == readingLanguageFile()) {
-            initializeFlag = false;
-            return false;
-        }
-        return true;
-    }
-
-    public boolean endFunc() {
-        return true;
     }
 
     public String getLangFilePath() {

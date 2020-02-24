@@ -1,13 +1,14 @@
 package jmp;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import jlib.IJmpWindow;
 
 public class WindowDatabase {
 
     // 設定データベース
-    private HashMap<String, IJmpWindow> database = null;
+    private Map<String, IJmpWindow> database = null;
 
     public WindowDatabase() {
         database = new HashMap<String, IJmpWindow>();

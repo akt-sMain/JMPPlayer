@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import function.Utility;
 
@@ -14,7 +15,7 @@ public class LanguageTable {
 
     private ArrayList<String> header = null;
 
-    private HashMap<String, String[]> langTable = null;
+    private Map<String, String[]> langTable = null;
 
     public LanguageTable() {
         header = new ArrayList<String>();

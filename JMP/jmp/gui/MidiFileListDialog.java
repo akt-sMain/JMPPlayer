@@ -41,11 +41,10 @@ import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.IJmpMainWindow;
 import jmp.ConfigDatabase;
-import jmp.DataManager;
-import jmp.JMPCore;
 import jmp.JMPFlags;
-import jmp.ResourceManager;
-import jmp.WindowManager;
+import jmp.core.DataManager;
+import jmp.core.JMPCore;
+import jmp.core.WindowManager;
 import jmp.gui.ui.FileListTableModel;
 import jmp.gui.ui.JMPFrame;
 import jmp.player.PlayerAccessor;
@@ -79,7 +78,7 @@ public class MidiFileListDialog extends JMPFrame {
         setResizable(false);
         setTitle("再生リスト");
 
-        Image jmpIcon = ResourceManager.getInstance().getJmpImageIcon();
+        Image jmpIcon = JMPCore.getResourceManager().getJmpImageIcon();
         if (jmpIcon != null) {
             setIconImage(jmpIcon);
         }
@@ -396,10 +395,10 @@ public class MidiFileListDialog extends JMPFrame {
                 }
             }
 
-            ImageIcon folderIcon = convertImageIcon(ResourceManager.getInstance().getFileFolderIcon());
-            ImageIcon midiIcon = convertImageIcon(ResourceManager.getInstance().getFileMidiIcon());
-            ImageIcon wavIcon = convertImageIcon(ResourceManager.getInstance().getFileWavIcon());
-            ImageIcon otherIcon = convertImageIcon(ResourceManager.getInstance().getFileOtherIcon());
+            ImageIcon folderIcon = convertImageIcon(JMPCore.getResourceManager().getFileFolderIcon());
+            ImageIcon midiIcon = convertImageIcon(JMPCore.getResourceManager().getFileMidiIcon());
+            ImageIcon wavIcon = convertImageIcon(JMPCore.getResourceManager().getFileWavIcon());
+            ImageIcon otherIcon = convertImageIcon(JMPCore.getResourceManager().getFileOtherIcon());
 
             for (String name : list) {
                 File f = midiFileMap.get(name);

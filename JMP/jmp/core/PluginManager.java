@@ -1,25 +1,26 @@
-package jmp;
+package jmp.core;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.sound.midi.MidiMessage;
 import javax.swing.JOptionPane;
 
-import function.Error;
 import function.Platform;
 import function.Utility;
 import jlib.IMidiEventListener;
 import jlib.IPlayerListener;
 import jlib.IPlugin;
 import jlib.ISupportExtensionConstraints;
+import jmp.JMPFlags;
+import jmp.plugin.JMPPluginLoader;
+import jmp.plugin.JmsProperty;
 import jmp.task.TaskOfMidiEvent.JmpMidiPacket;
 import lib.MakeJmpLib;
 
@@ -29,7 +30,7 @@ import lib.MakeJmpLib;
  * @author abs
  *
  */
-public class PluginManager {
+public class PluginManager extends AbstractManager {
     // ---------------------------------------------
     // 定数
     // ---------------------------------------------
@@ -64,74 +65,14 @@ public class PluginManager {
     // ---------------------------------------------
 
     /** プラグイン格納用コレクション */
-    private HashMap<String, IPlugin> aPlugins = new HashMap<String, IPlugin>();
-
-    // ---------------------------------------------
-    // 内部クラス
-    // ---------------------------------------------
-    /**
-     * JMSファイルのプロパティクラス
-     *
-     * @author akkut
-     *
-     */
-    public class JmsProperty {
-        private File data;
-        private File res;
-        private File jar;
-        private boolean isDeleteRequest = false;
-
-        public JmsProperty(File jar, File data, File res) {
-            setRes(res);
-            setData(data);
-            setJar(jar);
-            this.isDeleteRequest = false;
-        }
-
-        public File getData() {
-            return data;
-        }
-
-        public void setData(File data) {
-            this.data = data;
-        }
-
-        public File getJar() {
-            return jar;
-        }
-
-        public void setJar(File jar) {
-            this.jar = jar;
-        }
-
-        public boolean isDeleteRequest() {
-            return isDeleteRequest;
-        }
-
-        public void setDeleteRequest(boolean isDeleteRequest) {
-            this.isDeleteRequest = isDeleteRequest;
-        }
-
-        public File getRes() {
-            return res;
-        }
-
-        public void setRes(File res) {
-            this.res = res;
-        }
-    }
+    private Map<String, IPlugin> aPlugins = new HashMap<String, IPlugin>();
 
     // ---------------------------------------------
     // メソッド群
     // ---------------------------------------------
-    PluginManager() {
+    PluginManager(int pri) {
+        super(pri, "plugin");
     }
-
-    // private static PluginManager singleton = new PluginManager();
-    //
-    // public static PluginManager getInstance() {
-    // return singleton;
-    // }
 
     public boolean initFunc() {
 
@@ -233,16 +174,10 @@ public class PluginManager {
                 }
                 String data = "";
                 if (jms.getData() != null) {
-                    // data =
-                    // Utility.pathCombin(JMPCore.getSystemManager().getDataFileLocationPath(),
-                    // Utility.getFileNameNotExtension(jms.getJar()));
                     data = jms.getData().getPath();
                 }
                 String res = "";
                 if (jms.getRes() != null) {
-                    // res =
-                    // Utility.pathCombin(JMPCore.getSystemManager().getResFileLocationPath(),
-                    // Utility.getFileNameNotExtension(jms.getJar()));
                     res = jms.getRes().getPath();
                 }
 
@@ -565,33 +500,12 @@ public class PluginManager {
 
     private String importPlugin(File jarFile) {
         String ret = null;
-
-        try {
-            URL[] urls = { jarFile.toURI().toURL() };
-            ClassLoader loader = URLClassLoader.newInstance(urls);
-
-            // クラスをロード
-            Class<?> c = loader.loadClass(Utility.getFileNameNotExtension(jarFile.getPath()));
-            if (IPlugin.class.isAssignableFrom(c) == true) {
-                boolean result = true;
-                IPlugin p = null;
-                try {
-                    p = (IPlugin) c.newInstance();
-                }
-                catch (Exception ex) {
-                    result = false;
-                }
-
-                if (result == true) {
-                    String name = c.getName().trim();
-                    if (addPlugin(name, p, true) == true) {
-                        ret = name;
-                    }
-                }
+        IPlugin p = JMPPluginLoader.load(jarFile);
+        if (p != null) {
+            String name = p.getClass().getName().trim();
+            if (addPlugin(name, p, true) == true) {
+                ret = name;
             }
-        }
-        catch (Exception e) {
-            Error.copyMsg(e);
         }
         return ret;
     }
@@ -689,7 +603,7 @@ public class PluginManager {
 
     public void catchMidiEvent(MidiMessage message, long timeStamp, short senderType) {
         // Midiイベント受信後の処理は別スレッドに委譲する
-        TaskManager.getInstance().getTaskOfMidiEvent().add(message, timeStamp, senderType);
+        JMPCore.getTaskManager().getTaskOfMidiEvent().add(message, timeStamp, senderType);
     }
 
     public void send(JmpMidiPacket packet) {

@@ -6,7 +6,7 @@ import javax.sound.midi.ShortMessage;
 
 import jlib.IMidiEventListener;
 import jlib.IMidiFilter;
-import jmp.JMPCore;
+import jmp.core.JMPCore;
 import jmp.player.Player;
 import jmp.player.PlayerAccessor;
 
