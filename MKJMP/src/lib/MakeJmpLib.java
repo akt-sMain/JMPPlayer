@@ -14,6 +14,72 @@ public class MakeJmpLib {
 
     public static final String PKG_ZIP_EX = "jmz";
 
+    public static void call(String args[]) {
+        try {
+            boolean isConsole = false;
+            String name = "";
+            String jar = "";
+            String data = "";
+            String res = "";
+            String out = "";
+
+            for (int i = 0; i < args.length; i++) {
+                String str = args[i];
+                if (str.equalsIgnoreCase("-cmd")) {
+                    isConsole = true;
+                }
+                else if (str.equalsIgnoreCase("-name")) {
+                    i++;
+                    if (i < args.length && args[i].startsWith("-") == false) {
+                        name = args[i];
+                    }
+                }
+                else if (str.equalsIgnoreCase("-jar")) {
+                    i++;
+                    if (i < args.length && args[i].startsWith("-") == false) {
+                        jar = args[i];
+                    }
+                }
+                else if (str.equalsIgnoreCase("-data")) {
+                    i++;
+                    if (i < args.length && args[i].startsWith("-") == false) {
+                        data = args[i];
+                    }
+                }
+                else if (str.equalsIgnoreCase("-res")) {
+                    i++;
+                    if (i < args.length && args[i].startsWith("-") == false) {
+                        res = args[i];
+                    }
+                }
+                else if (str.equalsIgnoreCase("-out")) {
+                    i++;
+                    if (i < args.length && args[i].startsWith("-") == false) {
+                        out = args[i];
+                    }
+                }
+            }
+
+            if (isConsole == false) {
+                MakeJmpPackege frame = new MakeJmpPackege(jar, data, res, out);
+                frame.setVisible(true);
+            }
+            else {
+                if (name.isEmpty() == true) {
+                    name = Utility.getFileNameNotExtension(jar);
+                }
+
+                /*
+                 * dataがEmptyの場合は、data==FALSEになる
+                 */
+                MakeJmpLib.exportPackage(jar, data, res, name, out);
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void exportPackageForBlankData(String jar, String res, String pluginName, String exportDir) {
         exportPackage(jar, true, "", res, pluginName, exportDir);
     }

@@ -15,6 +15,7 @@ import jmp.player.PlayerAccessor;
 import jmp.task.ICallbackFunction;
 import jmp.task.TaskOfSequence;
 import jmplayer.JMPPlayer;
+import lib.MakeJmpLib;
 
 /**
  * JMPリソースのロードを行うクラス
@@ -38,12 +39,20 @@ public class JMPLoader {
         IPlugin stdPlugin = null;
         if (args.length > 0) {
             File jms = null;
+            if (args[0].equalsIgnoreCase("-mkjmp") == true) {
+                MakeJmpLib.call(args);
+                return true;
+            }
+
             for (int i = 0; i < args.length; i++) {
                 if (args[i].equalsIgnoreCase("-man") == true) {
                     System.out.println("-jms [*.jms]");
                     System.out.println("	プラグインのスタンドアロン起動モード");
                     System.out.println("-nonplg");
-                    System.out.println("	プラグインをロードせず起動");
+                    System.out.println("        プラグインをロードせず起動");
+                    System.out.println("-mkjmp");
+                    System.out.println("        プラグインパッケージ作成ライブラリを呼び出す。");
+                    System.out.println("        ※コマンドの先頭に記述すること");
                     return true;
                 }
                 else if (args[i].equalsIgnoreCase("-jms") == true) {

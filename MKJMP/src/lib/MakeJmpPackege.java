@@ -1,3 +1,4 @@
+package lib;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.datatransfer.DataFlavor;
@@ -24,8 +25,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import function.Platform;
 import function.Utility;
-import lib.MakeJmpConfig;
-import lib.MakeJmpLib;
 
 public class MakeJmpPackege extends JFrame {
 
@@ -48,67 +47,8 @@ public class MakeJmpPackege extends JFrame {
 
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    boolean isConsole = false;
-                    String name = "";
-                    String jar = "";
-                    String data = "";
-                    String res = "";
-                    String out = "";
-
-                    for (int i = 0; i < args.length; i++) {
-                        String str = args[i];
-                        if (str.equalsIgnoreCase("-cmd")) {
-                            isConsole = true;
-                        }
-                        else if (str.equalsIgnoreCase("-name")) {
-                            i++;
-                            if (i < args.length && args[i].startsWith("-") == false) {
-                                name = args[i];
-                            }
-                        }
-                        else if (str.equalsIgnoreCase("-jar")) {
-                            i++;
-                            if (i < args.length && args[i].startsWith("-") == false) {
-                                jar = args[i];
-                            }
-                        }
-                        else if (str.equalsIgnoreCase("-data")) {
-                            i++;
-                            if (i < args.length && args[i].startsWith("-") == false) {
-                                data = args[i];
-                            }
-                        }
-                        else if (str.equalsIgnoreCase("-res")) {
-                            i++;
-                            if (i < args.length && args[i].startsWith("-") == false) {
-                                res = args[i];
-                            }
-                        }
-                        else if (str.equalsIgnoreCase("-out")) {
-                            i++;
-                            if (i < args.length && args[i].startsWith("-") == false) {
-                                out = args[i];
-                            }
-                        }
-                    }
-
-                    if (isConsole == false) {
-                        MakeJmpPackege frame = new MakeJmpPackege(jar, data, res, out);
-                        frame.setVisible(true);
-                    }
-                    else {
-                        if (name.isEmpty() == true) {
-                            name = Utility.getFileNameNotExtension(jar);
-                        }
-                        MakeJmpLib.exportPackage(jar, data, res, name, out);
-
-                        System.exit(0);
-                    }
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+                MakeJmpLib.call(args);
+                System.exit(0);
             }
         });
     }
