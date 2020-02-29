@@ -7,7 +7,7 @@ import java.awt.Window;
 
 import javax.swing.JDialog;
 
-import jlib.IJmpWindow;
+import jlib.window.IJmpWindow;
 
 public class JMPDialog extends JDialog implements IJMPComponentUI, IJmpWindow {
 

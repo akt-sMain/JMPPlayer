@@ -3,7 +3,7 @@ package jmp.midi;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 
-import jlib.IMidiEventListener;
+import jlib.midi.IMidiEventListener;
 import jmp.core.JMPCore;
 
 public class MIReceiver implements Receiver {

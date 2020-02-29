@@ -1,9 +1,10 @@
-package jlib;
+package jlib.plugin;
 
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
-import jlib.mdx.MidiUtility;
+import jlib.midi.IMidiEventListener;
+import jlib.midi.MidiUtility;
 
 public abstract class JMidiPlugin extends JMPlugin implements IMidiEventListener {
 

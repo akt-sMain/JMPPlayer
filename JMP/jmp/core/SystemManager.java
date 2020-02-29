@@ -12,9 +12,9 @@ import javax.swing.UIManager;
 
 import function.Platform;
 import function.Utility;
-import jlib.IJmpMainWindow;
-import jlib.IPlugin;
 import jlib.manager.ISystemManager;
+import jlib.plugin.IPlugin;
+import jlib.window.IJmpMainWindow;
 import jmp.JMPFlags;
 import jmp.gui.LicenseReaderDialog;
 import jmp.task.ICallbackFunction;

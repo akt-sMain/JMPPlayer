@@ -8,7 +8,7 @@ import java.util.List;
 import javax.sound.midi.MidiMessage;
 
 import function.Utility;
-import jlib.IMidiEventListener;
+import jlib.midi.IMidiEventListener;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
 

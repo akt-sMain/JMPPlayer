@@ -1,7 +1,7 @@
 package jmp.core;
 
-import jlib.IJmpWindow;
 import jlib.manager.IWindowManager;
+import jlib.window.IJmpWindow;
 import jmp.WindowDatabase;
 
 public class WindowManager extends AbstractManager implements IWindowManager {

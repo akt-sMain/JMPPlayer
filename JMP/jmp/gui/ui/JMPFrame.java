@@ -2,7 +2,7 @@ package jmp.gui.ui;
 
 import javax.swing.JFrame;
 
-import jlib.IJmpWindow;
+import jlib.window.IJmpWindow;
 
 public class JMPFrame extends JFrame implements IJMPComponentUI, IJmpWindow {
 

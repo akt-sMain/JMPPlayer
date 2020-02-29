@@ -1,6 +1,6 @@
 package std;
 
-import jlib.IPlugin;
+import jlib.plugin.IPlugin;
 import jmp.ConfigDatabase;
 import jmp.JMPLoader;
 

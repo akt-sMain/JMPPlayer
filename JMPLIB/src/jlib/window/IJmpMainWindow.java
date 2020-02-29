@@ -1,6 +1,8 @@
-package jlib;
+package jlib.window;
 
 import java.io.File;
+
+import jlib.plugin.IPlugin;
 
 public interface IJmpMainWindow extends IJmpWindow {
 

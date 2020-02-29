@@ -1,4 +1,4 @@
-package jlib;
+package jlib.player;
 
 public interface IPlayer {
     /**

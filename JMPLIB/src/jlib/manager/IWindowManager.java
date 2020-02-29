@@ -1,6 +1,6 @@
 package jlib.manager;
 
-import jlib.IJmpWindow;
+import jlib.window.IJmpWindow;
 
 public interface IWindowManager {
 

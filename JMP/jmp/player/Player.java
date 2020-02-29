@@ -2,7 +2,7 @@ package jmp.player;
 
 import java.io.File;
 
-import jlib.IPlayer;
+import jlib.player.IPlayer;
 
 public abstract class Player implements IPlayer {
     private String[] supportExtentions = null;

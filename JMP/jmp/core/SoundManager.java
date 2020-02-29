@@ -12,10 +12,10 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
 import function.Utility;
-import jlib.IJmpMainWindow;
-import jlib.IMidiEventListener;
-import jlib.IPlayer;
 import jlib.manager.ISoundManager;
+import jlib.midi.IMidiEventListener;
+import jlib.player.IPlayer;
+import jlib.window.IJmpMainWindow;
 import jmp.JMPFlags;
 import jmp.player.MidiPlayer;
 import jmp.player.Player;

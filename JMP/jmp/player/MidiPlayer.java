@@ -14,8 +14,8 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 
-import jlib.IMidiFilter;
-import jlib.mdx.MidiUtility;
+import jlib.midi.IMidiFilter;
+import jlib.midi.MidiUtility;
 import jmp.ConfigDatabase;
 import jmp.JMPFlags;
 import jmp.core.JMPCore;

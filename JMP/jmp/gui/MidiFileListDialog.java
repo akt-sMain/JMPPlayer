@@ -38,8 +38,8 @@ import javax.swing.table.TableColumn;
 
 import function.Platform;
 import function.Platform.KindOfPlatform;
+import jlib.window.IJmpMainWindow;
 import function.Utility;
-import jlib.IJmpMainWindow;
 import jmp.ConfigDatabase;
 import jmp.JMPFlags;
 import jmp.core.DataManager;

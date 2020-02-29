@@ -1,7 +1,7 @@
 package jmp.core;
 
-import jlib.IPlugin;
 import jlib.JMPLIB;
+import jlib.plugin.IPlugin;
 
 public class JMPCore {
 

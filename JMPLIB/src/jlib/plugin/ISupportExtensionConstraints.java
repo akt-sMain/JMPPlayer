@@ -1,4 +1,4 @@
-package jlib;
+package jlib.plugin;
 
 import jlib.manager.JMPCoreAccessor;
 

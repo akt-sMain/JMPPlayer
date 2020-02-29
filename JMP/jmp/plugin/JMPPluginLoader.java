@@ -5,7 +5,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import function.Utility;
-import jlib.IPlugin;
+import jlib.plugin.IPlugin;
 
 public class JMPPluginLoader {
 

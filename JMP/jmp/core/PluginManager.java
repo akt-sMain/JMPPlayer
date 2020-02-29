@@ -14,10 +14,10 @@ import javax.swing.JOptionPane;
 
 import function.Platform;
 import function.Utility;
-import jlib.IMidiEventListener;
-import jlib.IPlayerListener;
-import jlib.IPlugin;
-import jlib.ISupportExtensionConstraints;
+import jlib.midi.IMidiEventListener;
+import jlib.player.IPlayerListener;
+import jlib.plugin.IPlugin;
+import jlib.plugin.ISupportExtensionConstraints;
 import jmp.JMPFlags;
 import jmp.plugin.JMPPluginLoader;
 import jmp.plugin.JmsProperty;

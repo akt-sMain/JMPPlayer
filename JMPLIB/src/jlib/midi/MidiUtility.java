@@ -1,4 +1,4 @@
-package jlib.mdx;
+package jlib.midi;
 
 import javax.sound.midi.ShortMessage;
 

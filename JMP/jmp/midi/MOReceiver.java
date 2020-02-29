@@ -4,8 +4,8 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
-import jlib.IMidiEventListener;
-import jlib.IMidiFilter;
+import jlib.midi.IMidiEventListener;
+import jlib.midi.IMidiFilter;
 import jmp.core.JMPCore;
 import jmp.player.Player;
 import jmp.player.PlayerAccessor;

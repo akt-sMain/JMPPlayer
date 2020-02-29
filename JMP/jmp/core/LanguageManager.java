@@ -4,7 +4,7 @@ import java.util.List;
 
 import function.Platform;
 import function.Utility;
-import jlib.IUpdateLanguageListener;
+import jlib.lang.IUpdateLanguageListener;
 import jlib.manager.ILanguageManager;
 import jmp.LanguageTable;
 

@@ -1,6 +1,6 @@
 package jlib.manager;
 
-import jlib.IUpdateLanguageListener;
+import jlib.lang.IUpdateLanguageListener;
 
 public interface ILanguageManager {
     /**

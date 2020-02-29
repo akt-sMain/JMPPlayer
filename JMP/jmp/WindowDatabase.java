@@ -3,7 +3,7 @@ package jmp;
 import java.util.HashMap;
 import java.util.Map;
 
-import jlib.IJmpWindow;
+import jlib.window.IJmpWindow;
 
 public class WindowDatabase {
 

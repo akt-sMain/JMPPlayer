@@ -1,4 +1,4 @@
-package jlib;
+package jlib.window;
 
 public interface IJmpWindow {
     /**

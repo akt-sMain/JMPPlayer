@@ -6,7 +6,7 @@ import javax.sound.midi.Sequencer;
 
 import function.Platform;
 import function.Utility;
-import jlib.IPlugin;
+import jlib.plugin.IPlugin;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
