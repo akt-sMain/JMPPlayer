@@ -3,7 +3,7 @@ package jlib.manager;
 import jlib.IJmpMainWindow;
 import jlib.IPlugin;
 
-public interface ISystemManager extends IManager {
+public interface ISystemManager {
 
     /**
      * データファイル格納ディレクトリパス

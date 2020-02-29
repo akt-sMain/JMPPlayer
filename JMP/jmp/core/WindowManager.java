@@ -2,7 +2,6 @@ package jmp.core;
 
 import jlib.IJmpWindow;
 import jlib.manager.IWindowManager;
-import jlib.manager.JMPCoreAccessor;
 import jmp.WindowDatabase;
 
 public class WindowManager extends AbstractManager implements IWindowManager {
@@ -18,8 +17,6 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         super(pri, "window");
 
         database = new WindowDatabase();
-
-        JMPCoreAccessor.register(this);
     }
 
     @Override

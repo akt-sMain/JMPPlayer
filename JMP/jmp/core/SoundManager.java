@@ -16,7 +16,6 @@ import jlib.IJmpMainWindow;
 import jlib.IMidiEventListener;
 import jlib.IPlayer;
 import jlib.manager.ISoundManager;
-import jlib.manager.JMPCoreAccessor;
 import jmp.JMPFlags;
 import jmp.player.MidiPlayer;
 import jmp.player.Player;
@@ -41,9 +40,6 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     SoundManager(int pri) {
         super(pri, "sound");
-
-        // アクセッサに登録
-        JMPCoreAccessor.register(this);
     }
 
     @Override

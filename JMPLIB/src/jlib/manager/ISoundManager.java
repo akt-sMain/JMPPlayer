@@ -5,7 +5,7 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 
-public interface ISoundManager extends IManager {
+public interface ISoundManager {
     /**
      * MIDIシーケンサーを取得
      *

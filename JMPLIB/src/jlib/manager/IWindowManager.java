@@ -2,7 +2,7 @@ package jlib.manager;
 
 import jlib.IJmpWindow;
 
-public interface IWindowManager extends IManager {
+public interface IWindowManager {
 
     /**
      * Windowインスタンス取得

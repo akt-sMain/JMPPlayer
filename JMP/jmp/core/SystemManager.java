@@ -15,7 +15,6 @@ import function.Utility;
 import jlib.IJmpMainWindow;
 import jlib.IPlugin;
 import jlib.manager.ISystemManager;
-import jlib.manager.JMPCoreAccessor;
 import jmp.JMPFlags;
 import jmp.gui.LicenseReaderDialog;
 import jmp.task.ICallbackFunction;
@@ -131,9 +130,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     SystemManager(int pri) {
         super(pri, "system");
-
-        // アクセッサに登録
-        JMPCoreAccessor.register(this);
     }
 
     public boolean initFunc() {

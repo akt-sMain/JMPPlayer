@@ -10,7 +10,6 @@ import javax.swing.JList;
 import function.Platform;
 import function.Utility;
 import jlib.manager.IDataManager;
-import jlib.manager.JMPCoreAccessor;
 import jmp.ConfigDatabase;
 import jmp.gui.HistoryDialog;
 
@@ -42,9 +41,6 @@ public class DataManager extends AbstractManager implements IDataManager {
      */
     DataManager(int pri) {
         super(pri, "data");
-
-        // アクセッサに登録
-        JMPCoreAccessor.register(this);
     }
 
     public boolean initFunc() {

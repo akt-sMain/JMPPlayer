@@ -1,6 +1,6 @@
 package jlib.manager;
 
-public interface IDataManager extends IManager {
+public interface IDataManager {
 
     /**
      * コンフィグ変更

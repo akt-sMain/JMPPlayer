@@ -3,7 +3,10 @@ package jmp.core;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractManager {
+import jlib.manager.IManager;
+import jlib.manager.JMPCoreAccessor;
+
+public abstract class AbstractManager implements IManager {
 
     public static final int MAX_PRIORITY = 9999;
     public static final int INVALID_PRIORITY = -1;
@@ -17,6 +20,9 @@ public abstract class AbstractManager {
         this.priority = pri;
         this.name = name;
         managers.add(this);
+
+        // アクセッサに登録
+        JMPCoreAccessor.register(this);
     }
 
     public static void consolePrint(String msg) {
