@@ -6,10 +6,12 @@ import jmp.WindowDatabase;
 
 public class WindowManager extends AbstractManager implements IWindowManager {
 
-    public static final String[] WINDOW_NAMELIST = { "MAIN", "FILE_LIST", "HISTORY" };
-    public static final String WINDOW_NAME_MAIN = WINDOW_NAMELIST[0];
-    public static final String WINDOW_NAME_FILE_LIST = WINDOW_NAMELIST[1];
-    public static final String WINDOW_NAME_HISTORY = WINDOW_NAMELIST[2];
+    public static final String WINDOW_NAME_MAIN = "MAIN";
+    public static final String WINDOW_NAME_FILE_LIST = "FILE_LIST";
+    public static final String WINDOW_NAME_HISTORY = "HISTORY";
+    public static final String WINDOW_NAME_MIDI_SETUP = "MIDI_SETUP";
+    public static final String[] WINDOW_NAMELIST = { WINDOW_NAME_MAIN, WINDOW_NAME_FILE_LIST, WINDOW_NAME_HISTORY,
+            WINDOW_NAME_MIDI_SETUP };
 
     private WindowDatabase database = null;
 
@@ -48,6 +50,20 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     @Override
     public String[] getWindowNameList() {
         return WINDOW_NAMELIST;
+    }
+
+    public void setVisibleAll(boolean visible) {
+        for (String name : getWindowNameList()) {
+            IJmpWindow win = getWindow(name);
+            if (win != null) {
+                if (visible == true) {
+                    win.showWindow();
+                }
+                else {
+                    win.hideWindow();
+                }
+            }
+        }
     }
 
 }

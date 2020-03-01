@@ -180,8 +180,15 @@ public class JMPLoader {
                 taskManager.join();
             }
             catch (InterruptedException e) {
+                // 強制終了
+                exit();
+
+                String taskErrorMsg = "予期せぬエラーが発生しました。(Task error.)" + Platform.getNewLine() + "アプリケーションを強制終了します。";
+                JMPCore.getSystemManager().showErrorMessageDialogSync(taskErrorMsg);
             }
-            taskManager.endFunc();
+
+            // Windowを閉じる
+            JMPCore.getWindowManager().setVisibleAll(false);
 
             if (win != null) {
                 // Windowの破棄

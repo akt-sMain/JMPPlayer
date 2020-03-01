@@ -25,6 +25,7 @@ import function.Utility;
 import jmp.ConfigDatabase;
 import jmp.JMPFlags;
 import jmp.core.JMPCore;
+import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.player.MidiPlayer;
 
@@ -82,6 +83,8 @@ public class SelectSynthsizerDialog extends JMPDialog {
         if (jmpIcon != null) {
             setIconImage(jmpIcon);
         }
+
+        JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_MIDI_SETUP, this);
 
         contentPanel.setBackground(getJmpBackColor());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -264,6 +267,16 @@ public class SelectSynthsizerDialog extends JMPDialog {
                 tabbedPane.removeTabAt(1);
             }
         }
+    }
+
+    @Override
+    public void showWindow() {
+        start();
+    }
+
+    @Override
+    public void hideWindow() {
+        close();
     }
 
     public void start() {

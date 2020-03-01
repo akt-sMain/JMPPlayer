@@ -399,6 +399,10 @@ public class MidiPlayer extends Player implements IMidiFilter {
         if (sequencer == null) {
             return false;
         }
+
+        if (sequencer.getSequence() == null) {
+            return false;
+        }
         return true;
     }
 

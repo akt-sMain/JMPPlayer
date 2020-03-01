@@ -119,6 +119,12 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     /** ZIPパッケージディレクトリ名 */
     public static final String ZIP_DIR_NAME = "zip";
 
+    /** エラーダイアログタイトル */
+    private static final String ERROR_DIALOG_TITLE = "エラー";
+
+    /** メッセージダイアログタイトル */
+    private static final String MSG_DIALOG_TITLE = "メッセージ";
+
     /** メインウィンドウ */
     public IJmpMainWindow mainWindow = null;
 
@@ -349,24 +355,37 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         return JMPCore.getPluginManager().getPluginName(plugin);
     }
 
+    public void showErrorMessageDialogSync(String message) {
+        IJmpMainWindow win = getMainWindow();
+        Component parent = null;
+        if (win instanceof Component) {
+            parent = (Component) win;
+        }
+        else {
+            parent = null;
+        }
+        JOptionPane.showMessageDialog(parent, message, ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+        SystemManager.TempResisterEx = null;
+    }
+
     public void showErrorMessageDialog(String message) {
         if (SystemManager.TempResisterEx != null) {
             String stackTrace = function.Error.getMsg(SystemManager.TempResisterEx);
             showMessageDialog(Utility.stringsCombin(message, Platform.getNewLine(), Platform.getNewLine(), stackTrace),
-                    "エラー", JOptionPane.ERROR_MESSAGE);
+                    ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
         }
         else {
-            showMessageDialog(message, "エラー", JOptionPane.ERROR_MESSAGE);
+            showMessageDialog(message, ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
         }
         SystemManager.TempResisterEx = null;
     }
 
     public void showInformationMessageDialog(String message) {
-        showMessageDialog(message, "メッセージ", JOptionPane.INFORMATION_MESSAGE);
+        showMessageDialog(message, MSG_DIALOG_TITLE, JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void showMessageDialog(String message, int option) {
-        showMessageDialog(message, "メッセージ", option);
+        showMessageDialog(message, MSG_DIALOG_TITLE, option);
     }
 
     public void showMessageDialog(String message, String title, int option) {

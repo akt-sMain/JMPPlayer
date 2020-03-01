@@ -25,15 +25,15 @@ public abstract class AbstractManager implements IManager {
         JMPCoreAccessor.register(this);
     }
 
-    public static void consolePrint(String msg) {
+    static void consolePrint(String msg) {
         System.out.print(msg);
     }
 
-    public static void consolePrintln(String msg) {
+    static void consolePrintln(String msg) {
         System.out.println(msg);
     }
 
-    public static boolean init() {
+    static boolean init() {
         boolean result = true;
         consolePrintln("## CORE initializing ##");
         for (AbstractManager am : getCloneManagerList(true)) {
@@ -53,7 +53,7 @@ public abstract class AbstractManager implements IManager {
         return result;
     }
 
-    public static boolean end() {
+    static boolean end() {
         boolean result = true;
         consolePrintln("");
         consolePrintln("## CORE exiting ##");

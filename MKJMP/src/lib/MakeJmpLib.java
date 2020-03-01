@@ -80,6 +80,17 @@ public class MakeJmpLib {
         }
     }
 
+    public static void exportPackage(MakeJmpConfig config) {
+        if (config.isAddData() == true) {
+            MakeJmpLib.exportPackageForBlankData(config.getJar(), config.getRes(), config.getPluginName(),
+                    config.getOutput());
+        }
+        else {
+            MakeJmpLib.exportPackage(config.getJar(), config.getData(), config.getRes(), config.getPluginName(),
+                    config.getOutput());
+        }
+    }
+
     public static void exportPackageForBlankData(String jar, String res, String pluginName, String exportDir) {
         exportPackage(jar, true, "", res, pluginName, exportDir);
     }

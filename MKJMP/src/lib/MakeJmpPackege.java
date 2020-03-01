@@ -1,4 +1,5 @@
 package lib;
+
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.datatransfer.DataFlavor;
@@ -270,12 +271,8 @@ public class MakeJmpPackege extends JFrame {
         String plg = textFieldPluginName.getText();
         String out = textFieldOutput.getText();
 
-        if (chckbxAddBlankData.isSelected() == true) {
-            MakeJmpLib.exportPackageForBlankData(jar, res, plg, out);
-        }
-        else {
-            MakeJmpLib.exportPackage(jar, data, res, plg, out);
-        }
+        MakeJmpConfig config = new MakeJmpConfig(plg, jar, res, chckbxAddBlankData.isSelected(), data, out);
+        MakeJmpLib.exportPackage(config);
     }
 
     public void loadFileData(String path) {
@@ -313,8 +310,9 @@ public class MakeJmpPackege extends JFrame {
     }
 
     public void saveFileMkj(String path) {
-        MakeJmpConfig cfg = new MakeJmpConfig(textFieldJarPath.getText(), textFieldResPath.getText(),
-                chckbxAddBlankData.isSelected(), textFieldDataPath.getText(), textFieldOutput.getText());
+        MakeJmpConfig cfg = new MakeJmpConfig(textFieldPluginName.getText(), textFieldJarPath.getText(),
+                textFieldResPath.getText(), chckbxAddBlankData.isSelected(), textFieldDataPath.getText(),
+                textFieldOutput.getText());
         try {
             cfg.write(new File(path));
         }
