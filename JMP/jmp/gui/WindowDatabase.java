@@ -1,9 +1,9 @@
-package jmp;
+package jmp.gui;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import jlib.window.IJmpWindow;
+import jlib.gui.IJmpWindow;
 
 public class WindowDatabase {
 

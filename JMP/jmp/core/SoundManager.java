@@ -12,10 +12,10 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
 import function.Utility;
-import jlib.manager.ISoundManager;
+import jlib.core.ISoundManager;
+import jlib.gui.IJmpMainWindow;
 import jlib.midi.IMidiEventListener;
 import jlib.player.IPlayer;
-import jlib.window.IJmpMainWindow;
 import jmp.JMPFlags;
 import jmp.player.MidiPlayer;
 import jmp.player.Player;
@@ -43,7 +43,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     @Override
-    public boolean initFunc() {
+    protected boolean initFunc() {
         if (JMPCore.getDataManager().isShowStartupDeviceSetup() == false) {
             // 自動接続フラグを立てる
             JMPFlags.StartupAutoConectSynth = true;
@@ -97,7 +97,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     @Override
-    public boolean endFunc() {
+    protected boolean endFunc() {
         if (initializeFlag == false) {
             return false;
         }

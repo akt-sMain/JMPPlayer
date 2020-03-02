@@ -12,9 +12,9 @@ import javax.swing.UIManager;
 
 import function.Platform;
 import function.Utility;
-import jlib.manager.ISystemManager;
+import jlib.core.ISystemManager;
+import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
-import jlib.window.IJmpMainWindow;
 import jmp.JMPFlags;
 import jmp.gui.LicenseReaderDialog;
 import jmp.task.ICallbackFunction;
@@ -138,7 +138,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         super(pri, "system");
     }
 
-    public boolean initFunc() {
+    protected boolean initFunc() {
         boolean result = true;
         TempResisterEx = null;
 
@@ -208,7 +208,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         return result;
     }
 
-    public boolean endFunc() {
+    protected boolean endFunc() {
         /* アクティベート処理 */
         boolean activateOutFlag = false;
         if (JMPFlags.ActivateFlag == true) {

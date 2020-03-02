@@ -74,7 +74,7 @@ public class PluginManager extends AbstractManager {
         super(pri, "plugin");
     }
 
-    public boolean initFunc() {
+    protected boolean initFunc() {
 
         // プラグイン読み込み
         if (JMPCore.StandAlonePlugin != null) {
@@ -112,7 +112,7 @@ public class PluginManager extends AbstractManager {
         return true;
     }
 
-    public boolean endFunc() {
+    protected boolean endFunc() {
 
         // プラグイン終了処理
         exit();

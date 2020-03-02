@@ -2,7 +2,7 @@ package jmp.core;
 
 import java.awt.Image;
 
-import jlib.manager.IManager;
+import jlib.core.IManager;
 import jmp.Resource;
 
 public class ResourceManager extends AbstractManager implements IManager{
@@ -14,7 +14,7 @@ public class ResourceManager extends AbstractManager implements IManager{
     }
 
     @Override
-    public boolean initFunc() {
+    protected boolean initFunc() {
         if (initializeFlag == false) {
             initializeFlag = true;
         }
@@ -25,7 +25,7 @@ public class ResourceManager extends AbstractManager implements IManager{
     }
 
     @Override
-    public boolean endFunc() {
+    protected boolean endFunc() {
         if (initializeFlag == false) {
             return false;
         }

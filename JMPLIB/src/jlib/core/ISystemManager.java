@@ -1,7 +1,7 @@
-package jlib.manager;
+package jlib.core;
 
+import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
-import jlib.window.IJmpMainWindow;
 
 public interface ISystemManager {
 

@@ -1,8 +1,8 @@
 package jmp.core;
 
-import jlib.manager.IWindowManager;
-import jlib.window.IJmpWindow;
-import jmp.WindowDatabase;
+import jlib.core.IWindowManager;
+import jlib.gui.IJmpWindow;
+import jmp.gui.WindowDatabase;
 
 public class WindowManager extends AbstractManager implements IWindowManager {
 
@@ -22,7 +22,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     }
 
     @Override
-    public boolean initFunc() {
+    protected boolean initFunc() {
         boolean result = true;
         if (initializeFlag == false) {
             initializeFlag = true;
@@ -31,7 +31,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     }
 
     @Override
-    public boolean endFunc() {
+    protected boolean endFunc() {
         if (initializeFlag == false) {
             return false;
         }

@@ -1,6 +1,6 @@
 package jlib.plugin;
 
-import jlib.manager.JMPCoreAccessor;
+import jlib.core.JMPCoreAccessor;
 
 public interface ISupportExtensionConstraints {
     /**

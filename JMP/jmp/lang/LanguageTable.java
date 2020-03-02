@@ -1,4 +1,4 @@
-package jmp;
+package jmp.lang;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;

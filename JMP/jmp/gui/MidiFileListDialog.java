@@ -38,7 +38,7 @@ import javax.swing.table.TableColumn;
 
 import function.Platform;
 import function.Platform.KindOfPlatform;
-import jlib.window.IJmpMainWindow;
+import jlib.gui.IJmpMainWindow;
 import function.Utility;
 import jmp.ConfigDatabase;
 import jmp.JMPFlags;

@@ -1,4 +1,4 @@
-package jlib.manager;
+package jlib.core;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;

@@ -9,7 +9,7 @@ import javax.swing.JList;
 
 import function.Platform;
 import function.Utility;
-import jlib.manager.IDataManager;
+import jlib.core.IDataManager;
 import jmp.ConfigDatabase;
 import jmp.gui.HistoryDialog;
 
@@ -43,7 +43,7 @@ public class DataManager extends AbstractManager implements IDataManager {
         super(pri, "data");
     }
 
-    public boolean initFunc() {
+    protected boolean initFunc() {
         if (initializeFlag == false) {
             initializeFlag = true;
         }
@@ -64,7 +64,7 @@ public class DataManager extends AbstractManager implements IDataManager {
         return true;
     }
 
-    public boolean endFunc() {
+    protected boolean endFunc() {
         if (initializeFlag == false) {
             return false;
         }

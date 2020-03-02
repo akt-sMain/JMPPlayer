@@ -3,7 +3,7 @@ package jmp.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import jlib.manager.IManager;
+import jlib.core.IManager;
 import jmp.task.ITask;
 import jmp.task.TaskOfMidiEvent;
 import jmp.task.TaskOfSequence;
@@ -23,7 +23,10 @@ public class TaskManager extends AbstractManager implements IManager{
     }
 
     @Override
-    public boolean initFunc() {
+    protected boolean initFunc() {
+        if (initializeFlag == false) {
+            initializeFlag = true;
+        }
         // 更新タスク登録
         taskOfUpdate = new TaskOfUpdate();
         tasks.add(taskOfUpdate);
@@ -43,7 +46,10 @@ public class TaskManager extends AbstractManager implements IManager{
     }
 
     @Override
-    public boolean endFunc() {
+    protected boolean endFunc() {
+        if (initializeFlag == false) {
+            return false;
+        }
         return true;
     }
 

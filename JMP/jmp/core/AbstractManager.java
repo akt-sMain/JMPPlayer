@@ -3,15 +3,15 @@ package jmp.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import jlib.manager.IManager;
-import jlib.manager.JMPCoreAccessor;
+import jlib.core.IManager;
+import jlib.core.JMPCoreAccessor;
 
 public abstract class AbstractManager implements IManager {
 
     public static final int MAX_PRIORITY = 9999;
     public static final int INVALID_PRIORITY = -1;
 
-    private static List<AbstractManager> managers = new ArrayList<AbstractManager>();
+    private static List<AbstractManager> managers = null;
     protected int priority = 0;
     protected String name = "";
     protected boolean initializeFlag = false;
@@ -19,6 +19,10 @@ public abstract class AbstractManager implements IManager {
     AbstractManager(int pri, String name) {
         this.priority = pri;
         this.name = name;
+
+        if (managers == null) {
+            managers = new ArrayList<AbstractManager>();
+        }
         managers.add(this);
 
         // アクセッサに登録
@@ -83,7 +87,7 @@ public abstract class AbstractManager implements IManager {
         int curPriority = INVALID_PRIORITY;
         List<AbstractManager> tmp = new ArrayList<AbstractManager>();
 
-        if (order = true) {
+        if (order == true) {
             // 優先度が高い順にソート
             while (true) {
                 int min = MAX_PRIORITY;
@@ -134,14 +138,14 @@ public abstract class AbstractManager implements IManager {
         return name;
     }
 
-    public boolean initFunc() {
+    protected boolean initFunc() {
         if (initializeFlag == false) {
             initializeFlag = true;
         }
         return true;
     }
 
-    public boolean endFunc() {
+    protected boolean endFunc() {
         if (initializeFlag == false) {
             return false;
         }

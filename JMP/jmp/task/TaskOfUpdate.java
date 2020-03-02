@@ -1,8 +1,8 @@
 package jmp.task;
 
 import function.Utility;
+import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
-import jlib.window.IJmpMainWindow;
 import jmp.JMPLoader;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;

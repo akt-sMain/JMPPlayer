@@ -1,4 +1,4 @@
-package jlib.manager;
+package jlib.core;
 
 /**
  * 各マネージャークラスへのアクセス制御をおこなうクラス
