@@ -2,12 +2,9 @@ package jmp;
 
 import java.io.File;
 
-import javax.sound.midi.Sequencer;
-
 import function.Platform;
 import function.Utility;
 import jlib.plugin.IPlugin;
-import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
 import jmp.core.TaskManager;
@@ -27,6 +24,8 @@ public class JMPLoader {
 
     /** 起動時にロードするファイルパスを保持する */
     private static String RequestFile = null;
+
+    private static boolean exitFlag = false;
 
     /**
      * JMPPlayer起動設定
@@ -112,46 +111,13 @@ public class JMPLoader {
      */
     public static boolean invoke(ConfigDatabase config, IPlugin standAlonePlugin) {
 
-        // スタンドアロンプラグイン設定
-        JMPCore.StandAlonePlugin = standAlonePlugin;
-
-        // 設定値を先行して登録する
-        JMPCore.getDataManager().setConfigDatabase(config);
-
-        // 管理クラス初期化処理
-        boolean result = JMPCore.initFunc();
+        // ライブラリ初期化処理
+        boolean result = initLibrary(config, standAlonePlugin);
 
         /* 起動準備 */
         if (result == true) {
 
-            // シンセ情報表示
-            if (JMPFlags.DebugMode == true) {
-                Sequencer seq = JMPCore.getSoundManager().getSequencer();
-                System.out.println("sequencer : " + (seq == null ? "NONE" : seq.getDeviceInfo().getName()));
-            }
-
-            // メインウィンドウ登録
-            JMPPlayer win = new JMPPlayer();
-            win.initializeSetting();
-            JMPCore.getSystemManager().registerMainWindow(win);
-
-            // 起動構成
-            if (JMPCore.StandAlonePlugin == null) {
-                // JMPPlayer起動
-                win.setVisible(true);
-            }
-            else {
-                // スタンドアロンプラグイン起動
-                win.setVisible(false);
-                JMPCore.StandAlonePlugin.open();
-            }
-
-            // タスク開始
             TaskManager taskManager = JMPCore.getTaskManager();
-            taskManager.taskStart();
-
-            // アプリ全般のコールバック関数を登録
-            JMPPlayer.registerCallbackPackage();
 
             // コマンド引数で指定されたファイルを開く
             if (JMPFlags.RequestFileLoadFlag == true) {
@@ -186,40 +152,120 @@ public class JMPLoader {
                 String taskErrorMsg = "予期せぬエラーが発生しました。(Task error.)" + Platform.getNewLine() + "アプリケーションを強制終了します。";
                 JMPCore.getSystemManager().showErrorMessageDialogSync(taskErrorMsg);
             }
-
-            // Windowを閉じる
-            JMPCore.getWindowManager().setVisibleAll(false);
-
-            if (win != null) {
-                // Windowの破棄
-                win.dispose();
-                win = null;
-            }
         }
 
-        boolean endResult = JMPCore.endFunc();
+        // ライブラリ終了処理
+        boolean endResult = exitLibrary();
         if (result == false) {
             endResult = result;
         }
         return endResult;
     }
 
+    /**
+     * 終了
+     */
     public static void exit() {
-        PluginManager pm = JMPCore.getPluginManager();
-        DataManager dm = JMPCore.getDataManager();
+        if (exitFlag == true) {
+            return;
+        }
 
         // 念のためシーケンサーを停止
-        PlayerAccessor.getInstance().getCurrent().stop();
+        PlayerAccessor.getInstance().stopAllPlayer();
 
         // 終了前に全てのプラグインを閉じる
-        for (IPlugin p : pm.getPlugins()) {
+        for (IPlugin p : JMPCore.getPluginManager().getPlugins()) {
             p.close();
         }
 
-        dm.getHistoryDialog().setVisible(false);
+        JMPCore.getWindowManager().setVisibleAll(false);
 
         // タスクの終了
         JMPCore.getTaskManager().taskExit();
+
+        exitFlag = true;
+    }
+
+    /**
+     * ライブラリ初期化
+     *
+     * @param config
+     * @return
+     */
+    public static boolean initLibrary(ConfigDatabase config) {
+        return initLibrary(config, null);
+    }
+
+    /**
+     * ライブラリ初期化
+     *
+     * @param config
+     * @param plugin
+     * @return
+     */
+    public static boolean initLibrary(ConfigDatabase config, IPlugin plugin) {
+
+        // スタンドアロンプラグイン設定
+        JMPCore.StandAlonePlugin = plugin;
+
+        // 設定値を先行して登録する
+        JMPCore.getDataManager().setConfigDatabase(config);
+
+        // 管理クラス初期化処理
+        boolean result = JMPCore.initFunc();
+
+        /* 起動準備 */
+        if (result == true) {
+
+            // メインウィンドウ登録
+            JMPPlayer win = new JMPPlayer();
+            win.initializeSetting();
+            win.setVisible(false);
+            JMPCore.getSystemManager().registerMainWindow(win);
+
+            // 起動構成
+            if (JMPCore.isEnableStandAlonePlugin() == false) {
+                // JMPPlayer起動
+                if (JMPFlags.LibraryMode == false) {
+                    win.setVisible(true);
+                }
+            }
+            else {
+                // スタンドアロンプラグイン起動
+                JMPCore.StandAlonePlugin.open();
+            }
+
+            // タスク開始
+            TaskManager taskManager = JMPCore.getTaskManager();
+            taskManager.taskStart();
+
+            // アプリ全般のコールバック関数を登録
+            JMPPlayer.registerCallbackPackage();
+        }
+        return result;
+    }
+
+    /**
+     * ライブラリ終了
+     *
+     * @return
+     */
+    public static boolean exitLibrary() {
+        exit();
+
+        // タスクジョイン
+        try {
+            TaskManager taskManager = JMPCore.getTaskManager();
+            taskManager.join();
+        }
+        catch (InterruptedException e) {
+        }
+
+        // Windowを閉じる
+        JMPCore.getWindowManager().setVisibleAll(false);
+
+        boolean result = JMPCore.endFunc();
+        return result;
     }
 
 }

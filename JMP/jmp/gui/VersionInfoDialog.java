@@ -21,7 +21,7 @@ public class VersionInfoDialog extends JMPDialog {
     public VersionInfoDialog() {
         super();
         setResizable(false);
-        setBounds(50, 60, 361, 165);
+        setBounds(50, 60, 380, 180);
         setTitle("Version");
         getContentPane().setLayout(null);
 

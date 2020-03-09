@@ -35,10 +35,12 @@ public class TaskOfUpdate extends Thread implements ITask {
             pm.update();
 
             // スタンドアロンプラグインが閉じられているか確認
-            IPlugin plg = JMPCore.StandAlonePlugin;
-            if (plg != null) {
-                if (plg.isOpen() == false) {
-                    JMPLoader.exit();
+            if (JMPCore.isEnableStandAlonePlugin() == true) {
+                IPlugin plg = JMPCore.StandAlonePlugin;
+                if (plg != null) {
+                    if (plg.isOpen() == false) {
+                        JMPLoader.exit();
+                    }
                 }
             }
 

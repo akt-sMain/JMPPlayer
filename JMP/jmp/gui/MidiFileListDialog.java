@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -38,8 +39,8 @@ import javax.swing.table.TableColumn;
 
 import function.Platform;
 import function.Platform.KindOfPlatform;
-import jlib.gui.IJmpMainWindow;
 import function.Utility;
+import jlib.gui.IJmpMainWindow;
 import jmp.ConfigDatabase;
 import jmp.JMPFlags;
 import jmp.core.DataManager;
@@ -89,13 +90,25 @@ public class MidiFileListDialog extends JMPFrame {
 
         model = new FileListTableModel(columnNames, 0);
         midiFileList = new JTable(model);
+        midiFileList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    Point p = e.getPoint();
+                    int row = midiFileList.rowAtPoint(p);
+                    if (row >= 0) {
+                        executeCell(row);
+                    }
+                }
+            }
+        });
         midiFileList.setLocation(462, 0);
         midiFileList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
         midiFileList.setForeground(Color.BLACK);
         midiFileList.setBackground(Color.WHITE);
         midiFileList.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-        setBounds(100, 100, 856, 497);
+        setBounds(100, 100, 870, 510);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBackground(getJmpBackColor());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -189,34 +202,7 @@ public class MidiFileListDialog extends JMPFrame {
         JButton btnDirectLoad = new JButton("開く or 再生");
         btnDirectLoad.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (midiFileList != null) {
-                    int selected = midiFileList.getSelectedRow();
-                    if (selected >= 0) {
-                        String name = (String) midiFileList.getModel().getValueAt(selected, COLUMN_NAME);
-                        if (midiFileMap.containsKey(name) == true) {
-                            IJmpMainWindow mainWindow = JMPCore.getSystemManager().getMainWindow();
-
-                            File midiFile = midiFileMap.get(name);
-                            if (midiFile.isDirectory() == true) {
-                                if (midiFile.exists() == true) {
-                                    updateList(midiFile);
-                                }
-                            }
-                            else {
-                                PlayerAccessor accessor = PlayerAccessor.getInstance();
-                                if (accessor.isSupportedExtension(Utility.getExtension(midiFile))) {
-                                    if (accessor.getCurrent().isRunnable() == true) {
-                                        accessor.getCurrent().stop();
-                                    }
-                                }
-
-                                // 自動再生フラグ
-                                JMPFlags.LoadToPlayFlag = true;
-                                mainWindow.loadFile(midiFile);
-                            }
-                        }
-                    }
-                }
+                executeSelected();
             }
         });
         btnDirectLoad.setBounds(291, 439, 105, 21);
@@ -308,6 +294,43 @@ public class MidiFileListDialog extends JMPFrame {
             }
         }
         super.setVisible(b);
+    }
+
+    public void executeCell(int row) {
+        if (midiFileList != null) {
+            if (row >= 0) {
+                String name = (String) midiFileList.getModel().getValueAt(row, COLUMN_NAME);
+                if (midiFileMap.containsKey(name) == true) {
+                    IJmpMainWindow mainWindow = JMPCore.getSystemManager().getMainWindow();
+
+                    File midiFile = midiFileMap.get(name);
+                    if (midiFile.isDirectory() == true) {
+                        if (midiFile.exists() == true) {
+                            updateList(midiFile);
+                        }
+                    }
+                    else {
+                        PlayerAccessor accessor = PlayerAccessor.getInstance();
+                        if (accessor.isSupportedExtension(Utility.getExtension(midiFile))) {
+                            if (accessor.getCurrent().isRunnable() == true) {
+                                accessor.getCurrent().stop();
+                            }
+                        }
+
+                        // 自動再生フラグ
+                        JMPFlags.LoadToPlayFlag = true;
+                        mainWindow.loadFile(midiFile);
+                    }
+                }
+            }
+        }
+    }
+
+    public void executeSelected() {
+        if (midiFileList != null) {
+            int selected = midiFileList.getSelectedRow();
+            executeCell(selected);
+        }
     }
 
     private void openPath() {

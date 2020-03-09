@@ -48,6 +48,13 @@ public class JMPCore {
         return result;
     }
 
+    public static boolean isEnableStandAlonePlugin() {
+        if (StandAlonePlugin != null) {
+            return true;
+        }
+        return false;
+    }
+
     public static SystemManager getSystemManager() {
         return systemManager;
     }

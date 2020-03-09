@@ -77,7 +77,7 @@ public class PluginManager extends AbstractManager {
     protected boolean initFunc() {
 
         // プラグイン読み込み
-        if (JMPCore.StandAlonePlugin != null) {
+        if (JMPCore.isEnableStandAlonePlugin() == true) {
             // スタンドアロンプラグインを登録
             String name = JMPCore.StandAlonePlugin.getClass().getName().trim();
             if (addPlugin(name, JMPCore.StandAlonePlugin) == false) {
@@ -630,7 +630,7 @@ public class PluginManager extends AbstractManager {
     }
 
     public void closeNonSupportPlugins(String ex) {
-        if (JMPCore.StandAlonePlugin != null) {
+        if (JMPCore.isEnableStandAlonePlugin() == true) {
             // スタンドアロンモードの時は無効
             return;
         }

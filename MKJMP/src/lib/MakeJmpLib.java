@@ -14,7 +14,7 @@ public class MakeJmpLib {
 
     public static final String PKG_ZIP_EX = "jmz";
 
-    public static void call(String args[]) {
+    public static void call(String... args) {
         try {
             boolean isConsole = false;
             String name = "";

@@ -46,7 +46,7 @@ public class LicenseReaderDialog extends JMPDialog {
         setResizable(false);
         setAlwaysOnTop(true);
         setTitle("License");
-        setBounds(100, 100, 711, 539);
+        setBounds(100, 100, 725, 550);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);

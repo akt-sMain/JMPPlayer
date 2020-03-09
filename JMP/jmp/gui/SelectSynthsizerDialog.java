@@ -76,7 +76,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
         setResizable(false);
         setTitle("シンセサイザー選択");
         setModalityType(ModalityType.APPLICATION_MODAL);
-        setBounds(100, 100, 460, 271);
+        setBounds(100, 100, 465, 275);
         getContentPane().setLayout(new BorderLayout());
 
         Image jmpIcon = JMPCore.getResourceManager().getJmpImageIcon();

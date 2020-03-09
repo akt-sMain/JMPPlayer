@@ -7,6 +7,9 @@ package jmp;
  *
  */
 public class JMPFlags {
+    /** ライブラリモード */
+    public static boolean LibraryMode = false;
+
     /** デバッグモード */
     public static boolean DebugMode = false;
 

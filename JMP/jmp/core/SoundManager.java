@@ -6,7 +6,9 @@ import java.util.Map;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequencer;
+import javax.sound.midi.Transmitter;
 import javax.sound.sampled.FloatControl;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -339,14 +341,22 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     @Override
     public boolean sendMidiMessage(MidiMessage msg, long timeStamp) {
-        if (MidiPlayer.getCurrentReciver() == null) {
+        if (getCurrentReciever() == null) {
             return false;
         }
 
-        MidiPlayer.getCurrentReciver().send(msg, timeStamp);
+        getCurrentReciever().send(msg, timeStamp);
 
         JMPCore.getPluginManager().catchMidiEvent(msg, timeStamp, IMidiEventListener.SENDER_MIDI_IN);
         return true;
+    }
+
+    public Receiver getCurrentReciever() {
+        return MidiPlayer.getCurrentReciver();
+    }
+
+    public Transmitter getCurrentTransmitter() {
+        return MidiPlayer.getCurrentTransmitter();
     }
 
     public void changePlayer(File file) {

@@ -188,7 +188,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
 
         /* スタンドアロンモード or デバッグモードの際はアクティベートする */
-        if (JMPFlags.DebugMode == true || JMPCore.StandAlonePlugin != null) {
+        if (JMPFlags.DebugMode == true || JMPCore.isEnableStandAlonePlugin() == true) {
             JMPFlags.ActivateFlag = true;
         }
 
@@ -214,7 +214,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         if (JMPFlags.ActivateFlag == true) {
             activateOutFlag = true;
         }
-        if (JMPFlags.DebugMode == true || JMPCore.StandAlonePlugin != null) {
+        if (JMPFlags.DebugMode == true || JMPCore.isEnableStandAlonePlugin() == true) {
             // デバッグ・スタンドアロン実行は発行しない
             activateOutFlag = false;
         }

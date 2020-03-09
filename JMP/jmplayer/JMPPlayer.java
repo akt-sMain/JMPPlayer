@@ -606,7 +606,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         }
 
         /* スタンドアロンモード用メニュー表示 */
-        if (JMPCore.StandAlonePlugin != null) {
+        if (JMPCore.isEnableStandAlonePlugin() == true) {
             pluginMenu.setVisible(false);
         }
 
@@ -986,7 +986,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
      * アプリケーション終了
      */
     public void exit() {
-        exit(JMPCore.StandAlonePlugin == null);
+        exit(JMPCore.isEnableStandAlonePlugin() == false);
     }
 
     public void exit(boolean forcedExit) {
@@ -1012,28 +1012,12 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
      *            プラグイン
      */
     public void addPluginMenu(String name, IPlugin plugin) {
-        for (int i = pluginMenu.getItemCount() - 1; i >= 0; i--) {
-            JMenuItem item = pluginMenu.getItem(i);
-            if (item != null) {
-                if (item.getText().equalsIgnoreCase(name) == true) {
-                    pluginMenu.remove(item);
-                }
-            }
-        }
+        JMPCore.getWindowManager().addPluginMenuItem(name, plugin);
+        pluginMenu.removeAll();
 
-        JMenuItem item = new JMenuItem(name);
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (plugin.isOpen() == true) {
-                    plugin.close();
-                }
-                else {
-                    plugin.open();
-                }
-            }
-        });
-        pluginMenu.add(item);
+        for (JMenuItem item : JMPCore.getWindowManager().getPluginMenuItems()) {
+            pluginMenu.add(item);
+        }
     }
 
     private void updatePluginEnable() {
@@ -1335,7 +1319,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
     @Override
     public void hideWindow() {
-        if (JMPCore.StandAlonePlugin != null) {
+        if (JMPCore.isEnableStandAlonePlugin() == true) {
             setVisible(false);
         }
     }

@@ -1,7 +1,12 @@
 package jmp.core;
 
+import java.util.List;
+
+import javax.swing.JMenuItem;
+
 import jlib.core.IWindowManager;
 import jlib.gui.IJmpWindow;
+import jlib.plugin.IPlugin;
 import jmp.gui.WindowDatabase;
 
 public class WindowManager extends AbstractManager implements IWindowManager {
@@ -64,6 +69,14 @@ public class WindowManager extends AbstractManager implements IWindowManager {
                 }
             }
         }
+    }
+
+    public void addPluginMenuItem(String name, IPlugin plugin) {
+        database.addPluginMenuItem(name, plugin);
+    }
+
+    public List<JMenuItem> getPluginMenuItems() {
+        return database.getPluginMenuItems();
     }
 
 }

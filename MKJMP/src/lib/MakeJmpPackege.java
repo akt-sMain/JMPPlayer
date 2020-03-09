@@ -49,7 +49,6 @@ public class MakeJmpPackege extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 MakeJmpLib.call(args);
-                System.exit(0);
             }
         });
     }

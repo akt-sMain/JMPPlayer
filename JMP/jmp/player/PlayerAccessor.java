@@ -30,9 +30,7 @@ public class PlayerAccessor {
 
     public boolean close() {
         boolean ret = true;
-        for (Player p : registerPlayer) {
-            p.stop();
-        }
+        stopAllPlayer();
         for (Player p : registerPlayer) {
             boolean tmp = ret;
             ret = p.close();
@@ -45,6 +43,12 @@ public class PlayerAccessor {
 
     public List<Player> getPlayers() {
         return registerPlayer;
+    }
+
+    public void stopAllPlayer() {
+        for (Player p : registerPlayer) {
+            p.stop();
+        }
     }
 
     public void register(Player player) {
