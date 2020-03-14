@@ -122,6 +122,10 @@ public class ResourceManager extends AbstractManager implements IManager {
         return getResourceImage(Skin.RSRC_FILE_ICON_WAV);
     }
 
+    public Image getFileXmlIcon() {
+        return getResourceImage(Skin.RSRC_FILE_ICON_XML);
+    }
+
     public Image getFileFolderIcon() {
         return getResourceImage(Skin.RSRC_FOLDER_ICON);
     }

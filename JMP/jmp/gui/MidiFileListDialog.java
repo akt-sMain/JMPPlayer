@@ -413,6 +413,17 @@ public class MidiFileListDialog extends JMPFrame {
             }
             for (Object key : keys) {
                 String sKey = key.toString();
+                File f = midiFileMap.get(sKey);
+                if (f.isFile() == true) {
+                    if (Utility.checkExtensions(sKey, DataManager.ExtentionForMusicXML) == true) {
+                        if (midiFileMap.containsKey(sKey) == true) {
+                            list.add(sKey);
+                        }
+                    }
+                }
+            }
+            for (Object key : keys) {
+                String sKey = key.toString();
                 if (list.contains(sKey) == false) {
                     list.add(sKey);
                 }
@@ -421,6 +432,7 @@ public class MidiFileListDialog extends JMPFrame {
             ImageIcon folderIcon = convertImageIcon(JMPCore.getResourceManager().getFileFolderIcon());
             ImageIcon midiIcon = convertImageIcon(JMPCore.getResourceManager().getFileMidiIcon());
             ImageIcon wavIcon = convertImageIcon(JMPCore.getResourceManager().getFileWavIcon());
+            ImageIcon xmlIcon = convertImageIcon(JMPCore.getResourceManager().getFileXmlIcon());
             ImageIcon otherIcon = convertImageIcon(JMPCore.getResourceManager().getFileOtherIcon());
 
             for (String name : list) {
@@ -436,6 +448,10 @@ public class MidiFileListDialog extends JMPFrame {
                     }
                     else if (Utility.checkExtensions(name, DataManager.ExtentionForWAV) == true) {
                         Object[] row = { wavIcon, name };
+                        model.addRow(row);
+                    }
+                    else if (Utility.checkExtensions(name, DataManager.ExtentionForMusicXML) == true) {
+                        Object[] row = { xmlIcon, name };
                         model.addRow(row);
                     }
                     else {

@@ -10,9 +10,10 @@ import jmp.core.JMPCore;
 
 public class Skin {
 
-    public static final String RSRC_FILE_ICON_OTEHER = "file_icon_other.png";
+    public static final String RSRC_FILE_ICON_OTEHER = "file_icon_OTHER.png";
     public static final String RSRC_FILE_ICON_MIDI = "file_icon_MIDI.png";
     public static final String RSRC_FILE_ICON_WAV = "file_icon_WAV.png";
+    public static final String RSRC_FILE_ICON_XML = "file_icon_XML.png";
     public static final String RSRC_FOLDER_ICON = "folder_icon.png";
     public static final String RSRC_BTN_ICON_PLAY = "btn_icon_PLAY.png";
     public static final String RSRC_BTN_ICON_STOP = "btn_icon_STOP.png";
@@ -22,8 +23,8 @@ public class Skin {
     public static final String RSRC_BTN_ICON_PREV2 = "btn_icon_PREV2.png";
 
     private static final String[] LST = { RSRC_FILE_ICON_OTEHER, RSRC_FILE_ICON_MIDI, RSRC_FILE_ICON_WAV,
-            RSRC_FOLDER_ICON, RSRC_BTN_ICON_PLAY, RSRC_BTN_ICON_STOP, RSRC_BTN_ICON_NEXT, RSRC_BTN_ICON_NEXT2,
-            RSRC_BTN_ICON_PREV, RSRC_BTN_ICON_PREV2, };
+            RSRC_FILE_ICON_XML, RSRC_FOLDER_ICON, RSRC_BTN_ICON_PLAY, RSRC_BTN_ICON_STOP, RSRC_BTN_ICON_NEXT,
+            RSRC_BTN_ICON_NEXT2, RSRC_BTN_ICON_PREV, RSRC_BTN_ICON_PREV2, };
 
     private Map<String, Resource> rsrcMap = new HashMap<String, Resource>();
 
@@ -63,7 +64,8 @@ public class Skin {
         if (Utility.isExsistFile(path) == true) {
             if (Utility.checkExtension(path, "png") == true) {
                 ImageResource rsrc = new ImageResource();
-                rsrc.setImage(ResourceUtility.readImage(path, localConfig.isConvertTransparent(), localConfig.getTransparentColor()));
+                rsrc.setImage(ResourceUtility.readImage(path, localConfig.isConvertTransparent(),
+                        localConfig.getTransparentColor()));
                 if (rsrc.getImage() != null) {
                     rsrcMap.put(name, rsrc);
                 }

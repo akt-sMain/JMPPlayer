@@ -115,8 +115,10 @@ public class MusicXMLNote extends MusicXMLElement{
             // alterが指定されていない場合は、accidentalの文字列解析を試みる
             int res = 0;
             String accidental = getAccidental();
-            res += Utility.getContainsStrCount(accidental, "sharp");
-            res -= Utility.getContainsStrCount(accidental, "flat");
+            if (accidental.isEmpty() == false) {
+                res += Utility.getContainsStrCount(accidental, "sharp");
+                res -= Utility.getContainsStrCount(accidental, "flat");
+            }
             return res;
         }
         return Utility.tryParseInt(alter, 0);
