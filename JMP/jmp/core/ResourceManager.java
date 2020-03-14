@@ -1,5 +1,6 @@
 package jmp.core;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -15,12 +16,16 @@ import jlib.core.IManager;
 import jmp.skin.ImageResource;
 import jmp.skin.Resource;
 import jmp.skin.Skin;
-import jmp.skin.SkinConfig;
+import jmp.skin.SkinGlobalConfig;
 
 public class ResourceManager extends AbstractManager implements IManager {
 
+    public static final String SKIN_FOLDER_NAME = "skin";
+
     private Skin skin = null;
     private Image jmpImageIcon = null;
+
+    private String skinPath = Utility.pathCombin(Platform.getCurrentPath(false), SKIN_FOLDER_NAME);
 
     ResourceManager(int pri) {
         super(pri, "resource");
@@ -40,20 +45,8 @@ public class ResourceManager extends AbstractManager implements IManager {
         if (confFile.exists() == false) {
             // Skin.txt作成
             List<String> confFileContent = new LinkedList<String>();
-            confFileContent.add("##################################");
-            confFileContent.add("# " + SkinConfig.KEY_USE + "=\"使用するSkinフォルダ名\"");
-            confFileContent.add("##################################");
-            confFileContent.add(SkinConfig.KEY_USE + "=default");
-            confFileContent.add("");
-            confFileContent.add("##################################");
-            confFileContent.add("# " + SkinConfig.KEY_CONVERT_TRANS + "=\"指定色を透過色に変換させるか\"");
-            confFileContent.add("##################################");
-            confFileContent.add(SkinConfig.KEY_CONVERT_TRANS+ "=FALSE");
-            confFileContent.add("");
-            confFileContent.add("##################################");
-            confFileContent.add("# " + SkinConfig.KEY_TRANSPARENT + "=\"透過させる色\"");
-            confFileContent.add("##################################");
-            confFileContent.add(SkinConfig.KEY_TRANSPARENT + "=#FF7F27");
+            confFileContent.add("# 使用するSkinフォルダ名");
+            confFileContent.add(SkinGlobalConfig.KEY_USE + "=default");
             confFileContent.add("");
             try {
                 Utility.outputTextFile(confPath, confFileContent);
@@ -63,15 +56,20 @@ public class ResourceManager extends AbstractManager implements IManager {
         }
 
         // リソース生成
-        SkinConfig config = new SkinConfig();
-        skin = new Skin(config);
+        SkinGlobalConfig gConfig = new SkinGlobalConfig();
         try {
-            config.read(new File(confPath));
-            skin.load(config);
+            gConfig.read(new File(confPath));
+
+            String path = Utility.pathCombin(skinPath, gConfig.getName());
+            if (Utility.isExsistFile(path) == false) {
+                gConfig.initialize();
+            }
         }
         catch (IOException e) {
+            gConfig.initialize();
         }
 
+        skin = new Skin(gConfig);
         return true;
     }
 
@@ -150,5 +148,23 @@ public class ResourceManager extends AbstractManager implements IManager {
 
     public Image getBtnPrev2Icon() {
         return getResourceImage(Skin.RSRC_BTN_ICON_PREV2);
+    }
+
+    public Color getBtnBackgroundColor() {
+        if (skin == null) {
+            return Color.WHITE;
+        }
+        return skin.getLocalConfig().getBtnBackgroundColor();
+    }
+
+    public Color getAppBackgroundColor() {
+        if (skin == null) {
+            return Color.WHITE;
+        }
+        return skin.getLocalConfig().getAppBackgroundColor();
+    }
+
+    public String getSkinPath() {
+        return skinPath;
     }
 }

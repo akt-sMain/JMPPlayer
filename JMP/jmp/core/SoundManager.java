@@ -20,6 +20,7 @@ import jlib.midi.IMidiEventListener;
 import jlib.player.IPlayer;
 import jmp.JMPFlags;
 import jmp.player.MidiPlayer;
+import jmp.player.MusicXmlPlayer;
 import jmp.player.Player;
 import jmp.player.PlayerAccessor;
 import jmp.player.WavPlayer;
@@ -37,6 +38,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     // MIDIプレイヤーインスタンス
     public static MidiPlayer MidiPlayer = null;
     public static WavPlayer WavPlayer = null;
+    public static MusicXmlPlayer MusicXmlPlayer = null;
 
     FloatControl volumeCtrl;
 
@@ -54,12 +56,16 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         // プレイヤーインスタンス作成
         MidiPlayer = new MidiPlayer();
         WavPlayer = new WavPlayer();
+        MusicXmlPlayer = new MusicXmlPlayer();
 
         MidiPlayer.setSupportExtentions(DataManager.ExtentionForMIDI);
         PlayerAccessor.getInstance().register(MidiPlayer);
 
         WavPlayer.setSupportExtentions(DataManager.ExtentionForWAV);
         PlayerAccessor.getInstance().register(WavPlayer);
+
+        MusicXmlPlayer.setSupportExtentions(DataManager.ExtentionForMusicXML);
+        PlayerAccessor.getInstance().register(MusicXmlPlayer);
 
         // デフォルトはMIDIプレイヤーにする
         PlayerAccessor.getInstance().change(MidiPlayer);

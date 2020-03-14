@@ -1,0 +1,13 @@
+# 指定色を透過色に変換させるか
+CONVERT_TRANS=FALSE
+
+# 透過させる色
+TRANSPARENT=#FF7F27
+
+# ボタンの背景色
+#  ※透明色指定する場合は"TRANS"
+BTN_BACKGROUND=#888888
+
+# 画面の背景色
+APPLICATION_BACKGROUND=#404040
+

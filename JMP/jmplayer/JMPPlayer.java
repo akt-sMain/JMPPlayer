@@ -125,7 +125,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     // ! ステータスカラー(Fail)
     public static final Color STATUS_COLOR_FAIL = Color.RED;
     // ! コントロールボタン背景色
-    public static final Color CONTROL_BTN_BACKGROUND = Utility.convertCodeToHtmlColor("#888888");
+    //public static final Color CONTROL_BTN_BACKGROUND = Utility.convertCodeToHtmlColor("#888888");
 
     private static String s_currentFileName = "";
     private static long s_tmpSliderTick = -1;
@@ -192,7 +192,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
         prev2Button = new JButton("←←");
         prev2Button.setToolTipText("前の曲へ");
-        prev2Button.setBackground(CONTROL_BTN_BACKGROUND);
+        prev2Button.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
         prev2Button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (JMPCore.getSoundManager().isValidPlayList() == true) {
@@ -214,7 +214,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
         playButton = new JButton("再生");
         playButton.setToolTipText("再生/停止");
-        playButton.setBackground(CONTROL_BTN_BACKGROUND);
+        playButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
         playButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JMPCore.getSoundManager().togglePlayStop();
@@ -226,7 +226,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
         next2Button = new JButton("→→");
         next2Button.setToolTipText("次の曲へ");
-        next2Button.setBackground(CONTROL_BTN_BACKGROUND);
+        next2Button.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
         next2Button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (JMPCore.getSoundManager().isValidPlayList() == true) {
@@ -242,7 +242,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
         prevButton = new JButton("←");
         prevButton.setToolTipText("巻き戻し");
-        prevButton.setBackground(CONTROL_BTN_BACKGROUND);
+        prevButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
         prevButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -254,7 +254,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
         nextButton = new JButton("→");
         nextButton.setToolTipText("早送り");
-        nextButton.setBackground(CONTROL_BTN_BACKGROUND);
+        nextButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
         nextButton.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -1092,6 +1092,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         JFileChooser filechooser = new JFileChooser();
         filechooser.addChoosableFileFilter(createFileFilter("MIDI Files", DataManager.ExtentionForMIDI));
         filechooser.addChoosableFileFilter(createFileFilter("WAV Files", DataManager.ExtentionForWAV));
+        filechooser.addChoosableFileFilter(createFileFilter("MusicXML Files", DataManager.ExtentionForMusicXML));
 
         File dir = new File(Platform.getCurrentPath());
         filechooser.setCurrentDirectory(dir);
@@ -1172,6 +1173,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                         }
                     }
                     catch (Exception e) {
+                        e.printStackTrace();
+
                         status = false;
                         statusStr = "※ファイルのロードに失敗しました。";
                     }

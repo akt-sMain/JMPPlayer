@@ -45,7 +45,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
 
         public void init() {
-            add(COMMON_REGKEY_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(Color.DARK_GRAY));
+            add(COMMON_REGKEY_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(DEFAULT_PLAYER_BACK_COLOR));
             add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 1), "#8ec21f");
             add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 2), "#3dc21f");
             add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 3), "#1fc253");
@@ -125,6 +125,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     /** メッセージダイアログタイトル */
     private static final String MSG_DIALOG_TITLE = "メッセージ";
 
+    /** デフォルトプレイヤーカラー */
+    public static final Color DEFAULT_PLAYER_BACK_COLOR = Color.DARK_GRAY;
+
     /** メインウィンドウ */
     public IJmpMainWindow mainWindow = null;
 
@@ -146,6 +149,10 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         cReg = new CommonRegister();
         cReg.init();
         cReg.load();
+
+        // ResourceとcRegの同期
+        setCommonRegisterValue(CommonRegister.COMMON_REGKEY_PLAYER_BACK_COLOR,
+                Utility.convertHtmlColorToCode(JMPCore.getResourceManager().getAppBackgroundColor()));
 
         // ルックアンドフィールの設定
         setupLookAndFeel();
@@ -411,6 +418,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
                 Utility.invokeProcess(path);
             }
         }
-        catch (Exception e1) {}
+        catch (Exception e1) {
+        }
     }
 }

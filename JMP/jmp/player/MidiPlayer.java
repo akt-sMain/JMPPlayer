@@ -513,7 +513,7 @@ public class MidiPlayer extends Player implements IMidiFilter {
      */
     public void loadMidiFile(File file) throws InvalidMidiDataException, IOException {
         Sequence seq = readMidiFile(file);
-        getSequencer().setSequence(seq);
+        loadMidiSequence(seq);
     }
 
     /**
@@ -531,6 +531,10 @@ public class MidiPlayer extends Player implements IMidiFilter {
             loadMidiFile(f);
         }
         return;
+    }
+
+    public void loadMidiSequence(Sequence seq) throws InvalidMidiDataException {
+        getSequencer().setSequence(seq);
     }
 
     /**

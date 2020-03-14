@@ -1,9 +1,12 @@
 package jmp.skin;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import function.Utility;
+import jmp.core.JMPCore;
 
 public class Skin {
 
@@ -24,28 +27,43 @@ public class Skin {
 
     private Map<String, Resource> rsrcMap = new HashMap<String, Resource>();
 
-    private SkinConfig config = null;
+    private SkinGlobalConfig globalConfig = null;
+    private SkinLocalConfig localConfig = null;
 
-    public Skin(SkinConfig config) {
+    public Skin(SkinGlobalConfig config) {
+        globalConfig = config;
         for (String lstname : LST) {
             rsrcMap.put(lstname, null);
         }
-        load(config);
+        readLocalConfig();
+        load();
     }
 
-    public void load(SkinConfig config) {
-        this.config = config;
+    private void load() {
         for (String lstname : LST) {
             createResource(lstname);
         }
     }
 
+    private void readLocalConfig() {
+        String skinPath = JMPCore.getResourceManager().getSkinPath();
+        String path = Utility.pathCombin(skinPath, globalConfig.getName(), "skinconf.txt");
+        localConfig = new SkinLocalConfig();
+        try {
+            localConfig.read(new File(path));
+        }
+        catch (IOException e) {
+            localConfig.initialize();
+        }
+    }
+
     private void createResource(String name) {
-        String path = Utility.pathCombin(config.getRefPath(), config.getName(), name);
+        String skinPath = JMPCore.getResourceManager().getSkinPath();
+        String path = Utility.pathCombin(skinPath, globalConfig.getName(), name);
         if (Utility.isExsistFile(path) == true) {
             if (Utility.checkExtension(path, "png") == true) {
                 ImageResource rsrc = new ImageResource();
-                rsrc.setImage(ResourceUtility.readImage(path, config.isConvertTransparent(), config.getTransparentColor()));
+                rsrc.setImage(ResourceUtility.readImage(path, localConfig.isConvertTransparent(), localConfig.getTransparentColor()));
                 if (rsrc.getImage() != null) {
                     rsrcMap.put(name, rsrc);
                 }
@@ -58,5 +76,9 @@ public class Skin {
             return null;
         }
         return rsrcMap.get(name);
+    }
+
+    public SkinLocalConfig getLocalConfig() {
+        return localConfig;
     }
 }
