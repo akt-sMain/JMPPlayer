@@ -11,6 +11,7 @@ import jmp.player.Player;
 import jmp.player.PlayerAccessor;
 
 public class MOReceiver implements Receiver {
+
     Receiver abstractReciever = null;
 
     public MOReceiver(Receiver abstractReciever) {

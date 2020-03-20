@@ -38,6 +38,7 @@ import function.Platform;
 import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.gui.IJmpMainWindow;
+import jlib.gui.IJmpWindow;
 import jlib.plugin.IPlugin;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
@@ -160,6 +161,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JLabel lblDebugMenu;
     private JMenuItem allClosePluginMenuItem;
     private JMenu mnExecuteBatFile;
+    private JMenuItem mntmMidiMonitor;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -505,6 +507,20 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             }
         });
         configMenu.add(mntmPcreset);
+
+        mntmMidiMonitor = new JMenuItem("MIDIメッセージモニタ");
+        mntmMidiMonitor.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                IJmpWindow win = JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
+                if (win.isWindowVisible() == true) {
+                    win.hideWindow();
+                }
+                else {
+                    win.showWindow();
+                }
+            }
+        });
+        configMenu.add(mntmMidiMonitor);
 
         lblDebugMenu = new JLabel("-- 開発者用メニュー --");
         lblDebugMenu.setHorizontalAlignment(SwingConstants.LEFT);
@@ -937,35 +953,16 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 slider.setValue((int) playerAccessor.getCurrent().getPosition());
             }
 
-            int time = playerAccessor.getCurrent().getPositionSecond();
-            int min = time / 60;
-            int sec = time % 60;
-            if (min > 99) {
-                // 100分以上の表示は不可
-                min = 99;
-                sec = 59;
-            }
-            String date = String.format("%02d:%02d", min, sec);
-            labelPositionTime.setText(date);
-
-            time = playerAccessor.getCurrent().getLengthSecond();
-            min = time / 60;
-            sec = time % 60;
-            if (min > 99) {
-                // 100分以上の表示は不可
-                min = 99;
-                sec = 59;
-            }
-            date = String.format("%02d:%02d", min, sec);
-            labelLengthTime.setText(date);
+            labelPositionTime.setText(JMPCore.getSoundManager().getPositionTimeString());
+            labelLengthTime.setText(JMPCore.getSoundManager().getLengthTimeString());
         }
         else {
             s_tmpSliderTick = -1;
             slider.setMaximum(100);
             slider.setValue(0);
 
-            labelPositionTime.setText("00:00");
-            labelLengthTime.setText("00:00");
+            labelPositionTime.setText(JMPCore.getSoundManager().getPlayerTimeString(0));
+            labelLengthTime.setText(JMPCore.getSoundManager().getPlayerTimeString(0));
         }
 
         // slider.setToolTipText(String.valueOf(slider.getValue()));

@@ -32,6 +32,9 @@ import jmp.player.WavPlayer;
  *
  */
 public class SoundManager extends AbstractManager implements ISoundManager {
+
+    public static final String PLAYER_TIME_FORMAT = "%02d:%02d";
+
     private DefaultListModel<String> playListModel = new DefaultListModel<>();
     private JList<String> playList = new JList<String>(playListModel);
 
@@ -417,5 +420,31 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             JMPCore.getSoundManager().sendProgramChange(ch, 0, 0);
         }
         catch (InvalidMidiDataException e1) {}
+    }
+
+    public String getPositionTimeString() {
+        int time = getCurrentPlayer().getPositionSecond();
+        return getPlayerTimeString(time);
+    }
+
+    public String getLengthTimeString() {
+        int time = getCurrentPlayer().getLengthSecond();
+        return getPlayerTimeString(time);
+    }
+
+    public String getPlayerTimeString(int time) {
+        int min = 0;
+        int sec = 0;
+        if (time > 0) {
+            min = time / 60;
+            sec = time % 60;
+            if (min > 99) {
+                // 100分以上の表示は不可
+                min = 99;
+                sec = 59;
+            }
+        }
+        String str = String.format(PLAYER_TIME_FORMAT, min, sec);
+        return str;
     }
 }

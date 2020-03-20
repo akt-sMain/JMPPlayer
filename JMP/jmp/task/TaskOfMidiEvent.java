@@ -11,6 +11,7 @@ import function.Utility;
 import jlib.midi.IMidiEventListener;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
+import jmp.core.WindowManager;
 
 public class TaskOfMidiEvent extends Thread implements ITask {
 
@@ -39,14 +40,23 @@ public class TaskOfMidiEvent extends Thread implements ITask {
 
     @Override
     public void run() {
+        WindowManager wm = JMPCore.getWindowManager();
         PluginManager pm = JMPCore.getPluginManager();
+
+        IMidiEventListener midiEventMonitor = (IMidiEventListener)wm.getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
+
         while (isRunnable) {
             synchronized (stack) {
                 // スタックされたパケットをプラグインに送信
                 Iterator<JmpMidiPacket> i = stack.iterator();
                 while (i.hasNext()) {
                     JmpMidiPacket packet = i.next();
+
                     pm.send(packet);
+                    if (midiEventMonitor != null) {
+                        midiEventMonitor.catchMidiEvent(packet.message, packet.timeStamp, packet.senderType);
+                    }
+
                     i.remove();
                 }
             }
