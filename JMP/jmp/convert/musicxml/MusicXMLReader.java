@@ -63,8 +63,65 @@ public class MusicXMLReader implements IJMPDocumentReader {
                     MusicXMLPart mxmlPart = readPartNodeList(element);
                     musicXML.addPart(mxmlPart);
                 }
+                else if (element.getNodeName().equals("part-list") == true) {
+                    MusicXMLPartList mxmlPartList = readPartListNodeList(element);
+                    musicXML.setPartList(mxmlPartList);
+                }
             }
         }
+    }
+
+    private MusicXMLPartList readPartListNodeList(Element element) {
+        MusicXMLPartList mxmlPartList = new MusicXMLPartList();
+        NodeList nodeList = element.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element childElement = (Element) node;
+                if (childElement.getNodeName().equals("score-part") == true) {
+                    MusicXMLScorePart musicXMLScorePart = readScoreListNodeList(childElement);
+                    mxmlPartList.addScorePart(musicXMLScorePart);
+                }
+            }
+        }
+        return mxmlPartList;
+    }
+
+    private MusicXMLScorePart readScoreListNodeList(Element element) {
+        String id = element.getAttribute("id");
+        MusicXMLScorePart musicXMLScorePart = new MusicXMLScorePart(id);
+        NodeList nodeList = element.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element childElement = (Element) node;
+                if (childElement.getNodeName().equals("midi-device") == true) {
+                    musicXMLScorePart.setPort(childElement.getAttribute("port"));
+                }
+                else if (childElement.getNodeName().equals("midi-instrument") == true) {
+                    NodeList nodeList2 = childElement.getChildNodes();
+                    for (int i2 = 0; i2 < nodeList2.getLength(); i2++) {
+                        Node node2 = nodeList2.item(i2);
+                        if (node2.getNodeType() == Node.ELEMENT_NODE) {
+                            Element childElement2 = (Element) node2;
+                            if (childElement2.getNodeName().equals("midi-channel") == true) {
+                                musicXMLScorePart.setChannel(childElement2.getTextContent());
+                            }
+                            else if (childElement2.getNodeName().equals("midi-program") == true) {
+                                musicXMLScorePart.setProgram(childElement2.getTextContent());
+                            }
+                            else if (childElement2.getNodeName().equals("volume") == true) {
+                                musicXMLScorePart.setVolume(childElement2.getTextContent());
+                            }
+                            else if (childElement2.getNodeName().equals("pan") == true) {
+                                musicXMLScorePart.setPan(childElement2.getTextContent());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return musicXMLScorePart;
     }
 
     private MusicXMLPart readPartNodeList(Element element) {
@@ -187,6 +244,10 @@ public class MusicXMLReader implements IJMPDocumentReader {
                     // rest element
                     mxmlNote.setRest(true);
                 }
+                else if (childElement.getNodeName().equals("chord") == true) {
+                    // rest element
+                    mxmlNote.setChord(true);
+                }
                 else if (childElement.getNodeName().equals("pitch") == true) {
                     // pitch element
                     NodeList pitchNodeList = childElement.getChildNodes();
@@ -241,38 +302,67 @@ public class MusicXMLReader implements IJMPDocumentReader {
         final int FixedVelocity = 80;
 
         Sequence sequence = new Sequence(Sequence.PPQ, BaseDuration);
-        for (int i = 0; i < musicXML.partSize(); i++) {
+
+        int partSize = musicXML.partSize();
+        for (int i = 0; i < partSize; i++) {
             MusicXMLPart part = musicXML.getPart(i);
             sequence.createTrack();
+
+            int channel = 0;
+            int program = 0;
+            MusicXMLScorePart scorePart = musicXML.getPartList().getScorePart(part.getId());
+            if (scorePart != null) {
+                channel = Utility.tryParseInt(scorePart.getChannel(), 0) - 1;
+                program = Utility.tryParseInt(scorePart.getProgram(), 0);
+
+                // 不定値チェック
+                channel = (channel < 0) ? 0 : (channel > 15) ? 15 : channel;
+                program = (program < 0) ? 0 : program;
+            }
 
             Track track = sequence.getTracks()[i];
 
             int divisionValue = BaseDuration;
-            long position = 0;
+            long position = 100;
+
+            // プログラムチェンジイベント作成
+            track.add(createProgramChangeEvent(position, channel, program));
+            position += 10;
+
+            position = 480;
+
+            long pastDuration = 0;
             for (MusicXMLMeasure meas : part.getMeasures()) {
                 for (MusicXMLElement element : meas.getElements()) {
                     if (element instanceof MusicXMLAttributes) {
                         MusicXMLAttributes mxAttr = (MusicXMLAttributes) element;
-                        divisionValue = BaseDuration / mxAttr.getDivisionsInt();
+                        if (mxAttr.getDivisions().isEmpty() == false) {
+                            divisionValue = BaseDuration / mxAttr.getDivisionsInt();
+                        }
                     }
                     if (element instanceof MusicXMLDirection) {
+                        /* テンポイベント作成 */
                         MusicXMLDirection mxDire = (MusicXMLDirection) element;
                         track.add(createTempoEvent(position, mxDire.getTempoDouble()));
                     }
                     else if (element instanceof MusicXMLNote) {
                         MusicXMLNote mxNote = (MusicXMLNote) element;
-                        long duration = divisionValue * mxNote.getDurationInt();
+                        if (mxNote.isChord() == false) {
+                            position += pastDuration;
+                        }
 
+                        long duration = divisionValue * mxNote.getDurationInt();
                         if (mxNote.isRest() == false) {
+                            /* NoteON, NoteOFFイベント作成 */
                             int midiNumber = convertToMidiNumber(mxNote.getStep(), mxNote.getAlterInt(),
                                     mxNote.getOctaveInt());
-                            track.add(createNoteOnEvent(position, i, midiNumber, FixedVelocity));
-                            track.add(createNoteOffEvent(position + duration, i, midiNumber, FixedVelocity));
+                            track.add(createNoteOnEvent(position, channel, midiNumber, FixedVelocity));
+                            track.add(createNoteOffEvent(position + duration, channel, midiNumber, FixedVelocity));
                         }
                         else {
                             /* 休符はDuration加算だけ行う */
                         }
-                        position += duration;
+                        pastDuration = duration;
                     }
                 }
             }
@@ -284,6 +374,12 @@ public class MusicXMLReader implements IJMPDocumentReader {
         int baseOctave = 4;
         int midiNumber = convertToMidiNumber(step, alter);
         midiNumber += (12 * (octave - baseOctave));
+        if (midiNumber < 0) {
+            midiNumber = 0;
+        }
+        if (midiNumber > 127) {
+            midiNumber = 127;
+        }
         return midiNumber;
     }
 
@@ -309,6 +405,9 @@ public class MusicXMLReader implements IJMPDocumentReader {
         }
         else if (step.equalsIgnoreCase("B") == true) {
             midiNumber = 71;
+        }
+        else {
+            midiNumber = 60;
         }
         return midiNumber + alter;
     }
@@ -350,6 +449,16 @@ public class MusicXMLReader implements IJMPDocumentReader {
 
     @SuppressWarnings("unused")
     private void printResult() {
+        MusicXMLPartList partList = musicXML.getPartList();
+        for (MusicXMLScorePart sp : partList.getScorePart()) {
+            System.out.println("---- PART_ID(" + sp.getPartID() + ") ----");
+            System.out.println(" :Port = " + sp.getPort());
+            System.out.println(" :Channel = " + sp.getChannel());
+            System.out.println(" :Program = " + sp.getProgram());
+            System.out.println(" :Volume = " + sp.getVolume());
+            System.out.println(" :Pan = " + sp.getPan());
+        }
+
         for (int i = 0; i < musicXML.partSize(); i++) {
             MusicXMLPart part = musicXML.getPart(i);
             for (MusicXMLMeasure meas : part.getMeasures()) {

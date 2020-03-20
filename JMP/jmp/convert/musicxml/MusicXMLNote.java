@@ -6,6 +6,9 @@ public class MusicXMLNote extends MusicXMLElement{
     /* <rest> */
     private boolean isRest = false;
 
+    /* <chord> */
+    private boolean isChord = false;
+
     /* <pitch> */
     private String step = "";
     private String octave = "";
@@ -116,8 +119,8 @@ public class MusicXMLNote extends MusicXMLElement{
             int res = 0;
             String accidental = getAccidental();
             if (accidental.isEmpty() == false) {
-                res += Utility.getContainsStrCount(accidental, "sharp");
-                res -= Utility.getContainsStrCount(accidental, "flat");
+//                res += Utility.getContainsStrCount(accidental, "sharp");
+//                res -= Utility.getContainsStrCount(accidental, "flat");
             }
             return res;
         }
@@ -126,6 +129,14 @@ public class MusicXMLNote extends MusicXMLElement{
 
     public void setAlter(String alter) {
         this.alter = alter;
+    }
+
+    public boolean isChord() {
+        return isChord;
+    }
+
+    public void setChord(boolean isChord) {
+        this.isChord = isChord;
     }
 
 }
