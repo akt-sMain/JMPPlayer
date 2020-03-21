@@ -1,6 +1,6 @@
 package jlib.midi;
 
-public class CommandDefine {
+public class DefineCommand {
     public static final int NOTE_OFF = 128;
     public static final int NOTE_ON = 144;
     public static final int POLYPHONIC_KEY_PRESSURE = 160;
@@ -21,7 +21,7 @@ public class CommandDefine {
     public static final int ACTIVE_SENSING = 254;
     public static final int RESET = 255;
 
-    public static String getCommandMessage(int data) {
+    static String getCommandMessage(int data) {
         switch (data) {
             case NOTE_OFF:
                 return "NOTE_OFF";

@@ -1,6 +1,6 @@
 package jlib.midi;
 
-public class ControlChangeDefine {
+public class DefineControlChange {
     public static final int BANK_SELECT_MSB = 0;
     public static final int MODULATION = 1;
     public static final int BLESS_CONTROL = 2;
@@ -62,7 +62,7 @@ public class ControlChangeDefine {
     public static final int MONO_ON = 126;
     public static final int POLY_ON = 127;
 
-    public static String getControlChangeMessage(int data) {
+    static String getControlChangeMessage(int data) {
         switch (data) {
             case BANK_SELECT_MSB:
                 return "BANK_SELECT_MSB";

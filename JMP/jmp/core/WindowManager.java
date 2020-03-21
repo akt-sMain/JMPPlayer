@@ -7,7 +7,7 @@ import javax.swing.JMenuItem;
 import jlib.core.IWindowManager;
 import jlib.gui.IJmpWindow;
 import jlib.plugin.IPlugin;
-import jmp.gui.MidiChannelMonitor;
+import jmp.gui.MidiMessageMonitor;
 import jmp.gui.WindowDatabase;
 
 public class WindowManager extends AbstractManager implements IWindowManager {
@@ -36,7 +36,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         }
 
         // MIDIチャンネルモニター作成
-        new MidiChannelMonitor();
+        new MidiMessageMonitor();
 
         return result;
     }
