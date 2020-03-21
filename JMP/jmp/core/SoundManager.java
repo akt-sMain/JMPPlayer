@@ -16,6 +16,7 @@ import javax.swing.JList;
 import function.Utility;
 import jlib.core.ISoundManager;
 import jlib.gui.IJmpMainWindow;
+import jlib.gui.IJmpWindow;
 import jlib.midi.IMidiEventListener;
 import jlib.player.IPlayer;
 import jmp.JMPFlags;
@@ -291,7 +292,19 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         if (player.isValid() == false) {
             return;
         }
+
+        /* TODO MIDIメッセージモニターのデッドロック問題の暫定対策(停止時に閉じる) */
+        IJmpWindow midiMinitor = JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
+        boolean backupVisible = midiMinitor.isWindowVisible();
+        if (backupVisible == true) {
+            midiMinitor.hideWindow();
+        }
+
         player.stop();
+
+        if (backupVisible == true) {
+            midiMinitor.showWindow();
+        }
     }
 
     @Override
@@ -300,7 +313,19 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         if (player.isValid() == false) {
             return;
         }
+
+        /* TODO MIDIメッセージモニターのデッドロック問題の暫定対策(停止時に閉じる) */
+        IJmpWindow midiMinitor = JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
+        boolean backupVisible = midiMinitor.isWindowVisible();
+        if (backupVisible == true) {
+            midiMinitor.hideWindow();
+        }
+
         player.setPosition(pos);
+
+        if (backupVisible == true) {
+            midiMinitor.showWindow();
+        }
     }
 
     @Override
