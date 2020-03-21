@@ -162,6 +162,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JMenuItem allClosePluginMenuItem;
     private JMenu mnExecuteBatFile;
     private JMenuItem mntmMidiMonitor;
+    private JMenuItem addPluginMenuItem;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -406,7 +407,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         pluginMenu = new JMenu("プラグイン");
         menuBar.add(pluginMenu);
 
-        JMenuItem addPluginMenuItem = new JMenuItem("プラグイン追加");
+        addPluginMenuItem = new JMenuItem("プラグイン追加");
         addPluginMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // ファイルフィルター
@@ -1012,6 +1013,10 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         JMPCore.getWindowManager().addPluginMenuItem(name, plugin);
         pluginMenu.removeAll();
 
+        pluginMenu.add(addPluginMenuItem);
+        pluginMenu.add(removePluginMenuItem);
+        pluginMenu.add(allClosePluginMenuItem);
+        pluginMenu.addSeparator();
         for (JMenuItem item : JMPCore.getWindowManager().getPluginMenuItems()) {
             pluginMenu.add(item);
         }
