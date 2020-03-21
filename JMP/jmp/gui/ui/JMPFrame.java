@@ -1,8 +1,11 @@
 package jmp.gui.ui;
 
+import java.awt.Image;
+
 import javax.swing.JFrame;
 
 import jlib.gui.IJmpWindow;
+import jmp.core.JMPCore;
 
 public class JMPFrame extends JFrame implements IJMPComponentUI, IJmpWindow {
 
@@ -14,6 +17,13 @@ public class JMPFrame extends JFrame implements IJMPComponentUI, IJmpWindow {
 
     private void _init() {
         getContentPane().setBackground(getJmpBackColor());
+    }
+
+    protected void setJmpIcon() {
+        Image jmpIcon = JMPCore.getResourceManager().getJmpImageIcon();
+        if (jmpIcon != null) {
+            setIconImage(jmpIcon);
+        }
     }
 
     @Override

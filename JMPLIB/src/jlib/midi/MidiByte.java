@@ -9,6 +9,30 @@ package jlib.midi;
 public class MidiByte {
 
     /**
+     * ステータスバイトがチャンネルメッセージか
+     *
+     * @param statusByte
+     *            ステータスバイト
+     * @return
+     */
+    public static boolean isChannelMessage(int statusByte) {
+        int command = statusByte & 0xf0;
+        return command < 0xf0;
+    }
+
+    /**
+     * ステータスバイトがシステムメッセージか
+     *
+     * @param statusByte
+     *            ステータスバイト
+     * @return
+     */
+    public static boolean isSystemMessage(int statusByte) {
+        int command = statusByte & 0xf0;
+        return command >= 0xf0;
+    }
+
+    /**
      * LSB(7bit)とMSB(7bit)を結合した14bitの値を取得する
      *
      * @param lsb

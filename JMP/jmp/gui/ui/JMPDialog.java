@@ -3,11 +3,13 @@ package jmp.gui.ui;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
+import java.awt.Image;
 import java.awt.Window;
 
 import javax.swing.JDialog;
 
 import jlib.gui.IJmpWindow;
+import jmp.core.JMPCore;
 
 public class JMPDialog extends JDialog implements IJMPComponentUI, IJmpWindow {
 
@@ -88,6 +90,13 @@ public class JMPDialog extends JDialog implements IJMPComponentUI, IJmpWindow {
     public JMPDialog(Window owner, String title, ModalityType modalityType, GraphicsConfiguration gc) {
         super(owner, title, modalityType, gc);
         _init();
+    }
+
+    protected void setJmpIcon() {
+        Image jmpIcon = JMPCore.getResourceManager().getJmpImageIcon();
+        if (jmpIcon != null) {
+            setIconImage(jmpIcon);
+        }
     }
 
     private void _init() {
