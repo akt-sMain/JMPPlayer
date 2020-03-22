@@ -1,0 +1,10 @@
+bin/
+zip/
+plugins/
+skin/
+*.jmz
+*.jar
+activate
+config.txt
+history.txt
+skin.txt
