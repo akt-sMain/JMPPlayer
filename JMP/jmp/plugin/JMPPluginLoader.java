@@ -9,7 +9,7 @@ import jlib.plugin.IPlugin;
 
 public class JMPPluginLoader {
 
-    public static IPlugin load(File jarFile){
+    public static IPlugin load(File jarFile) {
         IPlugin plugin = null;
         try {
             URL[] urls = { jarFile.toURI().toURL() };

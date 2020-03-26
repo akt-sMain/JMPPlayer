@@ -36,11 +36,13 @@ public class MidiPlayer extends Player implements IMidiFilter {
     };
 
     private Receiver currentReceiver = null;
+
     public Receiver getCurrentReciver() {
         return currentReceiver;
     };
 
     private Transmitter currentTransmitter = null;
+
     public Transmitter getCurrentTransmitter() {
         return currentTransmitter;
     };

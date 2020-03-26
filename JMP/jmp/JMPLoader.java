@@ -170,6 +170,8 @@ public class JMPLoader {
             return;
         }
 
+        JMPCore.getWindowManager().setVisibleAll(false);
+
         // 念のためシーケンサーを停止
         PlayerAccessor.getInstance().stopAllPlayer();
 
@@ -177,8 +179,6 @@ public class JMPLoader {
         for (IPlugin p : JMPCore.getPluginManager().getPlugins()) {
             p.close();
         }
-
-        JMPCore.getWindowManager().setVisibleAll(false);
 
         // タスクの終了
         JMPCore.getTaskManager().taskExit();

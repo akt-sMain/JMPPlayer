@@ -43,7 +43,7 @@ public class TaskOfMidiEvent extends Thread implements ITask {
         WindowManager wm = JMPCore.getWindowManager();
         PluginManager pm = JMPCore.getPluginManager();
 
-        IMidiEventListener midiEventMonitor = (IMidiEventListener)wm.getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
+        IMidiEventListener midiEventMonitor = (IMidiEventListener) wm.getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
 
         while (isRunnable) {
             synchronized (stack) {

@@ -34,14 +34,14 @@ public class MusicXMLReader implements IJMPDocumentReader {
 
     public void load() throws SAXException, IOException, ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //DTDエラー対処
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); // DTDエラー対処
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(file);
 
         Element root = document.getDocumentElement();
         readRootNodeList(root);
 
-        //printResult();
+        // printResult();
     }
 
     public void load(File file) throws SAXException, IOException, ParserConfigurationException {

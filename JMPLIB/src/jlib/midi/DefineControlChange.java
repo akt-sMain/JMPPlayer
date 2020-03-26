@@ -61,131 +61,32 @@ public class DefineControlChange {
     public static final int OMNI_ON = 125;
     public static final int MONO_ON = 126;
     public static final int POLY_ON = 127;
+    public static final int _END = 0;
+    public static final String[] IDENTS = { "BANK_SELECT_MSB", "MODULATION", "BLESS_CONTROL", "", "FOOT_CONTROL",
+            "PORTAMENTO_TIME", "DATA_ENTRY_MSB", "MAIN_VOLUME", "BALANCE_CONTROL", "", "PAN_POT", "EXPRESSION", "", "",
+            "", "", "GENERAL_CONTROL1", "GENERAL_CONTROL2", "GENERAL_CONTROL3", "GENERAL_CONTROL4", "", "", "", "", "",
+            "", "", "", "", "", "", "", "BANK_SELECT_LSB", "MODULATION_LSB", "BLESS_CONTROL_LSB", "",
+            "FOOT_CONTROL_LSB", "PORTAMENTO_TIME_LSB", "DATA_ENTRY_LSB", "VOLUME", "BALANCE", "", "", "", "",
+            "GENERAL_CONTROL1_LSB", "GENERAL_CONTROL2_LSB", "GENERAL_CONTROL3_LSB", "GENERAL_CONTROL4_LSB", "", "", "",
+            "", "", "", "", "", "", "", "", "", "", "", "", "DAMPER_REDAL", "PORTAMENTO", "SOSTENUTO", "SOFT_PEDAL", "",
+            "FREEZE", "MEMORY_PATCH_SELECT", "HARMONIC_CONTENT", "RELEASE_TIME", "ATTACK_TIME", "BRIGHTNESS",
+            "DECAY_TIME", "VIBRATE_RATE", "VIBRATE_DEPTH", "VIBRATE_DELAY", "", "", "", "", "", "PORTAMENTO_CONTROL",
+            "", "", "", "", "", "", "REVERB", "TREMOLO_DEPTH", "CHORUS", "DELAY_VARIATION", "PHASER_DEPTH",
+            "DATA_INCREMENT", "DATA_DECREMENT", "NRPN_LSB", "NRPN_MSB", "RPN_LSB", "RPN_MSB", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "", "", "", "ALL_SOUND_OFF", "RESET_ALL_CONTROLLER", "LOCAL_CONTROL",
+            "ALL_NOTE_OFF", "OMNI_OFF", "OMNI_ON", "MONO_ON", "POLY_ON", };
 
-    static String getControlChangeMessage(int data) {
-        switch (data) {
-            case BANK_SELECT_MSB:
-                return "BANK_SELECT_MSB";
-            case MODULATION:
-                return "MODULATION";
-            case BLESS_CONTROL:
-                return "BLESS_CONTROL";
-            case FOOT_CONTROL:
-                return "FOOT_CONTROL";
-            case PORTAMENTO_TIME:
-                return "PORTAMENTO_TIME";
-            case DATA_ENTRY_MSB:
-                return "DATA_ENTRY_MSB";
-            case MAIN_VOLUME:
-                return "MAIN_VOLUME";
-            case BALANCE_CONTROL:
-                return "BALANCE_CONTROL";
-            case PAN_POT:
-                return "PAN_POT";
-            case EXPRESSION:
-                return "EXPRESSION";
-            case GENERAL_CONTROL1:
-                return "GENERAL_CONTROL1";
-            case GENERAL_CONTROL2:
-                return "GENERAL_CONTROL2";
-            case GENERAL_CONTROL3:
-                return "GENERAL_CONTROL3";
-            case GENERAL_CONTROL4:
-                return "GENERAL_CONTROL4";
-            case BANK_SELECT_LSB:
-                return "BANK_SELECT_LSB";
-            case MODULATION_LSB:
-                return "MODULATION_LSB";
-            case BLESS_CONTROL_LSB:
-                return "BLESS_CONTROL_LSB";
-            case FOOT_CONTROL_LSB:
-                return "FOOT_CONTROL_LSB";
-            case PORTAMENTO_TIME_LSB:
-                return "PORTAMENTO_TIME_LSB";
-            case DATA_ENTRY_LSB:
-                return "DATA_ENTRY_LSB";
-            case VOLUME:
-                return "VOLUME";
-            case BALANCE:
-                return "BALANCE";
-            case GENERAL_CONTROL1_LSB:
-                return "GENERAL_CONTROL1_LSB";
-            case GENERAL_CONTROL2_LSB:
-                return "GENERAL_CONTROL2_LSB";
-            case GENERAL_CONTROL3_LSB:
-                return "GENERAL_CONTROL3_LSB";
-            case GENERAL_CONTROL4_LSB:
-                return "GENERAL_CONTROL4_LSB";
-            case DAMPER_REDAL:
-                return "DAMPER_REDAL";
-            case PORTAMENTO:
-                return "PORTAMENTO";
-            case SOSTENUTO:
-                return "SOSTENUTO";
-            case SOFT_PEDAL:
-                return "SOFT_PEDAL";
-            case FREEZE:
-                return "FREEZE";
-            case MEMORY_PATCH_SELECT:
-                return "MEMORY_PATCH_SELECT";
-            case HARMONIC_CONTENT:
-                return "HARMONIC_CONTENT";
-            case RELEASE_TIME:
-                return "RELEASE_TIME";
-            case ATTACK_TIME:
-                return "ATTACK_TIME";
-            case BRIGHTNESS:
-                return "BRIGHTNESS";
-            case DECAY_TIME:
-                return "DECAY_TIME";
-            case VIBRATE_RATE:
-                return "VIBRATE_RATE";
-            case VIBRATE_DEPTH:
-                return "VIBRATE_DEPTH";
-            case VIBRATE_DELAY:
-                return "VIBRATE_DELAY";
-            case PORTAMENTO_CONTROL:
-                return "PORTAMENTO_CONTROL";
-            case REVERB:
-                return "REVERB";
-            case TREMOLO_DEPTH:
-                return "TREMOLO_DEPTH";
-            case CHORUS:
-                return "CHORUS";
-            case DELAY_VARIATION:
-                return "DELAY_VARIATION";
-            case PHASER_DEPTH:
-                return "PHASER_DEPTH";
-            case DATA_INCREMENT:
-                return "DATA_INCREMENT";
-            case DATA_DECREMENT:
-                return "DATA_DECREMENT";
-            case NRPN_LSB:
-                return "NRPN_LSB";
-            case NRPN_MSB:
-                return "NRPN_MSB";
-            case RPN_LSB:
-                return "RPN_LSB";
-            case RPN_MSB:
-                return "RPN_MSB";
-            case ALL_SOUND_OFF:
-                return "ALL_SOUND_OFF";
-            case RESET_ALL_CONTROLLER:
-                return "RESET_ALL_CONTROLLER";
-            case LOCAL_CONTROL:
-                return "LOCAL_CONTROL";
-            case ALL_NOTE_OFF:
-                return "ALL_NOTE_OFF";
-            case OMNI_OFF:
-                return "OMNI_OFF";
-            case OMNI_ON:
-                return "OMNI_ON";
-            case MONO_ON:
-                return "MONO_ON";
-            case POLY_ON:
-                return "POLY_ON";
-            default:
-                return "";
-        }
+    public static String dataToIdent(int data) {
+        if (0 > data || data >= IDENTS.length)
+            return "";
+        return IDENTS[data];
     }
+
+    public static int identToData(String ident) {
+        for (int i = 0; i < IDENTS.length; i++)
+            if (IDENTS[i].equalsIgnoreCase(ident) == true)
+                return i;
+        return -1;
+    }
+
 }

@@ -10,7 +10,7 @@ import jmp.task.TaskOfSequence;
 import jmp.task.TaskOfTimer;
 import jmp.task.TaskOfUpdate;
 
-public class TaskManager extends AbstractManager implements IManager{
+public class TaskManager extends AbstractManager implements IManager {
 
     private TaskOfUpdate taskOfUpdate;
     private TaskOfTimer taskOfTimer;

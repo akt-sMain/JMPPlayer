@@ -18,6 +18,7 @@ import jlib.core.ISoundManager;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jlib.midi.IMidiEventListener;
+import jlib.midi.MidiByteMessage;
 import jlib.player.IPlayer;
 import jmp.JMPFlags;
 import jmp.player.MidiPlayer;
@@ -373,6 +374,10 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         return player.isSupportedExtension(extension);
     }
 
+    public boolean sendMidiMessage(byte[] data, long timeStamp) {
+        return sendMidiMessage(new MidiByteMessage(data), timeStamp);
+    }
+
     @Override
     public boolean sendMidiMessage(MidiMessage msg, long timeStamp) {
         if (getCurrentReciever() == null) {
@@ -436,7 +441,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     public void resetMidiEvent() {
         for (int i = 0; i < 16; i++) {
-            resetProgramChange(i); //プログラムチェンジリセット
+            resetProgramChange(i); // プログラムチェンジリセット
         }
     }
 
@@ -444,7 +449,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         try {
             JMPCore.getSoundManager().sendProgramChange(ch, 0, 0);
         }
-        catch (InvalidMidiDataException e1) {}
+        catch (InvalidMidiDataException e1) {
+        }
     }
 
     public String getPositionTimeString() {

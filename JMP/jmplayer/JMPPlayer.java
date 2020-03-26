@@ -126,7 +126,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     // ! ステータスカラー(Fail)
     public static final Color STATUS_COLOR_FAIL = Color.RED;
     // ! コントロールボタン背景色
-    //public static final Color CONTROL_BTN_BACKGROUND = Utility.convertCodeToHtmlColor("#888888");
+    // public static final Color CONTROL_BTN_BACKGROUND =
+    // Utility.convertCodeToHtmlColor("#888888");
 
     private static String s_currentFileName = "";
     private static long s_tmpSliderTick = -1;
@@ -163,6 +164,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JMenu mnExecuteBatFile;
     private JMenuItem mntmMidiMonitor;
     private JMenuItem addPluginMenuItem;
+    private JMenuItem mntmMidimessagesender;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -522,6 +524,20 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             }
         });
         configMenu.add(mntmMidiMonitor);
+
+        mntmMidimessagesender = new JMenuItem("MIDIメッセージセンダー");
+        mntmMidimessagesender.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                IJmpWindow win = JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_SENDER);
+                if (win.isWindowVisible() == true) {
+                    win.hideWindow();
+                }
+                else {
+                    win.showWindow();
+                }
+            }
+        });
+        configMenu.add(mntmMidimessagesender);
 
         lblDebugMenu = new JLabel("-- 開発者用メニュー --");
         lblDebugMenu.setHorizontalAlignment(SwingConstants.LEFT);

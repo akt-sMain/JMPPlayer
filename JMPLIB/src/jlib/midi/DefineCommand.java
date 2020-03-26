@@ -20,49 +20,31 @@ public class DefineCommand {
     public static final int STOP = 252;
     public static final int ACTIVE_SENSING = 254;
     public static final int RESET = 255;
+    public static final int _END = 0;
+    public static final String[] IDENTS = { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+            "", "NOTE_OFF", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "NOTE_ON", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "", "POLYPHONIC_KEY_PRESSURE", "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "CONTROL_CHANGE", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+            "PROGRAM_CHANGE", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "CHANNEL_PRESSURE", "", "",
+            "", "", "", "", "", "", "", "", "", "", "", "", "", "PITCH_BEND", "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "SYSEX_BEGIN", "MIDI_TIME_CODE", "SONG_POSITION", "SONG_SELECT", "", "", "TUNE_SELECT",
+            "SYSEX_END", "MIDI_CLOCK", "", "START", "CONTINUE", "STOP", "", "ACTIVE_SENSING", "RESET", };
 
-    static String getCommandMessage(int data) {
-        switch (data) {
-            case NOTE_OFF:
-                return "NOTE_OFF";
-            case NOTE_ON:
-                return "NOTE_ON";
-            case POLYPHONIC_KEY_PRESSURE:
-                return "POLYPHONIC_KEY_PRESSURE";
-            case CONTROL_CHANGE:
-                return "CONTROL_CHANGE";
-            case PROGRAM_CHANGE:
-                return "PROGRAM_CHANGE";
-            case CHANNEL_PRESSURE:
-                return "CHANNEL_PRESSURE";
-            case PITCH_BEND:
-                return "PITCH_BEND";
-            case SYSEX_BEGIN:
-                return "SYSEX_BEGIN";
-            case MIDI_TIME_CODE:
-                return "MIDI_TIME_CODE";
-            case SONG_POSITION:
-                return "SONG_POSITION";
-            case SONG_SELECT:
-                return "SONG_SELECT";
-            case TUNE_SELECT:
-                return "TUNE_SELECT";
-            case SYSEX_END:
-                return "SYSEX_END";
-            case MIDI_CLOCK:
-                return "MIDI_CLOCK";
-            case START:
-                return "START";
-            case CONTINUE:
-                return "CONTINUE";
-            case STOP:
-                return "STOP";
-            case ACTIVE_SENSING:
-                return "ACTIVE_SENSING";
-            case RESET:
-                return "RESET";
-            default:
-                return "";
-        }
+    public static String dataToIdent(int data) {
+        if (0 > data || data >= IDENTS.length)
+            return "";
+        return IDENTS[data];
     }
+
+    public static int identToData(String ident) {
+        for (int i = 0; i < IDENTS.length; i++)
+            if (IDENTS[i].equalsIgnoreCase(ident) == true)
+                return i;
+        return -1;
+    }
+
 }

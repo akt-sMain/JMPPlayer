@@ -15,7 +15,7 @@ public interface IJMPComponentUI {
             return Utility.convertCodeToHtmlColor(colorStr);
         }
         else {
-            return Color.WHITE;
+            return Utility.convertCodeToHtmlColor("#404040");
         }
     }
 

@@ -2,7 +2,7 @@ package jmp.convert.musicxml;
 
 import function.Utility;
 
-public class MusicXMLNote extends MusicXMLElement{
+public class MusicXMLNote extends MusicXMLElement {
     /* <rest> */
     private boolean isRest = false;
 
@@ -40,6 +40,7 @@ public class MusicXMLNote extends MusicXMLElement{
     public String getOctave() {
         return octave;
     }
+
     public int getOctaveInt() {
         return Utility.tryParseInt(getOctave(), 0);
     }
@@ -119,8 +120,8 @@ public class MusicXMLNote extends MusicXMLElement{
             int res = 0;
             String accidental = getAccidental();
             if (accidental.isEmpty() == false) {
-//                res += Utility.getContainsStrCount(accidental, "sharp");
-//                res -= Utility.getContainsStrCount(accidental, "flat");
+                // res += Utility.getContainsStrCount(accidental, "sharp");
+                // res -= Utility.getContainsStrCount(accidental, "flat");
             }
             return res;
         }

@@ -1,5 +1,8 @@
 package jlib.midi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * MIDIメッセージバイト定義
  *
@@ -7,6 +10,29 @@ package jlib.midi;
  *
  */
 public class MidiByte {
+
+    private static List<String> cloneIdentList(String[] idents, boolean deleteBlank) {
+        List<String> ret = new ArrayList<String>();
+        for (String ident : idents) {
+            if (deleteBlank == true && ident.isEmpty() == true) {
+                continue;
+            }
+            ret.add(ident);
+        }
+        return ret;
+    }
+
+    public static List<String> cloneCommandIdentList(boolean deleteBlank) {
+        return cloneIdentList(DefineCommand.IDENTS, deleteBlank);
+    }
+
+    public static List<String> cloneControlChangeIdentList(boolean deleteBlank) {
+        return cloneIdentList(DefineControlChange.IDENTS, deleteBlank);
+    }
+
+    public static List<String> cloneNoteNumberIdentList(boolean deleteBlank) {
+        return cloneIdentList(DefineNoteNumberGM.IDENTS, deleteBlank);
+    }
 
     /**
      * ステータスバイトがチャンネルメッセージか
@@ -64,13 +90,24 @@ public class MidiByte {
         int command = (statusByte & 0xf0);
         if (command < 0xf0) {
             // チャンネルメッセージ
-            res = DefineCommand.getCommandMessage(command);
+            res = DefineCommand.dataToIdent(command);
         }
         else {
             // システムメッセージ
-            res = DefineCommand.getCommandMessage(statusByte);
+            res = DefineCommand.dataToIdent(statusByte);
         }
         return res;
+    }
+
+    /**
+     * コマンド文字列からステータスバイトに変換する
+     *
+     * @param ident
+     *            コマンド文字列
+     * @return ステータスバイト
+     */
+    public static int convertChannelCommandStringToByte(String ident) {
+        return DefineCommand.identToData(ident);
     }
 
     /**
@@ -81,7 +118,11 @@ public class MidiByte {
      * @return コントロールチェンジ文字列
      */
     public static String convertByteToControlChangeString(int data1Byte) {
-        return DefineControlChange.getControlChangeMessage(data1Byte);
+        return DefineControlChange.dataToIdent(data1Byte);
+    }
+
+    public static int convertControlChangeStringToByte(String ident) {
+        return DefineControlChange.identToData(ident);
     }
 
     /**
@@ -92,7 +133,11 @@ public class MidiByte {
      * @return ノート情報文字列
      */
     public static String convertByteToNoteString(int data1Byte) {
-        return DefineNoteNumberGM.getNoteMessage(data1Byte);
+        return DefineNoteNumberGM.dataToIdent(data1Byte);
+    }
+
+    public static int convertNoteStringToByte(String ident) {
+        return DefineNoteNumberGM.identToData(ident);
     }
 
     /**

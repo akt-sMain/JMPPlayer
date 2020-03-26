@@ -7,6 +7,7 @@ import javax.swing.JMenuItem;
 import jlib.core.IWindowManager;
 import jlib.gui.IJmpWindow;
 import jlib.plugin.IPlugin;
+import jmp.gui.MidiDataTransportDialog;
 import jmp.gui.MidiMessageMonitor;
 import jmp.gui.WindowDatabase;
 
@@ -17,8 +18,9 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     public static final String WINDOW_NAME_HISTORY = "HISTORY";
     public static final String WINDOW_NAME_MIDI_SETUP = "MIDI_SETUP";
     public static final String WINDOW_NAME_MIDI_MONITOR = "MIDI_MONITOR";
+    public static final String WINDOW_NAME_MIDI_SENDER = "MIDI_SENDER";
     public static final String[] WINDOW_NAMELIST = { WINDOW_NAME_MAIN, WINDOW_NAME_FILE_LIST, WINDOW_NAME_HISTORY,
-            WINDOW_NAME_MIDI_SETUP, WINDOW_NAME_MIDI_MONITOR };
+            WINDOW_NAME_MIDI_SETUP, WINDOW_NAME_MIDI_MONITOR, WINDOW_NAME_MIDI_SENDER };
 
     private WindowDatabase database = null;
 
@@ -37,6 +39,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
 
         // MIDIチャンネルモニター作成
         new MidiMessageMonitor();
+        new MidiDataTransportDialog();
 
         return result;
     }

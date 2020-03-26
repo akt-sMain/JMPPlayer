@@ -88,7 +88,7 @@ public class ResourceManager extends AbstractManager implements IManager {
         }
 
         if (r instanceof ImageResource) {
-            ImageResource imgr = (ImageResource)r;
+            ImageResource imgr = (ImageResource) r;
             return imgr.getImage();
         }
         return null;
