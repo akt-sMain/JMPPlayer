@@ -3,7 +3,7 @@ package jmp;
 /**
  * アプリケーション全体で管理するフラグ
  *
- * @author akkut
+ * @author akt
  *
  */
 public class JMPFlags {
@@ -33,5 +33,8 @@ public class JMPFlags {
 
     /** 起動時にファイルロードするか */
     public static boolean RequestFileLoadFlag = false;
+
+    /** 非同期Midiパケットを使用するか */
+    public static boolean UseUnsynchronizedMidiPacket = false;
 
 }

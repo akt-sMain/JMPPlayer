@@ -9,6 +9,7 @@ import javax.sound.midi.MidiMessage;
 
 import function.Utility;
 import jlib.midi.IMidiEventListener;
+import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
 import jmp.core.WindowManager;
@@ -65,9 +66,19 @@ public class TaskOfMidiEvent extends Thread implements ITask {
     }
 
     public void add(MidiMessage message, long timeStamp, short senderType) {
+
+        JmpMidiPacket packet;
+        if (JMPFlags.UseUnsynchronizedMidiPacket == true) {
+            // 非同期にするため、MidiMessageをクローンする
+            packet = new JmpMidiPacket((MidiMessage)message.clone(), timeStamp, senderType);
+        }
+        else {
+            packet = new JmpMidiPacket(message, timeStamp, senderType);
+        }
+
         synchronized (stack) {
             // プラグインに送信するパケットを発行
-            stack.add(new JmpMidiPacket(message, timeStamp, senderType));
+            stack.add(packet);
         }
     }
 
