@@ -25,8 +25,10 @@ import function.Utility;
 import jmp.ConfigDatabase;
 import jmp.JMPFlags;
 import jmp.core.JMPCore;
+import jmp.core.LanguageManager;
 import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
+import jmp.lang.DefineLanguage.LangID;
 import jmp.player.MidiPlayer;
 
 public class SelectSynthsizerDialog extends JMPDialog {
@@ -270,6 +272,14 @@ public class SelectSynthsizerDialog extends JMPDialog {
     }
 
     @Override
+    public void setVisible(boolean b) {
+        if (b == true) {
+            updateLanguage();
+        }
+        super.setVisible(b);
+    }
+
+    @Override
     public void showWindow() {
         start();
     }
@@ -442,5 +452,13 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
     public void setCommitListener(SelectSynthsizerDialogListener commitListener) {
         this.commitListener = commitListener;
+    }
+
+    @Override
+    public void updateLanguage() {
+        super.updateLanguage();
+
+        LanguageManager lm = JMPCore.getLanguageManager();
+        setTitle(lm.getLanguageStr(LangID.MIDI_device_settings));
     }
 }

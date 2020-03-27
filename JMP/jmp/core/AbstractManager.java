@@ -37,6 +37,20 @@ public abstract class AbstractManager implements IManager {
         System.out.println(msg);
     }
 
+    static boolean isFinishedAllInitialize () {
+        for (AbstractManager am : managers) {
+            if (am.getPriority() <= INVALID_PRIORITY) {
+                // INVALID_PRIORITY は除去
+                continue;
+            }
+
+            if (am.isFinishedInitialize() == false) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     static boolean init() {
         boolean result = true;
         consolePrintln("## CORE initializing ##");
@@ -150,6 +164,10 @@ public abstract class AbstractManager implements IManager {
             return false;
         }
         return true;
+    }
+
+    public boolean isFinishedInitialize () {
+        return initializeFlag;
     }
 
 }

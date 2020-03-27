@@ -45,9 +45,11 @@ import jmp.ConfigDatabase;
 import jmp.JMPFlags;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
+import jmp.core.LanguageManager;
 import jmp.core.WindowManager;
 import jmp.gui.ui.FileListTableModel;
 import jmp.gui.ui.JMPFrame;
+import jmp.lang.DefineLanguage.LangID;
 import jmp.player.PlayerAccessor;
 
 public class MidiFileListDialog extends JMPFrame {
@@ -93,11 +95,17 @@ public class MidiFileListDialog extends JMPFrame {
         midiFileList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                Point p = e.getPoint();
                 if (e.getClickCount() == 2) {
-                    Point p = e.getPoint();
                     int row = midiFileList.rowAtPoint(p);
                     if (row >= 0) {
                         executeCell(row);
+                    }
+                }
+                else {
+                    int row = midiFileList.rowAtPoint(p);
+                    if (row >= 0) {
+                        updateCellInfo(row);
                     }
                 }
             }
@@ -131,11 +139,11 @@ public class MidiFileListDialog extends JMPFrame {
         playList.setForeground(Color.WHITE);
         playList.setBackground(Color.BLACK);
         scrollPane.setViewportView(playList);
-        JButton btnExproler = new JButton("エクスプローラで開く");
-        btnExproler.setBounds(5, 439, 121, 21);
+        btnExproler = new JButton("エクスプローラで開く");
+        btnExproler.setBounds(5, 439, 146, 21);
         contentPanel.add(btnExproler);
         {
-            JButton addButton = new JButton("追加");
+            addButton = new JButton("追加");
             addButton.setBounds(408, 210, 58, 21);
             contentPanel.add(addButton);
             addButton.addActionListener(new ActionListener() {
@@ -160,7 +168,7 @@ public class MidiFileListDialog extends JMPFrame {
             getRootPane().setDefaultButton(addButton);
         }
 
-        JButton btnLoad = new JButton("再生");
+        btnLoad = new JButton("再生");
         btnLoad.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int index = JMPCore.getSoundManager().getPlayList().getSelectedIndex();
@@ -173,7 +181,7 @@ public class MidiFileListDialog extends JMPFrame {
         btnLoad.setBounds(751, 439, 91, 21);
         contentPanel.add(btnLoad);
 
-        JButton buttonClear = new JButton("クリア");
+        buttonClear = new JButton("クリア");
         buttonClear.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 DefaultListModel<String> m = (DefaultListModel<String>) playList.getModel();
@@ -183,7 +191,7 @@ public class MidiFileListDialog extends JMPFrame {
         buttonClear.setBounds(545, 439, 91, 21);
         contentPanel.add(buttonClear);
 
-        JButton buttonDelete = new JButton("削除");
+        buttonDelete = new JButton("削除");
         buttonDelete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JList<String> list = JMPCore.getSoundManager().getPlayList();
@@ -199,13 +207,13 @@ public class MidiFileListDialog extends JMPFrame {
         buttonDelete.setBounds(648, 439, 91, 21);
         contentPanel.add(buttonDelete);
 
-        JButton btnDirectLoad = new JButton("開く or 再生");
+        btnDirectLoad = new JButton("開く or 再生");
         btnDirectLoad.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 executeSelected();
             }
         });
-        btnDirectLoad.setBounds(291, 439, 105, 21);
+        btnDirectLoad.setBounds(305, 439, 91, 21);
         contentPanel.add(btnDirectLoad);
 
         lblPath = new JLabel("PATH");
@@ -239,11 +247,11 @@ public class MidiFileListDialog extends JMPFrame {
         btnBack.setBounds(398, 8, 39, 21);
         contentPanel.add(btnBack);
 
-        JLabel label = new JLabel("連続再生リスト");
-        label.setForeground(Color.WHITE);
-        label.setFont(new Font("MS UI Gothic", Font.BOLD, 15));
-        label.setBounds(478, 16, 133, 21);
-        contentPanel.add(label);
+        labelContinuePlayback = new JLabel("連続再生リスト");
+        labelContinuePlayback.setForeground(Color.WHITE);
+        labelContinuePlayback.setFont(new Font("MS UI Gothic", Font.BOLD, 15));
+        labelContinuePlayback.setBounds(478, 16, 252, 21);
+        contentPanel.add(labelContinuePlayback);
 
         JPanel panel = new JmpQuickLaunch();
         panel.setBounds(742, 8, 100, 20);
@@ -294,6 +302,24 @@ public class MidiFileListDialog extends JMPFrame {
             }
         }
         super.setVisible(b);
+    }
+
+    public void updateCellInfo(int row) {
+        if (midiFileList != null) {
+            if (row >= 0) {
+                String name = (String) midiFileList.getModel().getValueAt(row, COLUMN_NAME);
+                if (midiFileMap.containsKey(name) == true) {
+                    LanguageManager lm = JMPCore.getLanguageManager();
+                    File midiFile = midiFileMap.get(name);
+                    if (midiFile.isDirectory() == true) {
+                        btnDirectLoad.setText(lm.getLanguageStr(LangID.Open));
+                    }
+                    else {
+                        btnDirectLoad.setText(lm.getLanguageStr(LangID.Playback));
+                    }
+                }
+            }
+        }
     }
 
     public void executeCell(int row) {
@@ -522,6 +548,13 @@ public class MidiFileListDialog extends JMPFrame {
 
     private static final String NODE_COLOR = "yellow";
     private static final String SEP_COLOR = "gray";
+    private JLabel labelContinuePlayback;
+    private JButton addButton;
+    private JButton btnExproler;
+    private JButton btnDirectLoad;
+    private JButton buttonClear;
+    private JButton buttonDelete;
+    private JButton btnLoad;
 
     protected void setCurrentPathText(String path) {
         File file = new File(path);
@@ -542,6 +575,22 @@ public class MidiFileListDialog extends JMPFrame {
             text += String.format(fontFormat, NODE_COLOR, node);
         }
         lblPath.setText(String.format(htmlFormat, text));
+    }
+
+    @Override
+    public void updateLanguage() {
+        LanguageManager lm = JMPCore.getLanguageManager();
+
+        super.updateLanguage();
+        setTitle(lm.getLanguageStr(LangID.Playlist));
+        labelContinuePlayback.setText(lm.getLanguageStr(LangID.Continuous_playback));
+        btnDirectLoad.setText(lm.getLanguageStr(LangID.Playback));
+        btnExproler.setText(lm.getLanguageStr(LangID.Open_with_Explorer));
+        addButton.setText(lm.getLanguageStr(LangID.Add));
+
+        buttonClear.setText(lm.getLanguageStr(LangID.Clear));
+        buttonDelete.setText(lm.getLanguageStr(LangID.Remove));
+        btnLoad.setText(lm.getLanguageStr(LangID.Playback));
     }
 
     /**

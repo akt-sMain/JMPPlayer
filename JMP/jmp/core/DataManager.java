@@ -26,10 +26,9 @@ public class DataManager extends AbstractManager implements IDataManager {
 
     private DefaultListModel<String> historyModel = null;
     private JList<String> history = null;
-    private HistoryDialog historyDialog = null;
 
     public HistoryDialog getHistoryDialog() {
-        return historyDialog;
+        return (HistoryDialog)JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_HISTORY);
     }
 
     // 固有変数
@@ -51,7 +50,6 @@ public class DataManager extends AbstractManager implements IDataManager {
 
         historyModel = new DefaultListModel<String>();
         history = new JList<String>(historyModel);
-        historyDialog = new HistoryDialog();
         if (database == null) {
             database = new ConfigDatabase();
             readingConfigFile();
@@ -69,12 +67,10 @@ public class DataManager extends AbstractManager implements IDataManager {
         if (initializeFlag == false) {
             return false;
         }
-        historyDialog.setVisible(false);
         if (makedConfigDatabaseFlag == false) {
             outputConfigFile();
         }
         outputHistoryFile();
-        historyDialog.dispose();
         return true;
     }
 
@@ -201,5 +197,17 @@ public class DataManager extends AbstractManager implements IDataManager {
 
     public void setTranspose(int transpose) {
         this.transpose = transpose;
+    }
+
+    public int getLanguage() {
+        String sValue = getConfigParam(ConfigDatabase.CFG_KEY_LANGUAGE);
+        return Utility.tryParseInt(sValue, 0);
+    }
+
+    public void setLanguage(int language) {
+        setConfigParam(ConfigDatabase.CFG_KEY_LANGUAGE, String.valueOf(language));
+
+        // 言語更新
+        JMPCore.getWindowManager().updateLanguage();
     }
 }

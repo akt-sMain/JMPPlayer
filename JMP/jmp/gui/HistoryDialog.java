@@ -14,13 +14,18 @@ import javax.swing.border.EmptyBorder;
 
 import jmp.JMPFlags;
 import jmp.core.JMPCore;
+import jmp.core.LanguageManager;
 import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
+import jmp.lang.DefineLanguage.LangID;
 
 public class HistoryDialog extends JMPDialog {
 
     private final JPanel contentPanel = new JPanel();
     private JList<String> list;
+    private JButton buttonClear;
+    private JButton playButton;
+    private JButton cancelButton;
 
     /**
      * Create the dialog.
@@ -57,7 +62,7 @@ public class HistoryDialog extends JMPDialog {
             buttonPane.setBackground(getJmpBackColor());
             getContentPane().add(buttonPane, BorderLayout.SOUTH);
             {
-                JButton playButton = new JButton("再生");
+                playButton = new JButton("再生");
                 playButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         String item = list.getSelectedValue();
@@ -72,7 +77,7 @@ public class HistoryDialog extends JMPDialog {
                     }
                 });
                 {
-                    JButton buttonClear = new JButton("履歴クリア");
+                    buttonClear = new JButton("履歴クリア");
                     buttonClear.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             JMPCore.getDataManager().clearHistory();
@@ -85,7 +90,7 @@ public class HistoryDialog extends JMPDialog {
                 getRootPane().setDefaultButton(playButton);
             }
             {
-                JButton cancelButton = new JButton("閉じる");
+                cancelButton = new JButton("閉じる");
                 cancelButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         setVisible(false);
@@ -104,6 +109,17 @@ public class HistoryDialog extends JMPDialog {
 
     public void update() {
         repaint();
+    }
+
+    @Override
+    public void updateLanguage() {
+        super.updateLanguage();
+
+        LanguageManager lm = JMPCore.getLanguageManager();
+        setTitle(lm.getLanguageStr(LangID.History));
+        buttonClear.setText(lm.getLanguageStr(LangID.Clear));
+        playButton.setText(lm.getLanguageStr(LangID.Playback));
+        cancelButton.setText(lm.getLanguageStr(LangID.Close));
     }
 
 }

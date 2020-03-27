@@ -92,17 +92,6 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         // volumeCtrl = null;
         // }
 
-        /* プレイヤーロード */
-        try {
-            if (PlayerAccessor.getInstance().open() == false) {
-                return false;
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-
         if (initializeFlag == false) {
             initializeFlag = true;
         }

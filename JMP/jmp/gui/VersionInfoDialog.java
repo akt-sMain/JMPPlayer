@@ -12,11 +12,15 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import jmp.core.JMPCore;
+import jmp.core.LanguageManager;
+import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
+import jmp.lang.DefineLanguage.LangID;
 
 public class VersionInfoDialog extends JMPDialog {
 
-    private LicenseReaderDialog licenseDialog = null;
+    private JButton btnLicense;
+    private JButton btnClose;
 
     public VersionInfoDialog() {
         super();
@@ -25,7 +29,7 @@ public class VersionInfoDialog extends JMPDialog {
         setTitle("Version");
         getContentPane().setLayout(null);
 
-        JButton btnClose = new JButton("Close");
+        btnClose = new JButton("Close");
         btnClose.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 close();
@@ -64,10 +68,11 @@ public class VersionInfoDialog extends JMPDialog {
         String verStr = String.format(": %s", JMPCore.APPLICATION_VERSION);
         lblVerDetail.setText(verStr);
 
-        JButton btnLicense = new JButton("License");
+        btnLicense = new JButton("License");
         btnLicense.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                licenseDialog.start();
+                LicenseReaderDialog dialog = (LicenseReaderDialog)JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE);
+                dialog.start();
             }
         });
         btnLicense.setBounds(149, 105, 91, 21);
@@ -95,8 +100,6 @@ public class VersionInfoDialog extends JMPDialog {
         labelBuild.setFont(UIManager.getFont("Menu.font"));
         labelBuild.setBounds(99, 61, 64, 13);
         getContentPane().add(labelBuild);
-
-        licenseDialog = JMPCore.getSystemManager().getLicenseDialog();
     }
 
     public void start() {
@@ -105,5 +108,16 @@ public class VersionInfoDialog extends JMPDialog {
 
     public void close() {
         setVisible(false);
+    }
+
+    @Override
+    public void updateLanguage() {
+        super.updateLanguage();
+
+        LanguageManager lm = JMPCore.getLanguageManager();
+
+        setTitle(lm.getLanguageStr(LangID.Version));
+        btnLicense.setText(lm.getLanguageStr(LangID.License));
+        btnClose.setText(lm.getLanguageStr(LangID.Close));
     }
 }

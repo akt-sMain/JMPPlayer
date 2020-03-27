@@ -76,6 +76,19 @@ public class PluginManager extends AbstractManager {
 
     protected boolean initFunc() {
 
+        super.initFunc();
+        return true;
+    }
+
+    protected boolean endFunc() {
+        super.endFunc();
+
+        // プラグイン終了処理
+        exit();
+        return true;
+    }
+
+    public void startupPluginInstance() {
         // プラグイン読み込み
         if (JMPCore.isEnableStandAlonePlugin() == true) {
             // スタンドアロンプラグインを登録
@@ -109,14 +122,6 @@ public class PluginManager extends AbstractManager {
 
         // プラグイン初期化
         initialize();
-        return true;
-    }
-
-    protected boolean endFunc() {
-
-        // プラグイン終了処理
-        exit();
-        return true;
     }
 
     public boolean readingPluginZipPackage(String path) {

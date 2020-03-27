@@ -33,9 +33,7 @@ public class ResourceManager extends AbstractManager implements IManager {
 
     @Override
     protected boolean initFunc() {
-        if (initializeFlag == false) {
-            initializeFlag = true;
-        }
+        super.initFunc();
 
         // アイコン作成
         jmpImageIcon = createJmpIcon();
@@ -75,9 +73,7 @@ public class ResourceManager extends AbstractManager implements IManager {
 
     @Override
     protected boolean endFunc() {
-        if (initializeFlag == false) {
-            return false;
-        }
+        super.endFunc();
         return true;
     }
 

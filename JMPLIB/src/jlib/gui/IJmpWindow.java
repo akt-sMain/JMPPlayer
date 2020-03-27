@@ -15,4 +15,10 @@ public interface IJmpWindow {
      * ウィンドウ表示/非表示化
      */
     abstract boolean isWindowVisible();
+
+    /*
+     * 言語更新イベント
+     */
+    default void updateLanguage() {
+    };
 }

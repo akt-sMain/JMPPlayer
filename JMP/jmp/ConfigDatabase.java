@@ -18,6 +18,7 @@ public class ConfigDatabase {
     public static final String CFG_KEY_AUTOPLAY = "AUTOPLAY";
     public static final String CFG_KEY_LOOPPLAY = "LOOPPLAY";
     public static final String CFG_KEY_SHOW_STARTUP_DEVICE_SETUP = "SHOW_STARTUP_DEVICE_SETUP";
+    public static final String CFG_KEY_LANGUAGE = "LANGUAGE";
 
     public ConfigDatabase() {
         database = new HashMap<String, String>();
@@ -33,6 +34,7 @@ public class ConfigDatabase {
         database.put(CFG_KEY_AUTOPLAY, "FALSE");
         database.put(CFG_KEY_LOOPPLAY, "FALSE");
         database.put(CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, "TRUE");
+        database.put(CFG_KEY_LANGUAGE, "0");
     }
 
     public void setConfigParam(String key, String value) {

@@ -214,14 +214,40 @@ public class JMPLoader {
         // 管理クラス初期化処理
         boolean result = JMPCore.initFunc();
 
+        if (result == true) {
+            // アクティベート
+            if (JMPCore.getSystemManager().executeCheckActivate() == false) {
+                result = false;
+            }
+        }
+
+        if (result == true) {
+            /* プレイヤーロード */
+            try {
+                if (PlayerAccessor.getInstance().open() == false) {
+                    result = false;
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                result = false;
+            }
+        }
+
         /* 起動準備 */
         if (result == true) {
+
+            // プラグイン準備
+            JMPCore.getPluginManager().startupPluginInstance();
 
             // メインウィンドウ登録
             JMPPlayer win = new JMPPlayer();
             win.initializeSetting();
             win.setVisible(false);
             JMPCore.getSystemManager().registerMainWindow(win);
+
+            // 言語更新
+            JMPCore.getWindowManager().updateLanguage();
 
             // 起動構成
             if (JMPCore.isEnableStandAlonePlugin() == false) {

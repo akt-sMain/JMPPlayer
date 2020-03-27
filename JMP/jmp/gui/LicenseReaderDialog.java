@@ -23,7 +23,11 @@ import javax.swing.border.EmptyBorder;
 import function.Platform;
 import function.Utility;
 import jmp.JMPFlags;
+import jmp.core.JMPCore;
+import jmp.core.LanguageManager;
+import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
+import jmp.lang.DefineLanguage.LangID;
 
 public class LicenseReaderDialog extends JMPDialog {
 
@@ -48,16 +52,21 @@ public class LicenseReaderDialog extends JMPDialog {
         setTitle("License");
         setBounds(100, 100, 725, 550);
         getContentPane().setLayout(new BorderLayout());
+
+        JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_LICENSE, this);
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(null);
+        rdbtnReject.setForeground(Color.WHITE);
 
         rdbtnReject.setSelected(true);
         rdbtnReject.setBounds(570, 442, 113, 21);
         contentPanel.add(rdbtnReject);
+        rdbtnAccept.setForeground(Color.WHITE);
 
         rdbtnAccept.setBounds(453, 442, 113, 21);
         contentPanel.add(rdbtnAccept);
+        labelAccept.setForeground(Color.WHITE);
 
         labelAccept.setBounds(408, 423, 160, 13);
         contentPanel.add(labelAccept);
@@ -80,7 +89,7 @@ public class LicenseReaderDialog extends JMPDialog {
         btnGroupAcc.add(rdbtnAccept);
         btnGroupAcc.add(rdbtnReject);
 
-        labelClipMes.setForeground(Color.BLUE);
+        labelClipMes.setForeground(new Color(0, 191, 255));
         labelClipMes.setFont(new Font("MS UI Gothic", Font.BOLD, 12));
         labelClipMes.setBounds(12, 456, 251, 13);
         labelClipMes.setVisible(false);
@@ -112,6 +121,8 @@ public class LicenseReaderDialog extends JMPDialog {
         }
 
         contentPanel.setBackground(getJmpBackColor());
+        rdbtnReject.setBackground(getJmpBackColor());
+        rdbtnAccept.setBackground(getJmpBackColor());
     }
 
     public void start() {
@@ -162,5 +173,18 @@ public class LicenseReaderDialog extends JMPDialog {
 
     public void close() {
         setVisible(false);
+    }
+
+    @Override
+    public void updateLanguage() {
+        super.updateLanguage();
+        LanguageManager lm = JMPCore.getLanguageManager();
+
+        setTitle(lm.getLanguageStr(LangID.License));
+        labelAccept.setText(lm.getLanguageStr(LangID.Above_conditions));
+        rdbtnReject.setText(lm.getLanguageStr(LangID.Reject));
+        rdbtnAccept.setText(lm.getLanguageStr(LangID.Accept));
+        labelClipMes.setText(lm.getLanguageStr(LangID.Copied_to_clipboard));
+        buttonCopy.setText(lm.getLanguageStr(LangID.Original_copy));
     }
 }

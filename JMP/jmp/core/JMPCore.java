@@ -19,10 +19,10 @@ public class JMPCore {
 
     /** 初期化・終了実行順位 */
     private static final int MANAGER_PRIORITY_RESOUCE = 0;
-    private static final int MANAGER_PRIORITY_LANG = AbstractManager.INVALID_PRIORITY; // 未実装
+    private static final int MANAGER_PRIORITY_LANG = 5;
     private static final int MANAGER_PRIORITY_SYSTEM = 10;
-    private static final int MANAGER_PRIORITY_WINDOW = 20;
-    private static final int MANAGER_PRIORITY_DATA = 30;
+    private static final int MANAGER_PRIORITY_DATA = 20;
+    private static final int MANAGER_PRIORITY_WINDOW = 30;
     private static final int MANAGER_PRIORITY_SOUND = 40;
     private static final int MANAGER_PRIORITY_PLUGIN = 50;
     private static final int MANAGER_PRIORITY_TASK = 60;
@@ -46,6 +46,10 @@ public class JMPCore {
         boolean result = true;
         result = AbstractManager.end();
         return result;
+    }
+
+    public static boolean isFinishedInitialize() {
+        return AbstractManager.isFinishedAllInitialize();
     }
 
     public static boolean isEnableStandAlonePlugin() {

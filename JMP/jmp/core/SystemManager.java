@@ -134,9 +134,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     /** 共通レジスタ */
     private CommonRegister cReg = null;
 
-    /** ライセンス表示ダイアログ */
-    private LicenseReaderDialog licenseDialog = null;
-
     SystemManager(int pri) {
         super(pri, "system");
     }
@@ -183,32 +180,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             jmsDir.mkdirs();
         }
 
-        /* ライセンス確認ダイアログのインスタンス生成 */
-        licenseDialog = new LicenseReaderDialog();
-
-        /* アクティベート状況の確認 */
-        if (Utility.isExsistFile(getActivateFileLocationPath()) == true) {
-            JMPFlags.ActivateFlag = true;
-        }
-        else {
-            JMPFlags.ActivateFlag = false;
-        }
-
-        /* スタンドアロンモード or デバッグモードの際はアクティベートする */
-        if (JMPFlags.DebugMode == true || JMPCore.isEnableStandAlonePlugin() == true) {
-            JMPFlags.ActivateFlag = true;
-        }
-
-        /* ライセンス確認 */
-        if (JMPFlags.ActivateFlag == false) {
-            getLicenseDialog().start();
-        }
-
-        if (JMPFlags.ActivateFlag == false) {
-            // アクティベートされなかった場合は終了する
-            result = false;
-        }
-
         if (initializeFlag == false) {
             initializeFlag = true;
         }
@@ -243,9 +214,36 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         return true;
     }
 
-    public LicenseReaderDialog getLicenseDialog() {
-        return licenseDialog;
-    };
+    public boolean executeCheckActivate() {
+        boolean result = true;
+
+        /* ライセンス確認ダイアログのインスタンス生成 */
+        LicenseReaderDialog licenseDialog = (LicenseReaderDialog)JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE);
+
+        /* アクティベート状況の確認 */
+        if (Utility.isExsistFile(getActivateFileLocationPath()) == true) {
+            JMPFlags.ActivateFlag = true;
+        }
+        else {
+            JMPFlags.ActivateFlag = false;
+        }
+
+        /* スタンドアロンモード or デバッグモードの際はアクティベートする */
+        if (JMPFlags.DebugMode == true || JMPCore.isEnableStandAlonePlugin() == true) {
+            JMPFlags.ActivateFlag = true;
+        }
+
+        /* ライセンス確認 */
+        if (JMPFlags.ActivateFlag == false) {
+            licenseDialog.start();
+        }
+
+        if (JMPFlags.ActivateFlag == false) {
+            // アクティベートされなかった場合は終了する
+            result = false;
+        }
+        return result;
+    }
 
     public boolean setCommonRegisterValue(String key, String value) {
         if (cReg == null) {

@@ -25,9 +25,11 @@ import function.Utility;
 import jlib.midi.IMidiEventListener;
 import jlib.midi.MidiByte;
 import jmp.core.JMPCore;
+import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
 import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
+import jmp.lang.DefineLanguage.LangID;
 
 public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener {
 
@@ -59,6 +61,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
     private JLabel lblData1;
     private JLabel lblCommand;
     private JLabel lblStack;
+    private JButton btnClear;
 
     public MidiMessageMonitor() {
         super();
@@ -135,7 +138,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
                 buttonPane.add(panel);
                 panel.setLayout(new BorderLayout(0, 0));
                 {
-                    JButton btnClear = new JButton("Clear");
+                    btnClear = new JButton("Clear");
                     btnClear.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             clearMidiMessage();
@@ -350,5 +353,14 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
             }
             lblStack.repaint();
         }
+    }
+
+    @Override
+    public void updateLanguage() {
+        super.updateLanguage();
+
+        LanguageManager lm = JMPCore.getLanguageManager();
+        setTitle(lm.getLanguageStr(LangID.MIDI_message_monitor));
+        btnClear.setText(lm.getLanguageStr(LangID.Clear));
     }
 }

@@ -7,8 +7,11 @@ import javax.swing.JMenuItem;
 import jlib.core.IWindowManager;
 import jlib.gui.IJmpWindow;
 import jlib.plugin.IPlugin;
+import jmp.gui.HistoryDialog;
+import jmp.gui.LicenseReaderDialog;
 import jmp.gui.MidiDataTransportDialog;
 import jmp.gui.MidiMessageMonitor;
+import jmp.gui.SelectLanguageDialog;
 import jmp.gui.WindowDatabase;
 
 public class WindowManager extends AbstractManager implements IWindowManager {
@@ -19,8 +22,11 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     public static final String WINDOW_NAME_MIDI_SETUP = "MIDI_SETUP";
     public static final String WINDOW_NAME_MIDI_MONITOR = "MIDI_MONITOR";
     public static final String WINDOW_NAME_MIDI_SENDER = "MIDI_SENDER";
+    public static final String WINDOW_NAME_LANGUAGE = "LANGUAGE";
+    public static final String WINDOW_NAME_LICENSE = "LICENSE";
     public static final String[] WINDOW_NAMELIST = { WINDOW_NAME_MAIN, WINDOW_NAME_FILE_LIST, WINDOW_NAME_HISTORY,
-            WINDOW_NAME_MIDI_SETUP, WINDOW_NAME_MIDI_MONITOR, WINDOW_NAME_MIDI_SENDER };
+            WINDOW_NAME_MIDI_SETUP, WINDOW_NAME_MIDI_MONITOR, WINDOW_NAME_MIDI_SENDER, WINDOW_NAME_LANGUAGE,
+            WINDOW_NAME_LICENSE };
 
     private WindowDatabase database = null;
 
@@ -37,9 +43,12 @@ public class WindowManager extends AbstractManager implements IWindowManager {
             initializeFlag = true;
         }
 
-        // MIDIチャンネルモニター作成
+        // Windowインスタンス作成
+        new LicenseReaderDialog();
         new MidiMessageMonitor();
         new MidiDataTransportDialog();
+        new SelectLanguageDialog();
+        new HistoryDialog();
 
         return result;
     }
@@ -87,6 +96,13 @@ public class WindowManager extends AbstractManager implements IWindowManager {
 
     public List<JMenuItem> getPluginMenuItems() {
         return database.getPluginMenuItems();
+    }
+
+    public void updateLanguage() {
+        for (String name : getWindowNameList()) {
+            IJmpWindow win = getWindow(name);
+            win.updateLanguage();
+        }
     }
 
 }

@@ -22,8 +22,10 @@ import javax.swing.event.PopupMenuListener;
 import function.Utility;
 import jlib.midi.MidiByte;
 import jmp.core.JMPCore;
+import jmp.core.LanguageManager;
 import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
+import jmp.lang.DefineLanguage.LangID;
 
 public class MidiDataTransportDialog extends JMPDialog {
 
@@ -40,6 +42,8 @@ public class MidiDataTransportDialog extends JMPDialog {
     private JLabel lblChannel;
     private JLabel lblData;
     private JLabel lblData_1;
+    private JLabel lblMidihex;
+    private JButton sendButton;
 
     public class CstmPopupMenuListener implements PopupMenuListener {
 
@@ -101,7 +105,7 @@ public class MidiDataTransportDialog extends JMPDialog {
         contentPanel.add(textField);
         textField.setColumns(10);
 
-        JLabel lblMidihex = new JLabel("MIDIデータバイト（Hex）");
+        lblMidihex = new JLabel("MIDIデータバイト（Hex）");
         lblMidihex.setForeground(Color.WHITE);
         lblMidihex.setBounds(6, 113, 297, 13);
         contentPanel.add(lblMidihex);
@@ -110,7 +114,7 @@ public class MidiDataTransportDialog extends JMPDialog {
         labelInfo.setBounds(12, 174, 297, 13);
         contentPanel.add(labelInfo);
         {
-            JButton sendButton = new JButton("Send");
+            sendButton = new JButton("Send");
             sendButton.setBounds(319, 165, 105, 21);
             contentPanel.add(sendButton);
             sendButton.addActionListener(new ActionListener() {
@@ -118,7 +122,6 @@ public class MidiDataTransportDialog extends JMPDialog {
                     send();
                 }
             });
-            getRootPane().setDefaultButton(sendButton);
         }
 
         comboBoxCommand = new JComboBox<String>();
@@ -161,15 +164,6 @@ public class MidiDataTransportDialog extends JMPDialog {
         comboBoxData2.setBounds(324, 43, 100, 19);
         comboBoxData2.addPopupMenuListener(new CstmPopupMenuListener());
         contentPanel.add(comboBoxData2);
-
-        JButton button = new JButton("文字列生成");
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                genMessageString();
-            }
-        });
-        button.setBounds(325, 72, 97, 21);
-        contentPanel.add(button);
 
         lblCommand = new JLabel("Command");
         lblCommand.setForeground(Color.WHITE);
@@ -341,12 +335,13 @@ public class MidiDataTransportDialog extends JMPDialog {
     }
 
     private void send() {
+        LanguageManager lm = JMPCore.getLanguageManager();
         String sBin = textField.getText();
         if (sBin.isEmpty() == false) {
             byte[] data = Utility.tryParseHexBinary(sBin);
             if (data.length <= 0) {
                 labelInfo.setForeground(Color.RED);
-                labelInfo.setText("無効なバイトデータ");
+                labelInfo.setText(lm.getLanguageStr(LangID.Invalid_byte_data));
             }
             else {
                 int ch = data.length >= 1 ? (data[0] & 0x0f) : 0;
@@ -360,5 +355,15 @@ public class MidiDataTransportDialog extends JMPDialog {
                 JMPCore.getSoundManager().sendMidiMessage(data, 0);
             }
         }
+    }
+
+    @Override
+    public void updateLanguage() {
+        super.updateLanguage();
+
+        LanguageManager lm = JMPCore.getLanguageManager();
+        setTitle(lm.getLanguageStr(LangID.MIDI_message_sender));
+        lblMidihex.setText(lm.getLanguageStr(LangID.MIDI_Data_byte));
+        sendButton.setText(lm.getLanguageStr(LangID.Send));
     }
 }

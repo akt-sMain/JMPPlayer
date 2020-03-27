@@ -1,11 +1,9 @@
 package jmp.core;
 
-import java.util.List;
-
 import function.Platform;
 import function.Utility;
 import jlib.core.ILanguageManager;
-import jlib.lang.IUpdateLanguageListener;
+import jmp.lang.DefineLanguage.LangID;
 import jmp.lang.LanguageTable;
 
 /**
@@ -15,13 +13,7 @@ import jmp.lang.LanguageTable;
  */
 public class LanguageManager extends AbstractManager implements ILanguageManager {
     /** 言語テーブル名 */
-    public static final String LANGUAGE_FILE_NAME = "language.lang";
-
-    private LanguageTable languageTable = null;
-
-    private int currentLanguage = 0;
-
-    private List<IUpdateLanguageListener> register = null;
+    public static final String LANGUAGE_FILE_NAME = "language.csv";
 
     /**
      * コンストラクタ
@@ -31,35 +23,13 @@ public class LanguageManager extends AbstractManager implements ILanguageManager
     }
 
     @Override
-    public void registerListener(IUpdateLanguageListener listener) {
-        if (register.contains(listener) == false) {
-            register.add(listener);
-        }
+    protected boolean initFunc() {
+        // 言語初期設定
+        return super.initFunc();
     }
 
     public String getLangFilePath() {
         return Utility.pathCombin(Platform.getCurrentPath(false), LANGUAGE_FILE_NAME);
-    }
-
-    /**
-     * 言語テーブル読み込み
-     *
-     * @return 可否
-     */
-    public boolean readingLanguageFile() {
-        boolean ret = true; // 可否
-        try {
-            languageTable.reading(getLangFilePath());
-        }
-        catch (Exception e) {
-            ret = false;
-        }
-
-        return ret;
-    }
-
-    public List<String> getTitleHeader() {
-        return languageTable.getTitleHeader();
     }
 
     /**
@@ -69,7 +39,7 @@ public class LanguageManager extends AbstractManager implements ILanguageManager
      * @return
      */
     public String getTitle(int index) {
-        return languageTable.getTitle(index);
+        return LanguageTable.getTitle(index);
     }
 
     /**
@@ -78,8 +48,8 @@ public class LanguageManager extends AbstractManager implements ILanguageManager
      * @param title
      * @return
      */
-    public int getIndex(String title) {
-        return languageTable.getIndex(title);
+    public int getIndex(LangID title) {
+        return LanguageTable.getIndex(title);
     }
 
     /**
@@ -89,8 +59,8 @@ public class LanguageManager extends AbstractManager implements ILanguageManager
      *            文字列ID
      * @return 文字列
      */
-    public String getLanguageStr(String id) {
-        int langIndex = getCurrentLanguage();
+    public String getLanguageStr(LangID id) {
+        int langIndex = JMPCore.getDataManager().getLanguage();
         return getLanguageStr(id, langIndex);
     }
 
@@ -101,12 +71,8 @@ public class LanguageManager extends AbstractManager implements ILanguageManager
      * @param langIndex
      * @return
      */
-    public String getLanguageStr(String id, int langIndex) {
-        // ID表示モードの場合はIDを返す
-        // if (CoreAccessor.getSystemManager().isVisibleLangID() == true) {
-        // return id;
-        // }
-        return languageTable.getLanguageStr(id, langIndex);
+    public String getLanguageStr(LangID id, int langIndex) {
+        return LanguageTable.getLanguageStr(id, langIndex);
     }
 
     /**
@@ -115,20 +81,6 @@ public class LanguageManager extends AbstractManager implements ILanguageManager
      * @return
      */
     public String getCurLanguageName() {
-        return getTitle(getCurrentLanguage());
-    }
-
-    public void updateLanguage() {
-        for (IUpdateLanguageListener l : register) {
-            l.updateLanguage();
-        }
-    }
-
-    public int getCurrentLanguage() {
-        return currentLanguage;
-    }
-
-    public void setCurrentLanguage(int currentLanguage) {
-        this.currentLanguage = currentLanguage;
+        return getTitle(JMPCore.getDataManager().getLanguage());
     }
 }

@@ -44,6 +44,7 @@ import jmp.JMPFlags;
 import jmp.JMPLoader;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
+import jmp.core.LanguageManager;
 import jmp.core.PluginManager;
 import jmp.core.SoundManager;
 import jmp.core.SystemManager;
@@ -55,6 +56,7 @@ import jmp.gui.ui.ControlButtonUI;
 import jmp.gui.ui.IButtonMarkPaint;
 import jmp.gui.ui.IJMPComponentUI;
 import jmp.gui.ui.SequencerSliderUI;
+import jmp.lang.DefineLanguage.LangID;
 import jmp.player.Player;
 import jmp.player.PlayerAccessor;
 import jmp.task.CallbackPackage;
@@ -150,7 +152,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JMenu fileMenu;
     private JCheckBoxMenuItem alwayTopCheckBox;
     private JCheckBoxMenuItem autoPlayCheckBox;
-    private JMenu playListMenu;
+    private JMenu playerMenu;
     private JMenuItem removePluginMenuItem;
     private JCheckBoxMenuItem roopPlayCheckBoxMenuItem;
     private JMenuItem mntmMidiDeviceSetup;
@@ -165,6 +167,18 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JMenuItem mntmMidiMonitor;
     private JMenuItem addPluginMenuItem;
     private JMenuItem mntmMidimessagesender;
+    private JMenuItem openItem;
+    private JMenuItem mntmReload;
+    private JMenuItem mntmVersion;
+    private JMenuItem endItem;
+    private JMenu windowMenu;
+    private JMenuItem playlistItem;
+    private JMenuItem menuItemHistory;
+    private JLabel lblMidi;
+    private JMenuItem mntmPcreset;
+    private JMenu configMenu;
+    private JLabel lblCommon;
+    private JMenuItem menuItemLanguage;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -319,7 +333,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         fileMenu = new JMenu("ファイル");
         menuBar.add(fileMenu);
 
-        JMenuItem openItem = new JMenuItem("開く");
+        openItem = new JMenuItem("開く");
         openItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 fileOpenFunc();
@@ -327,14 +341,14 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         });
         fileMenu.add(openItem);
 
-        JMenuItem endItem = new JMenuItem("終了");
+        endItem = new JMenuItem("終了");
         endItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 exit(true);
             }
         });
 
-        JMenuItem mntmReload = new JMenuItem("リロード");
+        mntmReload = new JMenuItem("リロード");
         mntmReload.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String path = s_currentFileName;
@@ -351,7 +365,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         JSeparator separator = new JSeparator();
         fileMenu.add(separator);
 
-        JMenuItem mntmVersion = new JMenuItem("バージョン情報");
+        mntmVersion = new JMenuItem("バージョン情報");
         mntmVersion.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 versionInfoDialog.start();
@@ -360,7 +374,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         fileMenu.add(mntmVersion);
         fileMenu.add(endItem);
 
-        JMenu windowMenu = new JMenu("ウィンドウ");
+        windowMenu = new JMenu("ウィンドウ");
         menuBar.add(windowMenu);
 
         alwayTopCheckBox = new JCheckBoxMenuItem("常に手前で表示");
@@ -371,8 +385,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         });
         windowMenu.add(alwayTopCheckBox);
 
-        playListMenu = new JMenu("プレイリスト");
-        menuBar.add(playListMenu);
+        playerMenu = new JMenu("プレイヤー");
+        menuBar.add(playerMenu);
 
         roopPlayCheckBoxMenuItem = new JCheckBoxMenuItem("ループ再生");
         roopPlayCheckBoxMenuItem.addChangeListener(new ChangeListener() {
@@ -380,27 +394,27 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 JMPCore.getDataManager().setLoopPlay(roopPlayCheckBoxMenuItem.isSelected());
             }
         });
-        playListMenu.add(roopPlayCheckBoxMenuItem);
+        playerMenu.add(roopPlayCheckBoxMenuItem);
 
         autoPlayCheckBox = new JCheckBoxMenuItem("連続再生");
-        playListMenu.add(autoPlayCheckBox);
+        playerMenu.add(autoPlayCheckBox);
         autoPlayCheckBox.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 JMPCore.getDataManager().setAutoPlay(autoPlayCheckBox.isSelected());
             }
         });
 
-        JMenuItem midiFileItem = new JMenuItem("再生リスト");
-        playListMenu.add(midiFileItem);
+        playlistItem = new JMenuItem("プレイリスト");
+        playerMenu.add(playlistItem);
 
-        JMenuItem menuItemHistory = new JMenuItem("履歴");
+        menuItemHistory = new JMenuItem("履歴");
         menuItemHistory.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JMPCore.getDataManager().getHistoryDialog().open();
             }
         });
-        playListMenu.add(menuItemHistory);
-        midiFileItem.addActionListener(new ActionListener() {
+        playerMenu.add(menuItemHistory);
+        playlistItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 midiFileListDialog.setVisible(true);
             }
@@ -480,7 +494,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         pluginMenu.add(allClosePluginMenuItem);
         pluginMenu.addSeparator();
 
-        JMenu configMenu = new JMenu("設定");
+        configMenu = new JMenu("設定");
         menuBar.add(configMenu);
 
         mntmMidiDeviceSetup = new JMenuItem("MIDIデバイス設定");
@@ -490,7 +504,18 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             }
         });
 
-        JLabel lblMidi = new JLabel("-- MIDI設定 --");
+        lblCommon = new JLabel("-- 共通設定 --");
+        configMenu.add(lblCommon);
+
+        menuItemLanguage = new JMenuItem("言語設定");
+        menuItemLanguage.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LANGUAGE).showWindow();
+            }
+        });
+        configMenu.add(menuItemLanguage);
+
+        lblMidi = new JLabel("-- MIDI設定 --");
         lblMidi.setHorizontalAlignment(SwingConstants.LEFT);
         configMenu.add(lblMidi);
         configMenu.add(mntmMidiDeviceSetup);
@@ -503,7 +528,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         });
         configMenu.add(chckbxmntmStartupmidisetup);
 
-        JMenuItem mntmPcreset = new JMenuItem("PCリセット");
+        mntmPcreset = new JMenuItem("PCリセット");
         mntmPcreset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JMPCore.getSoundManager().resetMidiEvent();
@@ -539,7 +564,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         });
         configMenu.add(mntmMidimessagesender);
 
-        lblDebugMenu = new JLabel("-- 開発者用メニュー --");
+        lblDebugMenu = new JLabel("-- Developer menu --");
         lblDebugMenu.setHorizontalAlignment(SwingConstants.LEFT);
         configMenu.add(lblDebugMenu);
 
@@ -1064,23 +1089,24 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         // 一番先頭のファイルを取得
         if ((files != null) && (files.size() > 0)) {
             SystemManager system = JMPCore.getSystemManager();
+            LanguageManager lm = JMPCore.getLanguageManager();
 
             String path = files.get(0).getPath();
             if (Utility.checkExtension(path, PluginManager.PLUGIN_ZIP_EX) == true) {
                 // プラグインロード
                 if (JMPCore.getPluginManager().readingPluginZipPackage(path, true) == true) {
-                    system.showInformationMessageDialog("プラグインロード成功。");
+                    system.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
                 }
                 else {
-                    system.showErrorMessageDialog("プラグインロード失敗。");
+                    system.showErrorMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_ERROR));
                 }
             }
             else if (Utility.checkExtension(path, PluginManager.SETUP_FILE_EX) == true) {
                 if (JMPCore.getPluginManager().readingSetupFile(path) == true) {
-                    system.showInformationMessageDialog("プラグインロード成功。");
+                    system.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
                 }
                 else {
-                    system.showErrorMessageDialog("プラグインロード失敗。");
+                    system.showErrorMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_ERROR));
                 }
             }
             else {
@@ -1136,13 +1162,15 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
      *            パス
      */
     public void loadFile(String path) {
+        LanguageManager lm = JMPCore.getLanguageManager();
+
         if (JMPFlags.NowLoadingFlag == true) {
-            setStatusText("※ファイルロード中に他のファイルをロードできません。", false);
+            setStatusText(lm.getLanguageStr(LangID.FILE_ERROR_1), false);
             return;
         }
 
         JMPFlags.NowLoadingFlag = true;
-        setStatusText("ロード中", Color.LIGHT_GRAY);
+        setStatusText(lm.getLanguageStr(LangID.Now_loading), Color.LIGHT_GRAY);
         repaint();
 
         /* ファイルロード */
@@ -1161,11 +1189,11 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 if (status == true) {
                     if (playerAccessor.isSupportedExtension(ex) == false) {
                         status = false;
-                        statusStr = "※サポート外のファイル形式です";
+                        statusStr = lm.getLanguageStr(LangID.FILE_ERROR_2);
                     }
                     else if (playerAccessor.getCurrent().isRunnable() == true) {
                         status = false;
-                        statusStr = "※再生中はファイルロードできません。";
+                        statusStr = lm.getLanguageStr(LangID.FILE_ERROR_3);
                     }
                 }
 
@@ -1182,19 +1210,19 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                                 JMPCore.getPluginManager().loadFile(f);
                             }
                             catch (Exception e) {
-                                subErrorStr = "(プラグインエラー)";
+                                subErrorStr = "(" + lm.getLanguageStr(LangID.Plugin_error) + ")";
                             }
                         }
                         else {
                             status = false;
-                            statusStr = "※ファイルを開くことができません。" + subErrorStr;
+                            statusStr = lm.getLanguageStr(LangID.FILE_ERROR_4) + subErrorStr;
                         }
                     }
                     catch (Exception e) {
                         e.printStackTrace();
 
                         status = false;
-                        statusStr = "※ファイルのロードに失敗しました。";
+                        statusStr = lm.getLanguageStr(LangID.FILE_ERROR_5);
                     }
                 }
 
@@ -1216,7 +1244,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     s_currentFileName = path;
 
                     // メッセージ発行
-                    statusStr = String.format("%s ...(ファイルロード成功)", Utility.getFileNameAndExtension(s_currentFileName));
+                    statusStr = String.format("%s ...(" + lm.getLanguageStr(LangID.FILE_LOAD_SUCCESS) + ")", Utility.getFileNameAndExtension(s_currentFileName));
                 }
                 else {
                     // 前のファイル名に戻す
@@ -1348,5 +1376,46 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     @Override
     public boolean isWindowVisible() {
         return isVisible();
+    }
+
+    @Override
+    public void updateLanguage() {
+        LanguageManager lm = JMPCore.getLanguageManager();
+
+        playButton.setToolTipText(lm.getLanguageStr(LangID.Playback) + "/" + lm.getLanguageStr(LangID.Stop));
+        prevButton.setToolTipText(lm.getLanguageStr(LangID.Rewind));
+        nextButton.setToolTipText(lm.getLanguageStr(LangID.Fast_forward));
+        prev2Button.setToolTipText(lm.getLanguageStr(LangID.Previous));
+        next2Button.setToolTipText(lm.getLanguageStr(LangID.Next));
+
+        fileMenu.setText(lm.getLanguageStr(LangID.File));
+        openItem.setText(lm.getLanguageStr(LangID.Open));
+        mntmReload.setText(lm.getLanguageStr(LangID.Reload));
+        mntmVersion.setText(lm.getLanguageStr(LangID.Version));
+        endItem.setText(lm.getLanguageStr(LangID.Exit));
+
+        windowMenu.setText(lm.getLanguageStr(LangID.Window));
+        alwayTopCheckBox.setText(lm.getLanguageStr(LangID.Allways_on_top));
+
+        playerMenu.setText(lm.getLanguageStr(LangID.Player));
+        roopPlayCheckBoxMenuItem.setText(lm.getLanguageStr(LangID.Loop_playback));
+        autoPlayCheckBox.setText(lm.getLanguageStr(LangID.Continuous_playback));
+        playlistItem.setText(lm.getLanguageStr(LangID.Playlist));
+        menuItemHistory.setText(lm.getLanguageStr(LangID.History));
+
+        pluginMenu.setText(lm.getLanguageStr(LangID.Plugin));
+        addPluginMenuItem.setText(lm.getLanguageStr(LangID.Add_plugin));
+        removePluginMenuItem.setText(lm.getLanguageStr(LangID.Remove_plugin));
+        allClosePluginMenuItem.setText(lm.getLanguageStr(LangID.Close_all_plugin));
+
+        configMenu.setText(lm.getLanguageStr(LangID.Setting));
+        lblMidi.setText("-- " + lm.getLanguageStr(LangID.MIDI_settings) + " --");
+        mntmMidiDeviceSetup.setText(lm.getLanguageStr(LangID.MIDI_device_settings));
+        chckbxmntmStartupmidisetup.setText(lm.getLanguageStr(LangID.Open_MIDI_device_settings_on_startup));
+        mntmPcreset.setText(lm.getLanguageStr(LangID.PC_reset));
+        mntmMidiMonitor.setText(lm.getLanguageStr(LangID.MIDI_message_monitor));
+        mntmMidimessagesender.setText(lm.getLanguageStr(LangID.MIDI_message_sender));
+        lblCommon.setText("-- " + lm.getLanguageStr(LangID.Common_setting) + " --");
+        menuItemLanguage.setText(lm.getLanguageStr(LangID.Language));
     }
 }
