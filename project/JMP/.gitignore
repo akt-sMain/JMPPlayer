@@ -4,7 +4,11 @@ plugins/
 skin/
 *.jmz
 *.jar
+*.exe
+*.bat
 activate
 config.txt
 history.txt
 skin.txt
+
+!convert_to_exe.bat
