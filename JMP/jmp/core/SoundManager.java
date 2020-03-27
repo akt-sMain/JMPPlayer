@@ -127,6 +127,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         IPlayer player = getCurrentPlayer();
         if (player != null && player.isValid() == true) {
             initPosition();
+            play();
         }
     }
 
