@@ -8,6 +8,7 @@ import jlib.plugin.IPlugin;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
 import jmp.core.TaskManager;
+import jmp.core.WindowManager;
 import jmp.player.PlayerAccessor;
 import jmp.task.ICallbackFunction;
 import jmp.task.TaskOfSequence;
@@ -49,6 +50,8 @@ public class JMPLoader {
                     System.out.println("	プラグインのスタンドアロン起動モード");
                     System.out.println("-nonplg");
                     System.out.println("        プラグインをロードせず起動");
+                    System.out.println("-unsync");
+                    System.out.println("        非同期化オプション");
                     System.out.println("-mkjmp");
                     System.out.println("        プラグインパッケージ作成ライブラリを呼び出す。");
                     System.out.println("        ※コマンドの先頭に記述すること");
@@ -75,6 +78,9 @@ public class JMPLoader {
                 }
                 else if (args[i].equalsIgnoreCase("-debug") == true) {
                     JMPFlags.DebugMode = true;
+                }
+                else if (args[i].equalsIgnoreCase("-unsync") == true) {
+                    JMPFlags.UseUnsynchronizedMidiPacket = true;
                 }
                 /* ※コマンドの判定を優先するため、このelseifは最後に挿入すること */
                 else if (Utility.isExsistFile(args[i]) == true) {
@@ -214,13 +220,26 @@ public class JMPLoader {
         // 管理クラス初期化処理
         boolean result = JMPCore.initFunc();
 
-        if (result == true) {
-            // アクティベート
-            if (JMPCore.getSystemManager().executeCheckActivate() == false) {
-                result = false;
+        if (JMPFlags.LibraryMode == false) {
+            if (result == true) {
+
+
+
+                // アクティベート
+                JMPCore.getSystemManager().executeActivate();
+
+                /* ライセンス確認 */
+                if (JMPFlags.ActivateFlag == false) {
+                    JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LANGUAGE).showWindow();
+                    JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE).showWindow();
+                }
+
+                if (JMPFlags.ActivateFlag == false) {
+                    // アクティベートされなかった場合は終了する
+                    result = false;
+                }
             }
         }
-
         if (result == true) {
             /* プレイヤーロード */
             try {

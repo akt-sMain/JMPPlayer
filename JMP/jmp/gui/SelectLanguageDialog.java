@@ -37,6 +37,7 @@ public class SelectLanguageDialog extends JMPDialog {
         setTitle("Language");
         setBounds(100, 100, 347, 125);
         getContentPane().setLayout(new BorderLayout());
+        setModal(true);
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(null);

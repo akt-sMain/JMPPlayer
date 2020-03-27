@@ -16,7 +16,6 @@ import jlib.core.ISystemManager;
 import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
 import jmp.JMPFlags;
-import jmp.gui.LicenseReaderDialog;
 import jmp.task.ICallbackFunction;
 
 /**
@@ -214,12 +213,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         return true;
     }
 
-    public boolean executeCheckActivate() {
-        boolean result = true;
-
-        /* ライセンス確認ダイアログのインスタンス生成 */
-        LicenseReaderDialog licenseDialog = (LicenseReaderDialog)JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE);
-
+    public void executeActivate() {
         /* アクティベート状況の確認 */
         if (Utility.isExsistFile(getActivateFileLocationPath()) == true) {
             JMPFlags.ActivateFlag = true;
@@ -232,17 +226,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         if (JMPFlags.DebugMode == true || JMPCore.isEnableStandAlonePlugin() == true) {
             JMPFlags.ActivateFlag = true;
         }
-
-        /* ライセンス確認 */
-        if (JMPFlags.ActivateFlag == false) {
-            licenseDialog.start();
-        }
-
-        if (JMPFlags.ActivateFlag == false) {
-            // アクティベートされなかった場合は終了する
-            result = false;
-        }
-        return result;
     }
 
     public boolean setCommonRegisterValue(String key, String value) {

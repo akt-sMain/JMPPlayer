@@ -101,7 +101,9 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     public void updateLanguage() {
         for (String name : getWindowNameList()) {
             IJmpWindow win = getWindow(name);
-            win.updateLanguage();
+            if (win != null) {
+                win.updateLanguage();
+            }
         }
     }
 

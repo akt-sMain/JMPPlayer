@@ -6,7 +6,7 @@ public class DefineLanguage {
     public static final int NUMBER_OF_INDEX_LANG = 2;
 
     public static enum LangID {
-        Language, Japanese, English, File, Save, Open, Reload, Version, Exit, Window, Allways_on_top, Player, Loop_playback, Continuous_playback, Playlist, History, Plugin, Add_plugin, Remove_plugin, Close_all_plugin, Setting, MIDI_settings, MIDI_device_settings, Open_MIDI_device_settings_on_startup, PC_reset, MIDI_message_monitor, MIDI_message_sender, Now_loading, Plugin_error, FILE_ERROR_1, FILE_ERROR_2, FILE_ERROR_3, FILE_ERROR_4, FILE_ERROR_5, FILE_LOAD_SUCCESS, PLUGIN_LOAD_SUCCESS, PLUGIN_LOAD_ERROR, Clear, Playback, Stop, Fast_forward, Rewind, Next, Previous, Close, Add, Remove, Open_with_Explorer, MIDI_Data_byte, Send, Invalid_byte_data, License, Above_conditions, Accept, Reject, Copied_to_clipboard, Original_copy, Common_setting, Apply,
+        Language, Japanese, English, File, Save, Open, Reload, Version, Exit, Window, Allways_on_top, Player, Loop_playback, Continuous_playback, Playlist, History, Plugin, Add_plugin, Remove_plugin, Close_all_plugin, Setting, MIDI_settings, MIDI_device_settings, Open_MIDI_device_settings_on_startup, PC_reset, MIDI_message_monitor, MIDI_message_sender, Now_loading, Plugin_error, FILE_ERROR_1, FILE_ERROR_2, FILE_ERROR_3, FILE_ERROR_4, FILE_ERROR_5, FILE_LOAD_SUCCESS, PLUGIN_LOAD_SUCCESS, PLUGIN_LOAD_ERROR, Clear, Playback, Stop, Fast_forward, Rewind, Next, Previous, Close, Add, Remove, Open_with_Explorer, MIDI_Data_byte, Send, Invalid_byte_data, License, Above_conditions, Accept, Reject, Copied_to_clipboard, Original_copy, Common_settings, Apply,
     }
 
     static java.util.HashMap<LangID, LanguageWords> langMap = new java.util.HashMap<LangID, LanguageWords>() {
@@ -66,12 +66,12 @@ public class DefineLanguage {
             put(LangID.Send, new LanguageWords("送信", "Send"));
             put(LangID.Invalid_byte_data, new LanguageWords("無効なバイトデータ", "Invalid byte data"));
             put(LangID.License, new LanguageWords("ライセンス", "License"));
-            put(LangID.Above_conditions, new LanguageWords("上記の条件に：", "Above_conditions："));
+            put(LangID.Above_conditions, new LanguageWords("上記の条件に：", "Above conditions："));
             put(LangID.Accept, new LanguageWords("同意する", "Accept"));
             put(LangID.Reject, new LanguageWords("同意しない", "Reject"));
             put(LangID.Copied_to_clipboard, new LanguageWords("クリップボードにコピーしました。", "Copied to clipboard."));
             put(LangID.Original_copy, new LanguageWords("原文のコピー", "Original copy"));
-            put(LangID.Common_setting, new LanguageWords("共通設定", "Common setting"));
+            put(LangID.Common_settings, new LanguageWords("共通設定", "Common settings"));
             put(LangID.Apply, new LanguageWords("適用", "Apply"));
         }
     };

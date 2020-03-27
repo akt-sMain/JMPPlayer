@@ -125,49 +125,55 @@ public class LicenseReaderDialog extends JMPDialog {
         rdbtnAccept.setBackground(getJmpBackColor());
     }
 
-    public void start() {
+    @Override
+    public void setVisible(boolean b) {
+        if (b == true) {
+            BufferedReader reader;
+            String line = "";
+            String contents = "";
 
-        BufferedReader reader;
-        String line = "";
-        String contents = "";
+            try {
+                String path = Utility.pathCombin(Platform.getCurrentPath(false), "license.txt");
+                File file = new File(path);
+                FileInputStream fs = new FileInputStream(file);
+                InputStreamReader isr = new InputStreamReader(fs, "UTF-8");
+                reader = new BufferedReader(isr);
 
-        try {
-            String path = Utility.pathCombin(Platform.getCurrentPath(false), "license.txt");
-            File file = new File(path);
-            FileInputStream fs = new FileInputStream(file);
-            InputStreamReader isr = new InputStreamReader(fs, "UTF-8");
-            reader = new BufferedReader(isr);
-
-            // ファイルを読み込む
-            while ((line = reader.readLine()) != null) {
-                contents += (line + Platform.getNewLine());
+                // ファイルを読み込む
+                while ((line = reader.readLine()) != null) {
+                    contents += (line + Platform.getNewLine());
+                }
+                reader.close();
             }
-            reader.close();
-        }
-        catch (Exception e) {
-            contents = "";
-            contents += "ライセンスが読み取れません。" + Platform.getNewLine();
-            contents += "「license.txt」の条件項目を参照してください。";
-        }
-        finally {
-            reader = null;
-        }
+            catch (Exception e) {
+                contents = "";
+                contents += "ライセンスが読み取れません。" + Platform.getNewLine();
+                contents += "「license.txt」の条件項目を参照してください。";
+            }
+            finally {
+                reader = null;
+            }
 
-        if (JMPFlags.ActivateFlag == true) {
-            rdbtnAccept.setSelected(true);
-            labelAccept.setVisible(false);
-            rdbtnReject.setVisible(false);
-            rdbtnAccept.setVisible(false);
-        }
-        else {
-            labelAccept.setVisible(true);
-            rdbtnReject.setVisible(true);
-            rdbtnAccept.setVisible(true);
-        }
+            if (JMPFlags.ActivateFlag == true) {
+                rdbtnAccept.setSelected(true);
+                labelAccept.setVisible(false);
+                rdbtnReject.setVisible(false);
+                rdbtnAccept.setVisible(false);
+            }
+            else {
+                labelAccept.setVisible(true);
+                rdbtnReject.setVisible(true);
+                rdbtnAccept.setVisible(true);
+            }
 
-        textAreaLisence.setText("");
-        textAreaLisence.setText(contents);
-        labelClipMes.setVisible(false);
+            textAreaLisence.setText("");
+            textAreaLisence.setText(contents);
+            labelClipMes.setVisible(false);
+        }
+        super.setVisible(b);
+    }
+
+    public void start() {
         setVisible(true);
     }
 

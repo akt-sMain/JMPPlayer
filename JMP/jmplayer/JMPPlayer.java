@@ -1415,7 +1415,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mntmPcreset.setText(lm.getLanguageStr(LangID.PC_reset));
         mntmMidiMonitor.setText(lm.getLanguageStr(LangID.MIDI_message_monitor));
         mntmMidimessagesender.setText(lm.getLanguageStr(LangID.MIDI_message_sender));
-        lblCommon.setText("-- " + lm.getLanguageStr(LangID.Common_setting) + " --");
+        lblCommon.setText("-- " + lm.getLanguageStr(LangID.Common_settings) + " --");
         menuItemLanguage.setText(lm.getLanguageStr(LangID.Language));
     }
 }
