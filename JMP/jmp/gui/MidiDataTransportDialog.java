@@ -231,8 +231,7 @@ public class MidiDataTransportDialog extends JMPDialog {
         int command = MidiByte.convertChannelCommandStringToByte(sCommand);
         if (MidiByte.isChannelMessage(command) == true) {
             comboBoxChannel.setEnabled(true);
-            if (command == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON
-                    || command == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_OFF) {
+            if (command == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON || command == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_OFF) {
                 for (String item : MidiByte.cloneNoteNumberIdentList(true)) {
                     comboBoxData1.addItem(item);
                 }

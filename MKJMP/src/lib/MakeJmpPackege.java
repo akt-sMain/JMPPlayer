@@ -87,8 +87,7 @@ public class MakeJmpPackege extends JFrame {
         contentPane.setLayout(null);
 
         panel = new JPanel();
-        panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "JAR", TitledBorder.LEADING,
-                TitledBorder.TOP, null, new Color(0, 0, 0)));
+        panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "JAR", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
         panel.setBounds(20, 10, 564, 105);
         contentPane.add(panel);
         panel.setLayout(null);
@@ -133,8 +132,8 @@ public class MakeJmpPackege extends JFrame {
         panel.add(btnReadJar);
 
         JPanel panel_1 = new JPanel();
-        panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "DATA", TitledBorder.LEADING,
-                TitledBorder.TOP, null, new Color(0, 0, 0)));
+        panel_1.setBorder(
+                new TitledBorder(UIManager.getBorder("TitledBorder.border"), "DATA", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
         panel_1.setBounds(20, 125, 564, 80);
         contentPane.add(panel_1);
         panel_1.setLayout(null);
@@ -186,8 +185,8 @@ public class MakeJmpPackege extends JFrame {
 
         JPanel panel_2 = new JPanel();
         panel_2.setLayout(null);
-        panel_2.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "RES", TitledBorder.LEADING,
-                TitledBorder.TOP, null, new Color(0, 0, 0)));
+        panel_2.setBorder(
+                new TitledBorder(UIManager.getBorder("TitledBorder.border"), "RES", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
         panel_2.setBounds(20, 215, 564, 80);
         contentPane.add(panel_2);
 
@@ -309,9 +308,8 @@ public class MakeJmpPackege extends JFrame {
     }
 
     public void saveFileMkj(String path) {
-        MakeJmpConfig cfg = new MakeJmpConfig(textFieldPluginName.getText(), textFieldJarPath.getText(),
-                textFieldResPath.getText(), chckbxAddBlankData.isSelected(), textFieldDataPath.getText(),
-                textFieldOutput.getText());
+        MakeJmpConfig cfg = new MakeJmpConfig(textFieldPluginName.getText(), textFieldJarPath.getText(), textFieldResPath.getText(),
+                chckbxAddBlankData.isSelected(), textFieldDataPath.getText(), textFieldOutput.getText());
         try {
             cfg.write(new File(path));
         }

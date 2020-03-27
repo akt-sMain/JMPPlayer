@@ -372,16 +372,14 @@ public class SelectSynthsizerDialog extends JMPDialog {
                     inDev.open();
                 }
                 inReciever = inDev.getReceiver();
-                JMPCore.getDataManager().setConfigParam(ConfigDatabase.CFG_KEY_MIDIOUT,
-                        inDev.getDeviceInfo().getName());
+                JMPCore.getDataManager().setConfigParam(ConfigDatabase.CFG_KEY_MIDIOUT, inDev.getDeviceInfo().getName());
             }
             else {
                 /* デフォルト使用 */
                 inReciever = MidiSystem.getReceiver();
                 JMPCore.getDataManager().setConfigParam(ConfigDatabase.CFG_KEY_MIDIOUT, "");
             }
-            if ((startupFlag == false) || (pastMidiOutName
-                    .equals(JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIOUT)) == false)) {
+            if ((startupFlag == false) || (pastMidiOutName.equals(JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIOUT)) == false)) {
                 commitListener.commitMidiOut(inReciever);
             }
 
@@ -393,11 +391,9 @@ public class SelectSynthsizerDialog extends JMPDialog {
                 if (outDev.isOpen() == false) {
                     outDev.open();
                 }
-                JMPCore.getDataManager().setConfigParam(ConfigDatabase.CFG_KEY_MIDIIN,
-                        outDev.getDeviceInfo().getName());
+                JMPCore.getDataManager().setConfigParam(ConfigDatabase.CFG_KEY_MIDIIN, outDev.getDeviceInfo().getName());
 
-                if ((startupFlag == false) || (pastMidiInName
-                        .equals(JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIIN)) == false)) {
+                if ((startupFlag == false) || (pastMidiInName.equals(JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIIN)) == false)) {
                     commitListener.commitMidiIn(outDev.getTransmitter());
                 }
             }

@@ -255,7 +255,7 @@ public class JMPLoader {
             JMPCore.getPluginManager().startupPluginInstance();
 
             // メインウィンドウ登録
-            JMPPlayer win = (JMPPlayer)JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MAIN);
+            JMPPlayer win = (JMPPlayer) JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MAIN);
             win.initializeSetting();
             win.setVisible(false);
             JMPCore.getSystemManager().registerMainWindow(win);

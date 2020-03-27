@@ -241,8 +241,7 @@ public class PluginManager extends AbstractManager {
                     String param = sLine[1].trim();
                     if (key.equalsIgnoreCase(SETUP_KEYNAME_PLUGIN) == true) {
                         String src = Utility.stringsCombin(file.getParent(), Platform.getSeparator(), param);
-                        String dst = Utility.stringsCombin(JMPCore.getSystemManager().getJarDirPath(),
-                                Platform.getSeparator(), param);
+                        String dst = Utility.stringsCombin(JMPCore.getSystemManager().getJarDirPath(), Platform.getSeparator(), param);
                         Utility.copyFile(src, dst);
 
                         // Jar名を保持（jar名をパス名にする）
@@ -254,10 +253,8 @@ public class PluginManager extends AbstractManager {
                     }
                     else if (key.equalsIgnoreCase(SETUP_KEYNAME_DATA) == true) {
                         if (param.equalsIgnoreCase("TRUE") == true) {
-                            String src = Utility.stringsCombin(file.getParent(), Platform.getSeparator(),
-                                    SETUP_KEYNAME_DATA);
-                            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getDataFileLocationPath(),
-                                    Platform.getSeparator(), jarName);
+                            String src = Utility.stringsCombin(file.getParent(), Platform.getSeparator(), SETUP_KEYNAME_DATA);
+                            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getDataFileLocationPath(), Platform.getSeparator(), jarName);
                             File df = new File(dst);
                             if (df.exists() == false) {
                                 df.mkdir();
@@ -270,10 +267,8 @@ public class PluginManager extends AbstractManager {
                     }
                     else if (key.equalsIgnoreCase(SETUP_KEYNAME_RES) == true) {
                         if (param.equalsIgnoreCase("TRUE") == true) {
-                            String src = Utility.stringsCombin(file.getParent(), Platform.getSeparator(),
-                                    SETUP_KEYNAME_RES);
-                            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getResFileLocationPath(),
-                                    Platform.getSeparator(), jarName);
+                            String src = Utility.stringsCombin(file.getParent(), Platform.getSeparator(), SETUP_KEYNAME_RES);
+                            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getResFileLocationPath(), Platform.getSeparator(), jarName);
                             File df = new File(dst);
                             if (df.exists() == false) {
                                 df.mkdir();
@@ -291,8 +286,7 @@ public class PluginManager extends AbstractManager {
             String src = file.getPath();
 
             String jmsName = Utility.getFileNameNotExtension(file) + "." + SETUP_FILE_EX;
-            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getJmsDirPath(), Platform.getSeparator(),
-                    jmsName);
+            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getJmsDirPath(), Platform.getSeparator(), jmsName);
             Utility.copyFile(src, dst);
 
             // 最後にプラグインを追加
@@ -401,8 +395,7 @@ public class PluginManager extends AbstractManager {
                     String key = sLine[0].trim();
                     String param = sLine[1].trim();
                     if (key.equalsIgnoreCase(SETUP_KEYNAME_PLUGIN) == true) {
-                        String plgPath = Utility.stringsCombin(JMPCore.getSystemManager().getJarDirPath(),
-                                Platform.getSeparator(), param);
+                        String plgPath = Utility.stringsCombin(JMPCore.getSystemManager().getJarDirPath(), Platform.getSeparator(), param);
 
                         // プラグインファイルを保持
                         pluginFile = new File(plgPath);
@@ -421,14 +414,14 @@ public class PluginManager extends AbstractManager {
             }
 
             if (isData == true) {
-                String dataPath = Utility.stringsCombin(JMPCore.getSystemManager().getDataFileLocationPath(),
-                        Platform.getSeparator(), Utility.getFileNameNotExtension(pluginFile));
+                String dataPath = Utility.stringsCombin(JMPCore.getSystemManager().getDataFileLocationPath(), Platform.getSeparator(),
+                        Utility.getFileNameNotExtension(pluginFile));
 
                 dataFile = new File(dataPath);
             }
             if (isRes == true) {
-                String resPath = Utility.stringsCombin(JMPCore.getSystemManager().getResFileLocationPath(),
-                        Platform.getSeparator(), Utility.getFileNameNotExtension(pluginFile));
+                String resPath = Utility.stringsCombin(JMPCore.getSystemManager().getResFileLocationPath(), Platform.getSeparator(),
+                        Utility.getFileNameNotExtension(pluginFile));
 
                 resFile = new File(resPath);
             }

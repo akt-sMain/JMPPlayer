@@ -82,12 +82,10 @@ public class MakeJmpLib {
 
     public static void exportPackage(MakeJmpConfig config) {
         if (config.isAddData() == true) {
-            MakeJmpLib.exportPackageForBlankData(config.getJar(), config.getRes(), config.getPluginName(),
-                    config.getOutput());
+            MakeJmpLib.exportPackageForBlankData(config.getJar(), config.getRes(), config.getPluginName(), config.getOutput());
         }
         else {
-            MakeJmpLib.exportPackage(config.getJar(), config.getData(), config.getRes(), config.getPluginName(),
-                    config.getOutput());
+            MakeJmpLib.exportPackage(config.getJar(), config.getData(), config.getRes(), config.getPluginName(), config.getOutput());
         }
     }
 
@@ -99,8 +97,7 @@ public class MakeJmpLib {
         exportPackage(jar, false, data, res, pluginName, exportDir);
     }
 
-    private static void exportPackage(String jar, boolean isAddBlankData, String data, String res, String pluginName,
-            String exportDir) {
+    private static void exportPackage(String jar, boolean isAddBlankData, String data, String res, String pluginName, String exportDir) {
         String jmsContents = "";
         if (jar.isEmpty() != true) {
             String jarPath = jar;

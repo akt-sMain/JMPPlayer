@@ -882,8 +882,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 Color color = Color.BLUE;
                 for (int i = 0; i < 2; i++) {
                     int offsetW = width / 2;
-                    int xPoints[] = { x + (offsetW * i), x + (offsetW * i) + width - offsetW,
-                            x + (offsetW * i) + width - offsetW };
+                    int xPoints[] = { x + (offsetW * i), x + (offsetW * i) + width - offsetW, x + (offsetW * i) + width - offsetW };
                     int yPoints[] = { y + (height / 2), y, y + height, };
                     g2d.setColor(color);
                     g2d.fillPolygon(xPoints, yPoints, 3);
@@ -1244,7 +1243,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     s_currentFileName = path;
 
                     // メッセージ発行
-                    statusStr = String.format("%s ...(" + lm.getLanguageStr(LangID.FILE_LOAD_SUCCESS) + ")", Utility.getFileNameAndExtension(s_currentFileName));
+                    statusStr = String.format("%s ...(" + lm.getLanguageStr(LangID.FILE_LOAD_SUCCESS) + ")",
+                            Utility.getFileNameAndExtension(s_currentFileName));
                 }
                 else {
                     // 前のファイル名に戻す

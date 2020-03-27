@@ -155,8 +155,7 @@ public class MidiFileListDialog extends JMPFrame {
                                 String name = (String) midiFileList.getModel().getValueAt(selected[i], COLUMN_NAME);
                                 if (midiFileMap.containsKey(name) == true) {
                                     File midiFile = midiFileMap.get(name);
-                                    DefaultListModel<String> playList = (DefaultListModel<String>) JMPCore
-                                            .getSoundManager().getPlayList().getModel();
+                                    DefaultListModel<String> playList = (DefaultListModel<String>) JMPCore.getSoundManager().getPlayList().getModel();
                                     playList.addElement(midiFile.getPath());
                                 }
                             }

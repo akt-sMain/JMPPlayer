@@ -160,8 +160,7 @@ public interface ISoundManager {
      *            ベロシティ
      * @throws InvalidMidiDataException
      */
-    default boolean sendNoteOn(int channel, int midiNumber, int velocity, long timeStamp)
-            throws InvalidMidiDataException {
+    default boolean sendNoteOn(int channel, int midiNumber, int velocity, long timeStamp) throws InvalidMidiDataException {
         ShortMessage sMes = new ShortMessage();
         sMes.setMessage(ShortMessage.NOTE_ON, channel, midiNumber, velocity);
         return sendMidiMessage(sMes, timeStamp);

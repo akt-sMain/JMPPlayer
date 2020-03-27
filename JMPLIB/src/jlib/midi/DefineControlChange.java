@@ -62,19 +62,16 @@ public class DefineControlChange {
     public static final int MONO_ON = 126;
     public static final int POLY_ON = 127;
     public static final int _END = 0;
-    public static final String[] IDENTS = { "BANK_SELECT_MSB", "MODULATION", "BLESS_CONTROL", "", "FOOT_CONTROL",
-            "PORTAMENTO_TIME", "DATA_ENTRY_MSB", "MAIN_VOLUME", "BALANCE_CONTROL", "", "PAN_POT", "EXPRESSION", "", "",
-            "", "", "GENERAL_CONTROL1", "GENERAL_CONTROL2", "GENERAL_CONTROL3", "GENERAL_CONTROL4", "", "", "", "", "",
-            "", "", "", "", "", "", "", "BANK_SELECT_LSB", "MODULATION_LSB", "BLESS_CONTROL_LSB", "",
-            "FOOT_CONTROL_LSB", "PORTAMENTO_TIME_LSB", "DATA_ENTRY_LSB", "VOLUME", "BALANCE", "", "", "", "",
-            "GENERAL_CONTROL1_LSB", "GENERAL_CONTROL2_LSB", "GENERAL_CONTROL3_LSB", "GENERAL_CONTROL4_LSB", "", "", "",
-            "", "", "", "", "", "", "", "", "", "", "", "", "DAMPER_REDAL", "PORTAMENTO", "SOSTENUTO", "SOFT_PEDAL", "",
-            "FREEZE", "MEMORY_PATCH_SELECT", "HARMONIC_CONTENT", "RELEASE_TIME", "ATTACK_TIME", "BRIGHTNESS",
-            "DECAY_TIME", "VIBRATE_RATE", "VIBRATE_DEPTH", "VIBRATE_DELAY", "", "", "", "", "", "PORTAMENTO_CONTROL",
-            "", "", "", "", "", "", "REVERB", "TREMOLO_DEPTH", "CHORUS", "DELAY_VARIATION", "PHASER_DEPTH",
-            "DATA_INCREMENT", "DATA_DECREMENT", "NRPN_LSB", "NRPN_MSB", "RPN_LSB", "RPN_MSB", "", "", "", "", "", "",
-            "", "", "", "", "", "", "", "", "", "", "", "", "ALL_SOUND_OFF", "RESET_ALL_CONTROLLER", "LOCAL_CONTROL",
-            "ALL_NOTE_OFF", "OMNI_OFF", "OMNI_ON", "MONO_ON", "POLY_ON", };
+    public static final String[] IDENTS = { "BANK_SELECT_MSB", "MODULATION", "BLESS_CONTROL", "", "FOOT_CONTROL", "PORTAMENTO_TIME", "DATA_ENTRY_MSB",
+            "MAIN_VOLUME", "BALANCE_CONTROL", "", "PAN_POT", "EXPRESSION", "", "", "", "", "GENERAL_CONTROL1", "GENERAL_CONTROL2", "GENERAL_CONTROL3",
+            "GENERAL_CONTROL4", "", "", "", "", "", "", "", "", "", "", "", "", "BANK_SELECT_LSB", "MODULATION_LSB", "BLESS_CONTROL_LSB", "",
+            "FOOT_CONTROL_LSB", "PORTAMENTO_TIME_LSB", "DATA_ENTRY_LSB", "VOLUME", "BALANCE", "", "", "", "", "GENERAL_CONTROL1_LSB", "GENERAL_CONTROL2_LSB",
+            "GENERAL_CONTROL3_LSB", "GENERAL_CONTROL4_LSB", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "DAMPER_REDAL", "PORTAMENTO",
+            "SOSTENUTO", "SOFT_PEDAL", "", "FREEZE", "MEMORY_PATCH_SELECT", "HARMONIC_CONTENT", "RELEASE_TIME", "ATTACK_TIME", "BRIGHTNESS", "DECAY_TIME",
+            "VIBRATE_RATE", "VIBRATE_DEPTH", "VIBRATE_DELAY", "", "", "", "", "", "PORTAMENTO_CONTROL", "", "", "", "", "", "", "REVERB", "TREMOLO_DEPTH",
+            "CHORUS", "DELAY_VARIATION", "PHASER_DEPTH", "DATA_INCREMENT", "DATA_DECREMENT", "NRPN_LSB", "NRPN_MSB", "RPN_LSB", "RPN_MSB", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "", "", "", "", "ALL_SOUND_OFF", "RESET_ALL_CONTROLLER", "LOCAL_CONTROL", "ALL_NOTE_OFF", "OMNI_OFF", "OMNI_ON",
+            "MONO_ON", "POLY_ON", };
 
     public static String dataToIdent(int data) {
         if (0 > data || data >= IDENTS.length)

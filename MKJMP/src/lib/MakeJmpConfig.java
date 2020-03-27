@@ -70,7 +70,7 @@ public class MakeJmpConfig {
         contents = Utility.stringsCombin(contents, Utility.stringsCombin(KEY_JAR, "=", getJar(), Platform.getNewLine()));
         contents = Utility.stringsCombin(contents, Utility.stringsCombin(KEY_RES, "=", getRes(), Platform.getNewLine()));
         contents = Utility.stringsCombin(contents, Utility.stringsCombin(KEY_DATA, "=", getData(), Platform.getNewLine()));
-        contents = Utility.stringsCombin(contents, Utility.stringsCombin(KEY_ADD_DATA, "=", (isAddData()?"TRUE":"FALSE"), Platform.getNewLine()));
+        contents = Utility.stringsCombin(contents, Utility.stringsCombin(KEY_ADD_DATA, "=", (isAddData() ? "TRUE" : "FALSE"), Platform.getNewLine()));
         contents = Utility.stringsCombin(contents, Utility.stringsCombin(KEY_OUTPUT, "=", getOutput(), Platform.getNewLine()));
 
         Utility.outputTextFile(file.getPath(), contents);

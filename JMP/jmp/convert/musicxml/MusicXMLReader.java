@@ -354,8 +354,7 @@ public class MusicXMLReader implements IJMPDocumentReader {
                         long duration = divisionValue * mxNote.getDurationInt();
                         if (mxNote.isRest() == false) {
                             /* NoteON, NoteOFFイベント作成 */
-                            int midiNumber = convertToMidiNumber(mxNote.getStep(), mxNote.getAlterInt(),
-                                    mxNote.getOctaveInt());
+                            int midiNumber = convertToMidiNumber(mxNote.getStep(), mxNote.getAlterInt(), mxNote.getOctaveInt());
                             track.add(createNoteOnEvent(position, channel, midiNumber, FixedVelocity));
                             track.add(createNoteOffEvent(position + duration, channel, midiNumber, FixedVelocity));
                         }
@@ -412,24 +411,21 @@ public class MusicXMLReader implements IJMPDocumentReader {
         return midiNumber + alter;
     }
 
-    protected MidiEvent createProgramChangeEvent(long position, int channel, int programNumber)
-            throws InvalidMidiDataException {
+    protected MidiEvent createProgramChangeEvent(long position, int channel, int programNumber) throws InvalidMidiDataException {
         ShortMessage sMes = new ShortMessage();
         sMes.setMessage(ShortMessage.PROGRAM_CHANGE, channel, programNumber, 0);
         MidiEvent event = new MidiEvent(sMes, position);
         return event;
     }
 
-    protected MidiEvent createNoteOnEvent(long position, int channel, int midiNumber, int velocity)
-            throws InvalidMidiDataException {
+    protected MidiEvent createNoteOnEvent(long position, int channel, int midiNumber, int velocity) throws InvalidMidiDataException {
         ShortMessage sMes = new ShortMessage();
         sMes.setMessage(ShortMessage.NOTE_ON, channel, midiNumber, velocity);
         MidiEvent event = new MidiEvent(sMes, position);
         return event;
     }
 
-    protected MidiEvent createNoteOffEvent(long position, int channel, int midiNumber, int velocity)
-            throws InvalidMidiDataException {
+    protected MidiEvent createNoteOffEvent(long position, int channel, int midiNumber, int velocity) throws InvalidMidiDataException {
         ShortMessage sMes = new ShortMessage();
         sMes.setMessage(ShortMessage.NOTE_OFF, channel, midiNumber, velocity);
         MidiEvent event = new MidiEvent(sMes, position);

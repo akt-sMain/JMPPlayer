@@ -25,9 +25,8 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     public static final String WINDOW_NAME_MIDI_SENDER = "MIDI_SENDER";
     public static final String WINDOW_NAME_LANGUAGE = "LANGUAGE";
     public static final String WINDOW_NAME_LICENSE = "LICENSE";
-    public static final String[] WINDOW_NAMELIST = { WINDOW_NAME_MAIN, WINDOW_NAME_FILE_LIST, WINDOW_NAME_HISTORY,
-            WINDOW_NAME_MIDI_SETUP, WINDOW_NAME_MIDI_MONITOR, WINDOW_NAME_MIDI_SENDER, WINDOW_NAME_LANGUAGE,
-            WINDOW_NAME_LICENSE };
+    public static final String[] WINDOW_NAMELIST = { WINDOW_NAME_MAIN, WINDOW_NAME_FILE_LIST, WINDOW_NAME_HISTORY, WINDOW_NAME_MIDI_SETUP,
+            WINDOW_NAME_MIDI_MONITOR, WINDOW_NAME_MIDI_SENDER, WINDOW_NAME_LANGUAGE, WINDOW_NAME_LICENSE };
 
     private WindowDatabase database = null;
 

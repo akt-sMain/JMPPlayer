@@ -351,8 +351,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             parent = null;
         }
 
-        JOptionPane.showMessageDialog(parent, message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error),
-                JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(parent, message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
         SystemManager.TempResisterEx = null;
     }
 
@@ -363,15 +362,13 @@ public class SystemManager extends AbstractManager implements ISystemManager {
                     JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
         }
         else {
-            showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error),
-                    JOptionPane.ERROR_MESSAGE);
+            showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
         }
         SystemManager.TempResisterEx = null;
     }
 
     public void showInformationMessageDialog(String message) {
-        showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Message),
-                JOptionPane.INFORMATION_MESSAGE);
+        showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Message), JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void showMessageDialog(String message, int option) {

@@ -46,8 +46,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
     private static final int INDEX_OF_COLUMN_DATA1 = 4;
     private static final int INDEX_OF_COLUMN_DATA2 = 5;
 
-    private static final String[] COLUMN_NAMES = new String[] { "Time", "Byte", "Channel", "Command", "Data1",
-            "Data2" };
+    private static final String[] COLUMN_NAMES = new String[] { "Time", "Byte", "Channel", "Command", "Data1", "Data2" };
 
     private JLabel lblCounter;
     private DefaultTableModel model = null;
@@ -177,8 +176,8 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
             {
                 comboBox = new JComboBox<String>();
                 buttonPane.add(comboBox);
-                comboBox.setModel(new DefaultComboBoxModel<String>(new String[] { "All", "1", "2", "3", "4", "5", "6",
-                        "7", "8", "9", "10", "11", "12", "13", "14", "15", "16" }));
+                comboBox.setModel(new DefaultComboBoxModel<String>(
+                        new String[] { "All", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16" }));
             }
         }
     }

@@ -28,7 +28,7 @@ public class DataManager extends AbstractManager implements IDataManager {
     private JList<String> history = null;
 
     public HistoryDialog getHistoryDialog() {
-        return (HistoryDialog)JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_HISTORY);
+        return (HistoryDialog) JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_HISTORY);
     }
 
     // 固有変数

@@ -5,10 +5,7 @@ import jmp.lang.DefineLanguage.LangID;
 public class LanguageTable {
 
     // タイトル
-    private static final LangID[] titles = new LangID[] {
-            LangID.Japanese,
-            LangID.English,
-    };
+    private static final LangID[] titles = new LangID[] { LangID.Japanese, LangID.English, };
 
     /**
      * 言語タイトル取得

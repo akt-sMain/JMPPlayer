@@ -6,7 +6,67 @@ public class DefineLanguage {
     public static final int NUMBER_OF_INDEX_LANG = 2;
 
     public static enum LangID {
-        Language, Japanese, English, File, Save, Open, Reload, Version, Exit, Window, Allways_on_top, Player, Loop_playback, Continuous_playback, Playlist, History, Plugin, Add_plugin, Remove_plugin, Close_all_plugin, Setting, MIDI_settings, MIDI_device_settings, Open_MIDI_device_settings_on_startup, PC_reset, MIDI_message_monitor, MIDI_message_sender, Now_loading, Plugin_error, FILE_ERROR_1, FILE_ERROR_2, FILE_ERROR_3, FILE_ERROR_4, FILE_ERROR_5, FILE_LOAD_SUCCESS, PLUGIN_LOAD_SUCCESS, PLUGIN_LOAD_ERROR, Clear, Playback, Stop, Fast_forward, Rewind, Next, Previous, Close, Add, Remove, Open_with_Explorer, MIDI_Data_byte, Send, Invalid_byte_data, License, Above_conditions, Accept, Reject, Copied_to_clipboard, Original_copy, Common_settings, Apply, Error, Message,
+        Language,
+        Japanese,
+        English,
+        File,
+        Save,
+        Open,
+        Reload,
+        Version,
+        Exit,
+        Window,
+        Allways_on_top,
+        Player,
+        Loop_playback,
+        Continuous_playback,
+        Playlist,
+        History,
+        Plugin,
+        Add_plugin,
+        Remove_plugin,
+        Close_all_plugin,
+        Setting,
+        MIDI_settings,
+        MIDI_device_settings,
+        Open_MIDI_device_settings_on_startup,
+        PC_reset,
+        MIDI_message_monitor,
+        MIDI_message_sender,
+        Now_loading,
+        Plugin_error,
+        FILE_ERROR_1,
+        FILE_ERROR_2,
+        FILE_ERROR_3,
+        FILE_ERROR_4,
+        FILE_ERROR_5,
+        FILE_LOAD_SUCCESS,
+        PLUGIN_LOAD_SUCCESS,
+        PLUGIN_LOAD_ERROR,
+        Clear,
+        Playback,
+        Stop,
+        Fast_forward,
+        Rewind,
+        Next,
+        Previous,
+        Close,
+        Add,
+        Remove,
+        Open_with_Explorer,
+        MIDI_Data_byte,
+        Send,
+        Invalid_byte_data,
+        License,
+        Above_conditions,
+        Accept,
+        Reject,
+        Copied_to_clipboard,
+        Original_copy,
+        Common_settings,
+        Apply,
+        Error,
+        Message,
     }
 
     static java.util.HashMap<LangID, LanguageWords> langMap = new java.util.HashMap<LangID, LanguageWords>() {
@@ -34,18 +94,15 @@ public class DefineLanguage {
             put(LangID.Setting, new LanguageWords("設定", "Setting"));
             put(LangID.MIDI_settings, new LanguageWords("MIDI設定", "MIDI settings"));
             put(LangID.MIDI_device_settings, new LanguageWords("MIDIデバイス設定", "MIDI device settings"));
-            put(LangID.Open_MIDI_device_settings_on_startup,
-                    new LanguageWords("起動時にMIDIデバイス設定を開く", "Open MIDI device settings on startup"));
+            put(LangID.Open_MIDI_device_settings_on_startup, new LanguageWords("起動時にMIDIデバイス設定を開く", "Open MIDI device settings on startup"));
             put(LangID.PC_reset, new LanguageWords("プログラムチェンジリセット", "Program change reset"));
             put(LangID.MIDI_message_monitor, new LanguageWords("MIDIメッセージモニター", "MIDI message monitor"));
             put(LangID.MIDI_message_sender, new LanguageWords("MIDIメッセージ送信", "MIDI message sender"));
             put(LangID.Now_loading, new LanguageWords("ロード中", "Now loading"));
             put(LangID.Plugin_error, new LanguageWords("プラグインエラー", "Plugin error"));
-            put(LangID.FILE_ERROR_1, new LanguageWords("※ファイルロード中に他のファイルをロードできません。",
-                    "※Other files cannot be loaded while loading a file."));
+            put(LangID.FILE_ERROR_1, new LanguageWords("※ファイルロード中に他のファイルをロードできません。", "※Other files cannot be loaded while loading a file."));
             put(LangID.FILE_ERROR_2, new LanguageWords("※サポート外のファイル形式です", "※File format not supported."));
-            put(LangID.FILE_ERROR_3,
-                    new LanguageWords("※再生中はファイルロードできません。", "※Files cannot be loaded during playback."));
+            put(LangID.FILE_ERROR_3, new LanguageWords("※再生中はファイルロードできません。", "※Files cannot be loaded during playback."));
             put(LangID.FILE_ERROR_4, new LanguageWords("※ファイルを開くことができません。", "※The file cannot be opened."));
             put(LangID.FILE_ERROR_5, new LanguageWords("※ファイルのロードに失敗しました。", "※Failed to load the file."));
             put(LangID.FILE_LOAD_SUCCESS, new LanguageWords("ファイルロード成功", "File loading successful."));

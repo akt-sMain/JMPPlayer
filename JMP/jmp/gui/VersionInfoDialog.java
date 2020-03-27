@@ -71,7 +71,7 @@ public class VersionInfoDialog extends JMPDialog {
         btnLicense = new JButton("License");
         btnLicense.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                LicenseReaderDialog dialog = (LicenseReaderDialog)JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE);
+                LicenseReaderDialog dialog = (LicenseReaderDialog) JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE);
                 dialog.start();
             }
         });

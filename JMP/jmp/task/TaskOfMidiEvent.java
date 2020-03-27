@@ -70,7 +70,7 @@ public class TaskOfMidiEvent extends Thread implements ITask {
         JmpMidiPacket packet;
         if (JMPFlags.UseUnsynchronizedMidiPacket == true) {
             // 非同期にするため、MidiMessageをクローンする
-            packet = new JmpMidiPacket((MidiMessage)message.clone(), timeStamp, senderType);
+            packet = new JmpMidiPacket((MidiMessage) message.clone(), timeStamp, senderType);
         }
         else {
             packet = new JmpMidiPacket(message, timeStamp, senderType);
