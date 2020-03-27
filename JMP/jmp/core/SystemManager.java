@@ -16,6 +16,7 @@ import jlib.core.ISystemManager;
 import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
 import jmp.JMPFlags;
+import jmp.lang.DefineLanguage.LangID;
 import jmp.task.ICallbackFunction;
 
 /**
@@ -118,12 +119,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     /** ZIPパッケージディレクトリ名 */
     public static final String ZIP_DIR_NAME = "zip";
 
-    /** エラーダイアログタイトル */
-    private static final String ERROR_DIALOG_TITLE = "エラー";
-
-    /** メッセージダイアログタイトル */
-    private static final String MSG_DIALOG_TITLE = "メッセージ";
-
     /** デフォルトプレイヤーカラー */
     public static final Color DEFAULT_PLAYER_BACK_COLOR = Color.DARK_GRAY;
 
@@ -178,6 +173,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             // jmsフォルダ作成
             jmsDir.mkdirs();
         }
+
+        // アクティベート処理
+        executeActivate();
 
         if (initializeFlag == false) {
             initializeFlag = true;
@@ -352,7 +350,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         else {
             parent = null;
         }
-        JOptionPane.showMessageDialog(parent, message, ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+
+        JOptionPane.showMessageDialog(parent, message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error),
+                JOptionPane.ERROR_MESSAGE);
         SystemManager.TempResisterEx = null;
     }
 
@@ -360,20 +360,22 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         if (SystemManager.TempResisterEx != null) {
             String stackTrace = function.Error.getMsg(SystemManager.TempResisterEx);
             showMessageDialog(Utility.stringsCombin(message, Platform.getNewLine(), Platform.getNewLine(), stackTrace),
-                    ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+                    JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
         }
         else {
-            showMessageDialog(message, ERROR_DIALOG_TITLE, JOptionPane.ERROR_MESSAGE);
+            showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error),
+                    JOptionPane.ERROR_MESSAGE);
         }
         SystemManager.TempResisterEx = null;
     }
 
     public void showInformationMessageDialog(String message) {
-        showMessageDialog(message, MSG_DIALOG_TITLE, JOptionPane.INFORMATION_MESSAGE);
+        showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Message),
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void showMessageDialog(String message, int option) {
-        showMessageDialog(message, MSG_DIALOG_TITLE, option);
+        showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Message), option);
     }
 
     public void showMessageDialog(String message, String title, int option) {

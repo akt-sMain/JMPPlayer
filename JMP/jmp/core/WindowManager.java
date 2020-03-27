@@ -13,6 +13,7 @@ import jmp.gui.MidiDataTransportDialog;
 import jmp.gui.MidiMessageMonitor;
 import jmp.gui.SelectLanguageDialog;
 import jmp.gui.WindowDatabase;
+import jmplayer.JMPPlayer;
 
 public class WindowManager extends AbstractManager implements IWindowManager {
 
@@ -49,6 +50,9 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         new MidiDataTransportDialog();
         new SelectLanguageDialog();
         new HistoryDialog();
+
+        // メインウィンドウ
+        new JMPPlayer();
 
         return result;
     }

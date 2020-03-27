@@ -222,18 +222,13 @@ public class JMPLoader {
 
         if (JMPFlags.LibraryMode == false) {
             if (result == true) {
-
-
-
-                // アクティベート
-                JMPCore.getSystemManager().executeActivate();
-
                 /* ライセンス確認 */
                 if (JMPFlags.ActivateFlag == false) {
                     JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LANGUAGE).showWindow();
                     JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE).showWindow();
                 }
 
+                // ダイアログが閉じられてから再度ActivateFlagを確認する
                 if (JMPFlags.ActivateFlag == false) {
                     // アクティベートされなかった場合は終了する
                     result = false;
@@ -260,7 +255,7 @@ public class JMPLoader {
             JMPCore.getPluginManager().startupPluginInstance();
 
             // メインウィンドウ登録
-            JMPPlayer win = new JMPPlayer();
+            JMPPlayer win = (JMPPlayer)JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MAIN);
             win.initializeSetting();
             win.setVisible(false);
             JMPCore.getSystemManager().registerMainWindow(win);

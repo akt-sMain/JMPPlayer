@@ -6,7 +6,7 @@ public class DefineLanguage {
     public static final int NUMBER_OF_INDEX_LANG = 2;
 
     public static enum LangID {
-        Language, Japanese, English, File, Save, Open, Reload, Version, Exit, Window, Allways_on_top, Player, Loop_playback, Continuous_playback, Playlist, History, Plugin, Add_plugin, Remove_plugin, Close_all_plugin, Setting, MIDI_settings, MIDI_device_settings, Open_MIDI_device_settings_on_startup, PC_reset, MIDI_message_monitor, MIDI_message_sender, Now_loading, Plugin_error, FILE_ERROR_1, FILE_ERROR_2, FILE_ERROR_3, FILE_ERROR_4, FILE_ERROR_5, FILE_LOAD_SUCCESS, PLUGIN_LOAD_SUCCESS, PLUGIN_LOAD_ERROR, Clear, Playback, Stop, Fast_forward, Rewind, Next, Previous, Close, Add, Remove, Open_with_Explorer, MIDI_Data_byte, Send, Invalid_byte_data, License, Above_conditions, Accept, Reject, Copied_to_clipboard, Original_copy, Common_settings, Apply,
+        Language, Japanese, English, File, Save, Open, Reload, Version, Exit, Window, Allways_on_top, Player, Loop_playback, Continuous_playback, Playlist, History, Plugin, Add_plugin, Remove_plugin, Close_all_plugin, Setting, MIDI_settings, MIDI_device_settings, Open_MIDI_device_settings_on_startup, PC_reset, MIDI_message_monitor, MIDI_message_sender, Now_loading, Plugin_error, FILE_ERROR_1, FILE_ERROR_2, FILE_ERROR_3, FILE_ERROR_4, FILE_ERROR_5, FILE_LOAD_SUCCESS, PLUGIN_LOAD_SUCCESS, PLUGIN_LOAD_ERROR, Clear, Playback, Stop, Fast_forward, Rewind, Next, Previous, Close, Add, Remove, Open_with_Explorer, MIDI_Data_byte, Send, Invalid_byte_data, License, Above_conditions, Accept, Reject, Copied_to_clipboard, Original_copy, Common_settings, Apply, Error, Message,
     }
 
     static java.util.HashMap<LangID, LanguageWords> langMap = new java.util.HashMap<LangID, LanguageWords>() {
@@ -73,6 +73,8 @@ public class DefineLanguage {
             put(LangID.Original_copy, new LanguageWords("原文のコピー", "Original copy"));
             put(LangID.Common_settings, new LanguageWords("共通設定", "Common settings"));
             put(LangID.Apply, new LanguageWords("適用", "Apply"));
+            put(LangID.Error, new LanguageWords("エラー", "Error"));
+            put(LangID.Message, new LanguageWords("メッセージ", "Message"));
         }
     };
 }
