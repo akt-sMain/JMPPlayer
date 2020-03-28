@@ -11,6 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
+import function.Platform;
+import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.WindowManager;
@@ -35,38 +37,36 @@ public class VersionInfoDialog extends JMPDialog {
                 close();
             }
         });
-        btnClose.setBounds(252, 105, 91, 21);
+        btnClose.setBounds(260, 107, 91, 21);
         getContentPane().add(btnClose);
 
-        JLabel lblVersionname = new JLabel("Version ");
+        JLabel lblVersionname = new JLabel("Version :");
         lblVersionname.setForeground(Color.WHITE);
         lblVersionname.setFont(UIManager.getFont("Menu.font"));
         lblVersionname.setHorizontalAlignment(SwingConstants.RIGHT);
-        lblVersionname.setBounds(99, 33, 64, 13);
+        lblVersionname.setBounds(99, 33, 94, 13);
         getContentPane().add(lblVersionname);
 
-        JLabel lblAppname = new JLabel("AppName");
+        JLabel lblAppname = new JLabel("AppName :");
         lblAppname.setForeground(Color.WHITE);
         lblAppname.setFont(UIManager.getFont("Menu.font"));
         lblAppname.setHorizontalAlignment(SwingConstants.RIGHT);
-        lblAppname.setBounds(99, 10, 64, 13);
+        lblAppname.setBounds(99, 10, 94, 13);
         getContentPane().add(lblAppname);
 
         JLabel lblAppDetail = new JLabel();
         lblAppDetail.setForeground(Color.WHITE);
         lblAppDetail.setFont(UIManager.getFont("Menu.font"));
-        lblAppDetail.setBounds(175, 10, 152, 13);
+        lblAppDetail.setBounds(205, 10, 122, 13);
         getContentPane().add(lblAppDetail);
-        String appStr = String.format(": %s", JMPCore.APPLICATION_NAME);
-        lblAppDetail.setText(appStr);
+        lblAppDetail.setText(JMPCore.APPLICATION_NAME);
 
         JLabel lblVerDetail = new JLabel();
         lblVerDetail.setForeground(Color.WHITE);
         lblVerDetail.setFont(UIManager.getFont("Menu.font"));
-        lblVerDetail.setBounds(175, 33, 152, 13);
+        lblVerDetail.setBounds(205, 33, 122, 13);
         getContentPane().add(lblVerDetail);
-        String verStr = String.format(": %s", JMPCore.APPLICATION_VERSION);
-        lblVerDetail.setText(verStr);
+        lblVerDetail.setText(JMPCore.APPLICATION_VERSION);
 
         btnLicense = new JButton("License");
         btnLicense.addActionListener(new ActionListener() {
@@ -75,7 +75,7 @@ public class VersionInfoDialog extends JMPDialog {
                 dialog.start();
             }
         });
-        btnLicense.setBounds(149, 105, 91, 21);
+        btnLicense.setBounds(157, 107, 91, 21);
         getContentPane().add(btnLicense);
 
         JLabel iconLabel = new JLabel("");
@@ -90,16 +90,35 @@ public class VersionInfoDialog extends JMPDialog {
         JLabel lblJmplib = new JLabel("JMPLIB");
         lblJmplib.setForeground(Color.WHITE);
         lblJmplib.setFont(UIManager.getFont("Menu.font"));
-        lblJmplib.setBounds(175, 61, 152, 13);
-        lblJmplib.setText(String.format(": %s", JMPCore.LIBRALY_VERSION));
+        lblJmplib.setBounds(205, 61, 122, 13);
+        lblJmplib.setText(JMPCore.LIBRALY_VERSION);
         getContentPane().add(lblJmplib);
 
-        JLabel labelBuild = new JLabel("LIB Version ");
+        JLabel labelBuild = new JLabel("LIB Version :");
         labelBuild.setHorizontalAlignment(SwingConstants.RIGHT);
         labelBuild.setForeground(Color.WHITE);
         labelBuild.setFont(UIManager.getFont("Menu.font"));
-        labelBuild.setBounds(99, 61, 64, 13);
+        labelBuild.setBounds(99, 61, 94, 13);
         getContentPane().add(labelBuild);
+
+        JLabel lblJava = new JLabel("Java :");
+        lblJava.setHorizontalAlignment(SwingConstants.RIGHT);
+        lblJava.setForeground(Color.WHITE);
+        lblJava.setFont(UIManager.getFont("Menu.font"));
+        lblJava.setBounds(99, 84, 94, 13);
+        getContentPane().add(lblJava);
+
+        JLabel lblJreVersion = new JLabel("0");
+        lblJreVersion.setForeground(Color.WHITE);
+        lblJreVersion.setFont(UIManager.getFont("Menu.font"));
+        lblJreVersion.setBounds(205, 84, 122, 13);
+        lblJreVersion.setText(Platform.getJavaVersion());
+        getContentPane().add(lblJreVersion);
+
+        if (JMPFlags.DebugMode == false) {
+            lblJava.setVisible(false);
+            lblJreVersion.setVisible(false);
+        }
     }
 
     public void start() {
