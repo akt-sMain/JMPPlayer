@@ -46,6 +46,7 @@ public class SelectLanguageDialog extends JMPDialog {
         JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_LANGUAGE, this);
 
         comboBoxLang = new JComboBox<String>();
+        comboBoxLang.setFont(new Font("Dialog", Font.PLAIN, 15));
         comboBoxLang.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if (JMPCore.isFinishedInitialize() == true) {

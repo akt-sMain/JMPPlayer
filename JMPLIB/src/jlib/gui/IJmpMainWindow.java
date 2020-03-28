@@ -52,4 +52,10 @@ public interface IJmpMainWindow extends IJmpWindow {
      * 終了
      */
     abstract void exit();
+
+    /**
+     * 設定初期化
+     */
+    default void initializeSetting() {
+    }
 }

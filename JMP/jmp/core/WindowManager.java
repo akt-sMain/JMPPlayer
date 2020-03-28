@@ -10,6 +10,7 @@ import jlib.plugin.IPlugin;
 import jmp.gui.HistoryDialog;
 import jmp.gui.LicenseReaderDialog;
 import jmp.gui.MidiDataTransportDialog;
+import jmp.gui.MidiFileListDialog;
 import jmp.gui.MidiMessageMonitor;
 import jmp.gui.SelectLanguageDialog;
 import jmp.gui.WindowDatabase;
@@ -49,9 +50,10 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         new MidiDataTransportDialog();
         new SelectLanguageDialog();
         new HistoryDialog();
+        new MidiFileListDialog();
 
         // メインウィンドウ
-        new JMPPlayer();
+        JMPCore.getSystemManager().registerMainWindow(new JMPPlayer());
 
         return result;
     }

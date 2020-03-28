@@ -57,7 +57,6 @@ import jmp.core.SoundManager;
 import jmp.core.SystemManager;
 import jmp.core.WindowManager;
 import jmp.gui.JmpQuickLaunch;
-import jmp.gui.MidiFileListDialog;
 import jmp.gui.VersionInfoDialog;
 import jmp.gui.ui.ControlButtonUI;
 import jmp.gui.ui.IButtonMarkPaint;
@@ -170,7 +169,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JLabel statusLabel;
     private JSlider slider;
     private JButton playButton;
-    private MidiFileListDialog midiFileListDialog;
     private JButton prev2Button;
     private JButton prevButton;
     private JButton nextButton;
@@ -236,7 +234,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_MAIN, this);
 
         // Midiリストダイアログ
-        midiFileListDialog = new MidiFileListDialog();
         getContentPane().setLayout(new BorderLayout(0, 0));
 
         panel_2 = new JPanel();
@@ -472,7 +469,13 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         playerMenu.add(menuItemHistory);
         playlistItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                midiFileListDialog.setVisible(true);
+                IJmpWindow win = JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_FILE_LIST);
+                if (win.isWindowVisible() == true) {
+                    win.hideWindow();
+                }
+                else {
+                    win.showWindow();
+                }
             }
         });
 
@@ -692,9 +695,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         versionInfoDialog = new VersionInfoDialog();
     }
 
-    /**
-     * 設定初期化
-     */
+    @Override
     public void initializeSetting() {
         DataManager dm = JMPCore.getDataManager();
 
@@ -1114,13 +1115,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         setVisible(false);
 
         if (forcedExit == true) {
-            // プレイリストダイアログの破棄
-            if (midiFileListDialog != null) {
-                midiFileListDialog.setVisible(false);
-                midiFileListDialog.dispose();
-                midiFileListDialog = null;
-            }
-
             // JMPリソースの終了処理
             JMPLoader.exit();
         }

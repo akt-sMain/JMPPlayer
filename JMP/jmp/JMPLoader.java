@@ -4,6 +4,7 @@ import java.io.File;
 
 import function.Platform;
 import function.Utility;
+import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
@@ -255,10 +256,9 @@ public class JMPLoader {
             JMPCore.getPluginManager().startupPluginInstance();
 
             // メインウィンドウ登録
-            JMPPlayer win = (JMPPlayer) JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MAIN);
+            IJmpMainWindow win = JMPCore.getSystemManager().getMainWindow();
             win.initializeSetting();
-            win.setVisible(false);
-            JMPCore.getSystemManager().registerMainWindow(win);
+            win.hideWindow();
 
             // 言語更新
             JMPCore.getWindowManager().updateLanguage();
@@ -267,7 +267,7 @@ public class JMPLoader {
             if (JMPCore.isEnableStandAlonePlugin() == false) {
                 // JMPPlayer起動
                 if (JMPFlags.LibraryMode == false) {
-                    win.setVisible(true);
+                    win.showWindow();
                 }
             }
             else {

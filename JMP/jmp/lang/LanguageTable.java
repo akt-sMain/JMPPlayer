@@ -4,9 +4,6 @@ import jmp.lang.DefineLanguage.LangID;
 
 public class LanguageTable {
 
-    // タイトル
-    private static final LangID[] titles = new LangID[] { LangID.Japanese, LangID.English, };
-
     /**
      * 言語タイトル取得
      *
@@ -14,7 +11,7 @@ public class LanguageTable {
      * @return
      */
     public static String getTitle(int langIndex) {
-        return getLanguageStr(titles[langIndex], langIndex);
+        return getLanguageStr(DefineLanguage.titles[langIndex], langIndex);
     }
 
     /**
@@ -24,8 +21,8 @@ public class LanguageTable {
      * @return
      */
     public static int getIndex(LangID titleID) {
-        for (int i = 0; i < titles.length; i++) {
-            if (titles[i] == titleID) {
+        for (int i = 0; i < DefineLanguage.titles.length; i++) {
+            if (DefineLanguage.titles[i] == titleID) {
                 return i;
             }
         }
