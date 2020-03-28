@@ -1,6 +1,7 @@
 package jmplayer;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
@@ -505,6 +506,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         });
 
         lblCommon = new JLabel("-- 共通設定 --");
+        lblCommon.setFont(new Font("Dialog", Font.BOLD, 14));
         configMenu.add(lblCommon);
 
         menuItemLanguage = new JMenuItem("言語設定");
@@ -516,6 +518,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         configMenu.add(menuItemLanguage);
 
         lblMidi = new JLabel("-- MIDI設定 --");
+        lblMidi.setFont(new Font("Dialog", Font.BOLD, 14));
         lblMidi.setHorizontalAlignment(SwingConstants.LEFT);
         configMenu.add(lblMidi);
         configMenu.add(mntmMidiDeviceSetup);
@@ -565,6 +568,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         configMenu.add(mntmMidimessagesender);
 
         lblDebugMenu = new JLabel("-- Developer menu --");
+        lblDebugMenu.setFont(new Font("Dialog", Font.BOLD, 14));
         lblDebugMenu.setHorizontalAlignment(SwingConstants.LEFT);
         configMenu.add(lblDebugMenu);
 
@@ -1213,7 +1217,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                         }
                     }
                     catch (Exception e) {
-                        e.printStackTrace();
+                        // e.printStackTrace();
 
                         status = false;
                         statusStr = lm.getLanguageStr(LangID.FILE_ERROR_5);
@@ -1238,8 +1242,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     s_currentFileName = path;
 
                     // メッセージ発行
-                    statusStr = String.format("%s ...(" + lm.getLanguageStr(LangID.FILE_LOAD_SUCCESS) + ")",
-                            Utility.getFileNameAndExtension(s_currentFileName));
+                    statusStr = String.format("%s ...(%s)", Utility.getFileNameAndExtension(s_currentFileName), lm.getLanguageStr(LangID.FILE_LOAD_SUCCESS));
                 }
                 else {
                     // 前のファイル名に戻す

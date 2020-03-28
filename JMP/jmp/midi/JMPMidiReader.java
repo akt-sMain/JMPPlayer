@@ -10,6 +10,8 @@ import javax.sound.midi.Sequence;
 
 import function.Utility;
 
+// 仮実装
+@SuppressWarnings("unused")
 public class JMPMidiReader {
 
     public class ModeSet {
