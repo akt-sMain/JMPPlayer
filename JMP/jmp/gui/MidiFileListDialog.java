@@ -171,9 +171,15 @@ public class MidiFileListDialog extends JMPFrame {
         btnLoad.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int index = JMPCore.getSoundManager().getPlayList().getSelectedIndex();
-                if (index == -1) {
+                if (index >= 0) {
+                    if (JMPCore.getDataManager().isAutoPlay() == false) {
+                        JMPCore.getDataManager().setAutoPlay(true);
+                    }
+                }
+                else {
                     JMPCore.getSoundManager().getPlayList().setSelectedIndex(0);
                 }
+
                 JMPCore.getSoundManager().playCurrent();
             }
         });
@@ -589,7 +595,7 @@ public class MidiFileListDialog extends JMPFrame {
 
         buttonClear.setText(lm.getLanguageStr(LangID.Clear));
         buttonDelete.setText(lm.getLanguageStr(LangID.Remove));
-        btnLoad.setText(lm.getLanguageStr(LangID.Playback));
+        btnLoad.setText(lm.getLanguageStr(LangID.Continuous_playback));
     }
 
     /**

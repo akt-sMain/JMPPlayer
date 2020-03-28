@@ -12,8 +12,9 @@ import jmp.player.PlayerAccessor;
 import jmplayer.JMPPlayer;
 
 public class SequencerSliderUI extends BasicSliderUI {
+    public static final int THUMB_SIZE = 8;
     public static final Color BLINK_COLOR_1 = Color.GREEN;
-    public static final Color BLINK_COLOR_2 = Utility.convertHighLightColor(BLINK_COLOR_1, 210);
+    public static final Color BLINK_COLOR_2 = Utility.convertHighLightColor(BLINK_COLOR_1, 230);
 
     public SequencerSliderUI() {
         super(null);
@@ -33,9 +34,12 @@ public class SequencerSliderUI extends BasicSliderUI {
             int h = knobBounds.height;
             g.translate(knobBounds.x, knobBounds.y);
             g.setColor(color);
-            g.drawLine((w / 2) - 1, 0, (w / 2) - 1, h);
-            g.drawLine((w / 2), 0, (w / 2), h);
-            g.drawLine((w / 2) + 1, 0, (w / 2) + 1, h);
+//            g.drawLine((w / 2) - 1, 0, (w / 2) - 1, h);
+//            g.drawLine((w / 2), 0, (w / 2), h);
+//            g.drawLine((w / 2) + 1, 0, (w / 2) + 1, h);
+            g.fillRect((w / 2) - (THUMB_SIZE / 2), 0, (w / 2) + (THUMB_SIZE / 2), h-1);
+            g.setColor(BLINK_COLOR_2);
+            g.drawRect((w / 2) - (THUMB_SIZE / 2), 0, (w / 2) + (THUMB_SIZE / 2), h-1);
             g.translate(-knobBounds.x, -knobBounds.y);
         }
         else {

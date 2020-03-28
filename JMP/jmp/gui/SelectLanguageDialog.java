@@ -35,7 +35,7 @@ public class SelectLanguageDialog extends JMPDialog {
     public SelectLanguageDialog() {
         setResizable(false);
         setTitle("Language");
-        setBounds(100, 100, 347, 125);
+        setBounds(100, 100, 365, 125);
         getContentPane().setLayout(new BorderLayout());
         setModal(true);
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -60,7 +60,7 @@ public class SelectLanguageDialog extends JMPDialog {
         contentPanel.add(comboBoxLang);
         {
             closeButton = new JButton("Apply");
-            closeButton.setBounds(268, 56, 61, 21);
+            closeButton.setBounds(259, 56, 70, 21);
             contentPanel.add(closeButton);
             closeButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -78,7 +78,7 @@ public class SelectLanguageDialog extends JMPDialog {
         lblTest.setBackground(new Color(0, 0, 0));
         lblTest.setForeground(new Color(175, 238, 238));
         lblTest.setHorizontalAlignment(SwingConstants.CENTER);
-        lblTest.setFont(new Font("MS UI Gothic", Font.PLAIN, 25));
+        lblTest.setFont(new Font("MS UI Gothic", Font.BOLD, 26));
         lblTest.setBounds(12, 39, 235, 38);
         contentPanel.add(lblTest);
     }

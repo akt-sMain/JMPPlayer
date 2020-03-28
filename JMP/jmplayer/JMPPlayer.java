@@ -1,9 +1,11 @@
 package jmplayer;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
@@ -27,12 +29,16 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.TransferHandler;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import function.Platform;
@@ -118,6 +124,23 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         }
     }
 
+    private class JmpMenuListener implements MenuListener {
+
+        @Override
+        public void menuSelected(MenuEvent e) {
+            updateMenuState();
+        }
+
+        @Override
+        public void menuDeselected(MenuEvent e) {
+        }
+
+        @Override
+        public void menuCanceled(MenuEvent e) {
+        }
+
+    }
+
     // ! アプリケーション名
     public static final String APP_TITLE = JMPCore.APPLICATION_NAME;
     // ! タイマーによるカラートグル制御
@@ -131,6 +154,9 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     // ! コントロールボタン背景色
     // public static final Color CONTROL_BTN_BACKGROUND =
     // Utility.convertCodeToHtmlColor("#888888");
+
+    // ! カレントタイムフォーマット
+    public static final String CURRENT_TIME_FORMAT = "%s／%s ";
 
     private static String s_currentFileName = "";
     private static long s_tmpSliderTick = -1;
@@ -155,11 +181,10 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JCheckBoxMenuItem autoPlayCheckBox;
     private JMenu playerMenu;
     private JMenuItem removePluginMenuItem;
-    private JCheckBoxMenuItem roopPlayCheckBoxMenuItem;
+    private JCheckBoxMenuItem loopPlayCheckBoxMenuItem;
     private JMenuItem mntmMidiDeviceSetup;
     private JMenuItem zipGenerateMenuItem;
     private JMenuItem removeAllPluginMenuItem;
-    private JLabel labelLengthTime;
     private JLabel labelPositionTime;
     private JCheckBoxMenuItem chckbxmntmStartupmidisetup;
     private JLabel lblDebugMenu;
@@ -180,6 +205,12 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JMenu configMenu;
     private JLabel lblCommon;
     private JMenuItem menuItemLanguage;
+    private JPanel panel_1;
+    private JPanel panel_2;
+    private JPanel panel_3;
+    private JPanel panel_4;
+    private JPanel panel_5;
+    private JPanel panel_6;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -191,13 +222,10 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         super();
 
         getContentPane().setBackground(getJmpBackColor());
-
-        setResizable(false);
         setTitle(APP_TITLE);
         this.addWindowListener(this);
         this.setTransferHandler(new DropFileHandler());
-        getContentPane().setLayout(null);
-        setBounds(20, 20, 442, 199);
+        setBounds(20, 20, 480, 210);
 
         Image jmpIcon = JMPCore.getResourceManager().getJmpImageIcon();
         if (jmpIcon != null) {
@@ -209,90 +237,82 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
         // Midiリストダイアログ
         midiFileListDialog = new MidiFileListDialog();
+        getContentPane().setLayout(new BorderLayout(0, 0));
+
+        panel_2 = new JPanel();
+        panel_2.setBackground(Color.BLACK);
+        getContentPane().add(panel_2);
+        panel_2.setLayout(new BorderLayout(0, 0));
+
+        JPanel panel = new JPanel();
+        panel_2.add(panel, BorderLayout.CENTER);
+        panel.setLayout(new BorderLayout(0, 0));
+
+        panel_1 = new JPanel();
+        panel_1.setBackground(getJmpBackColor());
+        panel.add(panel_1, BorderLayout.CENTER);
+        panel_1.setLayout(new GridLayout(0, 5, 15, 0));
 
         prev2Button = new JButton("←←");
+        panel_1.add(prev2Button);
         prev2Button.setToolTipText("前の曲へ");
         prev2Button.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
-        prev2Button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (JMPCore.getSoundManager().isValidPlayList() == true) {
-                    if (playerAccessor.getCurrent().getPosition() < 2000) {
-                        JMPCore.getSoundManager().playPrev();
-                        return;
-                    }
-                }
-
-                if (playerAccessor.getCurrent().isValid() == false) {
-                    return;
-                }
-
-                JMPCore.getSoundManager().initPlay();
-            }
-        });
-        prev2Button.setBounds(19, 10, 64, 64);
-        getContentPane().add(prev2Button);
-
-        playButton = new JButton("再生");
-        playButton.setToolTipText("再生/停止");
-        playButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
-        playButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JMPCore.getSoundManager().togglePlayStop();
-                repaint();
-            }
-        });
-        playButton.setBounds(185, 10, 64, 64);
-        getContentPane().add(playButton);
-
-        next2Button = new JButton("→→");
-        next2Button.setToolTipText("次の曲へ");
-        next2Button.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
-        next2Button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (JMPCore.getSoundManager().isValidPlayList() == true) {
-                    JMPCore.getSoundManager().playNext();
-                    return;
-                }
-
-                JMPCore.getSoundManager().endPosition();
-            }
-        });
-        next2Button.setBounds(351, 10, 64, 64);
-        getContentPane().add(next2Button);
 
         prevButton = new JButton("←");
+        panel_1.add(prevButton);
         prevButton.setToolTipText("巻き戻し");
         prevButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
-        prevButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                JMPCore.getSoundManager().rewind();
-            }
-        });
-        prevButton.setBounds(102, 10, 64, 64);
-        getContentPane().add(prevButton);
+
+        playButton = new JButton("再生");
+        panel_1.add(playButton);
+        playButton.setToolTipText("再生/停止");
+        playButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
 
         nextButton = new JButton("→");
+        panel_1.add(nextButton);
         nextButton.setToolTipText("早送り");
         nextButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
-        nextButton.addMouseListener(new MouseAdapter() {
 
-            @Override
-            public void mousePressed(MouseEvent e) {
-                JMPCore.getSoundManager().fastForward();
-            }
-        });
-        nextButton.setBounds(268, 10, 64, 64);
-        getContentPane().add(nextButton);
+        next2Button = new JButton("→→");
+        panel_1.add(next2Button);
+        next2Button.setToolTipText("次の曲へ");
+        next2Button.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
 
-        statusLabel = new JLabel("");
-        statusLabel.setBounds(12, 118, 412, 13);
-        getContentPane().add(statusLabel);
+        panel_3 = new JPanel();
+        panel_3.setBounds(36, 237, 495, 46);
+        panel.add(panel_3, BorderLayout.SOUTH);
+        panel_3.setLayout(new BorderLayout(0, 0));
 
         slider = new JSlider();
+        panel_3.add(slider, BorderLayout.CENTER);
         slider.setForeground(new Color(255, 255, 255));
         slider.setBackground(getJmpBackColor());
         slider.setValue(0);
+
+        panel_4 = new JPanel();
+        panel_4.setBackground(getJmpBackColor());
+        panel_3.add(panel_4, BorderLayout.SOUTH);
+        panel_4.setLayout(new GridLayout(0, 2, 0, 0));
+
+        panel_6 = new JPanel();
+        panel_6.setBackground(getJmpBackColor());
+        panel_4.add(panel_6);
+
+        labelPositionTime = new JLabel(String.format(CURRENT_TIME_FORMAT, "00:00", "00:00"));
+        labelPositionTime.setHorizontalAlignment(SwingConstants.RIGHT);
+        labelPositionTime.setFont(new Font("Dialog", Font.BOLD, 18));
+        panel_4.add(labelPositionTime);
+        labelPositionTime.setForeground(Color.WHITE);
+
+        panel_5 = new JPanel();
+        panel_5.setBorder(new LineBorder(Color.WHITE, 2));
+        panel_5.setBackground(Color.BLACK);
+        panel_2.add(panel_5, BorderLayout.SOUTH);
+        panel_5.setLayout(new BorderLayout(0, 0));
+
+        statusLabel = new JLabel(" ");
+        panel_5.add(statusLabel);
+        statusLabel.setFont(new Font("Dialog", Font.PLAIN, 14));
         slider.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -314,24 +334,57 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 s_tmpSliderTick = slider.getValue();
             }
         });
-        slider.setBounds(12, 95, 412, 13);
-        getContentPane().add(slider);
+        next2Button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (JMPCore.getSoundManager().isValidPlayList() == true) {
+                    JMPCore.getSoundManager().playNext();
+                    return;
+                }
 
-        labelPositionTime = new JLabel("00:00");
-        labelPositionTime.setForeground(Color.WHITE);
-        labelPositionTime.setBounds(12, 80, 67, 16);
-        getContentPane().add(labelPositionTime);
+                JMPCore.getSoundManager().endPosition();
+            }
+        });
+        nextButton.addMouseListener(new MouseAdapter() {
 
-        labelLengthTime = new JLabel("00:00");
-        labelLengthTime.setForeground(Color.WHITE);
-        labelLengthTime.setHorizontalAlignment(SwingConstants.RIGHT);
-        labelLengthTime.setBounds(351, 80, 73, 16);
-        getContentPane().add(labelLengthTime);
+            @Override
+            public void mousePressed(MouseEvent e) {
+                JMPCore.getSoundManager().fastForward();
+            }
+        });
+        playButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JMPCore.getSoundManager().togglePlayStop();
+                repaint();
+            }
+        });
+        prevButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                JMPCore.getSoundManager().rewind();
+            }
+        });
+        prev2Button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (JMPCore.getSoundManager().isValidPlayList() == true) {
+                    if (playerAccessor.getCurrent().getPosition() < 2000) {
+                        JMPCore.getSoundManager().playPrev();
+                        return;
+                    }
+                }
+
+                if (playerAccessor.getCurrent().isValid() == false) {
+                    return;
+                }
+
+                JMPCore.getSoundManager().initPlay();
+            }
+        });
 
         menuBar = new JMenuBar();
         setJMenuBar(menuBar);
 
         fileMenu = new JMenu("ファイル");
+        fileMenu.addMenuListener(new JmpMenuListener());
         menuBar.add(fileMenu);
 
         openItem = new JMenuItem("開く");
@@ -376,6 +429,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         fileMenu.add(endItem);
 
         windowMenu = new JMenu("ウィンドウ");
+        windowMenu.addMenuListener(new JmpMenuListener());
         menuBar.add(windowMenu);
 
         alwayTopCheckBox = new JCheckBoxMenuItem("常に手前で表示");
@@ -387,15 +441,16 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         windowMenu.add(alwayTopCheckBox);
 
         playerMenu = new JMenu("プレイヤー");
+        playerMenu.addMenuListener(new JmpMenuListener());
         menuBar.add(playerMenu);
 
-        roopPlayCheckBoxMenuItem = new JCheckBoxMenuItem("ループ再生");
-        roopPlayCheckBoxMenuItem.addChangeListener(new ChangeListener() {
+        loopPlayCheckBoxMenuItem = new JCheckBoxMenuItem("ループ再生");
+        loopPlayCheckBoxMenuItem.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                JMPCore.getDataManager().setLoopPlay(roopPlayCheckBoxMenuItem.isSelected());
+                JMPCore.getDataManager().setLoopPlay(loopPlayCheckBoxMenuItem.isSelected());
             }
         });
-        playerMenu.add(roopPlayCheckBoxMenuItem);
+        playerMenu.add(loopPlayCheckBoxMenuItem);
 
         autoPlayCheckBox = new JCheckBoxMenuItem("連続再生");
         playerMenu.add(autoPlayCheckBox);
@@ -422,6 +477,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         });
 
         pluginMenu = new JMenu("プラグイン");
+        pluginMenu.addMenuListener(new JmpMenuListener());
         menuBar.add(pluginMenu);
 
         addPluginMenuItem = new JMenuItem("プラグイン追加");
@@ -496,6 +552,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         pluginMenu.addSeparator();
 
         configMenu = new JMenu("設定");
+        configMenu.addMenuListener(new JmpMenuListener());
         menuBar.add(configMenu);
 
         mntmMidiDeviceSetup = new JMenuItem("MIDIデバイス設定");
@@ -675,7 +732,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         setUI();
         alwayTopCheckBox.setSelected(false);
         autoPlayCheckBox.setSelected(dm.isAutoPlay());
-        roopPlayCheckBoxMenuItem.setSelected(dm.isLoopPlay());
+        loopPlayCheckBoxMenuItem.setSelected(dm.isLoopPlay());
         chckbxmntmStartupmidisetup.setSelected(dm.isShowStartupDeviceSetup());
     }
 
@@ -776,7 +833,11 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     // 停止ボタン
                     Image img = JMPCore.getResourceManager().getBtnStopIcon();
                     if (img != null) {
-                        g.drawImage(img, 0, 0, null);
+                        int imgX = (playButton.getWidth() - img.getWidth(null)) / 2;
+                        int imgY = (playButton.getHeight() - img.getHeight(null)) / 2;
+                        imgX = (imgX < 0) ? 0 : imgX;
+                        imgY = (imgY < 0) ? 0 : imgY;
+                        g.drawImage(img, imgX, imgY, null);
                         return;
                     }
 
@@ -802,7 +863,11 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     // 再生ボタン
                     Image img = JMPCore.getResourceManager().getBtnPlayIcon();
                     if (img != null) {
-                        g.drawImage(img, 0, 0, null);
+                        int imgX = (playButton.getWidth() - img.getWidth(null)) / 2;
+                        int imgY = (playButton.getHeight() - img.getHeight(null)) / 2;
+                        imgX = (imgX < 0) ? 0 : imgX;
+                        imgY = (imgY < 0) ? 0 : imgY;
+                        g.drawImage(img, imgX, imgY, null);
                         return;
                     }
 
@@ -836,7 +901,11 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             public void paintMark(Graphics g, int x, int y, int width, int height) {
                 Image img = JMPCore.getResourceManager().getBtnNextIcon();
                 if (img != null) {
-                    g.drawImage(img, 0, 0, null);
+                    int imgX = (playButton.getWidth() - img.getWidth(null)) / 2;
+                    int imgY = (playButton.getHeight() - img.getHeight(null)) / 2;
+                    imgX = (imgX < 0) ? 0 : imgX;
+                    imgY = (imgY < 0) ? 0 : imgY;
+                    g.drawImage(img, imgX, imgY, null);
                     return;
                 }
 
@@ -872,7 +941,11 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             public void paintMark(Graphics g, int x, int y, int width, int height) {
                 Image img = JMPCore.getResourceManager().getBtnPrevIcon();
                 if (img != null) {
-                    g.drawImage(img, 0, 0, null);
+                    int imgX = (playButton.getWidth() - img.getWidth(null)) / 2;
+                    int imgY = (playButton.getHeight() - img.getHeight(null)) / 2;
+                    imgX = (imgX < 0) ? 0 : imgX;
+                    imgY = (imgY < 0) ? 0 : imgY;
+                    g.drawImage(img, imgX, imgY, null);
                     return;
                 }
 
@@ -909,7 +982,11 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             public void paintMark(Graphics g, int x, int y, int width, int height) {
                 Image img = JMPCore.getResourceManager().getBtnNext2Icon();
                 if (img != null) {
-                    g.drawImage(img, 0, 0, null);
+                    int imgX = (playButton.getWidth() - img.getWidth(null)) / 2;
+                    int imgY = (playButton.getHeight() - img.getHeight(null)) / 2;
+                    imgX = (imgX < 0) ? 0 : imgX;
+                    imgY = (imgY < 0) ? 0 : imgY;
+                    g.drawImage(img, imgX, imgY, null);
                     return;
                 }
 
@@ -949,7 +1026,11 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             public void paintMark(Graphics g, int x, int y, int width, int height) {
                 Image img = JMPCore.getResourceManager().getBtnPrev2Icon();
                 if (img != null) {
-                    g.drawImage(img, 0, 0, null);
+                    int imgX = (playButton.getWidth() - img.getWidth(null)) / 2;
+                    int imgY = (playButton.getHeight() - img.getHeight(null)) / 2;
+                    imgX = (imgX < 0) ? 0 : imgX;
+                    imgY = (imgY < 0) ? 0 : imgY;
+                    g.drawImage(img, imgX, imgY, null);
                     return;
                 }
 
@@ -987,23 +1068,26 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
     @Override
     public void update() {
+        String posStr = "00:00";
+        String lengthStr = "00:00";
         if (playerAccessor.isValid() == true) {
             slider.setMaximum((int) playerAccessor.getCurrent().getLength());
             if (s_tmpSliderTick == -1) {
                 slider.setValue((int) playerAccessor.getCurrent().getPosition());
             }
 
-            labelPositionTime.setText(JMPCore.getSoundManager().getPositionTimeString());
-            labelLengthTime.setText(JMPCore.getSoundManager().getLengthTimeString());
+            posStr = JMPCore.getSoundManager().getPositionTimeString();
+            lengthStr = JMPCore.getSoundManager().getLengthTimeString();
         }
         else {
             s_tmpSliderTick = -1;
             slider.setMaximum(100);
             slider.setValue(0);
 
-            labelPositionTime.setText(JMPCore.getSoundManager().getPlayerTimeString(0));
-            labelLengthTime.setText(JMPCore.getSoundManager().getPlayerTimeString(0));
+            posStr = JMPCore.getSoundManager().getPlayerTimeString(0);
+            lengthStr = JMPCore.getSoundManager().getPlayerTimeString(0);
         }
+        labelPositionTime.setText(String.format(CURRENT_TIME_FORMAT, posStr, lengthStr));
 
         // slider.setToolTipText(String.valueOf(slider.getValue()));
 
@@ -1071,6 +1155,20 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     item.setEnabled(plg.isEnable());
                 }
             }
+        }
+    }
+
+    private void updateMenuState() {
+        // 設定値とメニューの同期
+        DataManager dm = JMPCore.getDataManager();
+        chckbxmntmStartupmidisetup.setSelected(dm.isShowStartupDeviceSetup());
+        loopPlayCheckBoxMenuItem.setSelected(dm.isLoopPlay());
+        autoPlayCheckBox.setSelected(dm.isAutoPlay());
+        alwayTopCheckBox.setSelected(isAlwaysOnTop());
+
+        if (JMPCore.getSoundManager().getSequencer() != null) {
+            // Sequencerが実行中の場合は設定不可
+            mntmMidiDeviceSetup.setEnabled(!JMPCore.getSoundManager().getSequencer().isRunning());
         }
     }
 
@@ -1306,6 +1404,11 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
      *            テキストカラー
      */
     public void setStatusText(String text, Color color) {
+        if (text.isEmpty() == true) {
+            // ブランクの禁止
+            text = " ";
+        }
+
         statusLabel.setForeground(color);
         statusLabel.setText(text);
         statusLabel.repaint();
@@ -1325,7 +1428,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             setStatusText(name, STATUS_COLOR_FILE);
         }
         else {
-            setStatusText("", STATUS_COLOR_FILE);
+            setStatusText(" ", STATUS_COLOR_FILE);
         }
     }
 
@@ -1396,7 +1499,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         alwayTopCheckBox.setText(lm.getLanguageStr(LangID.Allways_on_top));
 
         playerMenu.setText(lm.getLanguageStr(LangID.Player));
-        roopPlayCheckBoxMenuItem.setText(lm.getLanguageStr(LangID.Loop_playback));
+        loopPlayCheckBoxMenuItem.setText(lm.getLanguageStr(LangID.Loop_playback));
         autoPlayCheckBox.setText(lm.getLanguageStr(LangID.Continuous_playback));
         playlistItem.setText(lm.getLanguageStr(LangID.Playlist));
         menuItemHistory.setText(lm.getLanguageStr(LangID.History));
