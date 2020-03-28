@@ -24,6 +24,7 @@ import jmp.convert.IJMPDocumentReader;
 
 public class MusicXMLReader implements IJMPDocumentReader {
 
+    private boolean loadResult = false;
     private File file = null;
     private MusicXML musicXML = null;
 
@@ -40,6 +41,10 @@ public class MusicXMLReader implements IJMPDocumentReader {
 
         Element root = document.getDocumentElement();
         readRootNodeList(root);
+
+        if (musicXML.getParts().size() > 0) {
+            loadResult = true;
+        }
 
         // printResult();
     }
@@ -495,5 +500,9 @@ public class MusicXMLReader implements IJMPDocumentReader {
                 }
             }
         }
+    }
+
+    public boolean isLoadResult() {
+        return loadResult;
     }
 }

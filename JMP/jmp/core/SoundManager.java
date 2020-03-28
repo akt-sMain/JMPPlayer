@@ -215,15 +215,25 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         PlayerAccessor accessor = PlayerAccessor.getInstance();
         Player tmpPlayer = accessor.getCurrent();
 
+        boolean loadResult = true;
+
         try {
             changePlayer(file);
 
-            accessor.getCurrent().loadFile(file);
+            if (accessor.getCurrent().loadFile(file) == false) {
+                loadResult = false;
+            }
         }
         catch (Exception e) {
-            // ロードに失敗した場合は、プレイヤーを元に戻す
-            accessor.change(tmpPlayer);
+            loadResult = false;
             throw e;
+        }
+        finally {
+            if (loadResult == false) {
+                // ロードに失敗した場合は、プレイヤーを元に戻す
+                accessor.change(tmpPlayer);
+                throw new Exception();
+            }
         }
     }
 

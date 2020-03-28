@@ -74,9 +74,13 @@ public class MusicXmlPlayer extends Player {
         MusicXMLReader reader = new MusicXMLReader(file);
         reader.load();
 
-        Sequence seq = reader.convertToMidi();
-        midiPlayer.loadMidiSequence(seq);
-        return true;
+        boolean result = false;
+        if (reader.isLoadResult() == true) {
+            Sequence seq = reader.convertToMidi();
+            midiPlayer.loadMidiSequence(seq);
+            result = true;
+        }
+        return result;
     }
 
     @Override
