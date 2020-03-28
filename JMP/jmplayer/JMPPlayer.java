@@ -675,11 +675,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         chckbxmntmStartupmidisetup.setSelected(dm.isShowStartupDeviceSetup());
     }
 
-    public static void main(String[] args) {
-        int res = (JMPLoader.invoke(args) == true) ? 0 : 1;
-        System.exit(res);
-    }
-
     public static void registerCallbackPackage() {
         CallbackPackage commonCallbackPkg = new CallbackPackage((long) 500);
         commonCallbackPkg.addCallbackFunction(new ICallbackFunction() {
