@@ -1,8 +1,5 @@
 package jmp.core;
 
-import function.Platform;
-import function.Utility;
-import jlib.core.ILanguageManager;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.lang.LanguageTable;
 
@@ -11,25 +8,13 @@ import jmp.lang.LanguageTable;
  * 言語マネージャー
  *
  */
-public class LanguageManager extends AbstractManager implements ILanguageManager {
-    /** 言語テーブル名 */
-    public static final String LANGUAGE_FILE_NAME = "language.csv";
+public class LanguageManager extends AbstractManager {
 
     /**
      * コンストラクタ
      */
     LanguageManager(int pri) {
         super(pri, "language");
-    }
-
-    @Override
-    protected boolean initFunc() {
-        // 言語初期設定
-        return super.initFunc();
-    }
-
-    public String getLangFilePath() {
-        return Utility.pathCombin(Platform.getCurrentPath(false), LANGUAGE_FILE_NAME);
     }
 
     /**
