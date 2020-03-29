@@ -822,7 +822,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
      * （コンストラクタでコールするとデザイナーがエラーになるため、mainでコールする。）
      */
     private void setUI() {
-        slider.setUI(new SequencerSliderUI());
+        slider.setUI(new SequencerSliderUI(slider));
 
         // 再生ボタンUI
         ControlButtonUI playUI = new ControlButtonUI();

@@ -12,12 +12,12 @@ import jmp.player.PlayerAccessor;
 import jmplayer.JMPPlayer;
 
 public class SequencerSliderUI extends BasicSliderUI {
-    public static final int THUMB_SIZE = 8;
-    public static final Color BLINK_COLOR_1 = Color.GREEN;
-    public static final Color BLINK_COLOR_2 = Utility.convertHighLightColor(BLINK_COLOR_1, 230);
+    public static final int THUMB_SIZE = 9;
+    public static final Color BLINK_COLOR_1 = Utility.convertColorAlpha(Color.WHITE, 165);
+    public static final Color BLINK_COLOR_2 = Color.WHITE;
 
-    public SequencerSliderUI() {
-        super(null);
+    public SequencerSliderUI(JSlider b) {
+        super(b);
     }
 
     @Override
