@@ -197,7 +197,10 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         if (activateOutFlag == true) {
             if (Utility.isExsistFile(getActivateFileLocationPath()) == false) {
                 try {
-                    String text = "ライセンス認証のためのファイルです。" + Platform.getNewLine() + "このファイルを削除してもソフトウェアの動作には影響ありません。";
+                    String text = "ライセンス認証のためのファイルです。" + Platform.getNewLine() + "このファイルを削除してもソフトウェアの動作には影響ありません。" + Platform.getNewLine()
+                            + Platform.getNewLine() + "File for license authentication." + Platform.getNewLine()
+                            + "Deleting this file does not affect the operation of the software.";
+
                     Utility.outputTextFile(getActivateFileLocationPath(), text);
                 }
                 catch (FileNotFoundException e) {

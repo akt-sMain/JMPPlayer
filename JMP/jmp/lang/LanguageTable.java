@@ -48,4 +48,22 @@ public class LanguageTable {
         }
         return ret;
     }
+
+    /**
+     * readme本文を取得
+     * @param langIndex
+     * @return
+     */
+    public static String getReadmeContent(int langIndex) {
+        String ret = "";
+        switch (langIndex) {
+            case DefineLanguage.INDEX_LANG_JAPANESE:
+                ret = DefineReadme.README_JA;
+                break;
+            default:
+                ret = DefineReadme.README_EN;
+                break;
+        }
+        return ret;
+    }
 }

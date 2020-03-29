@@ -68,4 +68,9 @@ public class LanguageManager extends AbstractManager {
     public String getCurLanguageName() {
         return getTitle(JMPCore.getDataManager().getLanguage());
     }
+
+    public String getReadmeContent() {
+        int langIndex = JMPCore.getDataManager().getLanguage();
+        return LanguageTable.getReadmeContent(langIndex);
+    }
 }

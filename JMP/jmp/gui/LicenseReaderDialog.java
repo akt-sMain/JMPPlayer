@@ -5,22 +5,17 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
-import function.Platform;
 import function.Utility;
 import jmp.JMPFlags;
 import jmp.core.JMPCore;
@@ -36,7 +31,8 @@ public class LicenseReaderDialog extends JMPDialog {
     private JLabel labelAccept = new JLabel("上記の条件に：");
     private JRadioButton rdbtnReject = new JRadioButton("同意しない");
     private JRadioButton rdbtnAccept = new JRadioButton("同意する");
-    private JTextArea textAreaLisence = new JTextArea();
+    //private JTextArea textAreaLisence = new JTextArea();
+    private JEditorPane textAreaLisence = new JEditorPane();
     private JLabel labelClipMes = new JLabel("クリップボードにコピーしました");
     private JButton buttonCopy = new JButton("原文のコピー");
 
@@ -98,6 +94,7 @@ public class LicenseReaderDialog extends JMPDialog {
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setBounds(12, 10, 681, 403);
         contentPanel.add(scrollPane);
+        textAreaLisence.setFont(new Font("Dialog", Font.PLAIN, 13));
         scrollPane.setViewportView(textAreaLisence);
         textAreaLisence.setEditable(false);
         {
@@ -128,32 +125,6 @@ public class LicenseReaderDialog extends JMPDialog {
     @Override
     public void setVisible(boolean b) {
         if (b == true) {
-            BufferedReader reader;
-            String line = "";
-            String contents = "";
-
-            try {
-                String path = Utility.pathCombin(Platform.getCurrentPath(false), "license.txt");
-                File file = new File(path);
-                FileInputStream fs = new FileInputStream(file);
-                InputStreamReader isr = new InputStreamReader(fs, "UTF-8");
-                reader = new BufferedReader(isr);
-
-                // ファイルを読み込む
-                while ((line = reader.readLine()) != null) {
-                    contents += (line + Platform.getNewLine());
-                }
-                reader.close();
-            }
-            catch (Exception e) {
-                contents = "";
-                contents += "ライセンスが読み取れません。" + Platform.getNewLine();
-                contents += "「license.txt」の条件項目を参照してください。";
-            }
-            finally {
-                reader = null;
-            }
-
             if (JMPFlags.ActivateFlag == true) {
                 rdbtnAccept.setSelected(true);
                 labelAccept.setVisible(false);
@@ -166,8 +137,9 @@ public class LicenseReaderDialog extends JMPDialog {
                 rdbtnAccept.setVisible(true);
             }
 
+            String content = JMPCore.getLanguageManager().getReadmeContent();
             textAreaLisence.setText("");
-            textAreaLisence.setText(contents);
+            textAreaLisence.setText(content);
             labelClipMes.setVisible(false);
         }
         super.setVisible(b);
