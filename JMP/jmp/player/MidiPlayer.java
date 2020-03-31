@@ -197,13 +197,13 @@ public class MidiPlayer extends Player implements IMidiFilter {
                 sequencer.close();
             }
 
-            // sequencer.addMetaEventListener(new MetaEventListener() {
-            //
-            // @Override
-            // public void meta(MetaMessage meta) {
-            // System.out.println("" + meta.getType());
-            // }
-            // });
+//            sequencer.addMetaEventListener(new MetaEventListener() {
+//
+//                @Override
+//                public void meta(MetaMessage meta) {
+//                    System.out.println("" + meta.getType());
+//                }
+//            });
 
             sequencer.open();
 

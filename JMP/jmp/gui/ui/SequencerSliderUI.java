@@ -16,6 +16,9 @@ public class SequencerSliderUI extends BasicSliderUI {
     public static final Color BLINK_COLOR_1 = Utility.convertColorAlpha(Color.WHITE, 165);
     public static final Color BLINK_COLOR_2 = Color.WHITE;
 
+    public static final Color TRACK_BORDER_COLOR = Color.WHITE;
+    public static final Color TRACK_BACK_COLOR = Utility.convertColorAlpha(Color.WHITE, 100);
+
     public SequencerSliderUI(JSlider b) {
         super(b);
     }
@@ -58,11 +61,10 @@ public class SequencerSliderUI extends BasicSliderUI {
 
             final int TRACK_HEIGHT = 3;
             g.translate(trackBounds.x, trackBounds.y + cy);
-            g.setColor(Color.WHITE);
-            g.drawLine(0, 0, cw, 0);
-            g.drawLine(0, TRACK_HEIGHT, cw, TRACK_HEIGHT);
-            g.drawLine(cw, 0, cw, TRACK_HEIGHT);
-            g.drawLine(0, 0, 0, TRACK_HEIGHT);
+            g.setColor(TRACK_BACK_COLOR);
+            g.fillRect(0, 0, cw, TRACK_HEIGHT);
+            g.setColor(TRACK_BORDER_COLOR);
+            g.drawRect(0, 0, cw, TRACK_HEIGHT);
             g.translate(-trackBounds.x, -(trackBounds.y + cy));
         }
         else {
