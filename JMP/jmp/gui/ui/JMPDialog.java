@@ -4,6 +4,7 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Window;
 
 import javax.swing.JDialog;
@@ -12,6 +13,9 @@ import jlib.gui.IJmpWindow;
 import jmp.core.JMPCore;
 
 public class JMPDialog extends JDialog implements IJMPComponentUI, IJmpWindow {
+
+    // Window配置の初期化実施
+    protected boolean initializeDefaultPositionFrag = false;
 
     public JMPDialog() {
         _init();
@@ -101,6 +105,20 @@ public class JMPDialog extends JDialog implements IJMPComponentUI, IJmpWindow {
 
     private void _init() {
         getContentPane().setBackground(getJmpBackColor());
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        if (super.isVisible() == false && b == true) {
+            if (initializeDefaultPositionFrag == false) {
+                Point p = getDefaultWindowLocation();
+                if (p != null) {
+                    this.setLocation(p);
+                    initializeDefaultPositionFrag = true;
+                }
+            }
+        }
+        super.setVisible(b);
     }
 
     @Override

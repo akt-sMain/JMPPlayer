@@ -57,11 +57,11 @@ public class SelectLanguageDialog extends JMPDialog {
                 }
             }
         });
-        comboBoxLang.setBounds(12, 10, 317, 19);
+        comboBoxLang.setBounds(12, 10, 317, 28);
         contentPanel.add(comboBoxLang);
         {
             closeButton = new JButton("Apply");
-            closeButton.setBounds(259, 56, 70, 21);
+            closeButton.setBounds(259, 57, 70, 21);
             contentPanel.add(closeButton);
             closeButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -80,7 +80,7 @@ public class SelectLanguageDialog extends JMPDialog {
         lblTest.setForeground(new Color(175, 238, 238));
         lblTest.setHorizontalAlignment(SwingConstants.CENTER);
         lblTest.setFont(new Font("MS UI Gothic", Font.BOLD, 26));
-        lblTest.setBounds(12, 39, 235, 38);
+        lblTest.setBounds(12, 48, 235, 38);
         contentPanel.add(lblTest);
     }
 

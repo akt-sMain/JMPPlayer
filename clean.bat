@@ -1,6 +1,7 @@
 @echo off
 
+echo remove setting files.
 del config.txt
 del history.txt
-del skin.txt
-del activate
+
+pause
