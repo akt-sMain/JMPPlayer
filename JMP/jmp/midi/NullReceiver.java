@@ -6,9 +6,8 @@ import javax.sound.midi.ShortMessage;
 
 import jlib.midi.IMidiEventListener;
 import jlib.midi.IMidiFilter;
+import jlib.player.IPlayer;
 import jmp.core.JMPCore;
-import jmp.player.Player;
-import jmp.player.PlayerAccessor;
 
 /**
  * プラグインのみにMIDIメッセージを転送する
@@ -25,7 +24,7 @@ public class NullReceiver implements Receiver {
     public void send(MidiMessage message, long timeStamp) {
         int transpose = JMPCore.getDataManager().getTranspose();
         if (transpose != 0) {
-            Player p = PlayerAccessor.getInstance().getCurrent();
+            IPlayer p = JMPCore.getSoundManager().getCurrentPlayer();
             if (p instanceof IMidiFilter) {
                 if (message instanceof ShortMessage) {
                     IMidiFilter filter = (IMidiFilter) p;

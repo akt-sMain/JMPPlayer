@@ -8,7 +8,7 @@ import javax.swing.JSlider;
 import javax.swing.plaf.basic.BasicSliderUI;
 
 import function.Utility;
-import jmp.player.PlayerAccessor;
+import jmp.core.JMPCore;
 import jmplayer.JMPPlayer;
 
 public class SequencerSliderUI extends BasicSliderUI {
@@ -28,7 +28,7 @@ public class SequencerSliderUI extends BasicSliderUI {
         if (slider.getOrientation() == JSlider.HORIZONTAL) {
             // 色をトグルさせる
             Color color = (JMPPlayer.TimerColorToggleFlag == false) ? BLINK_COLOR_1 : BLINK_COLOR_2;
-            if (PlayerAccessor.getInstance().getCurrent().isRunnable() == false) {
+            if (JMPCore.getSoundManager().isPlay() == false) {
                 color = BLINK_COLOR_1;
             }
 

@@ -15,8 +15,6 @@ import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 
 import jmp.core.JMPCore;
-import jmp.core.SoundManager;
-import jmp.player.PlayerAccessor;
 
 public class JMPSequencer implements Sequencer {
 
@@ -99,10 +97,7 @@ public class JMPSequencer implements Sequencer {
         }
 
         // MidiPlayerに変更する
-        if (PlayerAccessor.getInstance().getCurrent() != SoundManager.MidiPlayer) {
-            PlayerAccessor.getInstance().getCurrent().stop();
-            PlayerAccessor.getInstance().change(SoundManager.MidiPlayer);
-        }
+        JMPCore.getSoundManager().changeMidiPlayer();
 
         abstractSequenser.start();
 

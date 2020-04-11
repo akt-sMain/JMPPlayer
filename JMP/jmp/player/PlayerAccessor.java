@@ -8,13 +8,7 @@ public class PlayerAccessor {
     private List<Player> registerPlayer = new ArrayList<Player>();
     private Player currentPlayer = null;
 
-    private static PlayerAccessor instance = new PlayerAccessor();
-
-    private PlayerAccessor() {
-    }
-
-    public static PlayerAccessor getInstance() {
-        return instance;
+    public PlayerAccessor() {
     }
 
     public boolean open() {

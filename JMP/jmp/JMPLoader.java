@@ -10,7 +10,6 @@ import jmp.core.JMPCore;
 import jmp.core.PluginManager;
 import jmp.core.TaskManager;
 import jmp.core.WindowManager;
-import jmp.player.PlayerAccessor;
 import jmp.task.ICallbackFunction;
 import jmp.task.TaskOfSequence;
 import jmplayer.JMPPlayer;
@@ -179,9 +178,6 @@ public class JMPLoader {
 
         JMPCore.getWindowManager().setVisibleAll(false);
 
-        // 念のためシーケンサーを停止
-        PlayerAccessor.getInstance().stopAllPlayer();
-
         // 終了前に全てのプラグインを閉じる
         for (IPlugin p : JMPCore.getPluginManager().getPlugins()) {
             p.close();
@@ -238,15 +234,7 @@ public class JMPLoader {
         }
         if (result == true) {
             /* プレイヤーロード */
-            try {
-                if (PlayerAccessor.getInstance().open() == false) {
-                    result = false;
-                }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-                result = false;
-            }
+            result = JMPCore.getSoundManager().openPlayer();
         }
 
         /* 起動準備 */

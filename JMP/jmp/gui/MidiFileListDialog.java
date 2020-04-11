@@ -46,11 +46,11 @@ import jmp.JMPFlags;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
+import jmp.core.SoundManager;
 import jmp.core.WindowManager;
 import jmp.gui.ui.FileListTableModel;
 import jmp.gui.ui.JMPFrame;
 import jmp.lang.DefineLanguage.LangID;
-import jmp.player.PlayerAccessor;
 
 public class MidiFileListDialog extends JMPFrame {
 
@@ -341,10 +341,10 @@ public class MidiFileListDialog extends JMPFrame {
                         }
                     }
                     else {
-                        PlayerAccessor accessor = PlayerAccessor.getInstance();
-                        if (accessor.isSupportedExtension(Utility.getExtension(midiFile))) {
-                            if (accessor.getCurrent().isRunnable() == true) {
-                                accessor.getCurrent().stop();
+                        SoundManager sm = JMPCore.getSoundManager();
+                        if (sm.isSupportedExtensionAccessor(Utility.getExtension(midiFile))) {
+                            if (sm.isPlay() == true) {
+                                sm.stop();
                             }
                         }
 

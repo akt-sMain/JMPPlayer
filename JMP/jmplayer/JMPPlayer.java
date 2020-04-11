@@ -46,6 +46,7 @@ import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
+import jlib.player.IPlayer;
 import jlib.plugin.IPlugin;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
@@ -63,8 +64,6 @@ import jmp.gui.ui.IButtonMarkPaint;
 import jmp.gui.ui.IJMPComponentUI;
 import jmp.gui.ui.SequencerSliderUI;
 import jmp.lang.DefineLanguage.LangID;
-import jmp.player.Player;
-import jmp.player.PlayerAccessor;
 import jmp.task.CallbackPackage;
 import jmp.task.ICallbackFunction;
 
@@ -159,8 +158,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
     private static String s_currentFileName = "";
     private static long s_tmpSliderTick = -1;
-
-    private PlayerAccessor playerAccessor = PlayerAccessor.getInstance();
 
     private VersionInfoDialog versionInfoDialog = null;
 
@@ -320,7 +317,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             public void mouseReleased(MouseEvent e) {
                 long value = s_tmpSliderTick;
                 if (s_tmpSliderTick != -1) {
-                    playerAccessor.getCurrent().setPosition(value);
+                    JMPCore.getSoundManager().getCurrentPlayer().setPosition(value);
                 }
                 s_tmpSliderTick = -1;
             }
@@ -363,13 +360,13 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         prev2Button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (JMPCore.getSoundManager().isValidPlayList() == true) {
-                    if (playerAccessor.getCurrent().getPosition() < 2000) {
+                    if (JMPCore.getSoundManager().getCurrentPlayer().getPosition() < 2000) {
                         JMPCore.getSoundManager().playPrev();
                         return;
                     }
                 }
 
-                if (playerAccessor.getCurrent().isValid() == false) {
+                if (JMPCore.getSoundManager().getCurrentPlayer().isValid() == false) {
                     return;
                 }
 
@@ -742,7 +739,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         commonCallbackPkg.addCallbackFunction(new ICallbackFunction() {
             @Override
             public void callback() {
-                Player player = PlayerAccessor.getInstance().getCurrent();
+                IPlayer player = JMPCore.getSoundManager().getCurrentPlayer();
                 if (player != null) {
                     if (player.isRunnable() == true) {
                         // 再生バーのトグル
@@ -756,7 +753,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             public void callback() {
                 SoundManager sm = JMPCore.getSoundManager();
                 DataManager dm = JMPCore.getDataManager();
-                Player player = PlayerAccessor.getInstance().getCurrent();
+                IPlayer player = sm.getCurrentPlayer();
                 if (player == null) {
                     return;
                 }
@@ -830,7 +827,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             @Override
             public void paintMark(Graphics g, int x, int y, int width, int height) {
                 Graphics2D g2d = (Graphics2D) g.create();
-                if (playerAccessor.isValid() == true && playerAccessor.getCurrent().isRunnable() == true) {
+                if (JMPCore.getSoundManager().getCurrentPlayer().isValid() == true && JMPCore.getSoundManager().getCurrentPlayer().isRunnable() == true) {
                     // 停止ボタン
                     Image img = JMPCore.getResourceManager().getBtnStopIcon();
                     if (img != null) {
@@ -1071,10 +1068,10 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     public void update() {
         String posStr = "00:00";
         String lengthStr = "00:00";
-        if (playerAccessor.isValid() == true) {
-            slider.setMaximum((int) playerAccessor.getCurrent().getLength());
+        if (JMPCore.getSoundManager().getCurrentPlayer().isValid() == true) {
+            slider.setMaximum((int) JMPCore.getSoundManager().getCurrentPlayer().getLength());
             if (s_tmpSliderTick == -1) {
-                slider.setValue((int) playerAccessor.getCurrent().getPosition());
+                slider.setValue((int) JMPCore.getSoundManager().getCurrentPlayer().getPosition());
             }
 
             posStr = JMPCore.getSoundManager().getPositionTimeString();
@@ -1277,11 +1274,11 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
                 /* ロード前の検査 */
                 if (status == true) {
-                    if (playerAccessor.isSupportedExtension(ex) == false) {
+                    if (JMPCore.getSoundManager().isSupportedExtensionAccessor(ex) == false) {
                         status = false;
                         statusStr = lm.getLanguageStr(LangID.FILE_ERROR_2);
                     }
-                    else if (playerAccessor.getCurrent().isRunnable() == true) {
+                    else if (JMPCore.getSoundManager().getCurrentPlayer().isRunnable() == true) {
                         status = false;
                         statusStr = lm.getLanguageStr(LangID.FILE_ERROR_3);
                     }
@@ -1326,7 +1323,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
                     // 自動再生
                     if (JMPFlags.LoadToPlayFlag == true) {
-                        playerAccessor.getCurrent().play();
+                        JMPCore.getSoundManager().getCurrentPlayer().play();
                         JMPFlags.LoadToPlayFlag = false;
                     }
 

@@ -40,6 +40,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     private DefaultListModel<String> playListModel = new DefaultListModel<>();
     private JList<String> playList = new JList<String>(playListModel);
 
+    private PlayerAccessor playerAccessor = null;
+
     // MIDIプレイヤーインスタンス
     public static MidiPlayer MidiPlayer = null;
     public static WavPlayer WavPlayer = null;
@@ -58,22 +60,24 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             JMPFlags.StartupAutoConectSynth = true;
         }
 
+        playerAccessor = new PlayerAccessor();
+
         // プレイヤーインスタンス作成
         MidiPlayer = new MidiPlayer();
         WavPlayer = new WavPlayer();
         MusicXmlPlayer = new MusicXmlPlayer();
 
         MidiPlayer.setSupportExtentions(DataManager.ExtentionForMIDI);
-        PlayerAccessor.getInstance().register(MidiPlayer);
+        playerAccessor.register(MidiPlayer);
 
         WavPlayer.setSupportExtentions(DataManager.ExtentionForWAV);
-        PlayerAccessor.getInstance().register(WavPlayer);
+        playerAccessor.register(WavPlayer);
 
         MusicXmlPlayer.setSupportExtentions(DataManager.ExtentionForMusicXML);
-        PlayerAccessor.getInstance().register(MusicXmlPlayer);
+        playerAccessor.register(MusicXmlPlayer);
 
         // デフォルトはMIDIプレイヤーにする
-        PlayerAccessor.getInstance().change(MidiPlayer);
+        playerAccessor.change(MidiPlayer);
 
         // Port lineIn;
 
@@ -103,10 +107,25 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         if (initializeFlag == false) {
             return false;
         }
-
         stop();
-        PlayerAccessor.getInstance().close();
+        playerAccessor.stopAllPlayer();
+        playerAccessor.close();
         return true;
+    }
+
+    public boolean openPlayer() {
+        /* プレイヤーロード */
+        boolean result = true;
+        try {
+            if (playerAccessor.open() == false) {
+                result = false;
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            result = false;
+        }
+        return result;
     }
 
     /**
@@ -119,8 +138,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     public IPlayer getCurrentPlayer() {
-        PlayerAccessor accessor = PlayerAccessor.getInstance();
-        return accessor.getCurrent();
+        return playerAccessor.getCurrent();
     }
 
     public void initPlay() {
@@ -212,15 +230,14 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     public void loadFile(File file) throws Exception {
-        PlayerAccessor accessor = PlayerAccessor.getInstance();
-        Player tmpPlayer = accessor.getCurrent();
+        Player tmpPlayer = playerAccessor.getCurrent();
 
         boolean loadResult = true;
 
         try {
             changePlayer(file);
 
-            if (accessor.getCurrent().loadFile(file) == false) {
+            if (playerAccessor.getCurrent().loadFile(file) == false) {
                 loadResult = false;
             }
         }
@@ -231,10 +248,14 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         finally {
             if (loadResult == false) {
                 // ロードに失敗した場合は、プレイヤーを元に戻す
-                accessor.change(tmpPlayer);
+                playerAccessor.change(tmpPlayer);
                 throw new Exception();
             }
         }
+    }
+
+    public boolean isSupportedExtensionAccessor(String extension) {
+        return playerAccessor.isSupportedExtension(extension);
     }
 
     /**
@@ -398,15 +419,22 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         return MidiPlayer.getCurrentTransmitter();
     }
 
+    public void changeMidiPlayer() {
+        // MidiPlayerに変更する
+        if (playerAccessor.getCurrent() != SoundManager.MidiPlayer) {
+            playerAccessor.getCurrent().stop();
+            playerAccessor.change(SoundManager.MidiPlayer);
+        }
+    }
+
     public void changePlayer(File file) {
-        PlayerAccessor accessor = PlayerAccessor.getInstance();
         String ex = Utility.getExtension(file);
-        if (accessor.isSupportedExtension(ex) == false) {
+        if (playerAccessor.isSupportedExtension(ex) == false) {
             return;
         }
 
-        accessor.getCurrent().stop();
-        if (accessor.change(ex) == true) {
+        playerAccessor.getCurrent().stop();
+        if (playerAccessor.change(ex) == true) {
             JMPCore.getPluginManager().closeNonSupportPlugins(ex);
         }
     }
