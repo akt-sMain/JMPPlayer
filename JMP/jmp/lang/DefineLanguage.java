@@ -68,6 +68,7 @@ public class DefineLanguage {
         Apply,
         Error,
         Message,
+        Layout_initialization,
     }
 
     static java.util.HashMap<LangID, LanguageWords> langMap = new java.util.HashMap<LangID, LanguageWords>() {
@@ -133,6 +134,7 @@ public class DefineLanguage {
             put(LangID.Apply, new LanguageWords("Apply", "適用"));
             put(LangID.Error, new LanguageWords("Error", "エラー"));
             put(LangID.Message, new LanguageWords("Message", "メッセージ"));
+            put(LangID.Layout_initialization, new LanguageWords("Layout initialization", "レイアウト初期化"));
         }
     };
 }

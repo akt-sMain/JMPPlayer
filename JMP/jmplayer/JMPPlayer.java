@@ -206,6 +206,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JPanel panel_4;
     private JPanel panel_5;
     private JPanel panel_6;
+    private JMenuItem mntmInitLayout;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -220,7 +221,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         setTitle(APP_TITLE);
         this.addWindowListener(this);
         this.setTransferHandler(new DropFileHandler());
-        setBounds(20, 20, 480, 210);
+        setBounds(WindowManager.DEFAULT_PLAYER_WINDOW_SIZE);
 
         Image jmpIcon = JMPCore.getResourceManager().getJmpImageIcon();
         if (jmpIcon != null) {
@@ -433,6 +434,16 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             }
         });
         windowMenu.add(alwayTopCheckBox);
+
+        mntmInitLayout = new JMenuItem("レイアウト初期化");
+        mntmInitLayout.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateMenuState();
+
+                setSize(WindowManager.DEFAULT_PLAYER_WINDOW_SIZE.width, WindowManager.DEFAULT_PLAYER_WINDOW_SIZE.height);
+            }
+        });
+        windowMenu.add(mntmInitLayout);
 
         playerMenu = new JMenu("プレイヤー");
         playerMenu.addMenuListener(new JmpMenuListener());
@@ -1509,5 +1520,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mntmMidimessagesender.setText(lm.getLanguageStr(LangID.MIDI_message_sender));
         lblCommon.setText("-- " + lm.getLanguageStr(LangID.Common_settings) + " --");
         menuItemLanguage.setText(lm.getLanguageStr(LangID.Language));
+        mntmInitLayout.setText(lm.getLanguageStr(LangID.Layout_initialization));
     }
 }

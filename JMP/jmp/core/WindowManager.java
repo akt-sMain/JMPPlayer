@@ -1,5 +1,6 @@
 package jmp.core;
 
+import java.awt.Rectangle;
 import java.util.List;
 
 import javax.swing.JMenuItem;
@@ -17,6 +18,8 @@ import jmp.gui.WindowDatabase;
 import jmplayer.JMPPlayer;
 
 public class WindowManager extends AbstractManager implements IWindowManager {
+
+    public static final Rectangle DEFAULT_PLAYER_WINDOW_SIZE = new Rectangle(20, 20, 480, 210);
 
     public static final String WINDOW_NAME_MAIN = "MAIN";
     public static final String WINDOW_NAME_FILE_LIST = "FILE_LIST";
