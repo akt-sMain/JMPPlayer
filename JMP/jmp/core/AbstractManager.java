@@ -100,45 +100,31 @@ public abstract class AbstractManager implements IManager {
 
         int curPriority = INVALID_PRIORITY;
         List<AbstractManager> tmp = new ArrayList<AbstractManager>();
-
-        if (order == true) {
-            // 優先度が高い順にソート
-            while (true) {
-                int min = MAX_PRIORITY;
-                AbstractManager addManager = null;
-                for (AbstractManager am : cloneMng) {
-                    curPriority = am.getPriority();
-                    if (am.getPriority() <= min) {
+        
+        while (true) {
+            int limit = (order == true) ? MAX_PRIORITY : INVALID_PRIORITY;
+            AbstractManager addManager = null;
+            for (AbstractManager am : cloneMng) {
+                curPriority = am.getPriority();
+                
+                if (order == true) {
+                    if (am.getPriority() <= limit) {
                         addManager = am;
-                        min = curPriority;
+                        limit = curPriority;
                     }
                 }
-                tmp.add(addManager);
-                cloneMng.remove(addManager);
-
-                if (managers.size() <= tmp.size()) {
-                    break;
+                else {
+                    if (am.getPriority() >= limit) {
+                        addManager = am;
+                        limit = curPriority;
+                    }
                 }
             }
-        }
-        else {
-            // 優先度が低い順にソート
-            while (true) {
-                int max = INVALID_PRIORITY;
-                AbstractManager addManager = null;
-                for (AbstractManager am : cloneMng) {
-                    curPriority = am.getPriority();
-                    if (am.getPriority() >= max) {
-                        addManager = am;
-                        max = curPriority;
-                    }
-                }
-                tmp.add(addManager);
-                cloneMng.remove(addManager);
+            tmp.add(addManager);
+            cloneMng.remove(addManager);
 
-                if (managers.size() <= tmp.size()) {
-                    break;
-                }
+            if (managers.size() <= tmp.size()) {
+                break;
             }
         }
         return tmp;

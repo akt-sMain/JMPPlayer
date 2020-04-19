@@ -210,4 +210,12 @@ public class DataManager extends AbstractManager implements IDataManager {
         // 言語更新
         JMPCore.getWindowManager().updateLanguage();
     }
+
+    public String getLoadedFile() {
+        return getConfigParam(ConfigDatabase.CFG_KEY_LOADED_FILE);
+    }
+
+    public void setLoadedFile(String filePath) {
+        setConfigParam(ConfigDatabase.CFG_KEY_LOADED_FILE, filePath);
+    }
 }

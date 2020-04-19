@@ -5,14 +5,17 @@ import java.io.File;
 import function.Platform;
 import function.Utility;
 import jlib.gui.IJmpMainWindow;
+import jlib.player.IPlayer;
 import jlib.plugin.IPlugin;
+import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
+import jmp.core.SoundManager;
 import jmp.core.TaskManager;
 import jmp.core.WindowManager;
+import jmp.task.CallbackPackage;
 import jmp.task.ICallbackFunction;
 import jmp.task.TaskOfSequence;
-import jmplayer.JMPPlayer;
 import lib.MakeJmpLib;
 
 /**
@@ -263,12 +266,12 @@ public class JMPLoader {
                 JMPCore.StandAlonePlugin.open();
             }
 
+            // アプリケーション共通コールバック関数の登録
+            registerCommonCallbackPackage();
+
             // タスク開始
             TaskManager taskManager = JMPCore.getTaskManager();
             taskManager.taskStart();
-
-            // アプリ全般のコールバック関数を登録
-            JMPPlayer.registerCallbackPackage();
         }
         return result;
     }
@@ -294,6 +297,60 @@ public class JMPLoader {
 
         boolean result = JMPCore.endFunc();
         return result;
+    }
+
+    private static void registerCommonCallbackPackage() {
+        CallbackPackage commonCallbackPkg = new CallbackPackage((long) 500);
+
+        /* ループ・繰り返し再生の判定 */
+        commonCallbackPkg.addCallbackFunction(new ICallbackFunction() {
+            @Override
+            public void callback() {
+                SoundManager sm = JMPCore.getSoundManager();
+                DataManager dm = JMPCore.getDataManager();
+                IPlayer player = sm.getCurrentPlayer();
+                if (player == null) {
+                    return;
+                }
+
+                long tickPos = player.getPosition();
+                long tickLength = player.getLength();
+                if (dm.getLoadedFile().isEmpty() == true) {
+                    return;
+                }
+
+                if (JMPFlags.NowLoadingFlag == false) {
+                    if (tickPos >= tickLength) {
+                        if (dm.isLoopPlay() == true) {
+                            if (dm.isAutoPlay() == true) {
+                                if (sm.isValidPlayList() == true) {
+                                    if (sm.isValidPlayListNext() == true) {
+                                        // 次の曲
+                                        sm.playNext();
+                                    }
+                                    else {
+                                        sm.playForList(0);
+                                    }
+                                }
+                            }
+                            else {
+                                // ループ再生
+                                sm.initPlay();
+                            }
+                        }
+                        else if (dm.isAutoPlay() == true) {
+                            if (sm.isValidPlayList() == true) {
+                                if (sm.isValidPlayListNext() == true) {
+                                    // 次の曲
+                                    sm.playNext();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        JMPCore.getTaskManager().getTaskOfTimer().addCallbackPackage(commonCallbackPkg);
     }
 
 }

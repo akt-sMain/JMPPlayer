@@ -156,7 +156,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     // ! カレントタイムフォーマット
     public static final String CURRENT_TIME_FORMAT = "%s／%s ";
 
-    private static String s_currentFileName = "";
     private static long s_tmpSliderTick = -1;
 
     private VersionInfoDialog versionInfoDialog = null;
@@ -400,7 +399,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mntmReload = new JMenuItem("リロード");
         mntmReload.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String path = s_currentFileName;
+                String path = JMPCore.getDataManager().getLoadedFile();
                 if (path.isEmpty() == false) {
                     File f = new File(path);
                     if (f.exists() == true && f.canRead() == true) {
@@ -743,11 +742,10 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         autoPlayCheckBox.setSelected(dm.isAutoPlay());
         loopPlayCheckBoxMenuItem.setSelected(dm.isLoopPlay());
         chckbxmntmStartupmidisetup.setSelected(dm.isShowStartupDeviceSetup());
-    }
 
-    public static void registerCallbackPackage() {
-        CallbackPackage commonCallbackPkg = new CallbackPackage((long) 500);
-        commonCallbackPkg.addCallbackFunction(new ICallbackFunction() {
+        // シーケンスバーのトグル用コールバック関数を登録
+        CallbackPackage callbackPkg = new CallbackPackage((long) 500);
+        callbackPkg.addCallbackFunction(new ICallbackFunction() {
             @Override
             public void callback() {
                 IPlayer player = JMPCore.getSoundManager().getCurrentPlayer();
@@ -759,54 +757,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 }
             }
         });
-        commonCallbackPkg.addCallbackFunction(new ICallbackFunction() {
-            @Override
-            public void callback() {
-                SoundManager sm = JMPCore.getSoundManager();
-                DataManager dm = JMPCore.getDataManager();
-                IPlayer player = sm.getCurrentPlayer();
-                if (player == null) {
-                    return;
-                }
-
-                long tickPos = player.getPosition();
-                long tickLength = player.getLength();
-                if (s_currentFileName.isEmpty() == true) {
-                    return;
-                }
-
-                if (JMPFlags.NowLoadingFlag == false) {
-                    if (tickPos >= tickLength) {
-                        if (dm.isLoopPlay() == true) {
-                            if (dm.isAutoPlay() == true) {
-                                if (sm.isValidPlayList() == true) {
-                                    if (sm.isValidPlayListNext() == true) {
-                                        // 次の曲
-                                        sm.playNext();
-                                    }
-                                    else {
-                                        sm.playForList(0);
-                                    }
-                                }
-                            }
-                            else {
-                                // ループ再生
-                                sm.initPlay();
-                            }
-                        }
-                        else if (dm.isAutoPlay() == true) {
-                            if (sm.isValidPlayList() == true) {
-                                if (sm.isValidPlayListNext() == true) {
-                                    // 次の曲
-                                    sm.playNext();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });
-        JMPCore.getTaskManager().getTaskOfTimer().addCallbackPackage(commonCallbackPkg);
+        JMPCore.getTaskManager().getTaskOfTimer().addCallbackPackage(callbackPkg);
     }
 
     // private Color getCtrlBorderColor() {
@@ -1261,6 +1212,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
      */
     public void loadFile(String path) {
         LanguageManager lm = JMPCore.getLanguageManager();
+        DataManager dm = JMPCore.getDataManager();
 
         if (JMPFlags.NowLoadingFlag == true) {
             setStatusText(lm.getLanguageStr(LangID.FILE_ERROR_1), false);
@@ -1277,7 +1229,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             @Override
             public void callback() {
                 boolean status = true;
-                String tmpFileName = s_currentFileName;
+                String tmpFileName = dm.getLoadedFile();
                 String statusStr = "";
 
                 File f = new File(path);
@@ -1339,14 +1291,14 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     }
 
                     // 新しいファイル名
-                    s_currentFileName = path;
+                    dm.setLoadedFile(path);
 
                     // メッセージ発行
-                    statusStr = String.format("%s ...(%s)", Utility.getFileNameAndExtension(s_currentFileName), lm.getLanguageStr(LangID.FILE_LOAD_SUCCESS));
+                    statusStr = String.format("%s ...(%s)", Utility.getFileNameAndExtension(dm.getLoadedFile()), lm.getLanguageStr(LangID.FILE_LOAD_SUCCESS));
                 }
                 else {
                     // 前のファイル名に戻す
-                    s_currentFileName = tmpFileName;
+                    dm.setLoadedFile(tmpFileName);
                 }
 
                 // メッセージ表示
@@ -1425,8 +1377,9 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
      *            テキストカラー
      */
     public void setStatusTextForFile() {
-        if (s_currentFileName.equals("") == false) {
-            String name = Utility.getFileNameAndExtension(s_currentFileName);
+        DataManager dm = JMPCore.getDataManager();
+        if (dm.getLoadedFile().equals("") == false) {
+            String name = Utility.getFileNameAndExtension(dm.getLoadedFile());
             setStatusText(name, STATUS_COLOR_FILE);
         }
         else {

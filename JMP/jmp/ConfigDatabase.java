@@ -10,6 +10,8 @@ import function.Utility;
 
 public class ConfigDatabase {
 
+    private static final String KER_SEPARATOR = "<->";
+
     // 設定データベース
     private Map<String, String> database = null;
     public static final String CFG_KEY_MIDILIST = "MIDILIST";
@@ -19,6 +21,10 @@ public class ConfigDatabase {
     public static final String CFG_KEY_LOOPPLAY = "LOOPPLAY";
     public static final String CFG_KEY_SHOW_STARTUP_DEVICE_SETUP = "SHOW_STARTUP_DEVICE_SETUP";
     public static final String CFG_KEY_LANGUAGE = "LANGUAGE";
+    public static final String CFG_KEY_LOADED_FILE = "LOADED_FILE";
+    // ↓KEY追加後、必ずCFG_KEYSETに追加すること!!
+    public static final String[] CFG_KEYSET = { CFG_KEY_MIDILIST, CFG_KEY_MIDIOUT, CFG_KEY_MIDIIN, CFG_KEY_AUTOPLAY, CFG_KEY_LOOPPLAY,
+            CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, CFG_KEY_LANGUAGE, CFG_KEY_LOADED_FILE, };
 
     public ConfigDatabase() {
         database = new HashMap<String, String>();
@@ -35,6 +41,7 @@ public class ConfigDatabase {
         database.put(CFG_KEY_LOOPPLAY, "FALSE");
         database.put(CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, "TRUE");
         database.put(CFG_KEY_LANGUAGE, "0");
+        database.put(CFG_KEY_LOADED_FILE, "");
     }
 
     public void setConfigParam(String key, String value) {
@@ -53,12 +60,13 @@ public class ConfigDatabase {
 
     public boolean output(String path) {
         boolean ret = true;
+
         try {
             List<String> textContents = new LinkedList<String>();
 
             for (String key : database.keySet()) {
                 String value = getConfigParam(key);
-                textContents.add(key + "=" + value);
+                textContents.add(key + KER_SEPARATOR + value);
             }
             Utility.outputTextFile(path, textContents);
         }
@@ -79,11 +87,16 @@ public class ConfigDatabase {
             List<String> textContents = Utility.getTextFileContents(path);
 
             for (String line : textContents) {
-                String[] sLine = line.split("=");
+                String[] sLine = line.split(KER_SEPARATOR);
                 if (sLine.length >= 1) {
                     String key = sLine[0].trim();
-                    String value = (sLine.length >= 2) ? sLine[1] : "";
-                    database.put(key, value);
+                    for (String ckey : CFG_KEYSET) {
+                        if (key.equals(ckey) == true) {
+                            String value = (sLine.length >= 2) ? sLine[1] : "";
+                            database.put(key, value);
+                            break;
+                        }
+                    }
                 }
             }
         }
