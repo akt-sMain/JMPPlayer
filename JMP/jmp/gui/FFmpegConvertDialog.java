@@ -30,11 +30,11 @@ import jmp.ConfigDatabase;
 import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
+import jmp.core.SystemManager;
 import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 import wrapper.IProcessingCallback;
-import wrapper.ProcessingFFmpegWrapper;
 
 public class FFmpegConvertDialog extends JMPDialog {
 
@@ -233,14 +233,8 @@ public class FFmpegConvertDialog extends JMPDialog {
                 convertButton = new JButton("Convert");
                 convertButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        ProcessingFFmpegWrapper wrap = (ProcessingFFmpegWrapper) JMPCore.getSystemManager().getFFmpegWrapper();
-                        if (wrap instanceof ProcessingFFmpegWrapper) {
-                            /* ProcessingFFmpegWrapperのみ許可 */
-                        }
-                        else {
-                            return;
-                        }
 
+                        SystemManager system = JMPCore.getSystemManager();
                         LanguageManager lm = JMPCore.getLanguageManager();
                         String inpath = textFieldInputFile.getText();
                         if (Utility.isExsistFile(inpath) == false) {
@@ -250,8 +244,8 @@ public class FFmpegConvertDialog extends JMPDialog {
                             return;
                         }
 
-                        wrap.setPath(textFieldFFmpegExePath.getText());
-                        if (wrap.isValid() == false) {
+                        system.setFFmpegWrapperPath(textFieldFFmpegExePath.getText());
+                        if (system.isValidFFmpegWrapper() == false) {
                             lblStatus.setForeground(Color.RED);
                             String name = String.format("\"%s\"", lm.getLanguageStr(LangID.FFmpeg_path));
                             lblStatus.setText(lm.getLanguageStr(LangID.A_is_invalid).replace("[NAME]", name));
@@ -265,7 +259,7 @@ public class FFmpegConvertDialog extends JMPDialog {
                         File in = new File(inpath);
                         File out = new File(outpath);
 
-                        wrap.setCallback(new IProcessingCallback() {
+                        system.setFFmpegWrapperCallback(new IProcessingCallback() {
 
                             @Override
                             public void end(int result) {
@@ -301,8 +295,7 @@ public class FFmpegConvertDialog extends JMPDialog {
                         });
 
                         try {
-                            JMPCore.getDataManager().addConvertedFile(out);
-                            JMPCore.getSystemManager().getFFmpegWrapper().convert(in.getPath(), out.getPath());
+                            system.executeConvert(in.getPath(), out.getPath());
                         }
                         catch (IOException e1) {
                             lblStatus.setForeground(Color.RED);

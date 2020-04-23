@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import function.Platform;
 import function.Utility;
 
 public class ConfigDatabase {
@@ -38,7 +39,9 @@ public class ConfigDatabase {
     }
 
     public void initialize() {
-        database.put(CFG_KEY_MIDILIST, "");
+        String current = Platform.getCurrentPath();
+
+        database.put(CFG_KEY_MIDILIST, current);
         database.put(CFG_KEY_MIDIOUT, "");
         database.put(CFG_KEY_MIDIIN, "");
         database.put(CFG_KEY_AUTOPLAY, "FALSE");

@@ -321,31 +321,7 @@ public class JMPLoader {
 
                 if (JMPFlags.NowLoadingFlag == false) {
                     if (tickPos >= tickLength) {
-                        if (dm.isLoopPlay() == true) {
-                            if (dm.isAutoPlay() == true) {
-                                if (sm.isValidPlayList() == true) {
-                                    if (sm.isValidPlayListNext() == true) {
-                                        // 次の曲
-                                        sm.playNext();
-                                    }
-                                    else {
-                                        sm.playForList(0);
-                                    }
-                                }
-                            }
-                            else {
-                                // ループ再生
-                                sm.initPlay();
-                            }
-                        }
-                        else if (dm.isAutoPlay() == true) {
-                            if (sm.isValidPlayList() == true) {
-                                if (sm.isValidPlayListNext() == true) {
-                                    // 次の曲
-                                    sm.playNext();
-                                }
-                            }
-                        }
+                        sm.playNextForList();
                     }
                 }
             }

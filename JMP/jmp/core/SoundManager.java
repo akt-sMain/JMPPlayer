@@ -21,6 +21,7 @@ import jlib.midi.IMidiEventListener;
 import jlib.midi.MidiByteMessage;
 import jlib.player.IPlayer;
 import jmp.JMPFlags;
+import jmp.lang.DefineLanguage.LangID;
 import jmp.player.MidiPlayer;
 import jmp.player.MusicXmlPlayer;
 import jmp.player.Player;
@@ -40,9 +41,10 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     private DefaultListModel<String> playListModel = new DefaultListModel<>();
     private JList<String> playList = new JList<String>(playListModel);
 
-    private PlayerAccessor playerAccessor = null;
+    // プレイヤーアクセッサ
+    private static PlayerAccessor PlayerAccessor = null;
 
-    // MIDIプレイヤーインスタンス
+    // プレイヤーインスタンス
     public static MidiPlayer MidiPlayer = null;
     public static WavPlayer WavPlayer = null;
     public static MusicXmlPlayer MusicXmlPlayer = null;
@@ -60,7 +62,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             JMPFlags.StartupAutoConectSynth = true;
         }
 
-        playerAccessor = new PlayerAccessor();
+        PlayerAccessor = new PlayerAccessor();
 
         // プレイヤーインスタンス作成
         MidiPlayer = new MidiPlayer();
@@ -68,16 +70,16 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         MusicXmlPlayer = new MusicXmlPlayer();
 
         MidiPlayer.setSupportExtentions(DataManager.ExtentionForMIDI);
-        playerAccessor.register(MidiPlayer);
+        PlayerAccessor.register(MidiPlayer);
 
         WavPlayer.setSupportExtentions(DataManager.ExtentionForWAV);
-        playerAccessor.register(WavPlayer);
+        PlayerAccessor.register(WavPlayer);
 
         MusicXmlPlayer.setSupportExtentions(DataManager.ExtentionForMusicXML);
-        playerAccessor.register(MusicXmlPlayer);
+        PlayerAccessor.register(MusicXmlPlayer);
 
         // デフォルトはMIDIプレイヤーにする
-        playerAccessor.change(MidiPlayer);
+        PlayerAccessor.change(MidiPlayer);
 
         // Port lineIn;
 
@@ -108,8 +110,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             return false;
         }
         stop();
-        playerAccessor.stopAllPlayer();
-        playerAccessor.close();
+        PlayerAccessor.stopAllPlayer();
+        PlayerAccessor.close();
         return true;
     }
 
@@ -117,7 +119,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         /* プレイヤーロード */
         boolean result = true;
         try {
-            if (playerAccessor.open() == false) {
+            if (PlayerAccessor.open() == false) {
                 result = false;
             }
         }
@@ -138,7 +140,11 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     public IPlayer getCurrentPlayer() {
-        return playerAccessor.getCurrent();
+        return PlayerAccessor.getCurrent();
+    }
+
+    public void clearPlayList() {
+        playListModel.removeAllElements();
     }
 
     public void initPlay() {
@@ -179,9 +185,10 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     public void playForList(int index, boolean isLoadOnly) {
+        LanguageManager lm = JMPCore.getLanguageManager();
         IJmpMainWindow mainWindow = JMPCore.getSystemManager().getMainWindow();
         if (isValidPlayListIndex(index) == false) {
-            mainWindow.setStatusText("※再生するデータがありません", false);
+            mainWindow.setStatusText(lm.getLanguageStr(LangID.FILE_ERROR_6), false);
             return;
         }
 
@@ -229,15 +236,92 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         playForList(index - 1, isLoadOnly);
     }
 
+    /**
+     * リスト構成・DataManager設定から次の再生曲を指定する
+     */
+    public void playNextForList() {
+        boolean isPlayNext = false;
+        DataManager dm = JMPCore.getDataManager();
+        if (dm.isLoopPlay() == true) {
+            if (dm.isAutoPlay() == true) {
+                if (isValidPlayList() == true) {
+                    if (isValidPlayListNext() == true) {
+                        // 次の曲
+                        playNext();
+                        isPlayNext = true;
+                    }
+                    else {
+                        playForList(0);
+                        isPlayNext = true;
+                    }
+                }
+            }
+            else {
+                // ループ再生
+                initPlay();
+                isPlayNext = true;
+            }
+        }
+        else if (dm.isAutoPlay() == true) {
+            if (isValidPlayList() == true) {
+                if (isValidPlayListNext() == true) {
+                    // 次の曲
+                    playNext();
+                    isPlayNext = true;
+                }
+            }
+        }
+
+        if (isPlayNext == false) {
+            // 再生できなかった場合、Tickを終了位置にする
+            endPosition();
+        }
+    }
+
+    /**
+     * リスト構成・DataManager設定から前の再生曲を指定する
+     */
+    public void playPrevForList() {
+        if (getCurrentPlayer().isValid() == false) {
+            return;
+        }
+
+        boolean isPlayPrev = false;
+        DataManager dm = JMPCore.getDataManager();
+        if (getPosition() < getAmount()) {
+            if (dm.isAutoPlay() == true) {
+                if (isValidPlayList() == true) {
+                    if (isValidPlayListPrev() == true) {
+                        // 前の曲
+                        playPrev();
+                        isPlayPrev = true;
+                    }
+                    else {
+                        int index = playListModel.size() - 1;
+                        if (isValidPlayListIndex(index) == true) {
+                            playForList(index);
+                            isPlayPrev = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (isPlayPrev == false) {
+            // 再生できなかった場合、Tickを開始位置にする
+            initPosition();
+        }
+    }
+
     public void loadFile(File file) throws Exception {
-        Player tmpPlayer = playerAccessor.getCurrent();
+        Player tmpPlayer = PlayerAccessor.getCurrent();
 
         boolean loadResult = true;
 
         try {
             changePlayer(file);
 
-            if (playerAccessor.getCurrent().loadFile(file) == false) {
+            if (PlayerAccessor.getCurrent().loadFile(file) == false) {
                 loadResult = false;
             }
         }
@@ -248,14 +332,14 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         finally {
             if (loadResult == false) {
                 // ロードに失敗した場合は、プレイヤーを元に戻す
-                playerAccessor.change(tmpPlayer);
+                PlayerAccessor.change(tmpPlayer);
                 throw new Exception();
             }
         }
     }
 
     public boolean isSupportedExtensionAccessor(String extension) {
-        return playerAccessor.isSupportedExtension(extension);
+        return PlayerAccessor.isSupportedExtension(extension);
     }
 
     /**
@@ -421,20 +505,20 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     public void changeMidiPlayer() {
         // MidiPlayerに変更する
-        if (playerAccessor.getCurrent() != SoundManager.MidiPlayer) {
-            playerAccessor.getCurrent().stop();
-            playerAccessor.change(SoundManager.MidiPlayer);
+        if (PlayerAccessor.getCurrent() != SoundManager.MidiPlayer) {
+            PlayerAccessor.getCurrent().stop();
+            PlayerAccessor.change(SoundManager.MidiPlayer);
         }
     }
 
     public void changePlayer(File file) {
         String ex = Utility.getExtension(file);
-        if (playerAccessor.isSupportedExtension(ex) == false) {
+        if (PlayerAccessor.isSupportedExtension(ex) == false) {
             return;
         }
 
-        playerAccessor.getCurrent().stop();
-        if (playerAccessor.change(ex) == true) {
+        PlayerAccessor.getCurrent().stop();
+        if (PlayerAccessor.change(ex) == true) {
             JMPCore.getPluginManager().closeNonSupportPlugins(ex);
         }
     }

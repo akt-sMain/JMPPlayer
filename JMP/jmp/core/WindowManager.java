@@ -128,4 +128,13 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         }
     }
 
+    public void initializeLayout() {
+        for (String name : getWindowNameList()) {
+            IJmpWindow win = getWindow(name);
+            if (win != null) {
+                win.initializeLayout();
+            }
+        }
+    }
+
 }

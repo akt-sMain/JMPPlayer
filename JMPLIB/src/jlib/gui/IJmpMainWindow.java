@@ -54,7 +54,7 @@ public interface IJmpMainWindow extends IJmpWindow {
     abstract void exit();
 
     /**
-     * 設定初期化
+     * 設定初期化(起動時の1度のみ呼び出される)
      */
     default void initializeSetting() {
     }

@@ -21,4 +21,10 @@ public interface IJmpWindow {
      */
     default void updateLanguage() {
     };
+
+    /**
+     * レイアウトの初期化
+     */
+    default void initializeLayout() {
+    }
 }

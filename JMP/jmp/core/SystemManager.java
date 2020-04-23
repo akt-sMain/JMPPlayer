@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
@@ -19,6 +20,7 @@ import jmp.JMPFlags;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.task.ICallbackFunction;
 import wffmpeg.FFmpegWrapper;
+import wrapper.IProcessingCallback;
 import wrapper.ProcessingFFmpegWrapper;
 
 /**
@@ -231,6 +233,20 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         return true;
     }
 
+    public void initializeAllSetting() {
+        // 全てのWindowを閉じる
+        JMPCore.getWindowManager().setVisibleAll(false);
+        JMPCore.getPluginManager().closeAllPlugins();
+
+        JMPCore.getDataManager().initializeConfigDatabase();
+//        JMPCore.getDataManager().clearHistory();
+//        JMPCore.getSoundManager().clearPlayList();
+        JMPCore.getWindowManager().initializeLayout();
+
+        // 言語更新
+        JMPCore.getWindowManager().updateLanguage();
+    }
+
     public void executeActivate() {
         /* アクティベート状況の確認 */
         if (Utility.isExsistFile(getActivateFileLocationPath()) == true) {
@@ -426,8 +442,21 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
     }
 
-    public FFmpegWrapper getFFmpegWrapper() {
-        return ffmpegWrapper;
+    public void executeConvert(String inPath, String outPath) throws IOException {
+        ffmpegWrapper.convert(inPath, outPath);
+
+        JMPCore.getDataManager().addConvertedFile(new File(outPath));
+    }
+
+    public void setFFmpegWrapperCallback(IProcessingCallback cb) {
+        if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
+            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper)ffmpegWrapper;
+            pfw.setCallback(cb);
+        }
+    }
+
+    public boolean isValidFFmpegWrapper() {
+        return ffmpegWrapper.isValid();
     }
 
     public void setFFmpegWrapperPath(String path) {

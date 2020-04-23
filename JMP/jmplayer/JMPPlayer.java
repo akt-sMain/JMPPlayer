@@ -208,6 +208,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JMenuItem mntmInitLayout;
     private JMenuItem mntmFFmpegConverter;
     private JMenu mnTool;
+    private JMenuItem mntmInitializeConfig;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -332,12 +333,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         });
         next2Button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (JMPCore.getSoundManager().isValidPlayList() == true) {
-                    JMPCore.getSoundManager().playNext();
-                    return;
-                }
-
-                JMPCore.getSoundManager().endPosition();
+                JMPCore.getSoundManager().playNextForList();
             }
         });
         nextButton.addMouseListener(new MouseAdapter() {
@@ -361,18 +357,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         });
         prev2Button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (JMPCore.getSoundManager().isValidPlayList() == true) {
-                    if (JMPCore.getSoundManager().getCurrentPlayer().getPosition() < 2000) {
-                        JMPCore.getSoundManager().playPrev();
-                        return;
-                    }
-                }
-
-                if (JMPCore.getSoundManager().getCurrentPlayer().isValid() == false) {
-                    return;
-                }
-
-                JMPCore.getSoundManager().initPlay();
+                JMPCore.getSoundManager().playPrevForList();
             }
         });
 
@@ -439,9 +424,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mntmInitLayout = new JMenuItem("レイアウト初期化");
         mntmInitLayout.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                updateMenuState();
-
-                setSize(WindowManager.DEFAULT_PLAYER_WINDOW_SIZE.width, WindowManager.DEFAULT_PLAYER_WINDOW_SIZE.height);
+                JMPCore.getWindowManager().initializeLayout();
+                JMPCore.getWindowManager().setVisibleAll(false);
             }
         });
         windowMenu.add(mntmInitLayout);
@@ -614,7 +598,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         });
 
         lblCommon = new JLabel("-- 共通設定 --");
-        lblCommon.setFont(new Font("Dialog", Font.BOLD, 14));
+        lblCommon.setForeground(Color.DARK_GRAY);
+        lblCommon.setFont(new Font("Dialog", Font.BOLD, 12));
         configMenu.add(lblCommon);
 
         menuItemLanguage = new JMenuItem("言語設定");
@@ -625,8 +610,17 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         });
         configMenu.add(menuItemLanguage);
 
+        mntmInitializeConfig = new JMenuItem("InitializeConfig");
+        mntmInitializeConfig.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JMPCore.getSystemManager().initializeAllSetting();
+            }
+        });
+        configMenu.add(mntmInitializeConfig);
+
         lblMidi = new JLabel("-- MIDI設定 --");
-        lblMidi.setFont(new Font("Dialog", Font.BOLD, 14));
+        lblMidi.setForeground(Color.DARK_GRAY);
+        lblMidi.setFont(new Font("Dialog", Font.BOLD, 12));
         lblMidi.setHorizontalAlignment(SwingConstants.LEFT);
         configMenu.add(lblMidi);
         configMenu.add(mntmMidiDeviceSetup);
@@ -648,7 +642,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         configMenu.add(mntmPcreset);
 
         lblDebugMenu = new JLabel("-- Developer menu --");
-        lblDebugMenu.setFont(new Font("Dialog", Font.BOLD, 14));
+        lblDebugMenu.setForeground(Color.DARK_GRAY);
+        lblDebugMenu.setFont(new Font("Dialog", Font.BOLD, 12));
         lblDebugMenu.setHorizontalAlignment(SwingConstants.LEFT);
         configMenu.add(lblDebugMenu);
 
@@ -713,6 +708,15 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         });
 
         versionInfoDialog = new VersionInfoDialog();
+    }
+
+    @Override
+    public void initializeLayout() {
+        IJmpMainWindow.super.initializeLayout();
+
+        updateMenuState();
+        setAlwaysOnTop(false);
+        setSize(WindowManager.DEFAULT_PLAYER_WINDOW_SIZE.width, WindowManager.DEFAULT_PLAYER_WINDOW_SIZE.height);
     }
 
     @Override
@@ -1492,5 +1496,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
         mnTool.setText(lm.getLanguageStr(LangID.Tool));
         mntmFFmpegConverter.setText(lm.getLanguageStr(LangID.FFmpeg_converter));
+        mntmInitializeConfig.setText(lm.getLanguageStr(LangID.Initialize_setting));
     }
 }

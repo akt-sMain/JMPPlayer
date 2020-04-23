@@ -41,6 +41,7 @@ public class DefineLanguage {
         FILE_ERROR_3,
         FILE_ERROR_4,
         FILE_ERROR_5,
+        FILE_ERROR_6,
         FILE_LOAD_SUCCESS,
         PLUGIN_LOAD_SUCCESS,
         PLUGIN_LOAD_ERROR,
@@ -80,6 +81,7 @@ public class DefineLanguage {
         Conversion_failed,
         Conversion_completed,
         Now_converting,
+        Initialize_setting,
     }
 
     static java.util.HashMap<LangID, LanguageWords> langMap = new java.util.HashMap<LangID, LanguageWords>() {
@@ -118,6 +120,7 @@ public class DefineLanguage {
             put(LangID.FILE_ERROR_3, new LanguageWords("※Files cannot be loaded during playback.", "※再生中はファイルロードできません。"));
             put(LangID.FILE_ERROR_4, new LanguageWords("※The file cannot be opened.", "※ファイルを開くことができません。"));
             put(LangID.FILE_ERROR_5, new LanguageWords("※Failed to load the file.", "※ファイルのロードに失敗しました。"));
+            put(LangID.FILE_ERROR_6, new LanguageWords("※There is no data to play.", "※再生するデータがありません。"));
             put(LangID.FILE_LOAD_SUCCESS, new LanguageWords("File loading successful.", "ファイルロード成功"));
             put(LangID.PLUGIN_LOAD_SUCCESS, new LanguageWords("Plugin loading successful.", "プラグインロード成功"));
             put(LangID.PLUGIN_LOAD_ERROR, new LanguageWords("Plugin loading failed.", "プラグインロード失敗"));
@@ -157,6 +160,7 @@ public class DefineLanguage {
             put(LangID.Conversion_failed, new LanguageWords("Conversion failed.", "変換失敗。"));
             put(LangID.Conversion_completed, new LanguageWords("Conversion completed.", "変換完了。"));
             put(LangID.Now_converting, new LanguageWords("Now converting.", "変換中。"));
+            put(LangID.Initialize_setting, new LanguageWords("Initialize setting", "初期設定に戻す"));
         }
     };
 }
