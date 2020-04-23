@@ -1,6 +1,7 @@
 bin/
 zip/
 plugins/
+output/
 skin/
 *.jmz
 *.jar

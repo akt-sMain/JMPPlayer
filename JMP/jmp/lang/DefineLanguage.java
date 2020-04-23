@@ -69,6 +69,17 @@ public class DefineLanguage {
         Error,
         Message,
         Layout_initialization,
+        Tool,
+        FFmpeg_converter,
+        FFmpeg_path,
+        Output_directory,
+        Input_file,
+        Play_after_convert,
+        Convert,
+        A_is_invalid,
+        Conversion_failed,
+        Conversion_completed,
+        Now_converting,
     }
 
     static java.util.HashMap<LangID, LanguageWords> langMap = new java.util.HashMap<LangID, LanguageWords>() {
@@ -135,6 +146,17 @@ public class DefineLanguage {
             put(LangID.Error, new LanguageWords("Error", "エラー"));
             put(LangID.Message, new LanguageWords("Message", "メッセージ"));
             put(LangID.Layout_initialization, new LanguageWords("Layout initialization", "レイアウト初期化"));
+            put(LangID.Tool, new LanguageWords("Tool", "ツール"));
+            put(LangID.FFmpeg_converter, new LanguageWords("FFmpeg converter", "FFmpegコンバータ"));
+            put(LangID.FFmpeg_path, new LanguageWords("FFmpeg path(.exe)", "FFmpeg実行ファイル(.exe)"));
+            put(LangID.Output_directory, new LanguageWords("Output directory", "出力フォルダ"));
+            put(LangID.Input_file, new LanguageWords("Input file", "入力ファイル"));
+            put(LangID.Play_after_convert, new LanguageWords("Play after convert", "変換後に再生する"));
+            put(LangID.Convert, new LanguageWords("Convert", "変換"));
+            put(LangID.A_is_invalid, new LanguageWords("[NAME] is invalid.", "[NAME]が無効です。"));
+            put(LangID.Conversion_failed, new LanguageWords("Conversion failed.", "変換失敗。"));
+            put(LangID.Conversion_completed, new LanguageWords("Conversion completed.", "変換完了。"));
+            put(LangID.Now_converting, new LanguageWords("Now converting.", "変換中。"));
         }
     };
 }

@@ -5,9 +5,12 @@ import java.util.List;
 
 import javax.swing.JMenuItem;
 
+import function.Platform;
+import function.Platform.KindOfPlatform;
 import jlib.core.IWindowManager;
 import jlib.gui.IJmpWindow;
 import jlib.plugin.IPlugin;
+import jmp.gui.FFmpegConvertDialog;
 import jmp.gui.HistoryDialog;
 import jmp.gui.LicenseReaderDialog;
 import jmp.gui.MidiDataTransportDialog;
@@ -29,8 +32,9 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     public static final String WINDOW_NAME_MIDI_SENDER = "MIDI_SENDER";
     public static final String WINDOW_NAME_LANGUAGE = "LANGUAGE";
     public static final String WINDOW_NAME_LICENSE = "LICENSE";
+    public static final String WINDOW_NAME_FFMPEG = "FFMPEG";
     public static final String[] WINDOW_NAMELIST = { WINDOW_NAME_MAIN, WINDOW_NAME_FILE_LIST, WINDOW_NAME_HISTORY, WINDOW_NAME_MIDI_SETUP,
-            WINDOW_NAME_MIDI_MONITOR, WINDOW_NAME_MIDI_SENDER, WINDOW_NAME_LANGUAGE, WINDOW_NAME_LICENSE };
+            WINDOW_NAME_MIDI_MONITOR, WINDOW_NAME_MIDI_SENDER, WINDOW_NAME_LANGUAGE, WINDOW_NAME_LICENSE, WINDOW_NAME_FFMPEG };
 
     private WindowDatabase database = null;
 
@@ -48,15 +52,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         }
 
         // Windowインスタンス作成
-        new LicenseReaderDialog();
-        new MidiMessageMonitor();
-        new MidiDataTransportDialog();
-        new SelectLanguageDialog();
-        new HistoryDialog();
-        new MidiFileListDialog();
-
-        // メインウィンドウ
-        JMPCore.getSystemManager().registerMainWindow(new JMPPlayer());
+        makeWindowInstance();
 
         return result;
     }
@@ -68,6 +64,23 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         }
         setVisibleAll(false);
         return true;
+    }
+
+    private void makeWindowInstance() {
+        new LicenseReaderDialog();
+        new MidiMessageMonitor();
+        new MidiDataTransportDialog();
+        new SelectLanguageDialog();
+        new HistoryDialog();
+        new MidiFileListDialog();
+
+        /* Windows用の処理 */
+        if (Platform.getRunPlatform() == KindOfPlatform.WINDOWS) {
+            new FFmpegConvertDialog();
+        }
+
+        // メインウィンドウ登録
+        JMPCore.getSystemManager().registerMainWindow(new JMPPlayer());
     }
 
     public boolean register(String name, IJmpWindow window) {

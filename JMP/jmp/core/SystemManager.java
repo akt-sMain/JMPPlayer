@@ -18,6 +18,8 @@ import jlib.plugin.IPlugin;
 import jmp.JMPFlags;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.task.ICallbackFunction;
+import wffmpeg.FFmpegWrapper;
+import wrapper.ProcessingFFmpegWrapper;
 
 /**
  * システム管理クラス
@@ -26,6 +28,42 @@ import jmp.task.ICallbackFunction;
  *
  */
 public class SystemManager extends AbstractManager implements ISystemManager {
+
+    /** 例外メッセージのテンポラリ */
+    public static Exception TempResisterEx = null;
+
+    /** データディレクトリ名 */
+    public static final String PLUGINS_DIR_NAME = "plugins";
+
+    /** データディレクトリ名 */
+    public static final String DATA_DIR_NAME = "data";
+
+    /** リソースディレクトリ名 */
+    public static final String RES_DIR_NAME = "res";
+
+    /** JMSディレクトリ名 */
+    public static final String JMS_DIR_NAME = "jms";
+
+    /** JARディレクトリ名 */
+    public static final String JAR_DIR_NAME = "jar";
+
+    /** ZIPパッケージディレクトリ名 */
+    public static final String ZIP_DIR_NAME = "zip";
+
+    /** Outputディレクトリ名 */
+    public static final String OUTPUT_DIR_NAME = "output";
+
+    /** デフォルトプレイヤーカラー */
+    public static final Color DEFAULT_PLAYER_BACK_COLOR = Color.DARK_GRAY;
+
+    /** メインウィンドウ */
+    public IJmpMainWindow mainWindow = null;
+
+    /** 共通レジスタ */
+    private CommonRegister cReg = null;
+
+    /** FFmpeg wrapper インスタンス */
+    private FFmpegWrapper ffmpegWrapper = null;
 
     public class CommonRegister {
         public static final String COMMON_REGKEY_PLAYER_BACK_COLOR = "player_back_color";
@@ -98,36 +136,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
     }
 
-    /** 例外メッセージのテンポラリ */
-    public static Exception TempResisterEx = null;
-
-    /** データディレクトリ名 */
-    public static final String PLUGINS_DIR_NAME = "plugins";
-
-    /** データディレクトリ名 */
-    public static final String DATA_DIR_NAME = "data";
-
-    /** リソースディレクトリ名 */
-    public static final String RES_DIR_NAME = "res";
-
-    /** JMSディレクトリ名 */
-    public static final String JMS_DIR_NAME = "jms";
-
-    /** JARディレクトリ名 */
-    public static final String JAR_DIR_NAME = "jar";
-
-    /** ZIPパッケージディレクトリ名 */
-    public static final String ZIP_DIR_NAME = "zip";
-
-    /** デフォルトプレイヤーカラー */
-    public static final Color DEFAULT_PLAYER_BACK_COLOR = Color.DARK_GRAY;
-
-    /** メインウィンドウ */
-    public IJmpMainWindow mainWindow = null;
-
-    /** 共通レジスタ */
-    private CommonRegister cReg = null;
-
     SystemManager(int pri) {
         super(pri, "system");
     }
@@ -147,6 +155,10 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
         // ルックアンドフィールの設定
         setupLookAndFeel();
+
+        // FFmpegWrapperインスタンス生成
+        ffmpegWrapper = new ProcessingFFmpegWrapper();
+        ffmpegWrapper.setOverwrite(true);
 
         File pluginsDir = new File(getPluginsDirPath());
         if (pluginsDir.exists() == false) {
@@ -172,6 +184,11 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         if (jmsDir.exists() == false) {
             // jmsフォルダ作成
             jmsDir.mkdirs();
+        }
+        File outDir = new File(getOutputPath());
+        if (outDir.exists() == false) {
+            // outputフォルダ作成
+            outDir.mkdirs();
         }
 
         // アクティベート処理
@@ -279,6 +296,10 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     public String getZipDirPath() {
         return Utility.stringsCombin(Platform.getCurrentPath(), ZIP_DIR_NAME);
+    }
+
+    public String getOutputPath() {
+        return Utility.stringsCombin(Platform.getCurrentPath(), OUTPUT_DIR_NAME);
     }
 
     /**
@@ -403,5 +424,23 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
         catch (Exception e1) {
         }
+    }
+
+    public FFmpegWrapper getFFmpegWrapper() {
+        return ffmpegWrapper;
+    }
+
+    public void setFFmpegWrapperPath(String path) {
+        if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
+            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper)ffmpegWrapper;
+            pfw.setPath(path);
+        }
+    }
+    public String getFFmpegWrapperPath() {
+        if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
+            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper)ffmpegWrapper;
+            return pfw.getPath();
+        }
+        return "";
     }
 }

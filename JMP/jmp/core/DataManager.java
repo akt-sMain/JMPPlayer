@@ -27,6 +27,9 @@ public class DataManager extends AbstractManager implements IDataManager {
     private DefaultListModel<String> historyModel = null;
     private JList<String> history = null;
 
+    // 変換したファイルをログ
+    private List<File> convertedFiles = null;
+
     public HistoryDialog getHistoryDialog() {
         return (HistoryDialog) JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_HISTORY);
     }
@@ -60,12 +63,34 @@ public class DataManager extends AbstractManager implements IDataManager {
         }
         readingHistoryFile();
 
+        convertedFiles = new LinkedList<File>();
+
+        // 変換ファイル保持設定（仮実装）
+        setFFmpegLeaveOutputFile(true);
+
+        // 設定ファイルのFFmpegパスを同期
+        JMPCore.getSystemManager().setFFmpegWrapperPath(getFFmpegPath());
+
+        // ロードファイルの初期化
+        setLoadedFile("");
+
         return true;
     }
 
     protected boolean endFunc() {
         if (initializeFlag == false) {
             return false;
+        }
+        if (isFFmpegLeaveOutputFile() == false) {
+            if (convertedFiles.size() > 0) {
+                for (File f : convertedFiles) {
+                    if (f.exists() == true) {
+                        System.out.println(f.getAbsolutePath());
+                        Utility.deleteFileDirectory(f.getAbsolutePath());
+                        Utility.threadSleep(1000);
+                    }
+                }
+            }
         }
         if (makedConfigDatabaseFlag == false) {
             outputConfigFile();
@@ -217,5 +242,36 @@ public class DataManager extends AbstractManager implements IDataManager {
 
     public void setLoadedFile(String filePath) {
         setConfigParam(ConfigDatabase.CFG_KEY_LOADED_FILE, filePath);
+    }
+
+    public String getFFmpegPath() {
+        return getConfigParam(ConfigDatabase.CFG_KEY_FFMPEG_PATH);
+    }
+
+    public void setFFmpegPath(String filePath) {
+        setConfigParam(ConfigDatabase.CFG_KEY_FFMPEG_PATH, filePath);
+
+        JMPCore.getSystemManager().setFFmpegWrapperPath(filePath);
+    }
+
+    public String getFFmpegOutputPath() {
+        return getConfigParam(ConfigDatabase.CFG_KEY_FFMPEG_OUTPUT);
+    }
+
+    public void setFFmpegOutputPath(String filePath) {
+        setConfigParam(ConfigDatabase.CFG_KEY_FFMPEG_OUTPUT, filePath);
+    }
+
+    public void addConvertedFile(File file) {
+        convertedFiles.add(file);
+    }
+
+    public boolean isFFmpegLeaveOutputFile() {
+        String sValue = getConfigParam(ConfigDatabase.CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE);
+        return Utility.tryParseBoolean(sValue, false);
+    }
+
+    public void setFFmpegLeaveOutputFile(boolean isLeave) {
+        setConfigParam(ConfigDatabase.CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, isLeave ? "TRUE" : "FALSE");
     }
 }

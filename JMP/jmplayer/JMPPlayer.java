@@ -206,6 +206,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JPanel panel_5;
     private JPanel panel_6;
     private JMenuItem mntmInitLayout;
+    private JMenuItem mntmFFmpegConverter;
+    private JMenu mnTool;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -488,6 +490,45 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
         pluginMenu = new JMenu("プラグイン");
         pluginMenu.addMenuListener(new JmpMenuListener());
+
+        mnTool = new JMenu("Tool");
+        menuBar.add(mnTool);
+
+        mntmFFmpegConverter = new JMenuItem("FFmpeg converter");
+        mnTool.add(mntmFFmpegConverter);
+        mntmFFmpegConverter.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_FFMPEG).showWindow();
+            }
+        });
+
+        mntmMidiMonitor = new JMenuItem("MIDIメッセージモニタ");
+        mnTool.add(mntmMidiMonitor);
+
+        mntmMidimessagesender = new JMenuItem("MIDIメッセージセンダー");
+        mnTool.add(mntmMidimessagesender);
+        mntmMidimessagesender.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                IJmpWindow win = JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_SENDER);
+                if (win.isWindowVisible() == true) {
+                    win.hideWindow();
+                }
+                else {
+                    win.showWindow();
+                }
+            }
+        });
+        mntmMidiMonitor.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                IJmpWindow win = JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
+                if (win.isWindowVisible() == true) {
+                    win.hideWindow();
+                }
+                else {
+                    win.showWindow();
+                }
+            }
+        });
         menuBar.add(pluginMenu);
 
         addPluginMenuItem = new JMenuItem("プラグイン追加");
@@ -606,34 +647,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         });
         configMenu.add(mntmPcreset);
 
-        mntmMidiMonitor = new JMenuItem("MIDIメッセージモニタ");
-        mntmMidiMonitor.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                IJmpWindow win = JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
-                if (win.isWindowVisible() == true) {
-                    win.hideWindow();
-                }
-                else {
-                    win.showWindow();
-                }
-            }
-        });
-        configMenu.add(mntmMidiMonitor);
-
-        mntmMidimessagesender = new JMenuItem("MIDIメッセージセンダー");
-        mntmMidimessagesender.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                IJmpWindow win = JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_SENDER);
-                if (win.isWindowVisible() == true) {
-                    win.hideWindow();
-                }
-                else {
-                    win.showWindow();
-                }
-            }
-        });
-        configMenu.add(mntmMidimessagesender);
-
         lblDebugMenu = new JLabel("-- Developer menu --");
         lblDebugMenu.setFont(new Font("Dialog", Font.BOLD, 14));
         lblDebugMenu.setHorizontalAlignment(SwingConstants.LEFT);
@@ -728,8 +741,10 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             mnExecuteBatFile.setVisible(false);
         }
 
+        /* Windows用の処理 */
         if (Platform.getRunPlatform() != KindOfPlatform.WINDOWS) {
             mnExecuteBatFile.setVisible(false);
+            mntmFFmpegConverter.setVisible(false);
         }
 
         /* スタンドアロンモード用メニュー表示 */
@@ -1474,5 +1489,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         lblCommon.setText("-- " + lm.getLanguageStr(LangID.Common_settings) + " --");
         menuItemLanguage.setText(lm.getLanguageStr(LangID.Language));
         mntmInitLayout.setText(lm.getLanguageStr(LangID.Layout_initialization));
+
+        mnTool.setText(lm.getLanguageStr(LangID.Tool));
+        mntmFFmpegConverter.setText(lm.getLanguageStr(LangID.FFmpeg_converter));
     }
 }
