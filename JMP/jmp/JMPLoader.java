@@ -141,7 +141,7 @@ public class JMPLoader {
                             catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            JMPCore.getSystemManager().getMainWindow().loadFile(f);
+                            JMPCore.getFileManager().loadFile(f);
                         }
                     });
                 }

@@ -11,6 +11,7 @@ public class JMPCoreAccessor {
     private static ISoundManager soundManager = null;
     private static IDataManager dataManager = null;
     private static IWindowManager windowManager = null;
+    private static IFileManager fileManager = null;
 
     /**
      * マネージャー登録
@@ -29,6 +30,9 @@ public class JMPCoreAccessor {
         }
         else if (manager instanceof IWindowManager) {
             windowManager = (IWindowManager) manager;
+        }
+        else if (manager instanceof IFileManager) {
+            fileManager = (IFileManager) manager;
         }
     }
 
@@ -66,5 +70,14 @@ public class JMPCoreAccessor {
      */
     public static IWindowManager getWindowManager() {
         return windowManager;
+    }
+
+    /**
+     * FileManager取得
+     *
+     * @return
+     */
+    public static IFileManager getFileManager() {
+        return fileManager;
     }
 }

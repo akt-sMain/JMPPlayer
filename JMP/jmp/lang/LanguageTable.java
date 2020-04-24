@@ -51,6 +51,7 @@ public class LanguageTable {
 
     /**
      * readme本文を取得
+     * 
      * @param langIndex
      * @return
      */

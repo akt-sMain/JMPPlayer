@@ -5,13 +5,10 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -20,7 +17,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -32,6 +28,8 @@ import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SystemManager;
 import jmp.core.WindowManager;
+import jmp.gui.ui.DropFileCallbackHandler;
+import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 import wrapper.IProcessingCallback;
@@ -73,7 +71,6 @@ public class FFmpegConvertDialog extends JMPDialog {
         setTitle("FFmpeg convert");
         setBounds(100, 100, 450, 300);
         setResizable(false);
-        setTransferHandler(new DropFileHandler());
 
         contentPanel.setBackground(getJmpBackColor());
 
@@ -93,6 +90,13 @@ public class FFmpegConvertDialog extends JMPDialog {
         textFieldFFmpegExePath.setBounds(12, 48, 373, 19);
         contentPanel.add(textFieldFFmpegExePath);
         textFieldFFmpegExePath.setColumns(10);
+        textFieldFFmpegExePath.setTransferHandler(new DropFileCallbackHandler(new IDropFileCallback() {
+
+            @Override
+            public void catchDropFile(File file) {
+                setExePath(file.getPath());
+            }
+        }));
 
         lblPath = new JLabel("FFmpeg path(.exe)");
         lblPath.setForeground(Color.WHITE);
@@ -110,6 +114,13 @@ public class FFmpegConvertDialog extends JMPDialog {
         textFieldOutputDirectory.setColumns(10);
         textFieldOutputDirectory.setBounds(12, 100, 373, 19);
         contentPanel.add(textFieldOutputDirectory);
+        textFieldOutputDirectory.setTransferHandler(new DropFileCallbackHandler(new IDropFileCallback() {
+
+            @Override
+            public void catchDropFile(File file) {
+                setOutputDirectory(file.getPath());
+            }
+        }));
 
         lblInputFile = new JLabel("Input file");
         lblInputFile.setForeground(Color.WHITE);
@@ -121,6 +132,13 @@ public class FFmpegConvertDialog extends JMPDialog {
         textFieldInputFile.setColumns(10);
         textFieldInputFile.setBounds(12, 152, 373, 19);
         contentPanel.add(textFieldInputFile);
+        textFieldInputFile.setTransferHandler(new DropFileCallbackHandler(new IDropFileCallback() {
+
+            @Override
+            public void catchDropFile(File file) {
+                setInputPath(file.getPath());
+            }
+        }));
 
         lblStatus = new JLabel("");
         lblStatus.setBackground(new Color(0, 0, 0));
@@ -280,7 +298,7 @@ public class FFmpegConvertDialog extends JMPDialog {
 
                                 if (chckbxToPlay.isSelected() == true) {
                                     JMPFlags.LoadToPlayFlag = true;
-                                    JMPCore.getSystemManager().loadFile(out.getPath());
+                                    JMPCore.getFileManager().loadFile(out.getPath());
                                 }
                             }
 
@@ -365,36 +383,6 @@ public class FFmpegConvertDialog extends JMPDialog {
         super.setVisible(b);
     }
 
-    /**
-     * ロードアイテム受信
-     *
-     * @param item
-     *            アイテム
-     */
-    public void catchLoadItem(Object item) {
-        @SuppressWarnings("unchecked")
-        List<File> files = (List<File>) item;
-
-        // 一番先頭のファイルを取得
-        if ((files != null) && (files.size() > 0)) {
-            String path = files.get(0).getPath();
-            File file = new File(path);
-            if (file.exists() == true) {
-                if (Utility.checkExtension(file, "exe") == true) {
-                    setExePath(file.getPath());
-                }
-                else {
-                    if (file.isDirectory() == true) {
-                        setOutputDirectory(file.getPath());
-                    }
-                    else {
-                        setInputPath(file.getPath());
-                    }
-                }
-            }
-        }
-    }
-
     @Override
     public void updateLanguage() {
         super.updateLanguage();
@@ -408,53 +396,5 @@ public class FFmpegConvertDialog extends JMPDialog {
         convertButton.setText(lm.getLanguageStr(LangID.Convert));
         btnExpButton.setText(lm.getLanguageStr(LangID.Open_with_Explorer));
         chckbxToPlay.setText(lm.getLanguageStr(LangID.Play_after_convert));
-    }
-
-    /**
-     *
-     * ドラッグ＆ドロップハンドラー
-     *
-     */
-    public class DropFileHandler extends TransferHandler {
-        /**
-         * ドロップされたものを受け取るか判断 (アイテムのときだけ受け取る)
-         */
-        @Override
-        public boolean canImport(TransferSupport support) {
-            if (support.isDrop() == false) {
-                // ドロップ操作でない場合は受け取らない
-                return false;
-            }
-
-            if (support.isDataFlavorSupported(DataFlavor.javaFileListFlavor) == false) {
-                // ファイルでない場合は受け取らない
-                return false;
-            }
-
-            return true;
-        }
-
-        /**
-         * ドロップされたアイテムを受け取る
-         */
-        @Override
-        public boolean importData(TransferSupport support) {
-            // ドロップアイテム受理の確認
-            if (canImport(support) == false) {
-                return false;
-            }
-
-            // ドロップ処理
-            Transferable t = support.getTransferable();
-            try {
-                // ドロップアイテム取得
-                catchLoadItem(t.getTransferData(DataFlavor.javaFileListFlavor));
-                return true;
-            }
-            catch (Exception e) {
-                /* 受け取らない */
-            }
-            return false;
-        }
     }
 }

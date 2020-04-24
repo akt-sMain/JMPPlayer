@@ -100,13 +100,13 @@ public abstract class AbstractManager implements IManager {
 
         int curPriority = INVALID_PRIORITY;
         List<AbstractManager> tmp = new ArrayList<AbstractManager>();
-        
+
         while (true) {
             int limit = (order == true) ? MAX_PRIORITY : INVALID_PRIORITY;
             AbstractManager addManager = null;
             for (AbstractManager am : cloneMng) {
                 curPriority = am.getPriority();
-                
+
                 if (order == true) {
                     if (am.getPriority() <= limit) {
                         addManager = am;

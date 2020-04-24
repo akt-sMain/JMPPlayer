@@ -1,7 +1,5 @@
 package jlib.gui;
 
-import java.io.File;
-
 import jlib.plugin.IPlugin;
 
 public interface IJmpMainWindow extends IJmpWindow {
@@ -10,18 +8,6 @@ public interface IJmpMainWindow extends IJmpWindow {
      * ファイルオープン処理実行
      */
     abstract void fileOpenFunc();
-
-    /**
-     * ファイルロード
-     *
-     * @param path
-     *            ファイルパス
-     */
-    abstract void loadFile(String path);
-
-    default void loadFile(File file) {
-        loadFile(file.getPath());
-    }
 
     /**
      * ステータステキスト設定

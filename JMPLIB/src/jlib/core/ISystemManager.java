@@ -54,14 +54,4 @@ public interface ISystemManager {
      * @return メインウィンドウ
      */
     abstract IJmpMainWindow getMainWindow();
-
-    /**
-     * ファイルロード(MainWindowのラッパー)
-     *
-     * @param path
-     *            ファイルパス
-     */
-    public default void loadFile(String path) {
-        getMainWindow().loadFile(path);
-    }
 }

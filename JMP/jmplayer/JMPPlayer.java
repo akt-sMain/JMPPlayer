@@ -48,6 +48,8 @@ import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jlib.player.IPlayer;
 import jlib.plugin.IPlugin;
+import jmp.FileResult;
+import jmp.IFileResultCallback;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
 import jmp.core.DataManager;
@@ -390,7 +392,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 if (path.isEmpty() == false) {
                     File f = new File(path);
                     if (f.exists() == true && f.canRead() == true) {
-                        loadFile(f.getPath());
+                        JMPCore.getFileManager().loadFile(path);
                     }
                 }
             }
@@ -476,6 +478,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         pluginMenu.addMenuListener(new JmpMenuListener());
 
         mnTool = new JMenu("Tool");
+        mnTool.addMenuListener(new JmpMenuListener());
         menuBar.add(mnTool);
 
         mntmFFmpegConverter = new JMenuItem("FFmpeg converter");
@@ -777,6 +780,26 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             }
         });
         JMPCore.getTaskManager().getTaskOfTimer().addCallbackPackage(callbackPkg);
+
+        // ロード後のコールバックを登録
+        JMPCore.getFileManager().addLoadResultCallback(new IFileResultCallback() {
+
+            @Override
+            public void end(FileResult result) {
+                setStatusTextForFile();
+                setStatusText(result.statusMsg, result.status);
+            }
+
+            @Override
+            public void begin(FileResult result) {
+                if (result.status == false) {
+                    setStatusText(result.statusMsg, result.status);
+                }
+                else {
+                    setStatusText(result.statusMsg, Color.LIGHT_GRAY);
+                }
+            }
+        });
     }
 
     // private Color getCtrlBorderColor() {
@@ -1092,6 +1115,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     public void exit(boolean forcedExit) {
         setVisible(false);
 
+        JMPCore.getSoundManager().stop();
+
         if (forcedExit == true) {
             // JMPリソースの終了処理
             JMPLoader.exit();
@@ -1178,7 +1203,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 }
             }
             else {
-                loadFile(path);
+                JMPCore.getFileManager().loadFile(path);
             }
         }
     }
@@ -1215,123 +1240,12 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 String path = file.getPath();
                 if (file.isDirectory() == false) {
                     // ファイルロード
-                    loadFile(path);
+                    JMPCore.getFileManager().loadFile(path);
                 }
                 break;
             default:
                 break;
         }
-    }
-
-    /**
-     * ファイルロード処理
-     *
-     * @param path
-     *            パス
-     */
-    public void loadFile(String path) {
-        LanguageManager lm = JMPCore.getLanguageManager();
-        DataManager dm = JMPCore.getDataManager();
-
-        if (JMPFlags.NowLoadingFlag == true) {
-            setStatusText(lm.getLanguageStr(LangID.FILE_ERROR_1), false);
-            return;
-        }
-
-        JMPFlags.NowLoadingFlag = true;
-        setStatusText(lm.getLanguageStr(LangID.Now_loading), Color.LIGHT_GRAY);
-        repaint();
-
-        /* ファイルロード */
-        // Sequenceタスクに委託
-        JMPCore.getTaskManager().getTaskOfSequence().queuing(new ICallbackFunction() {
-            @Override
-            public void callback() {
-                boolean status = true;
-                String tmpFileName = dm.getLoadedFile();
-                String statusStr = "";
-
-                File f = new File(path);
-                String ex = Utility.getExtension(f);
-
-                /* ロード前の検査 */
-                if (status == true) {
-                    if (JMPCore.getSoundManager().isSupportedExtensionAccessor(ex) == false) {
-                        status = false;
-                        statusStr = lm.getLanguageStr(LangID.FILE_ERROR_2);
-                    }
-                    else if (JMPCore.getSoundManager().getCurrentPlayer().isRunnable() == true) {
-                        status = false;
-                        statusStr = lm.getLanguageStr(LangID.FILE_ERROR_3);
-                    }
-                }
-
-                /* ロード処理 */
-                if (status == true) {
-                    String subErrorStr = "";
-                    try {
-                        if (f.canRead() == true && f.exists() == true) {
-                            // ファイルロード実行
-                            JMPCore.getSoundManager().loadFile(f);
-
-                            // プラグインのファイルロード処理
-                            try {
-                                JMPCore.getPluginManager().loadFile(f);
-                            }
-                            catch (Exception e) {
-                                subErrorStr = "(" + lm.getLanguageStr(LangID.Plugin_error) + ")";
-                            }
-                        }
-                        else {
-                            status = false;
-                            statusStr = lm.getLanguageStr(LangID.FILE_ERROR_4) + subErrorStr;
-                        }
-                    }
-                    catch (Exception e) {
-                        // e.printStackTrace();
-
-                        status = false;
-                        statusStr = lm.getLanguageStr(LangID.FILE_ERROR_5);
-                    }
-                }
-
-                // 結果表示
-                if (status == true) {
-
-                    // 履歴に追加
-                    if (JMPFlags.NoneHIstoryLoadFlag == false) {
-                        JMPCore.getDataManager().addHistory(f.getPath());
-                    }
-
-                    // 自動再生
-                    if (JMPFlags.LoadToPlayFlag == true) {
-                        JMPCore.getSoundManager().getCurrentPlayer().play();
-                        JMPFlags.LoadToPlayFlag = false;
-                    }
-
-                    // 新しいファイル名
-                    dm.setLoadedFile(path);
-
-                    // メッセージ発行
-                    statusStr = String.format("%s ...(%s)", Utility.getFileNameAndExtension(dm.getLoadedFile()), lm.getLanguageStr(LangID.FILE_LOAD_SUCCESS));
-                }
-                else {
-                    // 前のファイル名に戻す
-                    dm.setLoadedFile(tmpFileName);
-                }
-
-                // メッセージ表示
-                setStatusTextForFile();
-                setStatusText(statusStr, status);
-
-                // フラグ初期化
-                JMPFlags.NoneHIstoryLoadFlag = false;
-                JMPFlags.LoadToPlayFlag = false;
-
-                // ロード中フラグ初期化
-                JMPFlags.NowLoadingFlag = false;
-            }
-        });
     }
 
     /**

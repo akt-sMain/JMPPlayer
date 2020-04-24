@@ -107,33 +107,6 @@ public class DataManager extends AbstractManager implements IDataManager {
         database.initialize();
     }
 
-    public boolean isAutoPlay() {
-        String sValue = getConfigParam(ConfigDatabase.CFG_KEY_AUTOPLAY);
-        return Utility.tryParseBoolean(sValue, false);
-    }
-
-    public void setAutoPlay(boolean isAutoPlay) {
-        setConfigParam(ConfigDatabase.CFG_KEY_AUTOPLAY, isAutoPlay ? "TRUE" : "FALSE");
-    }
-
-    public boolean isLoopPlay() {
-        String sValue = getConfigParam(ConfigDatabase.CFG_KEY_LOOPPLAY);
-        return Utility.tryParseBoolean(sValue, false);
-    }
-
-    public void setLoopPlay(boolean isLoopPlay) {
-        setConfigParam(ConfigDatabase.CFG_KEY_LOOPPLAY, isLoopPlay ? "TRUE" : "FALSE");
-    }
-
-    public boolean isShowStartupDeviceSetup() {
-        String sValue = getConfigParam(ConfigDatabase.CFG_KEY_SHOW_STARTUP_DEVICE_SETUP);
-        return Utility.tryParseBoolean(sValue, false);
-    }
-
-    public void setShowStartupDeviceSetup(boolean isShow) {
-        setConfigParam(ConfigDatabase.CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, isShow ? "TRUE" : "FALSE");
-    }
-
     private boolean readingConfigFile() {
         String path = Platform.getCurrentPath() + CONFIG_FILE;
         return database.reading(path);
@@ -222,6 +195,33 @@ public class DataManager extends AbstractManager implements IDataManager {
 
     public void setTranspose(int transpose) {
         this.transpose = transpose;
+    }
+
+    public boolean isAutoPlay() {
+        String sValue = getConfigParam(ConfigDatabase.CFG_KEY_AUTOPLAY);
+        return Utility.tryParseBoolean(sValue, false);
+    }
+
+    public void setAutoPlay(boolean isAutoPlay) {
+        setConfigParam(ConfigDatabase.CFG_KEY_AUTOPLAY, isAutoPlay ? "TRUE" : "FALSE");
+    }
+
+    public boolean isLoopPlay() {
+        String sValue = getConfigParam(ConfigDatabase.CFG_KEY_LOOPPLAY);
+        return Utility.tryParseBoolean(sValue, false);
+    }
+
+    public void setLoopPlay(boolean isLoopPlay) {
+        setConfigParam(ConfigDatabase.CFG_KEY_LOOPPLAY, isLoopPlay ? "TRUE" : "FALSE");
+    }
+
+    public boolean isShowStartupDeviceSetup() {
+        String sValue = getConfigParam(ConfigDatabase.CFG_KEY_SHOW_STARTUP_DEVICE_SETUP);
+        return Utility.tryParseBoolean(sValue, false);
+    }
+
+    public void setShowStartupDeviceSetup(boolean isShow) {
+        setConfigParam(ConfigDatabase.CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, isShow ? "TRUE" : "FALSE");
     }
 
     public int getLanguage() {

@@ -239,8 +239,8 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         JMPCore.getPluginManager().closeAllPlugins();
 
         JMPCore.getDataManager().initializeConfigDatabase();
-//        JMPCore.getDataManager().clearHistory();
-//        JMPCore.getSoundManager().clearPlayList();
+        // JMPCore.getDataManager().clearHistory();
+        // JMPCore.getSoundManager().clearPlayList();
         JMPCore.getWindowManager().initializeLayout();
 
         // 言語更新
@@ -450,7 +450,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     public void setFFmpegWrapperCallback(IProcessingCallback cb) {
         if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
-            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper)ffmpegWrapper;
+            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
             pfw.setCallback(cb);
         }
     }
@@ -461,13 +461,14 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     public void setFFmpegWrapperPath(String path) {
         if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
-            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper)ffmpegWrapper;
+            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
             pfw.setPath(path);
         }
     }
+
     public String getFFmpegWrapperPath() {
         if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
-            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper)ffmpegWrapper;
+            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
             return pfw.getPath();
         }
         return "";

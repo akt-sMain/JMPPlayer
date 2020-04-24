@@ -613,7 +613,7 @@ public class PluginManager extends AbstractManager {
         }
     }
 
-    public void loadFile(File file) {
+    void loadFile(File file) {
         for (IPlugin plugin : getPlugins()) {
             plugin.loadFile(file);
         }

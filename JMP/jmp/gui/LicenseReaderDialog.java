@@ -31,7 +31,7 @@ public class LicenseReaderDialog extends JMPDialog {
     private JLabel labelAccept = new JLabel("上記の条件に：");
     private JRadioButton rdbtnReject = new JRadioButton("同意しない");
     private JRadioButton rdbtnAccept = new JRadioButton("同意する");
-    //private JTextArea textAreaLisence = new JTextArea();
+    // private JTextArea textAreaLisence = new JTextArea();
     private JEditorPane textAreaLisence = new JEditorPane();
     private JLabel labelClipMes = new JLabel("クリップボードにコピーしました");
     private JButton buttonCopy = new JButton("原文のコピー");

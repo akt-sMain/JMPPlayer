@@ -40,7 +40,6 @@ import javax.swing.table.TableColumn;
 import function.Platform;
 import function.Platform.KindOfPlatform;
 import function.Utility;
-import jlib.gui.IJmpMainWindow;
 import jmp.ConfigDatabase;
 import jmp.JMPFlags;
 import jmp.core.DataManager;
@@ -332,8 +331,6 @@ public class MidiFileListDialog extends JMPFrame {
             if (row >= 0) {
                 String name = (String) midiFileList.getModel().getValueAt(row, COLUMN_NAME);
                 if (midiFileMap.containsKey(name) == true) {
-                    IJmpMainWindow mainWindow = JMPCore.getSystemManager().getMainWindow();
-
                     File midiFile = midiFileMap.get(name);
                     if (midiFile.isDirectory() == true) {
                         if (midiFile.exists() == true) {
@@ -350,7 +347,7 @@ public class MidiFileListDialog extends JMPFrame {
 
                         // 自動再生フラグ
                         JMPFlags.LoadToPlayFlag = true;
-                        mainWindow.loadFile(midiFile);
+                        JMPCore.getFileManager().loadFile(midiFile);
                     }
                 }
             }

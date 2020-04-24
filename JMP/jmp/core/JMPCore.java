@@ -26,6 +26,7 @@ public class JMPCore {
     private static final int MANAGER_PRIORITY_SOUND = 40;
     private static final int MANAGER_PRIORITY_PLUGIN = 50;
     private static final int MANAGER_PRIORITY_TASK = 60;
+    private static final int MANAGER_PRIORITY_FILE = 70;
 
     private static SystemManager systemManager = new SystemManager(MANAGER_PRIORITY_SYSTEM);
     private static DataManager dataManager = new DataManager(MANAGER_PRIORITY_DATA);
@@ -35,6 +36,7 @@ public class JMPCore {
     private static LanguageManager languageManager = new LanguageManager(MANAGER_PRIORITY_LANG);
     private static TaskManager taskManager = new TaskManager(MANAGER_PRIORITY_TASK);
     private static ResourceManager resourceManager = new ResourceManager(MANAGER_PRIORITY_RESOUCE);
+    private static FileManager fileManager = new FileManager(MANAGER_PRIORITY_FILE);
 
     public static boolean initFunc() {
         boolean result = true;
@@ -89,5 +91,9 @@ public class JMPCore {
 
     public static ResourceManager getResourceManager() {
         return resourceManager;
+    }
+
+    public static FileManager getFileManager() {
+        return fileManager;
     }
 }

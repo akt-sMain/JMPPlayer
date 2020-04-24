@@ -37,12 +37,12 @@ public class SequencerSliderUI extends BasicSliderUI {
             int h = knobBounds.height;
             g.translate(knobBounds.x, knobBounds.y);
             g.setColor(color);
-//            g.drawLine((w / 2) - 1, 0, (w / 2) - 1, h);
-//            g.drawLine((w / 2), 0, (w / 2), h);
-//            g.drawLine((w / 2) + 1, 0, (w / 2) + 1, h);
-            g.fillRect((w / 2) - (THUMB_SIZE / 2), 0, (w / 2) + (THUMB_SIZE / 2), h-1);
+            // g.drawLine((w / 2) - 1, 0, (w / 2) - 1, h);
+            // g.drawLine((w / 2), 0, (w / 2), h);
+            // g.drawLine((w / 2) + 1, 0, (w / 2) + 1, h);
+            g.fillRect((w / 2) - (THUMB_SIZE / 2), 0, (w / 2) + (THUMB_SIZE / 2), h - 1);
             g.setColor(BLINK_COLOR_2);
-            g.drawRect((w / 2) - (THUMB_SIZE / 2), 0, (w / 2) + (THUMB_SIZE / 2), h-1);
+            g.drawRect((w / 2) - (THUMB_SIZE / 2), 0, (w / 2) + (THUMB_SIZE / 2), h - 1);
             g.translate(-knobBounds.x, -knobBounds.y);
         }
         else {

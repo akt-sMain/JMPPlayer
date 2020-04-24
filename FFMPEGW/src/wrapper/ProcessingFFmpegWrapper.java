@@ -129,13 +129,13 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
         ExecutorService execTh = Executors.newSingleThreadExecutor();
         execTh.submit(lr);
 
-//        while(lr.isRunnable() == true) {
-//            try {
-//                Thread.sleep(1000);
-//            }
-//            catch (InterruptedException e) {
-//            }
-//        }
+        // while(lr.isRunnable() == true) {
+        // try {
+        // Thread.sleep(1000);
+        // }
+        // catch (InterruptedException e) {
+        // }
+        // }
 
     }
 

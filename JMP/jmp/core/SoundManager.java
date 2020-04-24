@@ -200,7 +200,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
                 // 自動再生フラグ
                 JMPFlags.LoadToPlayFlag = true;
             }
-            mainWindow.loadFile(path);
+            JMPCore.getFileManager().loadFile(path);
         }
         catch (Exception e) {
         }
@@ -272,7 +272,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             }
         }
 
-        if (isPlayNext == false) {
+        if (isPlayNext == false && (dm.isLoopPlay() == true || dm.isAutoPlay() == true)) {
             // 再生できなかった場合、Tickを終了位置にする
             endPosition();
         }
@@ -313,7 +313,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         }
     }
 
-    public void loadFile(File file) throws Exception {
+    void loadFile(File file) throws Exception {
         Player tmpPlayer = PlayerAccessor.getCurrent();
 
         boolean loadResult = true;

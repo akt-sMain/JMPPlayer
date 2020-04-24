@@ -72,7 +72,7 @@ public class HistoryDialog extends JMPDialog {
 
                             // 履歴に残さずロードする
                             JMPFlags.NoneHIstoryLoadFlag = true;
-                            JMPCore.getSystemManager().getMainWindow().loadFile(item);
+                            JMPCore.getFileManager().loadFile(item);
                         }
                     }
                 });
