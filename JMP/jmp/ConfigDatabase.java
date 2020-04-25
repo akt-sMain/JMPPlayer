@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import function.Platform;
+import function.Platform.SystemProperty;
 import function.Utility;
 
 public class ConfigDatabase {
@@ -15,7 +16,7 @@ public class ConfigDatabase {
 
     // 設定データベース
     private Map<String, String> database = null;
-    public static final String CFG_KEY_MIDILIST = "MIDILIST";
+    public static final String CFG_KEY_PLAYLIST = "PLAYLIST";
     public static final String CFG_KEY_MIDIOUT = "MIDIOUT";
     public static final String CFG_KEY_MIDIIN = "MIDIIN";
     public static final String CFG_KEY_AUTOPLAY = "AUTOPLAY";
@@ -27,7 +28,7 @@ public class ConfigDatabase {
     public static final String CFG_KEY_FFMPEG_OUTPUT = "FFMPEG_OUTPUT";
     public static final String CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE = "FFMPEG_LEAVE_OUTPUT_FILE";
     // ↓KEY追加後、必ずCFG_KEYSETに追加すること!!
-    public static final String[] CFG_KEYSET = { CFG_KEY_MIDILIST, CFG_KEY_MIDIOUT, CFG_KEY_MIDIIN, CFG_KEY_AUTOPLAY, CFG_KEY_LOOPPLAY,
+    public static final String[] CFG_KEYSET = { CFG_KEY_PLAYLIST, CFG_KEY_MIDIOUT, CFG_KEY_MIDIIN, CFG_KEY_AUTOPLAY, CFG_KEY_LOOPPLAY,
             CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, CFG_KEY_LANGUAGE, CFG_KEY_LOADED_FILE, CFG_KEY_FFMPEG_PATH, CFG_KEY_FFMPEG_OUTPUT,
             CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, };
 
@@ -40,8 +41,9 @@ public class ConfigDatabase {
 
     public void initialize() {
         String current = Platform.getCurrentPath();
+        String desktop = getDesktopPath(current);
 
-        database.put(CFG_KEY_MIDILIST, current);
+        database.put(CFG_KEY_PLAYLIST, desktop);
         database.put(CFG_KEY_MIDIOUT, "");
         database.put(CFG_KEY_MIDIIN, "");
         database.put(CFG_KEY_AUTOPLAY, "FALSE");
@@ -52,6 +54,19 @@ public class ConfigDatabase {
         database.put(CFG_KEY_FFMPEG_PATH, "");
         database.put(CFG_KEY_FFMPEG_OUTPUT, "output");
         database.put(CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, "TRUE");
+    }
+
+    private String getDesktopPath(String defaultPath) {
+        String desktop = Platform.getProperty(SystemProperty.USER_HOME);
+        if (Utility.isExsistFile(desktop) == false) {
+            return defaultPath;
+        }
+
+        String newDesktop = Utility.pathCombin(desktop, "Desktop");
+        if (Utility.isExsistFile(newDesktop) == false) {
+            return desktop;
+        }
+        return newDesktop;
     }
 
     public void setConfigParam(String key, String value) {

@@ -137,4 +137,12 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         }
     }
 
+    public void updateConfig(String key) {
+        for (String name : getWindowNameList()) {
+            IJmpWindow win = getWindow(name);
+            if (win != null) {
+                win.updateConfig(key);
+            }
+        }
+    }
 }

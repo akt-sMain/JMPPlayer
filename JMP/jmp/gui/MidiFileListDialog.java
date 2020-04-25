@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -30,7 +28,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.TransferHandler;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -47,7 +44,9 @@ import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
 import jmp.core.WindowManager;
+import jmp.gui.ui.DropFileCallbackHandler;
 import jmp.gui.ui.FileListTableModel;
+import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.JMPFrame;
 import jmp.lang.DefineLanguage.LangID;
 
@@ -72,6 +71,9 @@ public class MidiFileListDialog extends JMPFrame {
     private static final int ROW_SIZE = 20;
     private JLabel lblPath;
 
+    private static final int WINDOW_WIDTH = 870;
+    private static final int WINDOW_HEIGHT = 510;
+
     /**
      * Create the dialog.
      */
@@ -85,7 +87,13 @@ public class MidiFileListDialog extends JMPFrame {
             setIconImage(jmpIcon);
         }
 
-        this.setTransferHandler(new DropFileHandler());
+        this.setTransferHandler(new DropFileCallbackHandler(new IDropFileCallback() {
+
+            @Override
+            public void catchDropFile(File file) {
+                updateList(file);
+            }
+        }));
 
         JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_FILE_LIST, this);
 
@@ -115,14 +123,14 @@ public class MidiFileListDialog extends JMPFrame {
         midiFileList.setBackground(Color.WHITE);
         midiFileList.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-        setBounds(100, 100, 870, 510);
+        setBounds(100, 100, WINDOW_WIDTH, WINDOW_HEIGHT);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBackground(getJmpBackColor());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(null);
         {
-            JScrollPane scrollPane = new JScrollPane();
+            scrollPane = new JScrollPane();
             scrollPane.setBounds(5, 39, 391, 390);
             contentPanel.add(scrollPane);
             {
@@ -130,14 +138,14 @@ public class MidiFileListDialog extends JMPFrame {
             }
         }
 
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setBounds(478, 39, 364, 388);
-        contentPanel.add(scrollPane);
+        scrollPane_1 = new JScrollPane();
+        scrollPane_1.setBounds(478, 39, 364, 388);
+        contentPanel.add(scrollPane_1);
 
         playList = JMPCore.getSoundManager().getPlayList();
         playList.setForeground(Color.WHITE);
         playList.setBackground(Color.BLACK);
-        scrollPane.setViewportView(playList);
+        scrollPane_1.setViewportView(playList);
         btnExproler = new JButton("エクスプローラで開く");
         btnExproler.setBounds(5, 439, 146, 21);
         contentPanel.add(btnExproler);
@@ -230,7 +238,7 @@ public class MidiFileListDialog extends JMPFrame {
         lblPath.setBackground(Color.BLACK);
         lblPath.setForeground(Color.WHITE);
         lblPath.setFont(new Font("MS UI Gothic", Font.BOLD, 14));
-        lblPath.setBounds(5, 8, 391, 21);
+        lblPath.setBounds(5, 8, 422, 21);
         lblPath.setOpaque(true);
         LineBorder border = new LineBorder(Color.LIGHT_GRAY, 1, false);
         lblPath.setBorder(border);
@@ -239,7 +247,7 @@ public class MidiFileListDialog extends JMPFrame {
         JButton btnBack = new JButton("<");
         btnBack.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String curPath = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDILIST);
+                String curPath = JMPCore.getDataManager().getPlayListPath();
                 File cur = new File(curPath);
 
                 cur = cur.getParentFile();
@@ -248,7 +256,7 @@ public class MidiFileListDialog extends JMPFrame {
                 }
             }
         });
-        btnBack.setBounds(398, 8, 39, 21);
+        btnBack.setBounds(427, 8, 39, 21);
         contentPanel.add(btnBack);
 
         labelContinuePlayback = new JLabel("連続再生リスト");
@@ -262,7 +270,7 @@ public class MidiFileListDialog extends JMPFrame {
         contentPanel.add(panel);
         btnExproler.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String path = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDILIST);
+                String path = JMPCore.getDataManager().getPlayListPath();
                 try {
                     Utility.openExproler(path);
                 }
@@ -287,7 +295,7 @@ public class MidiFileListDialog extends JMPFrame {
         // colName.setMaxWidth(150);
         // colName.setMinWidth(150);
 
-        String listPath = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDILIST);
+        String listPath = JMPCore.getDataManager().getPlayListPath();
         if ((listPath.isEmpty() == true) || (Utility.isExsistFile(listPath) == false)) {
             updateList(Platform.getCurrentPath());
         }
@@ -300,12 +308,43 @@ public class MidiFileListDialog extends JMPFrame {
     @Override
     public void setVisible(boolean b) {
         if (b == true) {
-            String path = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDILIST);
+            String path = JMPCore.getDataManager().getPlayListPath();
             if (path != null && path.isEmpty() == false) {
                 updateList(path);
             }
+
+            updateGUI();
         }
         super.setVisible(b);
+    }
+
+    public void updateGUI() {
+        if (JMPCore.getDataManager().isAutoPlay() == true) {
+            setVisibleExtendGUI(true);
+        }
+        else {
+            setVisibleExtendGUI(false);
+        }
+    }
+
+    public void setVisibleExtendGUI(boolean visible) {
+        scrollPane_1.setVisible(visible);
+        labelContinuePlayback.setVisible(visible);
+        buttonClear.setVisible(visible);
+        buttonDelete.setVisible(visible);
+        btnLoad.setVisible(visible);
+        addButton.setVisible(visible);
+
+        if (visible == true) {
+            this.setSize(WINDOW_WIDTH, this.getHeight());
+            scrollPane.setSize(391, scrollPane.getHeight());
+            btnDirectLoad.setLocation(305, btnDirectLoad.getY());
+        }
+        else {
+            this.setSize(540, this.getHeight());
+            scrollPane.setSize(510, scrollPane.getHeight());
+            btnDirectLoad.setLocation(406, btnDirectLoad.getY());
+        }
     }
 
     public void updateCellInfo(int row) {
@@ -366,7 +405,7 @@ public class MidiFileListDialog extends JMPFrame {
         // filechooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         filechooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        String path = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDILIST);
+        String path = JMPCore.getDataManager().getPlayListPath();
         if (path != null && path.isEmpty() == false) {
             filechooser.setCurrentDirectory(new File(path));
         }
@@ -397,7 +436,7 @@ public class MidiFileListDialog extends JMPFrame {
         }
 
         setCurrentPathText(file.getPath());
-        JMPCore.getDataManager().setConfigParam(ConfigDatabase.CFG_KEY_MIDILIST, file.getPath());
+        JMPCore.getDataManager().setPlayListPath(file.getPath());
 
         midiFileMap = JMPCore.getSoundManager().getMidiFileList(file);
         removeAllRows();
@@ -493,19 +532,6 @@ public class MidiFileListDialog extends JMPFrame {
         }
     }
 
-    private void catchItem(Object obj) {
-        @SuppressWarnings("unchecked")
-        List<File> files = (List<File>) obj;
-
-        // 一番先頭のファイルを取得
-        if (files != null) {
-            if (files.size() > 0) {
-                File file = files.get(0);
-                updateList(file);
-            }
-        }
-    }
-
     private ImageIcon convertImageIcon(Image img) {
         return img == null ? null : new ImageIcon(img);
     }
@@ -557,6 +583,8 @@ public class MidiFileListDialog extends JMPFrame {
     private JButton buttonClear;
     private JButton buttonDelete;
     private JButton btnLoad;
+    private JScrollPane scrollPane_1;
+    private JScrollPane scrollPane;
 
     protected void setCurrentPathText(String path) {
         File file = new File(path);
@@ -595,51 +623,10 @@ public class MidiFileListDialog extends JMPFrame {
         btnLoad.setText(lm.getLanguageStr(LangID.Continuous_playback));
     }
 
-    /**
-     *
-     * ドラッグ＆ドロップハンドラー
-     *
-     */
-    public class DropFileHandler extends TransferHandler {
-        /**
-         * ドロップされたものを受け取るか判断 (アイテムのときだけ受け取る)
-         */
-        @Override
-        public boolean canImport(TransferSupport support) {
-            if (support.isDrop() == false) {
-                // ドロップ操作でない場合は受け取らない
-                return false;
-            }
-
-            if (support.isDataFlavorSupported(DataFlavor.javaFileListFlavor) == false) {
-                // ファイルでない場合は受け取らない
-                return false;
-            }
-
-            return true;
-        }
-
-        /**
-         * ドロップされたアイテムを受け取る
-         */
-        @Override
-        public boolean importData(TransferSupport support) {
-            // ドロップアイテム受理の確認
-            if (canImport(support) == false) {
-                return false;
-            }
-
-            // ドロップ処理
-            Transferable t = support.getTransferable();
-            try {
-                // ドロップアイテム取得
-                catchItem(t.getTransferData(DataFlavor.javaFileListFlavor));
-                return true;
-            }
-            catch (Exception e) {
-                /* 受け取らない */
-            }
-            return false;
+    @Override
+    public void updateConfig(String key) {
+        if (key.equalsIgnoreCase(ConfigDatabase.CFG_KEY_AUTOPLAY) == true) {
+            updateGUI();
         }
     }
 }

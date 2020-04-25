@@ -27,4 +27,12 @@ public interface IJmpWindow {
      */
     default void initializeLayout() {
     }
+
+    /**
+     * 設定変更イベント
+     *
+     * @param key 設定キー
+     */
+    default void updateConfig(String key) {
+    }
 }

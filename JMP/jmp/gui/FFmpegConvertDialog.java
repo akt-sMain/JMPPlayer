@@ -12,7 +12,6 @@ import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -48,20 +47,6 @@ public class FFmpegConvertDialog extends JMPDialog {
     private JLabel lblOutputDirectory;
     private JLabel lblInputFile;
     private JButton btnExpButton;
-
-    /**
-     * Launch the application.
-     */
-    public static void main(String[] args) {
-        try {
-            FFmpegConvertDialog dialog = new FFmpegConvertDialog();
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Create the dialog.
@@ -251,74 +236,7 @@ public class FFmpegConvertDialog extends JMPDialog {
                 convertButton = new JButton("Convert");
                 convertButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-
-                        SystemManager system = JMPCore.getSystemManager();
-                        LanguageManager lm = JMPCore.getLanguageManager();
-                        String inpath = textFieldInputFile.getText();
-                        if (Utility.isExsistFile(inpath) == false) {
-                            lblStatus.setForeground(Color.RED);
-                            String name = String.format("\"%s\"", lm.getLanguageStr(LangID.Input_file));
-                            lblStatus.setText(lm.getLanguageStr(LangID.A_is_invalid).replace("[NAME]", name));
-                            return;
-                        }
-
-                        system.setFFmpegWrapperPath(textFieldFFmpegExePath.getText());
-                        if (system.isValidFFmpegWrapper() == false) {
-                            lblStatus.setForeground(Color.RED);
-                            String name = String.format("\"%s\"", lm.getLanguageStr(LangID.FFmpeg_path));
-                            lblStatus.setText(lm.getLanguageStr(LangID.A_is_invalid).replace("[NAME]", name));
-                            return;
-                        }
-                        String inname = Utility.getFileNameNotExtension(inpath);
-                        File outdir = new File(textFieldOutputDirectory.getText());
-
-                        String outpath = Utility.pathCombin(outdir.getPath(), (inname + ".wav"));
-
-                        File in = new File(inpath);
-                        File out = new File(outpath);
-
-                        system.setFFmpegWrapperCallback(new IProcessingCallback() {
-
-                            @Override
-                            public void end(int result) {
-                                convertButton.setEnabled(true);
-
-                                if (result != 0) {
-                                    lblStatus.setForeground(Color.RED);
-                                    lblStatus.setText(lm.getLanguageStr(LangID.Conversion_failed));
-                                    repaint();
-                                    return;
-                                }
-
-                                lblStatus.setForeground(Color.GREEN);
-
-                                String name = Utility.getFileNameAndExtension(out);
-                                lblStatus.setText(lm.getLanguageStr(LangID.Conversion_completed) + "(" + name + ")");
-                                repaint();
-
-                                if (chckbxToPlay.isSelected() == true) {
-                                    JMPFlags.LoadToPlayFlag = true;
-                                    JMPCore.getFileManager().loadFile(out.getPath());
-                                }
-                            }
-
-                            @Override
-                            public void begin() {
-                                lblStatus.setForeground(Color.LIGHT_GRAY);
-                                lblStatus.setText(lm.getLanguageStr(LangID.Now_converting));
-                                repaint();
-
-                                convertButton.setEnabled(false);
-                            }
-                        });
-
-                        try {
-                            system.executeConvert(in.getPath(), out.getPath());
-                        }
-                        catch (IOException e1) {
-                            lblStatus.setForeground(Color.RED);
-                            lblStatus.setText("Faild.");
-                        }
+                        executeConvert();
                     }
                 });
 
@@ -371,6 +289,76 @@ public class FFmpegConvertDialog extends JMPDialog {
 
     public void setInputPath(String path) {
         textFieldInputFile.setText(path);
+    }
+
+    private void executeConvert() {
+        SystemManager system = JMPCore.getSystemManager();
+        LanguageManager lm = JMPCore.getLanguageManager();
+        String inpath = textFieldInputFile.getText();
+        if (Utility.isExsistFile(inpath) == false) {
+            lblStatus.setForeground(Color.RED);
+            String name = String.format("\"%s\"", lm.getLanguageStr(LangID.Input_file));
+            lblStatus.setText(lm.getLanguageStr(LangID.A_is_invalid).replace("[NAME]", name));
+            return;
+        }
+
+        system.setFFmpegWrapperPath(textFieldFFmpegExePath.getText());
+        if (system.isValidFFmpegWrapper() == false) {
+            lblStatus.setForeground(Color.RED);
+            String name = String.format("\"%s\"", lm.getLanguageStr(LangID.FFmpeg_path));
+            lblStatus.setText(lm.getLanguageStr(LangID.A_is_invalid).replace("[NAME]", name));
+            return;
+        }
+        String inname = Utility.getFileNameNotExtension(inpath);
+        File outdir = new File(textFieldOutputDirectory.getText());
+
+        String outpath = Utility.pathCombin(outdir.getPath(), (inname + ".wav"));
+
+        File in = new File(inpath);
+        File out = new File(outpath);
+
+        system.setFFmpegWrapperCallback(new IProcessingCallback() {
+
+            @Override
+            public void end(int result) {
+                convertButton.setEnabled(true);
+
+                if (result != 0) {
+                    lblStatus.setForeground(Color.RED);
+                    lblStatus.setText(lm.getLanguageStr(LangID.Conversion_failed));
+                    repaint();
+                    return;
+                }
+
+                lblStatus.setForeground(Color.GREEN);
+
+                String name = Utility.getFileNameAndExtension(out);
+                lblStatus.setText(lm.getLanguageStr(LangID.Conversion_completed) + "(" + name + ")");
+                repaint();
+
+                if (chckbxToPlay.isSelected() == true) {
+                    JMPFlags.LoadToPlayFlag = true;
+                    JMPCore.getFileManager().loadFile(out.getPath());
+                }
+            }
+
+            @Override
+            public void begin() {
+                lblStatus.setForeground(Color.LIGHT_GRAY);
+                lblStatus.setText(lm.getLanguageStr(LangID.Now_converting));
+                repaint();
+
+                convertButton.setEnabled(false);
+            }
+        });
+
+        try {
+            system.executeConvert(in.getPath(), out.getPath());
+        }
+        catch (IOException e1) {
+            lblStatus.setForeground(Color.RED);
+            lblStatus.setText("Faild.");
+        }
     }
 
     @Override

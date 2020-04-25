@@ -8,8 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Image;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -19,7 +17,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -33,7 +30,6 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
-import javax.swing.TransferHandler;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -62,7 +58,9 @@ import jmp.core.WindowManager;
 import jmp.gui.JmpQuickLaunch;
 import jmp.gui.VersionInfoDialog;
 import jmp.gui.ui.ControlButtonUI;
+import jmp.gui.ui.DropFileCallbackHandler;
 import jmp.gui.ui.IButtonMarkPaint;
+import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.IJMPComponentUI;
 import jmp.gui.ui.SequencerSliderUI;
 import jmp.lang.DefineLanguage.LangID;
@@ -75,54 +73,7 @@ import jmp.task.ICallbackFunction;
  * @author abs
  *
  */
-public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow, IJMPComponentUI {
-    /**
-     *
-     * ドラッグ＆ドロップハンドラー
-     *
-     */
-    public class DropFileHandler extends TransferHandler {
-        /**
-         * ドロップされたものを受け取るか判断 (アイテムのときだけ受け取る)
-         */
-        @Override
-        public boolean canImport(TransferSupport support) {
-            if (support.isDrop() == false) {
-                // ドロップ操作でない場合は受け取らない
-                return false;
-            }
-
-            if (support.isDataFlavorSupported(DataFlavor.javaFileListFlavor) == false) {
-                // ファイルでない場合は受け取らない
-                return false;
-            }
-
-            return true;
-        }
-
-        /**
-         * ドロップされたアイテムを受け取る
-         */
-        @Override
-        public boolean importData(TransferSupport support) {
-            // ドロップアイテム受理の確認
-            if (canImport(support) == false) {
-                return false;
-            }
-
-            // ドロップ処理
-            Transferable t = support.getTransferable();
-            try {
-                // ドロップアイテム取得
-                catchLoadItem(t.getTransferData(DataFlavor.javaFileListFlavor));
-                return true;
-            }
-            catch (Exception e) {
-                /* 受け取らない */
-            }
-            return false;
-        }
-    }
+public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow, IJMPComponentUI, IDropFileCallback {
 
     private class JmpMenuListener implements MenuListener {
 
@@ -224,7 +175,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         getContentPane().setBackground(getJmpBackColor());
         setTitle(APP_TITLE);
         this.addWindowListener(this);
-        this.setTransferHandler(new DropFileHandler());
+        this.setTransferHandler(new DropFileCallbackHandler(this));
         setBounds(WindowManager.DEFAULT_PLAYER_WINDOW_SIZE);
 
         Image jmpIcon = JMPCore.getResourceManager().getJmpImageIcon();
@@ -533,15 +484,12 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 switch (selected) {
                     case JFileChooser.APPROVE_OPTION:
                         File file = filechooser.getSelectedFile();
-                        String path = file.getPath();
                         if (file.isDirectory() == false) {
-                            if (Utility.checkExtension(path, PluginManager.SETUP_FILE_EX) == true) {
-                                // CoreAccessor.getPluginManager().readingSetupFile(path);
-                                catchLoadItem(path);
+                            if (Utility.checkExtension(file, PluginManager.SETUP_FILE_EX) == true) {
+                                catchDropFile(file);
                             }
-                            else if (Utility.checkExtension(path, PluginManager.PLUGIN_ZIP_EX) == true) {
-                                // CoreAccessor.getPluginManager().readingPluginZipPackage(path);
-                                catchLoadItem(path);
+                            else if (Utility.checkExtension(file, PluginManager.PLUGIN_ZIP_EX) == true) {
+                                catchDropFile(file);
                             }
                         }
                         break;
@@ -1169,45 +1117,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         }
     }
 
-    /**
-     * ロードアイテム受信
-     *
-     * @param item
-     *            アイテム
-     */
-    public void catchLoadItem(Object item) {
-        @SuppressWarnings("unchecked")
-        List<File> files = (List<File>) item;
-
-        // 一番先頭のファイルを取得
-        if ((files != null) && (files.size() > 0)) {
-            SystemManager system = JMPCore.getSystemManager();
-            LanguageManager lm = JMPCore.getLanguageManager();
-
-            String path = files.get(0).getPath();
-            if (Utility.checkExtension(path, PluginManager.PLUGIN_ZIP_EX) == true) {
-                // プラグインロード
-                if (JMPCore.getPluginManager().readingPluginZipPackage(path, true) == true) {
-                    system.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
-                }
-                else {
-                    system.showErrorMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_ERROR));
-                }
-            }
-            else if (Utility.checkExtension(path, PluginManager.SETUP_FILE_EX) == true) {
-                if (JMPCore.getPluginManager().readingSetupFile(path) == true) {
-                    system.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
-                }
-                else {
-                    system.showErrorMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_ERROR));
-                }
-            }
-            else {
-                JMPCore.getFileManager().loadFile(path);
-            }
-        }
-    }
-
     private FileNameExtensionFilter createFileFilter(String exName, String... ex) {
         String exs = "";
         for (int i = 0; i < ex.length; i++) {
@@ -1231,7 +1140,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         filechooser.addChoosableFileFilter(createFileFilter("WAV Files", DataManager.ExtentionForWAV));
         filechooser.addChoosableFileFilter(createFileFilter("MusicXML Files", DataManager.ExtentionForMusicXML));
 
-        File dir = new File(Platform.getCurrentPath());
+        File dir = new File(JMPCore.getDataManager().getPlayListPath());
         filechooser.setCurrentDirectory(dir);
         int selected = filechooser.showOpenDialog(getParent());
         switch (selected) {
@@ -1411,5 +1320,33 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mnTool.setText(lm.getLanguageStr(LangID.Tool));
         mntmFFmpegConverter.setText(lm.getLanguageStr(LangID.FFmpeg_converter));
         mntmInitializeConfig.setText(lm.getLanguageStr(LangID.Initialize_setting));
+    }
+
+    @Override
+    public void catchDropFile(File file) {
+        SystemManager system = JMPCore.getSystemManager();
+        LanguageManager lm = JMPCore.getLanguageManager();
+
+        String path = file.getPath();
+        if (Utility.checkExtension(path, PluginManager.PLUGIN_ZIP_EX) == true) {
+            // プラグインロード
+            if (JMPCore.getPluginManager().readingPluginZipPackage(path, true) == true) {
+                system.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
+            }
+            else {
+                system.showErrorMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_ERROR));
+            }
+        }
+        else if (Utility.checkExtension(path, PluginManager.SETUP_FILE_EX) == true) {
+            if (JMPCore.getPluginManager().readingSetupFile(path) == true) {
+                system.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
+            }
+            else {
+                system.showErrorMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_ERROR));
+            }
+        }
+        else {
+            JMPCore.getFileManager().loadFile(path);
+        }
     }
 }

@@ -160,11 +160,19 @@ public class DataManager extends AbstractManager implements IDataManager {
     @Override
     public void setConfigParam(String key, String value) {
         database.setConfigParam(key, value);
+
+        // 設定変更通知
+        JMPCore.getWindowManager().updateConfig(key);
     }
 
     @Override
     public String getConfigParam(String key) {
         return database.getConfigParam(key);
+    }
+
+    @Override
+    public String[] getKeySet() {
+        return ConfigDatabase.CFG_KEYSET;
     }
 
     public static final int MAX_HISTORY_SIZE = 50;
@@ -234,6 +242,14 @@ public class DataManager extends AbstractManager implements IDataManager {
 
         // 言語更新
         JMPCore.getWindowManager().updateLanguage();
+    }
+
+    public String getPlayListPath() {
+        return getConfigParam(ConfigDatabase.CFG_KEY_PLAYLIST);
+    }
+
+    public void setPlayListPath(String filePath) {
+        setConfigParam(ConfigDatabase.CFG_KEY_PLAYLIST, filePath);
     }
 
     public String getLoadedFile() {

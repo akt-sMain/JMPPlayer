@@ -20,4 +20,11 @@ public interface IDataManager {
      * @return コンフィグ値
      */
     abstract String getConfigParam(String key);
+
+    /**
+     * コンフィグキーセット取得
+     *
+     * @return コンフィグキーセット
+     */
+    abstract String[] getKeySet();
 }
