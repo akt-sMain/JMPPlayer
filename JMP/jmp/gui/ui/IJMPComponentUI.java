@@ -26,13 +26,24 @@ public interface IJMPComponentUI {
 
     default Point getDefaultWindowLocation() {
         Point p = new Point(50, 50);
-        if (JMPCore.getSystemManager() != null) {
-            IJmpMainWindow mainWindow = JMPCore.getSystemManager().getMainWindow();
+
+        SystemManager system = JMPCore.getSystemManager();
+        if (system != null) {
+            IJmpMainWindow mainWindow = system.getMainWindow();
             if (mainWindow instanceof Window) {
                 Window root = (Window) mainWindow;
                 if (root != null) {
+                    int offsetX, offsetY;
+                    if (root.isAlwaysOnTop() == true) {
+                        offsetX = root.getWidth();
+                        offsetY = 0;
+                    }
+                    else {
+                        offsetX = DEFAULT_WINDOW_OFFSET;
+                        offsetY = DEFAULT_WINDOW_OFFSET;
+                    }
                     p = root.getLocation();
-                    p.setLocation(p.getX() + DEFAULT_WINDOW_OFFSET, p.getY() + DEFAULT_WINDOW_OFFSET);
+                    p.setLocation(p.getX() + offsetX, p.getY() + offsetY);
                 }
             }
         }

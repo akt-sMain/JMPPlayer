@@ -55,6 +55,7 @@ import jmp.core.PluginManager;
 import jmp.core.SoundManager;
 import jmp.core.SystemManager;
 import jmp.core.WindowManager;
+import jmp.gui.JmpPlayerLaunch;
 import jmp.gui.JmpQuickLaunch;
 import jmp.gui.VersionInfoDialog;
 import jmp.gui.ui.ControlButtonUI;
@@ -244,7 +245,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         panel_3.add(panel_4, BorderLayout.SOUTH);
         panel_4.setLayout(new GridLayout(0, 2, 0, 0));
 
-        panel_6 = new JPanel();
+        panel_6 = new JmpPlayerLaunch();
         panel_6.setBackground(getJmpBackColor());
         panel_4.add(panel_6);
 

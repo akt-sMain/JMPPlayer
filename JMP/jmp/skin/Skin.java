@@ -21,9 +21,13 @@ public class Skin {
     public static final String RSRC_BTN_ICON_NEXT2 = "btn_icon_NEXT2.png";
     public static final String RSRC_BTN_ICON_PREV = "btn_icon_PREV.png";
     public static final String RSRC_BTN_ICON_PREV2 = "btn_icon_PREV2.png";
+    public static final String RSRC_BTN_ICON_AUTO = "btn_icon_AUTO.png";
+    public static final String RSRC_BTN_ICON_LOOP = "btn_icon_LOOP.png";
+    public static final String RSRC_BTN_ICON_LIST = "btn_icon_LIST.png";
 
     private static final String[] LST = { RSRC_FILE_ICON_OTEHER, RSRC_FILE_ICON_MIDI, RSRC_FILE_ICON_WAV, RSRC_FILE_ICON_XML, RSRC_FOLDER_ICON,
-            RSRC_BTN_ICON_PLAY, RSRC_BTN_ICON_STOP, RSRC_BTN_ICON_NEXT, RSRC_BTN_ICON_NEXT2, RSRC_BTN_ICON_PREV, RSRC_BTN_ICON_PREV2, };
+            RSRC_BTN_ICON_PLAY, RSRC_BTN_ICON_STOP, RSRC_BTN_ICON_NEXT, RSRC_BTN_ICON_NEXT2, RSRC_BTN_ICON_PREV, RSRC_BTN_ICON_PREV2, RSRC_BTN_ICON_AUTO,
+            RSRC_BTN_ICON_LOOP, RSRC_BTN_ICON_LIST };
 
     private Map<String, Resource> rsrcMap = new HashMap<String, Resource>();
 

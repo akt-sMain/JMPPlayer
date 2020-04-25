@@ -150,6 +150,18 @@ public class ResourceManager extends AbstractManager implements IManager {
         return getResourceImage(Skin.RSRC_BTN_ICON_PREV2);
     }
 
+    public Image getBtnAutoIcon() {
+        return getResourceImage(Skin.RSRC_BTN_ICON_AUTO);
+    }
+
+    public Image getBtnLoopIcon() {
+        return getResourceImage(Skin.RSRC_BTN_ICON_LOOP);
+    }
+
+    public Image getBtnListIcon() {
+        return getResourceImage(Skin.RSRC_BTN_ICON_LIST);
+    }
+
     public Color getBtnBackgroundColor() {
         if (skin == null) {
             return Color.WHITE;
