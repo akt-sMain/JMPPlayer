@@ -505,30 +505,41 @@ public class MidiFileListDialog extends JMPFrame {
             for (String name : list) {
                 File f = midiFileMap.get(name);
                 if (f.isDirectory() == true) {
-                    Object[] row = { folderIcon, name };
+                    Object[] row = createFileListRows(folderIcon, "DI", name);
                     model.addRow(row);
                 }
                 else {
                     if (Utility.checkExtensions(name, DataManager.ExtentionForMIDI) == true) {
-                        Object[] row = { midiIcon, name };
+                        Object[] row = createFileListRows(midiIcon, "MI", name);
                         model.addRow(row);
                     }
                     else if (Utility.checkExtensions(name, DataManager.ExtentionForWAV) == true) {
-                        Object[] row = { wavIcon, name };
+                        Object[] row = createFileListRows(wavIcon, "WA", name);
                         model.addRow(row);
                     }
                     else if (Utility.checkExtensions(name, DataManager.ExtentionForMusicXML) == true) {
-                        Object[] row = { xmlIcon, name };
+                        Object[] row = createFileListRows(xmlIcon, "XM", name);
                         model.addRow(row);
                     }
                     else {
-                        Object[] row = { otherIcon, name };
+                        Object[] row = createFileListRows(otherIcon, "#", name);
                         model.addRow(row);
                     }
                 }
             }
 
             midiFileList.setRowHeight(ROW_SIZE);
+        }
+    }
+
+    private Object[] createFileListRows(ImageIcon icon, String ex, String fileName) {
+        if (icon != null) {
+            Object[] row = { icon, fileName };
+            return row;
+        }
+        else {
+            Object[] row = { ex, fileName };
+            return row;
         }
     }
 

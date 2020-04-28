@@ -68,7 +68,9 @@ public class PlayerAccessor {
     }
 
     public void change(Player player) {
-        currentPlayer = player;
+        if (registerPlayer.contains(player) == true) {
+            currentPlayer = player;
+        }
     }
 
     public Player getCurrent() {

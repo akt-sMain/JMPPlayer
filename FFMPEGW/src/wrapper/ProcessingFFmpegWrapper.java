@@ -17,7 +17,10 @@ import wffmpeg.FFmpegWrapper;
  */
 public class ProcessingFFmpegWrapper extends FFmpegWrapper {
     /** FFmpegの実行パス */
-    private String path = "";
+    protected String path = "";
+
+    /** waitあり */
+    protected boolean waitFor = false;
 
     private IProcessingCallback callback = null;
 
@@ -33,7 +36,8 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
         @Override
         public void run() {
             pPrintln("## Converting... ##");
-            callback.begin();
+            notifyBegin();
+
             try {
                 proc.waitFor();
             }
@@ -41,9 +45,23 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
                 e.printStackTrace();
             }
             int result = proc.exitValue();
-            pPrintln("## EXIT(" + proc.exitValue() + ") ##");
+
+            pPrintln("## EXIT(" + result + ") ##");
+            notifyEnd(result);
+
             isRunnable = false;
-            callback.end(result);
+        }
+
+        private void notifyBegin() {
+            if (callback != null) {
+                callback.begin();
+            }
+        }
+
+        private void notifyEnd(int result) {
+            if (callback != null) {
+                callback.end(result);
+            }
         }
 
         private void pPrintln(String str) {
@@ -63,11 +81,21 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
      *            FFmpegの実行パス
      */
     public ProcessingFFmpegWrapper(String path) {
+        super();
+
         this.path = path;
     }
 
     public ProcessingFFmpegWrapper() {
+        super();
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         this.path = "";
+        this.waitFor = false;
+        this.callback = null;
     }
 
     public void setPath(String path) {
@@ -76,6 +104,18 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
 
     public String getPath() {
         return this.path;
+    }
+
+    public boolean isWaitFor() {
+        return waitFor;
+    }
+
+    public void setWaitFor(boolean waitFor) {
+        this.waitFor = waitFor;
+    }
+
+    public void setCallback(IProcessingCallback callback) {
+        this.callback = callback;
     }
 
     @Override
@@ -129,17 +169,20 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
         ExecutorService execTh = Executors.newSingleThreadExecutor();
         execTh.submit(lr);
 
-        // while(lr.isRunnable() == true) {
-        // try {
-        // Thread.sleep(1000);
-        // }
-        // catch (InterruptedException e) {
-        // }
-        // }
+        if (isWaitFor() == true) {
+            while (lr.isRunnable() == true) {
+                try {
+                    Thread.sleep(1000);
+                }
+                catch (InterruptedException e) {
+                }
 
-    }
+                if (isWaitFor() == false) {
+                    // Wait設定解除時に抜ける
+                    break;
+                }
+            }
+        }
 
-    public void setCallback(IProcessingCallback callback) {
-        this.callback = callback;
     }
 }

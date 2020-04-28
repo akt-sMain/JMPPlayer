@@ -5,6 +5,7 @@ import java.util.List;
 
 import jlib.core.IManager;
 import jlib.core.JMPCoreAccessor;
+import jmp.JMPFlags;
 
 public abstract class AbstractManager implements IManager {
 
@@ -29,14 +30,6 @@ public abstract class AbstractManager implements IManager {
         JMPCoreAccessor.register(this);
     }
 
-    static void consolePrint(String msg) {
-        System.out.print(msg);
-    }
-
-    static void consolePrintln(String msg) {
-        System.out.println(msg);
-    }
-
     static boolean isFinishedAllInitialize() {
         for (AbstractManager am : managers) {
             if (am.getPriority() <= INVALID_PRIORITY) {
@@ -53,41 +46,44 @@ public abstract class AbstractManager implements IManager {
 
     static boolean init() {
         boolean result = true;
-        consolePrintln("## CORE initializing ##");
+        JMPFlags.Log.cprintln("###");
+        JMPFlags.Log.cprintln("## CORE initializing");
+        JMPFlags.Log.cprintln("##");
         for (AbstractManager am : getCloneManagerList(true)) {
             if (am.getPriority() <= INVALID_PRIORITY) {
                 // INVALID_PRIORITY は除去
                 continue;
             }
 
-            consolePrint(">> " + am.getName() + " init... ");
+            JMPFlags.Log.cprint(">> " + am.getName() + " init... ");
             if (result == true) {
                 result = am.initFunc();
             }
-            consolePrintln(result == true ? "success" : "fail");
+            JMPFlags.Log.cprintln(result == true ? "success" : "fail");
         }
-        consolePrintln(">> finished");
-        consolePrintln("");
+        JMPFlags.Log.cprintln("## finished");
+        JMPFlags.Log.cprintln("");
         return result;
     }
 
     static boolean end() {
         boolean result = true;
-        consolePrintln("");
-        consolePrintln("## CORE exiting ##");
+        JMPFlags.Log.cprintln("###");
+        JMPFlags.Log.cprintln("## CORE exiting");
+        JMPFlags.Log.cprintln("##");
         for (AbstractManager am : getCloneManagerList(false)) {
             if (am.getPriority() <= INVALID_PRIORITY) {
                 // INVALID_PRIORITY は除去
                 continue;
             }
 
-            consolePrint(">> " + am.getName() + " exit... ");
+            JMPFlags.Log.cprint(">> " + am.getName() + " exit... ");
             if (result == true) {
                 result = am.endFunc();
             }
-            consolePrintln(result == true ? "success" : "fail");
+            JMPFlags.Log.cprintln(result == true ? "success" : "fail");
         }
-        consolePrintln(">> finished");
+        JMPFlags.Log.cprintln("## finished");
         return result;
     }
 

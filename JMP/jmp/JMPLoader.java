@@ -15,7 +15,6 @@ import jmp.core.TaskManager;
 import jmp.core.WindowManager;
 import jmp.task.CallbackPackage;
 import jmp.task.ICallbackFunction;
-import jmp.task.TaskOfSequence;
 import lib.MakeJmpLib;
 
 /**
@@ -55,6 +54,8 @@ public class JMPLoader {
                     System.out.println("        プラグインをロードせず起動");
                     System.out.println("-unsync");
                     System.out.println("        非同期化オプション");
+                    System.out.println("-c");
+                    System.out.println("        コンソール出力有効化");
                     System.out.println("-mkjmp");
                     System.out.println("        プラグインパッケージ作成ライブラリを呼び出す。");
                     System.out.println("        ※コマンドの先頭に記述すること");
@@ -66,8 +67,12 @@ public class JMPLoader {
                         break;
                     }
 
+                    String jmsName = args[i];
                     String path = JMPCore.getSystemManager().getJmsDirPath();
-                    path += Platform.getSeparator() + args[i];
+                    if (jmsName.endsWith(".jms") == false) {
+                        jmsName += ".jms";
+                    }
+                    path += Platform.getSeparator() + jmsName;
 
                     jms = new File(path);
                     if (jms.exists() == true) {
@@ -84,6 +89,9 @@ public class JMPLoader {
                 }
                 else if (args[i].equalsIgnoreCase("-unsync") == true) {
                     JMPFlags.UseUnsynchronizedMidiPacket = true;
+                }
+                else if (args[i].equalsIgnoreCase("-c") == true) {
+                    JMPFlags.CoreConsoleOut = true;
                 }
                 /* ※コマンドの判定を優先するため、このelseifは最後に挿入すること */
                 else if (Utility.isExsistFile(args[i]) == true) {
@@ -135,12 +143,7 @@ public class JMPLoader {
                     taskManager.getTaskOfSequence().queuing(new ICallbackFunction() {
                         @Override
                         public void callback() {
-                            try {
-                                TaskOfSequence.sleep(1000);
-                            }
-                            catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            Utility.threadSleep(1000);
                             JMPCore.getFileManager().loadFile(f);
                         }
                     });

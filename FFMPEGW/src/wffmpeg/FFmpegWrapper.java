@@ -13,6 +13,17 @@ public abstract class FFmpegWrapper {
     /** 上書き設定 */
     private boolean isOverwrite = false;
 
+    public FFmpegWrapper() {
+        init();
+    }
+
+    /**
+     * 初期化
+     */
+    protected void init() {
+        isOverwrite = false;
+    }
+
     /**
      * 変換実行
      *

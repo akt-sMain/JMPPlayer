@@ -7,6 +7,30 @@ package jmp;
  *
  */
 public class JMPFlags {
+    /** ログ出力クラス */
+    public static class Log {
+        private static void cprintImpl(String msg, boolean ln) {
+            if (JMPFlags.CoreConsoleOut == true) {
+                if (ln == true) {
+                    System.out.println(msg);
+                }
+                else {
+                    System.out.print(msg);
+                }
+            }
+        }
+
+        /** コンソール出力 */
+        public static void cprint(String msg) {
+            cprintImpl(msg, false);
+        }
+
+        /** コンソール出力 */
+        public static void cprintln(String msg) {
+            cprintImpl(msg, true);
+        }
+    }
+
     /** ライブラリモード */
     public static boolean LibraryMode = false;
 
@@ -36,5 +60,8 @@ public class JMPFlags {
 
     /** 非同期Midiパケットを使用するか */
     public static boolean UseUnsynchronizedMidiPacket = false;
+
+    /** コアの初期化・終了初期の結果をコンソール出力するか */
+    public static boolean CoreConsoleOut = false;
 
 }
