@@ -58,11 +58,20 @@ public class PlayerAccessor {
     }
 
     public boolean change(String extension) {
+        Player tmpPlayer = null;
         for (Player player : registerPlayer) {
+            if (player.isAllSupported() == true) {
+                tmpPlayer = player;
+            }
             if (player.isSupportedExtension(extension) == true) {
                 change(player);
                 return true;
             }
+        }
+
+        if (tmpPlayer != null) {
+            change(tmpPlayer);
+            return true;
         }
         return false;
     }
@@ -79,6 +88,9 @@ public class PlayerAccessor {
 
     public boolean isSupportedExtension(String extension) {
         for (Player player : registerPlayer) {
+            if (player.isAllSupported() == true) {
+                return true;
+            }
             if (player.isSupportedExtension(extension) == true) {
                 return true;
             }

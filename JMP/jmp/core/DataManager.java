@@ -8,6 +8,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
 import function.Platform;
+import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.core.IDataManager;
 import jmp.ConfigDatabase;
@@ -18,6 +19,7 @@ public class DataManager extends AbstractManager implements IDataManager {
     public static final String[] ExtentionForMIDI = { "mid", "midi" };
     public static final String[] ExtentionForWAV = { "wav" };
     public static final String[] ExtentionForMusicXML = { "xml", "musicxml" };
+    public static final String[] ExtentionForFFmpeg = { "*" };
     public static final String CONFIG_FILE = "config.txt";
     public static final String HISTORY_FILE = "history.txt";
 
@@ -65,9 +67,6 @@ public class DataManager extends AbstractManager implements IDataManager {
 
         convertedFiles = new LinkedList<File>();
 
-        // 変換ファイル保持設定（仮実装）
-        setFFmpegLeaveOutputFile(true);
-
         // 設定ファイルのFFmpegパスを同期
         JMPCore.getSystemManager().setFFmpegWrapperPath(getFFmpegPath());
 
@@ -85,9 +84,8 @@ public class DataManager extends AbstractManager implements IDataManager {
             if (convertedFiles.size() > 0) {
                 for (File f : convertedFiles) {
                     if (f.exists() == true) {
-                        System.out.println(f.getAbsolutePath());
-                        Utility.deleteFileDirectory(f.getAbsolutePath());
-                        Utility.threadSleep(1000);
+                        Utility.deleteFileDirectory(f);
+                        Utility.threadSleep(200);
                     }
                 }
             }
@@ -289,5 +287,17 @@ public class DataManager extends AbstractManager implements IDataManager {
 
     public void setFFmpegLeaveOutputFile(boolean isLeave) {
         setConfigParam(ConfigDatabase.CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, isLeave ? "TRUE" : "FALSE");
+    }
+
+    public boolean isUseFFmpegPlayer() {
+        if (Platform.getRunPlatform() != KindOfPlatform.WINDOWS) {
+            return false;
+        }
+        String sValue = getConfigParam(ConfigDatabase.CFG_KEY_USE_FFMPEG_PLAYER);
+        return Utility.tryParseBoolean(sValue, false);
+    }
+
+    public void setUseFFmpegPlayer(boolean isUse) {
+        setConfigParam(ConfigDatabase.CFG_KEY_USE_FFMPEG_PLAYER, isUse ? "TRUE" : "FALSE");
     }
 }

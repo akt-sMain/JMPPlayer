@@ -27,10 +27,11 @@ public class ConfigDatabase {
     public static final String CFG_KEY_FFMPEG_PATH = "FFMPEG_PATH";
     public static final String CFG_KEY_FFMPEG_OUTPUT = "FFMPEG_OUTPUT";
     public static final String CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE = "FFMPEG_LEAVE_OUTPUT_FILE";
+    public static final String CFG_KEY_USE_FFMPEG_PLAYER = "USE_FFMPEG_PLAYER";
     // ↓KEY追加後、必ずCFG_KEYSETに追加すること!!
     public static final String[] CFG_KEYSET = { CFG_KEY_PLAYLIST, CFG_KEY_MIDIOUT, CFG_KEY_MIDIIN, CFG_KEY_AUTOPLAY, CFG_KEY_LOOPPLAY,
             CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, CFG_KEY_LANGUAGE, CFG_KEY_LOADED_FILE, CFG_KEY_FFMPEG_PATH, CFG_KEY_FFMPEG_OUTPUT,
-            CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, };
+            CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, CFG_KEY_USE_FFMPEG_PLAYER, };
 
     public ConfigDatabase() {
         database = new HashMap<String, String>();
@@ -51,9 +52,10 @@ public class ConfigDatabase {
         database.put(CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, "TRUE");
         database.put(CFG_KEY_LANGUAGE, "0");
         database.put(CFG_KEY_LOADED_FILE, "");
-        database.put(CFG_KEY_FFMPEG_PATH, "");
+        database.put(CFG_KEY_FFMPEG_PATH, "ffmpeg.exe");
         database.put(CFG_KEY_FFMPEG_OUTPUT, "output");
-        database.put(CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, "TRUE");
+        database.put(CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, "FALSE");
+        database.put(CFG_KEY_USE_FFMPEG_PLAYER, "FALSE");
     }
 
     private String getDesktopPath(String defaultPath) {

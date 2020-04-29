@@ -245,6 +245,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
         // 言語更新
         JMPCore.getWindowManager().updateLanguage();
+
+        // 設定ファイルのFFmpegパスを同期
+        setFFmpegWrapperPath(JMPCore.getDataManager().getFFmpegPath());
     }
 
     public void executeActivate() {
@@ -453,6 +456,21 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
             pfw.setCallback(cb);
         }
+    }
+
+    public void setFFmpegWrapperWaitFor(boolean waitFor) {
+        if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
+            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
+            pfw.setWaitFor(waitFor);
+        }
+    }
+
+    public boolean isFFmpegWrapperWaitFor() {
+        if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
+            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
+            return pfw.isWaitFor();
+        }
+        return false;
     }
 
     public boolean isValidFFmpegWrapper() {

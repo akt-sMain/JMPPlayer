@@ -11,6 +11,8 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import function.Platform;
+
 public class WavPlayer extends Player {
 
     private Clip clip = null;
@@ -19,18 +21,30 @@ public class WavPlayer extends Player {
     }
 
     public void setClip(Clip c) {
-        if (clip != null) {
-            // クリップの破棄
-            try {
-                clip.stop();
-                clip.close();
-                clip = null;
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        // クリップの破棄
+        disposeClip();
+        clip = null;
+
+        Platform.requestGarbageCollection();
+
         clip = c;
+    }
+
+    // クリップの破棄
+    private void disposeClip() {
+        if (clip != null) {
+            clip.stop();
+            clip.close();
+        }
+    }
+
+    @Override
+    public boolean close() {
+        boolean ret = super.close();
+
+        // クリップを破棄
+        disposeClip();
+        return ret;
     }
 
     @Override

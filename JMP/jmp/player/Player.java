@@ -34,6 +34,17 @@ public abstract class Player implements IPlayer {
      */
     public abstract boolean saveFile(File file) throws Exception;
 
+    public boolean isAllSupported() {
+        if (supportExtentions != null) {
+            for (String s : supportExtentions) {
+                if (s.equalsIgnoreCase("*") == true) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean isSupportedExtension(String extension) {
         if (supportExtentions != null) {

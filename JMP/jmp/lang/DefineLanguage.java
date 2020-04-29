@@ -82,6 +82,8 @@ public class DefineLanguage {
         Conversion_completed,
         Now_converting,
         Initialize_setting,
+        Leave_output_file,
+        Use_FFmpeg_player,
     }
 
     static java.util.HashMap<LangID, LanguageWords> langMap = new java.util.HashMap<LangID, LanguageWords>() {
@@ -161,6 +163,8 @@ public class DefineLanguage {
             put(LangID.Conversion_completed, new LanguageWords("Conversion completed.", "変換完了。"));
             put(LangID.Now_converting, new LanguageWords("Now converting.", "変換中。"));
             put(LangID.Initialize_setting, new LanguageWords("Initialize setting", "初期設定に戻す"));
+            put(LangID.Leave_output_file, new LanguageWords("Leave output file", "出力ファイルを残す"));
+            put(LangID.Use_FFmpeg_player, new LanguageWords("Use FFmpeg player", "FFmpegプレイヤー使用"));
         }
     };
 }
