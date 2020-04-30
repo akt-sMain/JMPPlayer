@@ -20,6 +20,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import function.Utility;
+import jlib.midi.MidiByte;
 import jmp.convert.IJMPDocumentReader;
 
 public class MusicXMLReader implements IJMPDocumentReader {
@@ -162,6 +163,9 @@ public class MusicXMLReader implements IJMPDocumentReader {
                 else if (childElement.getNodeName().equals("note") == true) {
                     mxmlMeasure.addElement(readNoteNodeList(childElement));
                 }
+                else if (childElement.getNodeName().equals("backup") == true) {
+                    mxmlMeasure.addElement(readBackupNodeList(childElement));
+                }
             }
         }
         return mxmlMeasure;
@@ -302,6 +306,22 @@ public class MusicXMLReader implements IJMPDocumentReader {
         return mxmlNote;
     }
 
+    private MusicXMLBackup readBackupNodeList(Element element) {
+        MusicXMLBackup mxmlBackup = new MusicXMLBackup();
+        NodeList nodeList = element.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element childElement = (Element) node;
+                if (childElement.getNodeName().equals("duration") == true) {
+                    // duration element
+                    mxmlBackup.setDuration(childElement.getTextContent());
+                }
+            }
+        }
+        return mxmlBackup;
+    }
+
     public Sequence convertToMidi() throws InvalidMidiDataException {
         final int BaseDuration = 480;
         final int FixedVelocity = 80;
@@ -368,6 +388,12 @@ public class MusicXMLReader implements IJMPDocumentReader {
                         }
                         pastDuration = duration;
                     }
+                    else if (element instanceof MusicXMLBackup) {
+                        /* Backupイベント */
+                        MusicXMLBackup mxBackup = (MusicXMLBackup) element;
+                        long duration = divisionValue * mxBackup.getDurationInt();
+                        position -= duration; // ポジションを戻す
+                    }
                 }
             }
         }
@@ -375,7 +401,7 @@ public class MusicXMLReader implements IJMPDocumentReader {
     }
 
     private int convertToMidiNumber(String step, int alter, int octave) {
-        int baseOctave = 4;
+        final int baseOctave = 4;
         int midiNumber = convertToMidiNumber(step, alter);
         midiNumber += (12 * (octave - baseOctave));
         if (midiNumber < 0) {
@@ -418,21 +444,21 @@ public class MusicXMLReader implements IJMPDocumentReader {
 
     protected MidiEvent createProgramChangeEvent(long position, int channel, int programNumber) throws InvalidMidiDataException {
         ShortMessage sMes = new ShortMessage();
-        sMes.setMessage(ShortMessage.PROGRAM_CHANGE, channel, programNumber, 0);
+        sMes.setMessage(MidiByte.Status.Channel.ChannelVoice.Fst.PROGRAM_CHANGE, channel, programNumber, 0);
         MidiEvent event = new MidiEvent(sMes, position);
         return event;
     }
 
     protected MidiEvent createNoteOnEvent(long position, int channel, int midiNumber, int velocity) throws InvalidMidiDataException {
         ShortMessage sMes = new ShortMessage();
-        sMes.setMessage(ShortMessage.NOTE_ON, channel, midiNumber, velocity);
+        sMes.setMessage(MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON, channel, midiNumber, velocity);
         MidiEvent event = new MidiEvent(sMes, position);
         return event;
     }
 
     protected MidiEvent createNoteOffEvent(long position, int channel, int midiNumber, int velocity) throws InvalidMidiDataException {
         ShortMessage sMes = new ShortMessage();
-        sMes.setMessage(ShortMessage.NOTE_OFF, channel, midiNumber, velocity);
+        sMes.setMessage(MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_OFF, channel, midiNumber, velocity);
         MidiEvent event = new MidiEvent(sMes, position);
         return event;
     }
