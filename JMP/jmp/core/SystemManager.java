@@ -74,6 +74,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
         public static final String COMMON_REGKEY_EXTENSION_MIDI = "extension_midi";
         public static final String COMMON_REGKEY_EXTENSION_WAV = "extension_wav";
+        public static final String COMMON_REGKEY_EXTENSION_MUSICXML = "extension_musicxml";
 
         private HashMap<String, String> map;
 
@@ -105,6 +106,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
             add(COMMON_REGKEY_EXTENSION_MIDI, genExtensionsStr(DataManager.ExtentionForMIDI));
             add(COMMON_REGKEY_EXTENSION_WAV, genExtensionsStr(DataManager.ExtentionForWAV));
+            add(COMMON_REGKEY_EXTENSION_MUSICXML, genExtensionsStr(DataManager.ExtentionForMusicXML));
         }
 
         private String genExtensionsStr(String... ex) {
