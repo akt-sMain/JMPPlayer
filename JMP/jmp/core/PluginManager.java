@@ -615,7 +615,24 @@ public class PluginManager extends AbstractManager {
 
     void loadFile(File file) {
         for (IPlugin plugin : getPlugins()) {
-            plugin.loadFile(file);
+            boolean ret = false;
+            if (plugin instanceof ISupportExtensionConstraints) {
+                ISupportExtensionConstraints sec = (ISupportExtensionConstraints) plugin;
+                String[] allowsEx = sec.allowedExtensionsArray();
+                for (String ae : allowsEx) {
+                    if (Utility.checkExtension(file, ae) == true) {
+                        ret = true;
+                        break;
+                    }
+                }
+            }
+            else {
+                ret = true;
+            }
+
+            if (ret == true) {
+                plugin.loadFile(file);
+            }
         }
     }
 
