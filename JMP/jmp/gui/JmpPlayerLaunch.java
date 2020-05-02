@@ -19,7 +19,7 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, IJMPCompon
 
     public static final Color BORDER_COLOR = Color.WHITE;
     public static final Color BACK_COLOR = Color.BLACK;
-    public static final Color BACK_COLOR2 = Utility.convertCodeToHtmlColor("#778899");
+    public static final Color BACK_COLOR2 = Utility.convertCodeToHtmlColor("#c71585");
     public static final int SIZE = 16;
     public static final int MERGIN = 2;
     public static final int TOTAL_WIDTH = ((SIZE + (MERGIN * 2))) * 3;

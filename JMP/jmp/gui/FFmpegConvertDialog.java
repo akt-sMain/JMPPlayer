@@ -255,15 +255,7 @@ public class FFmpegConvertDialog extends JMPDialog {
                 btnExpButton = new JButton("Exploler");
                 btnExpButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-
-                        File outdir = new File(textFieldOutputDirectory.getText());
-                        if (outdir.exists() == true) {
-                            try {
-                                Utility.openExproler(outdir);
-                            }
-                            catch (IOException e2) {
-                            }
-                        }
+                        openOutputFolder();
                     }
                 });
                 buttonPane.add(btnExpButton);
@@ -301,6 +293,17 @@ public class FFmpegConvertDialog extends JMPDialog {
 
     public void setInputPath(String path) {
         textFieldInputFile.setText(path);
+    }
+
+    public void openOutputFolder() {
+        File outdir = new File(textFieldOutputDirectory.getText());
+        if (outdir.exists() == true) {
+            try {
+                Utility.openExproler(outdir);
+            }
+            catch (IOException e2) {
+            }
+        }
     }
 
     private void executeConvert() {
@@ -352,6 +355,7 @@ public class FFmpegConvertDialog extends JMPDialog {
                     JMPFlags.LoadToPlayFlag = true;
                     JMPCore.getFileManager().loadFile(out.getPath());
                 }
+                openOutputFolder();
             }
 
             @Override
