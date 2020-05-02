@@ -3,7 +3,8 @@ package jlib.core;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequencer;
-import javax.sound.midi.ShortMessage;
+
+import jlib.midi.IMidiToolkit;
 
 public interface ISoundManager {
     /**
@@ -141,6 +142,13 @@ public interface ISoundManager {
     abstract boolean isSupportedExtension(String extension);
 
     /**
+     * Midiツールキット取得
+     *
+     * @return
+     */
+    abstract IMidiToolkit getMidiToolkit();
+
+    /**
      * Midiメッセージ送信
      *
      * @param msg
@@ -161,8 +169,7 @@ public interface ISoundManager {
      * @throws InvalidMidiDataException
      */
     default boolean sendNoteOn(int channel, int midiNumber, int velocity, long timeStamp) throws InvalidMidiDataException {
-        ShortMessage sMes = new ShortMessage();
-        sMes.setMessage(ShortMessage.NOTE_ON, channel, midiNumber, velocity);
+        MidiMessage sMes = getMidiToolkit().createNoteOnMessage(channel, midiNumber, velocity);
         return sendMidiMessage(sMes, timeStamp);
     }
 
@@ -176,8 +183,7 @@ public interface ISoundManager {
      * @throws InvalidMidiDataException
      */
     default boolean sendNoteOff(int channel, int midiNumber, long timeStamp) throws InvalidMidiDataException {
-        ShortMessage sMes = new ShortMessage();
-        sMes.setMessage(ShortMessage.NOTE_OFF, channel, midiNumber, 0);
+        MidiMessage sMes = getMidiToolkit().createNoteOffMessage(channel, midiNumber, 0);
         return sendMidiMessage(sMes, timeStamp);
     }
 
@@ -191,8 +197,7 @@ public interface ISoundManager {
      * @throws InvalidMidiDataException
      */
     default boolean sendProgramChange(int channel, int programNumber, long timeStamp) throws InvalidMidiDataException {
-        ShortMessage sMes = new ShortMessage();
-        sMes.setMessage(ShortMessage.PROGRAM_CHANGE, channel, programNumber, 0);
+        MidiMessage sMes = getMidiToolkit().createProgramChangeMessage(channel, programNumber);
         return sendMidiMessage(sMes, timeStamp);
     }
 

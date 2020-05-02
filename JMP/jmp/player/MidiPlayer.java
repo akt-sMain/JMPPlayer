@@ -15,7 +15,7 @@ import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 
 import jlib.midi.IMidiFilter;
-import jlib.midi.MidiUtility;
+import jlib.midi.IMidiToolkit;
 import jmp.ConfigDatabase;
 import jmp.JMPFlags;
 import jmp.core.JMPCore;
@@ -52,7 +52,8 @@ public class MidiPlayer extends Player implements IMidiFilter {
 
     @Override
     public void transpose(ShortMessage sMes, int transpose) {
-        if (MidiUtility.isNoteOn(sMes) == true || MidiUtility.isNoteOff(sMes) == true) {
+        IMidiToolkit toolkit = JMPCore.getSoundManager().getMidiToolkit();
+        if (toolkit.isNoteOn(sMes) == true || toolkit.isNoteOff(sMes) == true) {
             int status = sMes.getStatus();
             int data1 = sMes.getData1();
             int data2 = sMes.getData2();

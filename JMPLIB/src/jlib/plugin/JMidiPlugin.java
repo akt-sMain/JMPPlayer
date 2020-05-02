@@ -3,7 +3,9 @@ package jlib.plugin;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
+import jlib.core.JMPCoreAccessor;
 import jlib.midi.IMidiEventListener;
+import jlib.midi.IMidiToolkit;
 import jlib.midi.MidiUtility;
 
 public abstract class JMidiPlugin extends JMPlugin implements IMidiEventListener {
@@ -86,17 +88,18 @@ public abstract class JMidiPlugin extends JMPlugin implements IMidiEventListener
 
         try {
             if (message instanceof ShortMessage) {
+                IMidiToolkit toolkit = JMPCoreAccessor.getSoundManager().getMidiToolkit();
                 ShortMessage sMes = (ShortMessage) message;
-                if (MidiUtility.isNoteOn(sMes) == true) {
+                if (toolkit.isNoteOn(sMes) == true) {
                     noteOn(sMes.getChannel(), sMes.getData1(), sMes.getData2(), timeStamp, senderType);
                 }
-                else if (MidiUtility.isNoteOff(sMes) == true) {
+                else if (toolkit.isNoteOff(sMes) == true) {
                     noteOff(sMes.getChannel(), sMes.getData1(), timeStamp, senderType);
                 }
-                else if ((sMes.getCommand() == ShortMessage.PROGRAM_CHANGE)) {
+                else if (toolkit.isProgramChange(sMes) == true) {
                     programChange(sMes.getChannel(), sMes.getData1(), timeStamp, senderType);
                 }
-                else if ((sMes.getCommand() == ShortMessage.PITCH_BEND)) {
+                else if (toolkit.isPitchBend(sMes) == true) {
                     int pbValue = MidiUtility.convertPitchBendValue(sMes);
                     pitchBend(sMes.getChannel(), pbValue, timeStamp, senderType);
                 }

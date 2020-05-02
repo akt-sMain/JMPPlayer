@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MetaMessage;
-import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Sequence;
-import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,8 +17,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import function.Utility;
-import jlib.midi.MidiByte;
+import jlib.midi.IMidiToolkit;
 import jmp.convert.IJMPDocumentReader;
+import jmp.core.JMPCore;
 
 public class MusicXMLReader implements IJMPDocumentReader {
 
@@ -323,6 +321,7 @@ public class MusicXMLReader implements IJMPDocumentReader {
     }
 
     public Sequence convertToMidi() throws InvalidMidiDataException {
+        IMidiToolkit toolkit = JMPCore.getSoundManager().getMidiToolkit();
         final int BaseDuration = 480;
         final int FixedVelocity = 80;
 
@@ -351,7 +350,7 @@ public class MusicXMLReader implements IJMPDocumentReader {
             long position = 100;
 
             // プログラムチェンジイベント作成
-            track.add(createProgramChangeEvent(position, channel, program));
+            track.add(toolkit.createProgramChangeEvent(position, channel, program));
             position += 10;
 
             position = 480;
@@ -368,7 +367,7 @@ public class MusicXMLReader implements IJMPDocumentReader {
                     if (element instanceof MusicXMLDirection) {
                         /* テンポイベント作成 */
                         MusicXMLDirection mxDire = (MusicXMLDirection) element;
-                        track.add(createTempoEvent(position, mxDire.getTempoDouble()));
+                        track.add(toolkit.createTempoEvent(position, mxDire.getTempoDouble()));
                     }
                     else if (element instanceof MusicXMLNote) {
                         MusicXMLNote mxNote = (MusicXMLNote) element;
@@ -380,8 +379,8 @@ public class MusicXMLReader implements IJMPDocumentReader {
                         if (mxNote.isRest() == false) {
                             /* NoteON, NoteOFFイベント作成 */
                             int midiNumber = convertToMidiNumber(mxNote.getStep(), mxNote.getAlterInt(), mxNote.getOctaveInt());
-                            track.add(createNoteOnEvent(position, channel, midiNumber, FixedVelocity));
-                            track.add(createNoteOffEvent(position + duration, channel, midiNumber, FixedVelocity));
+                            track.add(toolkit.createNoteOnEvent(position, channel, midiNumber, FixedVelocity));
+                            track.add(toolkit.createNoteOffEvent(position + duration, channel, midiNumber, FixedVelocity));
                         }
                         else {
                             /* 休符はDuration加算だけ行う */
@@ -440,38 +439,6 @@ public class MusicXMLReader implements IJMPDocumentReader {
             midiNumber = 60;
         }
         return midiNumber + alter;
-    }
-
-    protected MidiEvent createProgramChangeEvent(long position, int channel, int programNumber) throws InvalidMidiDataException {
-        ShortMessage sMes = new ShortMessage();
-        sMes.setMessage(MidiByte.Status.Channel.ChannelVoice.Fst.PROGRAM_CHANGE, channel, programNumber, 0);
-        MidiEvent event = new MidiEvent(sMes, position);
-        return event;
-    }
-
-    protected MidiEvent createNoteOnEvent(long position, int channel, int midiNumber, int velocity) throws InvalidMidiDataException {
-        ShortMessage sMes = new ShortMessage();
-        sMes.setMessage(MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON, channel, midiNumber, velocity);
-        MidiEvent event = new MidiEvent(sMes, position);
-        return event;
-    }
-
-    protected MidiEvent createNoteOffEvent(long position, int channel, int midiNumber, int velocity) throws InvalidMidiDataException {
-        ShortMessage sMes = new ShortMessage();
-        sMes.setMessage(MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_OFF, channel, midiNumber, velocity);
-        MidiEvent event = new MidiEvent(sMes, position);
-        return event;
-    }
-
-    protected MidiEvent createTempoEvent(long position, float bpm) throws InvalidMidiDataException {
-        long mpq = Math.round(60000000f / bpm);
-        byte[] data = new byte[3];
-        data[0] = new Long(mpq / 0x10000).byteValue();
-        data[1] = new Long((mpq / 0x100) % 0x100).byteValue();
-        data[2] = new Long(mpq % 0x100).byteValue();
-        MetaMessage meta = new MetaMessage(0x51, data, data.length);
-        MidiEvent event = new MidiEvent(meta, position);
-        return event;
     }
 
     @SuppressWarnings("unused")

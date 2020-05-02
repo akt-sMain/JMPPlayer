@@ -18,10 +18,12 @@ import jlib.core.ISoundManager;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jlib.midi.IMidiEventListener;
+import jlib.midi.IMidiToolkit;
 import jlib.midi.MidiByteMessage;
 import jlib.player.IPlayer;
 import jmp.JMPFlags;
 import jmp.lang.DefineLanguage.LangID;
+import jmp.midi.DefaultMidiToolkit;
 import jmp.player.FFmpegPlayer;
 import jmp.player.MidiPlayer;
 import jmp.player.MusicXmlPlayer;
@@ -595,5 +597,11 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         }
         String str = String.format(PLAYER_TIME_FORMAT, min, sec);
         return str;
+    }
+
+    @Override
+    public IMidiToolkit getMidiToolkit() {
+        IMidiToolkit kit = DefaultMidiToolkit.getInstance();
+        return kit;
     }
 }
