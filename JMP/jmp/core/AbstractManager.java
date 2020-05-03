@@ -87,6 +87,12 @@ public abstract class AbstractManager implements IManager {
         return result;
     }
 
+    static void callNotifyUpdateCommonRegister(String key) {
+        for (AbstractManager am : managers) {
+            am.notifyUpdateCommonRegister(key);
+        }
+    }
+
     private static List<AbstractManager> getCloneManagerList(boolean order) {
         // マネージャーリストをコピー
         List<AbstractManager> cloneMng = new ArrayList<AbstractManager>();
@@ -146,6 +152,10 @@ public abstract class AbstractManager implements IManager {
             return false;
         }
         return true;
+    }
+
+    // cReg更新通知
+    protected void notifyUpdateCommonRegister(String key) {
     }
 
     public boolean isFinishedInitialize() {

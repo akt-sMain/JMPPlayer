@@ -13,6 +13,8 @@ import jmp.core.SystemManager.CommonRegister;
 public interface IJMPComponentUI {
     public static final int DEFAULT_WINDOW_OFFSET = 50;
 
+    abstract void updateBackColor();
+
     default Color getJmpBackColor() {
         SystemManager sm = JMPCore.getSystemManager();
         String colorStr = sm.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_PLAYER_BACK_COLOR);

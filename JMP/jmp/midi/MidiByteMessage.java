@@ -1,4 +1,4 @@
-package jlib.midi;
+package jmp.midi;
 
 import javax.sound.midi.MidiMessage;
 

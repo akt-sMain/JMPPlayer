@@ -410,7 +410,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         menuItemHistory = new JMenuItem("履歴");
         menuItemHistory.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JMPCore.getDataManager().getHistoryDialog().open();
+                JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_HISTORY).showWindow();
             }
         });
         playerMenu.add(menuItemHistory);
@@ -1349,5 +1349,10 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         else {
             JMPCore.getFileManager().loadFile(path);
         }
+    }
+
+    @Override
+    public void updateBackColor() {
+        getContentPane().setBackground(getJmpBackColor());
     }
 }

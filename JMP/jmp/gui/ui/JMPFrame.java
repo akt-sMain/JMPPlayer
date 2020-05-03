@@ -59,4 +59,9 @@ public class JMPFrame extends JFrame implements IJMPComponentUI, IJmpWindow {
         return isVisible();
     }
 
+    @Override
+    public void updateBackColor() {
+        getContentPane().setBackground(getJmpBackColor());
+    }
+
 }

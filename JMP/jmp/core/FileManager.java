@@ -14,6 +14,16 @@ import jmp.task.ICallbackFunction;
 
 public class FileManager extends AbstractManager implements IFileManager {
 
+    private static final String SUCCESS_MSG_FOAMET_LOAD = "%s ...(%s)";
+
+    private class LoadSetting {
+        public boolean noneHistoryLoadFlag = false;
+        public boolean loadToPlayFlag = false;
+
+        public LoadSetting() {
+        }
+    }
+
     private List<IFileResultCallback> loadCallbacks = null;
 
     FileManager(int pri) {
@@ -66,32 +76,39 @@ public class FileManager extends AbstractManager implements IFileManager {
         for (IFileResultCallback cb : loadCallbacks) {
             cb.begin(beginResult);
         }
-        if (beginResult.status == false) {
-            // 失敗
-            return;
+
+        if (beginResult.status == true) {
+            // ロード中フラグ
+            JMPFlags.NowLoadingFlag = true;
+
+            // フラグバックアップ
+            LoadSetting setting = new LoadSetting();
+            setting.noneHistoryLoadFlag = JMPFlags.NoneHIstoryLoadFlag;
+            setting.loadToPlayFlag = JMPFlags.LoadToPlayFlag;
+
+            // Sequenceタスクに委託
+            JMPCore.getTaskManager().getTaskOfSequence().queuing(new ICallbackFunction() {
+                @Override
+                public void callback() {
+
+                    /* Coreのロード処理 */
+                    FileResult endResult = loadFileImpl(f, setting);
+
+                    // 終了判定の結果を通知
+                    for (IFileResultCallback cb : loadCallbacks) {
+                        cb.end(endResult);
+                    }
+                }
+            });
         }
 
-        // ロード中フラグ
-        JMPFlags.NowLoadingFlag = true;
-
-        // Sequenceタスクに委託
-        JMPCore.getTaskManager().getTaskOfSequence().queuing(new ICallbackFunction() {
-            @Override
-            public void callback() {
-
-                /* Coreのロード処理 */
-                FileResult endResult = loadFileImpl(f);
-
-                // 終了判定の結果を通知
-                for (IFileResultCallback cb : loadCallbacks) {
-                    cb.end(endResult);
-                }
-            }
-        });
+        // フラグ初期化
+        JMPFlags.NoneHIstoryLoadFlag = false; // 履歴保存
+        JMPFlags.LoadToPlayFlag = false; // ロード後再生
     }
 
     /** コアのファイルロード処理 */
-    private FileResult loadFileImpl(File f) {
+    private FileResult loadFileImpl(File f, LoadSetting setting) {
         DataManager dm = JMPCore.getDataManager();
         SoundManager sm = JMPCore.getSoundManager();
         LanguageManager lm = JMPCore.getLanguageManager();
@@ -135,14 +152,13 @@ public class FileManager extends AbstractManager implements IFileManager {
         if (result.status == true) {
 
             // 履歴に追加
-            if (JMPFlags.NoneHIstoryLoadFlag == false) {
+            if (setting.noneHistoryLoadFlag == false) {
                 dm.addHistory(f.getPath());
             }
 
             // 自動再生
-            if (JMPFlags.LoadToPlayFlag == true) {
+            if (setting.loadToPlayFlag == true) {
                 sm.play();
-                JMPFlags.LoadToPlayFlag = false;
             }
 
             // 新しいファイル名
@@ -151,18 +167,15 @@ public class FileManager extends AbstractManager implements IFileManager {
             // メッセージ発行
             String successFileName = Utility.getFileNameAndExtension(dm.getLoadedFile());
             String successMsg = lm.getLanguageStr(LangID.FILE_LOAD_SUCCESS);
-            result.statusMsg = String.format("%s ...(%s)", successFileName, successMsg);
+            result.statusMsg = String.format(SUCCESS_MSG_FOAMET_LOAD, successFileName, successMsg);
         }
         else {
             // 前のファイル名に戻す
             dm.setLoadedFile(tmpFileName);
         }
 
-        // フラグ初期化
-        JMPFlags.NoneHIstoryLoadFlag = false; // 履歴保存
-        JMPFlags.LoadToPlayFlag = false; // ロード後再生
-        JMPFlags.NowLoadingFlag = false; // ロード中
+        // ロード中フラグ解除
+        JMPFlags.NowLoadingFlag = false;
         return result;
     }
-
 }

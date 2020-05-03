@@ -39,6 +39,15 @@ public interface IMidiToolkit {
     abstract boolean isPitchBend(MidiMessage mes);
 
     /**
+     * ByteメッセージからMIDIメッセージオブジェクト生成
+     *
+     * @param data
+     * @return
+     * @throws InvalidMidiDataException
+     */
+    abstract MidiMessage createByteMidiMessage(byte[] data);
+
+    /**
      * プログラムチェンジMIDIメッセージオブジェクト生成
      *
      * @param channel

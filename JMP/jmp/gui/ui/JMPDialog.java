@@ -135,4 +135,9 @@ public class JMPDialog extends JDialog implements IJMPComponentUI, IJmpWindow {
     public boolean isWindowVisible() {
         return isVisible();
     }
+
+    @Override
+    public void updateBackColor() {
+        getContentPane().setBackground(getJmpBackColor());
+    }
 }

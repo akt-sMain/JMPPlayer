@@ -12,7 +12,6 @@ import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.core.IDataManager;
 import jmp.ConfigDatabase;
-import jmp.gui.HistoryDialog;
 
 public class DataManager extends AbstractManager implements IDataManager {
 
@@ -31,10 +30,6 @@ public class DataManager extends AbstractManager implements IDataManager {
 
     // 変換したファイルをログ
     private List<File> convertedFiles = null;
-
-    public HistoryDialog getHistoryDialog() {
-        return (HistoryDialog) JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_HISTORY);
-    }
 
     // 固有変数
     private int transpose = 0;
@@ -182,8 +177,6 @@ public class DataManager extends AbstractManager implements IDataManager {
         if (size > MAX_HISTORY_SIZE) {
             historyModel.remove(size - 1);
         }
-
-        getHistoryDialog().update();
     }
 
     public JList<String> getHistory() {
@@ -192,7 +185,6 @@ public class DataManager extends AbstractManager implements IDataManager {
 
     public void clearHistory() {
         historyModel.removeAllElements();
-        getHistoryDialog().update();
     }
 
     public int getTranspose() {

@@ -1,4 +1,4 @@
-package jmp.midi;
+package jmp.midi.toolkit;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -8,22 +8,17 @@ import javax.sound.midi.ShortMessage;
 
 import jlib.midi.IMidiToolkit;
 import jlib.midi.MidiByte;
+import jmp.midi.MidiByteMessage;
 
 public class DefaultMidiToolkit implements IMidiToolkit {
-
-    private static DefaultMidiToolkit instance = new DefaultMidiToolkit();
-
-    private DefaultMidiToolkit() {};
-
-    public static DefaultMidiToolkit getInstance() {
-        return instance;
-    }
+    DefaultMidiToolkit() {
+    };
 
     @Override
     public boolean isNoteOn(MidiMessage mes) {
         ShortMessage sMes = null;
         if (mes instanceof ShortMessage) {
-            sMes = (ShortMessage)mes;
+            sMes = (ShortMessage) mes;
         }
         else {
             return false;
@@ -39,7 +34,7 @@ public class DefaultMidiToolkit implements IMidiToolkit {
     public boolean isNoteOff(MidiMessage mes) {
         ShortMessage sMes = null;
         if (mes instanceof ShortMessage) {
-            sMes = (ShortMessage)mes;
+            sMes = (ShortMessage) mes;
         }
         else {
             return false;
@@ -56,7 +51,7 @@ public class DefaultMidiToolkit implements IMidiToolkit {
     public boolean isProgramChange(MidiMessage mes) {
         ShortMessage sMes = null;
         if (mes instanceof ShortMessage) {
-            sMes = (ShortMessage)mes;
+            sMes = (ShortMessage) mes;
         }
         else {
             return false;
@@ -72,7 +67,7 @@ public class DefaultMidiToolkit implements IMidiToolkit {
     public boolean isPitchBend(MidiMessage mes) {
         ShortMessage sMes = null;
         if (mes instanceof ShortMessage) {
-            sMes = (ShortMessage)mes;
+            sMes = (ShortMessage) mes;
         }
         else {
             return false;
@@ -82,6 +77,11 @@ public class DefaultMidiToolkit implements IMidiToolkit {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public MidiMessage createByteMidiMessage(byte[] data) {
+        return new MidiByteMessage(data);
     }
 
     @Override

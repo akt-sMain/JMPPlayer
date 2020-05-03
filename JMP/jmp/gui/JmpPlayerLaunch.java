@@ -176,4 +176,8 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, IJMPCompon
     public void mouseExited(MouseEvent e) {
     }
 
+    @Override
+    public void updateBackColor() {
+        setBackground(getJmpBackColor());
+    }
 }

@@ -18,6 +18,7 @@ import jmp.gui.MidiFileListDialog;
 import jmp.gui.MidiMessageMonitor;
 import jmp.gui.SelectLanguageDialog;
 import jmp.gui.WindowDatabase;
+import jmp.gui.ui.IJMPComponentUI;
 import jmplayer.JMPPlayer;
 
 public class WindowManager extends AbstractManager implements IWindowManager {
@@ -64,6 +65,22 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         }
         setVisibleAll(false);
         return true;
+    }
+
+    @Override
+    protected void notifyUpdateCommonRegister(String key) {
+        if (key.equals(SystemManager.CommonRegister.COMMON_REGKEY_PLAYER_BACK_COLOR) == true) {
+            for (String name : getWindowNameList()) {
+                IJmpWindow win = getWindow(name);
+                if (win != null) {
+                    if (win instanceof IJMPComponentUI) {
+                        IJMPComponentUI ui = (IJMPComponentUI)win;
+                        ui.updateBackColor();
+                    }
+                }
+            }
+        }
+        super.notifyUpdateCommonRegister(key);
     }
 
     private void makeWindowInstance() {

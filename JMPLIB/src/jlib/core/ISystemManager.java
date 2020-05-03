@@ -49,6 +49,13 @@ public interface ISystemManager {
     abstract String getCommonRegisterValue(String key);
 
     /**
+     * 共通レジスタのキーセットを取得する
+     *
+     * @return キーセット
+     */
+    abstract String[] getCommonKeySet();
+
+    /**
      * メインウィンドウ取得
      *
      * @return メインウィンドウ

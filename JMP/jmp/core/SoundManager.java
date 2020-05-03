@@ -19,11 +19,11 @@ import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jlib.midi.IMidiEventListener;
 import jlib.midi.IMidiToolkit;
-import jlib.midi.MidiByteMessage;
 import jlib.player.IPlayer;
 import jmp.JMPFlags;
 import jmp.lang.DefineLanguage.LangID;
-import jmp.midi.DefaultMidiToolkit;
+import jmp.midi.MidiByteMessage;
+import jmp.midi.toolkit.MidiToolkitManager;
 import jmp.player.FFmpegPlayer;
 import jmp.player.MidiPlayer;
 import jmp.player.MusicXmlPlayer;
@@ -55,6 +55,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     FloatControl volumeCtrl;
 
+    private IMidiToolkit midiToolkit = MidiToolkitManager.getInstance().getDefaultMidiToolkit();
+
     SoundManager(int pri) {
         super(pri, "sound");
     }
@@ -65,6 +67,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             // 自動接続フラグを立てる
             JMPFlags.StartupAutoConectSynth = true;
         }
+
+        updateMidiToolkit();
 
         PlayerAccessor = new PlayerAccessor();
 
@@ -600,8 +604,22 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     @Override
+    protected void notifyUpdateCommonRegister(String key) {
+        if (key.equals(SystemManager.CommonRegister.COMMON_REGKEY_USE_MIDI_TOOLKIT) == true) {
+            updateMidiToolkit();
+        }
+        super.notifyUpdateCommonRegister(key);
+    }
+
+    public void updateMidiToolkit() {
+        // 使用するツールキットを更新
+        SystemManager system = JMPCore.getSystemManager();
+        midiToolkit = MidiToolkitManager.getInstance()
+                .getMidiToolkit(system.getCommonRegisterValue(SystemManager.CommonRegister.COMMON_REGKEY_USE_MIDI_TOOLKIT));
+    }
+
+    @Override
     public IMidiToolkit getMidiToolkit() {
-        IMidiToolkit kit = DefaultMidiToolkit.getInstance();
-        return kit;
+        return midiToolkit;
     }
 }

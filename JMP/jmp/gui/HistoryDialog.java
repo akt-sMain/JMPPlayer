@@ -72,6 +72,7 @@ public class HistoryDialog extends JMPDialog {
 
                             // 履歴に残さずロードする
                             JMPFlags.NoneHIstoryLoadFlag = true;
+                            JMPCore.getSoundManager().stop();
                             JMPCore.getFileManager().loadFile(item);
                         }
                     }
@@ -100,15 +101,6 @@ public class HistoryDialog extends JMPDialog {
                 buttonPane.add(cancelButton);
             }
         }
-    }
-
-    public void open() {
-        update();
-        setVisible(true);
-    }
-
-    public void update() {
-        repaint();
     }
 
     @Override

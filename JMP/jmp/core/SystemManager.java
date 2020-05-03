@@ -18,6 +18,7 @@ import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
 import jmp.JMPFlags;
 import jmp.lang.DefineLanguage.LangID;
+import jmp.midi.toolkit.DefaultMidiToolkit;
 import jmp.task.ICallbackFunction;
 import wffmpeg.FFmpegWrapper;
 import wrapper.IProcessingCallback;
@@ -64,6 +65,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     /** 共通レジスタ */
     private CommonRegister cReg = null;
 
+    /** デフォルトMidiToolkit名 */
+    public static final String USE_MIDI_TOOLKIT_CLASSNAME = DefaultMidiToolkit.class.getSimpleName();
+
     /** FFmpeg wrapper インスタンス */
     private FFmpegWrapper ffmpegWrapper = null;
 
@@ -75,6 +79,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         public static final String COMMON_REGKEY_EXTENSION_MIDI = "extension_midi";
         public static final String COMMON_REGKEY_EXTENSION_WAV = "extension_wav";
         public static final String COMMON_REGKEY_EXTENSION_MUSICXML = "extension_musicxml";
+        public static final String COMMON_REGKEY_USE_MIDI_TOOLKIT = "use_midi_toolkit";
 
         private HashMap<String, String> map;
 
@@ -107,6 +112,8 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             add(COMMON_REGKEY_EXTENSION_MIDI, genExtensionsStr(DataManager.ExtentionForMIDI));
             add(COMMON_REGKEY_EXTENSION_WAV, genExtensionsStr(DataManager.ExtentionForWAV));
             add(COMMON_REGKEY_EXTENSION_MUSICXML, genExtensionsStr(DataManager.ExtentionForMusicXML));
+
+            add(COMMON_REGKEY_USE_MIDI_TOOLKIT, USE_MIDI_TOOLKIT_CLASSNAME);
         }
 
         private String genExtensionsStr(String... ex) {
@@ -137,6 +144,16 @@ public class SystemManager extends AbstractManager implements ISystemManager {
                 return map.get(key);
             }
             return "";
+        }
+
+        public String[] getKeySet() {
+            String[] array = new String[map.keySet().size()];
+            int ai = 0;
+            for (String key : map.keySet()) {
+                array[ai] = key;
+                ai++;
+            }
+            return array;
         }
     }
 
@@ -271,7 +288,13 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         if (cReg == null) {
             return false;
         }
-        return cReg.setValue(key, value);
+
+        boolean ret = cReg.setValue(key, value);
+        if (ret == true) {
+            // 全てのマネージャーに通知
+            AbstractManager.callNotifyUpdateCommonRegister(key);
+        }
+        return ret;
     }
 
     public String getCommonRegisterValue(String key) {
@@ -279,6 +302,10 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             return "";
         }
         return cReg.getValue(key);
+    }
+
+    public String[] getCommonKeySet() {
+        return cReg.getKeySet();
     }
 
     /**
