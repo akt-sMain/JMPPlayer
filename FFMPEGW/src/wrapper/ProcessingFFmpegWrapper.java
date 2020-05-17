@@ -175,6 +175,7 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
                     Thread.sleep(1000);
                 }
                 catch (InterruptedException e) {
+                    break;
                 }
 
                 if (isWaitFor() == false) {

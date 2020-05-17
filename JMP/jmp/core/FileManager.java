@@ -41,6 +41,12 @@ public class FileManager extends AbstractManager implements IFileManager {
     }
 
     @Override
+    public void loadFileToPlay(File f) {
+        JMPFlags.LoadToPlayFlag = true;
+        loadFile(f);
+    }
+
+    @Override
     public void loadFile(File f) {
         LanguageManager lm = JMPCore.getLanguageManager();
         SoundManager sm = JMPCore.getSoundManager();

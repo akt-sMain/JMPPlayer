@@ -27,12 +27,16 @@ public class MusicXMLReader implements IJMPDocumentReader {
     private File file = null;
     private MusicXML musicXML = null;
 
-    public MusicXMLReader(File file) {
-        this.file = file;
+    private boolean isAutoAssignChannel = true;
+    private boolean isAutoAssignProgramChange = true;
+
+    public MusicXMLReader() {
         musicXML = new MusicXML();
     }
 
     public void load() throws SAXException, IOException, ParserConfigurationException {
+
+        loadResult = false;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); // DTDエラー対処
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -278,6 +282,11 @@ public class MusicXMLReader implements IJMPDocumentReader {
                     // duration element
                     mxmlNote.setDuration(childElement.getTextContent());
                 }
+                else if (childElement.getNodeName().equals("tie") == true) {
+                    // tie element
+                    String tieType = childElement.getAttribute("type");
+                    mxmlNote.setTieType(tieType);
+                }
                 else if (childElement.getNodeName().equals("voice") == true) {
                     // voice element
                     mxmlNote.setVoice(childElement.getTextContent());
@@ -336,12 +345,15 @@ public class MusicXMLReader implements IJMPDocumentReader {
             int program = 0;
             MusicXMLScorePart scorePart = musicXML.getPartList().getScorePart(part.getId());
             if (scorePart != null) {
-                channel = Utility.tryParseInt(scorePart.getChannel(), 0) - 1;
-                program = Utility.tryParseInt(scorePart.getProgram(), 0);
+                if (isAutoAssignChannel() == true) {
+                    channel = Utility.tryParseInt(scorePart.getChannel(), 0) - 1;
+                    channel = (channel < 0) ? 0 : (channel > 15) ? 15 : channel; // 不定値チェック
+                }
 
-                // 不定値チェック
-                channel = (channel < 0) ? 0 : (channel > 15) ? 15 : channel;
-                program = (program < 0) ? 0 : program;
+                if (isAutoAssignProgramChange() == true) {
+                    program = Utility.tryParseInt(scorePart.getProgram(), 0);
+                    program = (program < 0) ? 0 : program; // 不定値チェック
+                }
             }
 
             Track track = sequence.getTracks()[i];
@@ -497,5 +509,21 @@ public class MusicXMLReader implements IJMPDocumentReader {
 
     public boolean isLoadResult() {
         return loadResult;
+    }
+
+    public boolean isAutoAssignChannel() {
+        return isAutoAssignChannel;
+    }
+
+    public void setAutoAssignChannel(boolean isAutoAssignChannel) {
+        this.isAutoAssignChannel = isAutoAssignChannel;
+    }
+
+    public boolean isAutoAssignProgramChange() {
+        return isAutoAssignProgramChange;
+    }
+
+    public void setAutoAssignProgramChange(boolean isAutoAssignProgramChange) {
+        this.isAutoAssignProgramChange = isAutoAssignProgramChange;
     }
 }

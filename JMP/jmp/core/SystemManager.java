@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -71,15 +73,50 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     /** FFmpeg wrapper インスタンス */
     private FFmpegWrapper ffmpegWrapper = null;
 
+    public class CommonRegisterINI {
+        public String key, value;
+        public CommonRegisterINI(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
     public class CommonRegister {
-        public static final String COMMON_REGKEY_PLAYER_BACK_COLOR = "player_back_color";
 
         public static final String COMMON_REGKEY_CH_COLOR_FORMAT = "ch_color_%d";
 
+        public static final String COMMON_REGKEY_PLAYER_BACK_COLOR = "player_back_color";
         public static final String COMMON_REGKEY_EXTENSION_MIDI = "extension_midi";
         public static final String COMMON_REGKEY_EXTENSION_WAV = "extension_wav";
         public static final String COMMON_REGKEY_EXTENSION_MUSICXML = "extension_musicxml";
         public static final String COMMON_REGKEY_USE_MIDI_TOOLKIT = "use_midi_toolkit";
+
+        private String[] cRegKeySet = null;
+        private List<CommonRegisterINI> iniList = new ArrayList<CommonRegisterINI>() {
+            {
+                add(new CommonRegisterINI(COMMON_REGKEY_EXTENSION_MIDI, genExtensionsStr(DataManager.ExtentionForMIDI)));
+                add(new CommonRegisterINI(COMMON_REGKEY_EXTENSION_WAV, genExtensionsStr(DataManager.ExtentionForWAV)));
+                add(new CommonRegisterINI(COMMON_REGKEY_EXTENSION_MUSICXML, genExtensionsStr(DataManager.ExtentionForMusicXML)));
+                add(new CommonRegisterINI(COMMON_REGKEY_USE_MIDI_TOOLKIT, USE_MIDI_TOOLKIT_CLASSNAME));
+                add(new CommonRegisterINI(COMMON_REGKEY_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(DEFAULT_PLAYER_BACK_COLOR)));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 1), "#8ec21f"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 2), "#3dc21f"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 3), "#1fc253"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 4), "#1fc2a4"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 5), "#1f8ec2"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 6), "#1f3dc2"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 7), "#531fc2"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 8), "#a41fc2"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 9), "#ffc0cb"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 10), "#c21f3d"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 11), "#c2531f"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 12), "#c2a41f"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 13), "#3d00c2"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 14), "#ffff29"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 15), "#bbff29"));
+                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 16), "#f98608"));
+            }
+        };
 
         private HashMap<String, String> map;
 
@@ -91,29 +128,14 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
 
         public void init() {
-            add(COMMON_REGKEY_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(DEFAULT_PLAYER_BACK_COLOR));
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 1), "#8ec21f");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 2), "#3dc21f");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 3), "#1fc253");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 4), "#1fc2a4");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 5), "#1f8ec2");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 6), "#1f3dc2");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 7), "#531fc2");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 8), "#a41fc2");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 9), "#ffc0cb");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 10), "#c21f3d");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 11), "#c2531f");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 12), "#c2a41f");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 13), "#3d00c2");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 14), "#ffff29");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 15), "#bbff29");
-            add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 16), "#f98608");
+            cRegKeySet = new String[iniList.size()];
+            for (int i=0; i<iniList.size(); i++) {
+                CommonRegisterINI cri = iniList.get(i);
+                add(cri.key, cri.value);
 
-            add(COMMON_REGKEY_EXTENSION_MIDI, genExtensionsStr(DataManager.ExtentionForMIDI));
-            add(COMMON_REGKEY_EXTENSION_WAV, genExtensionsStr(DataManager.ExtentionForWAV));
-            add(COMMON_REGKEY_EXTENSION_MUSICXML, genExtensionsStr(DataManager.ExtentionForMusicXML));
-
-            add(COMMON_REGKEY_USE_MIDI_TOOLKIT, USE_MIDI_TOOLKIT_CLASSNAME);
+                // キーセットを作成
+                cRegKeySet[i] = cri.key;
+            }
         }
 
         private String genExtensionsStr(String... ex) {
@@ -147,13 +169,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
 
         public String[] getKeySet() {
-            String[] array = new String[map.keySet().size()];
-            int ai = 0;
-            for (String key : map.keySet()) {
-                array[ai] = key;
-                ai++;
-            }
-            return array;
+            return cRegKeySet;
         }
     }
 
@@ -250,6 +266,11 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean isEnableStandAlonePlugin() {
+        return JMPCore.isEnableStandAlonePlugin();
     }
 
     public void initializeAllSetting() {

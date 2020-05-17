@@ -355,13 +355,13 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     /**
-     * 指定ディレクトリにあるMidiファイルを列挙する
+     * 指定ディレクトリにあるファイルを列挙する
      *
      * @param dir
      *            ディレクトリ
-     * @return Midiファイルリスト(key:ファイル名, value:Fileオブジェクト)
+     * @return ファイルリスト(key:ファイル名, value:Fileオブジェクト)
      */
-    public Map<String, File> getMidiFileList(File dir) {
+    public Map<String, File> getFileList(File dir) {
         HashMap<String, File> result = new HashMap<String, File>();
         if (dir.isDirectory() == false) {
             return result;

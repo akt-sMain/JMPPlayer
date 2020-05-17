@@ -4,14 +4,19 @@ import java.io.File;
 
 import javax.sound.midi.Sequence;
 
+import function.Platform;
+import function.Utility;
 import jmp.convert.musicxml.MusicXMLReader;
 import jmp.core.SoundManager;
+import jmp.gui.MusicXMLConfirmDialog;
 
 public class MusicXmlPlayer extends Player {
 
+    private MusicXMLConfirmDialog confirmDialog = null;
     private MidiPlayer midiPlayer = SoundManager.MidiPlayer;
 
     public MusicXmlPlayer() {
+        confirmDialog = new MusicXMLConfirmDialog();
     }
 
     @Override
@@ -71,14 +76,48 @@ public class MusicXmlPlayer extends Player {
 
     @Override
     public boolean loadFile(File file) throws Exception {
-        MusicXMLReader reader = new MusicXMLReader(file);
-        reader.load();
+        File xmlFile = null;
+        File tmpDir = null;
+        if (Utility.checkExtension(file, "mxl") == true) {
+            String tmpDirectoryPath = Utility.pathCombin(Platform.getCurrentPath(false), ("_mxl_" + Utility.getFileNameNotExtension(file)));
+            Utility.unZip(file.getPath(), tmpDirectoryPath);
+
+            tmpDir = new File(tmpDirectoryPath);
+            if (tmpDir.exists() == true) {
+                for (File f : tmpDir.listFiles()) {
+                    if (Utility.checkExtension(f, "xml") == true) {
+                        xmlFile = f;
+                        break;
+                    }
+                }
+            }
+        }
+        else {
+            xmlFile = file;
+        }
+
+        if (xmlFile == null) {
+            return false;
+        }
+
+        MusicXMLReader reader = new MusicXMLReader();
+        reader.load(xmlFile);
 
         boolean result = false;
         if (reader.isLoadResult() == true) {
+            confirmDialog.setVisible(true);
+            reader.setAutoAssignChannel(confirmDialog.isAutoAssignChannel());
+            reader.setAutoAssignProgramChange(confirmDialog.isAutoAssignProgramChange());
+            
             Sequence seq = reader.convertToMidi();
             midiPlayer.loadMidiSequence(seq);
             result = true;
+        }
+
+        if (tmpDir != null) {
+            if (tmpDir.exists() == true) {
+                Utility.deleteFileDirectory(tmpDir);
+            }
         }
         return result;
     }

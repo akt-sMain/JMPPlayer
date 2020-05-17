@@ -16,6 +16,7 @@ public class WindowDatabase {
 
     // 設定データベース
     private Map<String, IJmpWindow> database = null;
+    private List<IJmpWindow> accesser = null;
 
     private List<JMenuItem> pluginMenuItems = null;
 
@@ -23,14 +24,28 @@ public class WindowDatabase {
         database = new HashMap<String, IJmpWindow>();
         database.clear();
 
+        accesser = new ArrayList<IJmpWindow>();
+
         pluginMenuItems = new ArrayList<JMenuItem>();
         pluginMenuItems.clear();
+    }
+
+    public boolean addWindow(IJmpWindow window) {
+        boolean ret = true;
+        if (accesser.contains(window) == false) {
+            accesser.add(window);
+        }
+        else {
+            ret = false;
+        }
+        return ret;
     }
 
     public boolean setWindow(String name, IJmpWindow window) {
         boolean ret = true;
         if (database.containsKey(name) == false) {
             database.put(name, window);
+            addWindow(window);
         }
         else {
             ret = false;
@@ -45,6 +60,10 @@ public class WindowDatabase {
         else {
             return null;
         }
+    }
+
+    public List<IJmpWindow> getAccessor() {
+        return accesser;
     }
 
     public void addPluginMenuItem(String name, IPlugin plugin) {

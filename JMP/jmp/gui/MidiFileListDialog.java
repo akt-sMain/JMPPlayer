@@ -438,7 +438,7 @@ public class MidiFileListDialog extends JMPFrame {
         setCurrentPathText(file.getPath());
         JMPCore.getDataManager().setPlayListPath(file.getPath());
 
-        midiFileMap = JMPCore.getSoundManager().getMidiFileList(file);
+        midiFileMap = JMPCore.getSoundManager().getFileList(file);
         removeAllRows();
 
         if (midiFileMap != null) {

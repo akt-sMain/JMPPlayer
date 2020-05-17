@@ -84,6 +84,8 @@ public class DefineLanguage {
         Initialize_setting,
         Leave_output_file,
         Use_FFmpeg_player,
+        Automatically_assign_MIDI_channel,
+        Automatically_assign_Program_change_number,
     }
 
     static java.util.HashMap<LangID, LanguageWords> langMap = new java.util.HashMap<LangID, LanguageWords>() {
@@ -165,6 +167,8 @@ public class DefineLanguage {
             put(LangID.Initialize_setting, new LanguageWords("Initialize setting", "初期設定に戻す"));
             put(LangID.Leave_output_file, new LanguageWords("Leave output file", "出力ファイルを残す"));
             put(LangID.Use_FFmpeg_player, new LanguageWords("Use FFmpeg player", "FFmpegプレイヤー使用"));
+            put(LangID.Automatically_assign_MIDI_channel, new LanguageWords("Automatically assign MIDI channel", "「MIDIチャンネル」を自動的に割り当てる"));
+            put(LangID.Automatically_assign_Program_change_number, new LanguageWords("Automatically assign Program change number", "「プログラムチェンジ」を自動的に割り当てる"));
         }
     };
 }

@@ -100,7 +100,16 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         JMPCore.getSystemManager().registerMainWindow(new JMPPlayer());
     }
 
+    public boolean register(IJmpWindow window) {
+        if (database == null) {
+            return false;
+        }
+        return database.addWindow(window);
+    }
     public boolean register(String name, IJmpWindow window) {
+        if (database == null) {
+            return false;
+        }
         return database.setWindow(name, window);
     }
 
@@ -115,8 +124,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     }
 
     public void setVisibleAll(boolean visible) {
-        for (String name : getWindowNameList()) {
-            IJmpWindow win = getWindow(name);
+        for (IJmpWindow win : database.getAccessor()) {
             if (win != null) {
                 if (visible == true) {
                     win.showWindow();
@@ -137,8 +145,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     }
 
     public void updateLanguage() {
-        for (String name : getWindowNameList()) {
-            IJmpWindow win = getWindow(name);
+        for (IJmpWindow win : database.getAccessor()) {
             if (win != null) {
                 win.updateLanguage();
             }
@@ -146,8 +153,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     }
 
     public void initializeLayout() {
-        for (String name : getWindowNameList()) {
-            IJmpWindow win = getWindow(name);
+        for (IJmpWindow win : database.getAccessor()) {
             if (win != null) {
                 win.initializeLayout();
             }
@@ -155,8 +161,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     }
 
     public void updateConfig(String key) {
-        for (String name : getWindowNameList()) {
-            IJmpWindow win = getWindow(name);
+        for (IJmpWindow win : database.getAccessor()) {
             if (win != null) {
                 win.updateConfig(key);
             }

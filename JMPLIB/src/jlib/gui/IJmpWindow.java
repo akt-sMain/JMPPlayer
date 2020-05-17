@@ -20,7 +20,7 @@ public interface IJmpWindow {
      * 言語更新イベント
      */
     default void updateLanguage() {
-    };
+    }
 
     /**
      * レイアウトの初期化

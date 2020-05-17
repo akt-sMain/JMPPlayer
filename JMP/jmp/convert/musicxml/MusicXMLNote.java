@@ -26,6 +26,8 @@ public class MusicXMLNote extends MusicXMLElement {
     private String stem = "";
     private String staff = "";
 
+    private String tieType = "";
+
     public MusicXMLNote() {
     }
 
@@ -138,6 +140,14 @@ public class MusicXMLNote extends MusicXMLElement {
 
     public void setChord(boolean isChord) {
         this.isChord = isChord;
+    }
+
+    public String getTieType() {
+        return tieType;
+    }
+
+    public void setTieType(String tieType) {
+        this.tieType = tieType;
     }
 
 }

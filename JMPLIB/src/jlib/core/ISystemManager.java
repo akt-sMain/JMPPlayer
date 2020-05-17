@@ -6,6 +6,13 @@ import jlib.plugin.IPlugin;
 public interface ISystemManager {
 
     /**
+     * スタンドアロンモードか
+     *
+     * @return
+     */
+    abstract boolean isEnableStandAlonePlugin();
+
+    /**
      * データファイル格納ディレクトリパス
      *
      * @return パス

@@ -1064,9 +1064,9 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     public void exit(boolean forcedExit) {
         setVisible(false);
 
-        JMPCore.getSoundManager().stop();
-
         if (forcedExit == true) {
+            JMPCore.getSoundManager().stop();
+
             // JMPリソースの終了処理
             JMPLoader.exit();
         }
