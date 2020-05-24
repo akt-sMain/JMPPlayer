@@ -410,7 +410,7 @@ public class MidiFileListDialog extends JMPFrame {
             filechooser.setCurrentDirectory(new File(path));
         }
 
-        int selected = filechooser.showSaveDialog(getParent());
+        int selected = filechooser.showOpenDialog(getParent());
         if (selected == JFileChooser.APPROVE_OPTION) {
             File file = filechooser.getSelectedFile();
             if (file.exists() == true && file.canRead() == true) {
