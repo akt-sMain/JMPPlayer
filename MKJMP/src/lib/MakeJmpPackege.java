@@ -81,6 +81,7 @@ public class MakeJmpPackege extends JFrame {
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 616, 405);
+        setTransferHandler(new DropFileHandler(new mkjDEvent()));
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
@@ -235,7 +236,7 @@ public class MakeJmpPackege extends JFrame {
         textFieldResPath.setTransferHandler(new DropFileHandler(new ResDEvent()));
         textFieldOutput.setTransferHandler(new DropFileHandler(new OutputDEvent()));
 
-        JButton btnWrite = new JButton("Write");
+        JButton btnWrite = new JButton(MakeJmpConfig.EX.toUpperCase() + " Write");
         btnWrite.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String name = textFieldPluginName.getText();
@@ -246,11 +247,13 @@ public class MakeJmpPackege extends JFrame {
         btnWrite.setBounds(20, 345, 91, 21);
         contentPane.add(btnWrite);
 
-        btnRead = new JButton("Read");
+        btnRead = new JButton(MakeJmpConfig.EX.toUpperCase() + " Read");
         btnRead.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 File ret = Utility.OpenLoadFileDialog(null, new File(Platform.getCurrentPath()));
-                loadFileMkj(ret.getPath());
+                if (ret != null) {
+                    loadFileMkj(ret.getPath());
+                }
             }
         });
         btnRead.setBounds(123, 345, 91, 21);
@@ -361,7 +364,7 @@ public class MakeJmpPackege extends JFrame {
 
         @Override
         public void catchDropEvent(File file) {
-            loadFileOutput(file.getAbsolutePath());
+            loadFileMkj(file.getAbsolutePath());
         }
     }
 
