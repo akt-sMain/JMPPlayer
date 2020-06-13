@@ -16,6 +16,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -48,6 +49,7 @@ public class FFmpegConvertDialog extends JMPDialog {
     private JLabel lblInputFile;
     private JButton btnExpButton;
     private JCheckBox checkBoxUsePlayer;
+    private JTextField dstExtTextField;
 
     /**
      * Create the dialog.
@@ -239,6 +241,13 @@ public class FFmpegConvertDialog extends JMPDialog {
         checkBoxUsePlayer.setBackground(Color.DARK_GRAY);
         checkBoxUsePlayer.setBounds(12, 200, 174, 21);
         contentPanel.add(checkBoxUsePlayer);
+
+        dstExtTextField = new JTextField();
+        dstExtTextField.setHorizontalAlignment(SwingConstants.RIGHT);
+        dstExtTextField.setText("wav");
+        dstExtTextField.setBounds(315, 123, 70, 19);
+        contentPanel.add(dstExtTextField);
+        dstExtTextField.setColumns(10);
         {
             JPanel buttonPane = new JPanel();
             buttonPane.setBackground(getJmpBackColor());
@@ -263,6 +272,14 @@ public class FFmpegConvertDialog extends JMPDialog {
                 buttonPane.add(convertButton);
                 getRootPane().setDefaultButton(convertButton);
             }
+        }
+
+        if (JMPFlags.DebugMode == true) {
+            dstExtTextField.setVisible(true);
+        }
+        else {
+            dstExtTextField.setVisible(false);
+            dstExtTextField.setText("wav");
         }
     }
 
@@ -327,7 +344,11 @@ public class FFmpegConvertDialog extends JMPDialog {
         String inname = Utility.getFileNameNotExtension(inpath);
         File outdir = new File(textFieldOutputDirectory.getText());
 
-        String outpath = Utility.pathCombin(outdir.getPath(), (inname + ".wav"));
+        String dstExt = dstExtTextField.getText();
+        if (dstExt.isEmpty() == true) {
+            dstExt = "wav";
+        }
+        String outpath = Utility.pathCombin(outdir.getPath(), String.format("%s.%s", inname, dstExt));
 
         File in = new File(inpath);
         File out = new File(outpath);

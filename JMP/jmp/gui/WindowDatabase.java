@@ -25,6 +25,7 @@ public class WindowDatabase {
         database.clear();
 
         accesser = new ArrayList<IJmpWindow>();
+        accesser.clear();
 
         pluginMenuItems = new ArrayList<JMenuItem>();
         pluginMenuItems.clear();

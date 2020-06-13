@@ -537,6 +537,13 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         });
         pluginMenu.add(allClosePluginMenuItem);
         pluginMenu.addSeparator();
+        pluginMenu.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                updatePluginEnable();
+            }
+        });
 
         configMenu = new JMenu("設定");
         configMenu.addMenuListener(new JmpMenuListener());
@@ -1042,10 +1049,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
         // slider.setToolTipText(String.valueOf(slider.getValue()));
 
-        if (pluginMenu.isPopupMenuVisible() == true) {
-            updatePluginEnable();
-        }
-
         // 再描画
         repaint();
 
@@ -1092,13 +1095,22 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     }
 
     private void updatePluginEnable() {
+
         for (int i = 0; i < pluginMenu.getItemCount(); i++) {
             JMenuItem item = pluginMenu.getItem(i);
             if (item != null) {
                 String name = item.getText();
                 IPlugin plg = JMPCore.getPluginManager().getPlugin(name);
-                if (plg != null) {
-                    item.setEnabled(plg.isEnable());
+                if ((plg != null) && (plg.isEnable() == true)) {
+                    item.setEnabled(true);
+                }
+                else {
+                    item.setEnabled(false);
+                }
+
+                // 何もロードされていない場合は、常に有効状態にする
+                if (JMPCore.getDataManager().getLoadedFile().isEmpty() == true) {
+                    item.setEnabled(true);
                 }
             }
         }
