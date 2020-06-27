@@ -152,7 +152,20 @@ public class FFmpegConvertDialog extends JMPDialog {
                 // ファイルフィルター
                 JFileChooser filechooser = new JFileChooser();
                 filechooser.setFileFilter(createFileFilter("EXE Files", "exe"));
-                File dir = new File(Platform.getCurrentPath());
+
+                File dir = null;
+                String exePath = textFieldFFmpegExePath.getText();
+                if (Utility.isExsistFile(exePath) == true) {
+                    File ef = new File(exePath);
+                    dir = ef.getParentFile();
+                }
+                else {
+                    dir = new File(Platform.getCurrentPath());
+                }
+                if (dir.isDirectory() == false) {
+                    dir = dir.getParentFile();
+                }
+
                 filechooser.setCurrentDirectory(dir);
                 int selected = filechooser.showOpenDialog(getParent());
                 switch (selected) {

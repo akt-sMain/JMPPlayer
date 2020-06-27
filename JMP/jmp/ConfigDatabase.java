@@ -36,6 +36,9 @@ public class ConfigDatabase {
     public ConfigDatabase() {
         database = new HashMap<String, String>();
         database.clear();
+        for (String key : CFG_KEYSET) {
+            database.put(key, "");
+        }
 
         initialize();
     }
@@ -44,18 +47,19 @@ public class ConfigDatabase {
         String current = Platform.getCurrentPath();
         String desktop = getDesktopPath(current);
 
-        database.put(CFG_KEY_PLAYLIST, desktop);
-        database.put(CFG_KEY_MIDIOUT, "");
-        database.put(CFG_KEY_MIDIIN, "");
-        database.put(CFG_KEY_AUTOPLAY, "FALSE");
-        database.put(CFG_KEY_LOOPPLAY, "FALSE");
-        database.put(CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, "TRUE");
-        database.put(CFG_KEY_LANGUAGE, "0");
-        database.put(CFG_KEY_LOADED_FILE, "");
-        database.put(CFG_KEY_FFMPEG_PATH, "ffmpeg.exe");
-        database.put(CFG_KEY_FFMPEG_OUTPUT, "output");
-        database.put(CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, "FALSE");
-        database.put(CFG_KEY_USE_FFMPEG_PLAYER, "FALSE");
+        // 初期化
+        setConfigParam(CFG_KEY_PLAYLIST, desktop);
+        setConfigParam(CFG_KEY_MIDIOUT, "");
+        setConfigParam(CFG_KEY_MIDIIN, "");
+        setConfigParam(CFG_KEY_AUTOPLAY, "FALSE");
+        setConfigParam(CFG_KEY_LOOPPLAY, "FALSE");
+        setConfigParam(CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, "TRUE");
+        setConfigParam(CFG_KEY_LANGUAGE, "0");
+        setConfigParam(CFG_KEY_LOADED_FILE, "");
+        setConfigParam(CFG_KEY_FFMPEG_PATH, "ffmpeg.exe");
+        setConfigParam(CFG_KEY_FFMPEG_OUTPUT, "output");
+        setConfigParam(CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, "FALSE");
+        setConfigParam(CFG_KEY_USE_FFMPEG_PLAYER, "FALSE");
     }
 
     private String getDesktopPath(String defaultPath) {

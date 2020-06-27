@@ -16,6 +16,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 import javax.swing.JButton;
@@ -659,6 +660,11 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 }
                 if (dir.exists() == true) {
                     JMPCore.getPluginManager().generatePluginZipPackage(dir.getPath());
+                    try {
+                        Utility.openExproler(dir);
+                    }
+                    catch (IOException e1) {
+                    }
                 }
                 else {
                     System.out.println("Not make zip dir.");
@@ -1095,13 +1101,16 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     }
 
     private void updatePluginEnable() {
-
         for (int i = 0; i < pluginMenu.getItemCount(); i++) {
             JMenuItem item = pluginMenu.getItem(i);
             if (item != null) {
                 String name = item.getText();
                 IPlugin plg = JMPCore.getPluginManager().getPlugin(name);
-                if ((plg != null) && (plg.isEnable() == true)) {
+                if (plg == null) {
+                    continue;
+                }
+
+                if (plg.isEnable() == true) {
                     item.setEnabled(true);
                 }
                 else {
@@ -1114,6 +1123,10 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 }
             }
         }
+        boolean isPlay = JMPCore.getSoundManager().isPlay();
+        addPluginMenuItem.setEnabled(!isPlay);
+        removePluginMenuItem.setEnabled(!isPlay);
+        allClosePluginMenuItem.setEnabled(!isPlay);
     }
 
     private void updateMenuState() {
@@ -1126,7 +1139,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
         if (JMPCore.getSoundManager().getSequencer() != null) {
             // Sequencerが実行中の場合は設定不可
-            mntmMidiDeviceSetup.setEnabled(!JMPCore.getSoundManager().getSequencer().isRunning());
+            boolean isRunning = JMPCore.getSoundManager().getSequencer().isRunning();
+            mntmMidiDeviceSetup.setEnabled(!isRunning);
         }
     }
 

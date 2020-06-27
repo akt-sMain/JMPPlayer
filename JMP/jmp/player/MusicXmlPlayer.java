@@ -79,7 +79,13 @@ public class MusicXmlPlayer extends Player {
         File xmlFile = null;
         File tmpDir = null;
         if (Utility.checkExtension(file, "mxl") == true) {
-            String tmpDirectoryPath = Utility.pathCombin(Platform.getCurrentPath(false), ("_mxl_" + Utility.getFileNameNotExtension(file)));
+            int cnt = 0;
+            String tmpDirectoryPath = "";
+            while (tmpDirectoryPath.isEmpty() == true || Utility.isExsistFile(tmpDirectoryPath) == true) {
+                String tmpDirectoryName = String.format("_%s%d%s", "mxl", cnt, Utility.getFileNameNotExtension(file));
+                tmpDirectoryPath = Utility.pathCombin(Platform.getCurrentPath(false), tmpDirectoryName);
+                cnt++;
+            }
             Utility.unZip(file.getPath(), tmpDirectoryPath);
 
             tmpDir = new File(tmpDirectoryPath);
@@ -108,7 +114,7 @@ public class MusicXmlPlayer extends Player {
             confirmDialog.setVisible(true);
             reader.setAutoAssignChannel(confirmDialog.isAutoAssignChannel());
             reader.setAutoAssignProgramChange(confirmDialog.isAutoAssignProgramChange());
-            
+
             Sequence seq = reader.convertToMidi();
             midiPlayer.loadMidiSequence(seq);
             result = true;
