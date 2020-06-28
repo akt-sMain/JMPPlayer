@@ -614,8 +614,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     public void updateMidiToolkit() {
         // 使用するツールキットを更新
         SystemManager system = JMPCore.getSystemManager();
-        midiToolkit = MidiToolkitManager.getInstance()
-                .getMidiToolkit(system.getCommonRegisterValue(SystemManager.CommonRegister.COMMON_REGKEY_USE_MIDI_TOOLKIT));
+        String toolkitName = system.getCommonRegisterValue(SystemManager.CommonRegister.COMMON_REGKEY_USE_MIDI_TOOLKIT);
+        midiToolkit = MidiToolkitManager.getInstance().getMidiToolkit(toolkitName);
     }
 
     @Override

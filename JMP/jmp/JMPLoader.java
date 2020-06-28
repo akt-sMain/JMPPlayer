@@ -30,6 +30,95 @@ public class JMPLoader {
 
     private static boolean exitFlag = false;
 
+    /* コマンド文字列 */
+    public static final String CMD_MANUAL = "-man";
+    public static final String CMD_DEBUG = "-debug";
+    public static final String CMD_STDPLG = "-stdplg";
+    public static final String CMD_NONPLG = "-nonplg";
+    public static final String CMD_PLGLST = "-plglst";
+    public static final String CMD_UNSYNC = "-unsync";
+    public static final String CMD_SYSOUT = "-c";
+    public static final String CMD_MKJMP = "-mkjmp";
+
+    /* フォーマット */
+    private static final String PLGLST_FORMAT = "<%d> %s";
+    private static final String MANUAL_FORMAT_CMD = " %s";
+    private static final String MANUAL_FORMAT_DSC = "     %s";
+
+    private static void printManual() {
+        printManualLine(//
+                CMD_STDPLG + " [プラグイン名]", //
+                "プラグインのスタンドアロン起動モード"//
+        );//
+        printManualLine(//
+                CMD_NONPLG, //
+                "プラグインをロードせず起動"//
+        );//
+        printManualLine(//
+                CMD_PLGLST, //
+                "プラグイン一覧"//
+        );//
+        printManualLine(//
+                CMD_UNSYNC, //
+                "非同期化オプション"//
+        );//
+        printManualLine(//
+                CMD_SYSOUT, //
+                "コンソール出力有効化"//
+        );//
+        printManualLine(//
+                CMD_MKJMP, //
+                "プラグインパッケージ作成ライブラリを呼び出す。", //
+                "※コマンドの先頭に記述すること"//
+        );//
+    }
+
+    private static void printManualLine(String cmd, String... description) {
+        System.out.println(String.format(MANUAL_FORMAT_CMD, cmd));
+        for (String d : description) {
+            System.out.println(String.format(MANUAL_FORMAT_DSC, d));
+        }
+        System.out.println();
+    }
+
+    private static void printPlglst() {
+        String path = JMPCore.getSystemManager().getJmsDirPath();
+        File jmsDir = new File(path);
+        int cnt = 0;
+        if (jmsDir.isDirectory() == true) {
+            for (File f : jmsDir.listFiles()) {
+                if (Utility.checkExtension(f, PluginManager.SETUP_FILE_EX) == true) {
+                    String dsc = String.format(PLGLST_FORMAT, (cnt + 1), Utility.getFileNameNotExtension(f));
+                    System.out.println(dsc);
+                    cnt++;
+                }
+            }
+        }
+        if (cnt <= 0) {
+            System.out.println("<!> プラグインが存在しません。");
+        }
+    }
+
+    private static IPlugin getStdPlugin(String jmsName) {
+        String path = JMPCore.getSystemManager().getJmsDirPath();
+        if (jmsName.endsWith("." + PluginManager.SETUP_FILE_EX) == false) {
+            jmsName += "." + PluginManager.SETUP_FILE_EX;
+        }
+        path += Platform.getSeparator() + jmsName;
+
+        IPlugin stdPlugin = null;
+        File jms = new File(path);
+        if (jms.exists() == true) {
+            if (Utility.checkExtension(jms.getPath(), PluginManager.SETUP_FILE_EX) == true) {
+                stdPlugin = JMPCore.getPluginManager().readingPlugin(jms);
+            }
+        }
+        if (stdPlugin == null) {
+            System.out.println("<!> 指定したプラグインが存在しません。");
+        }
+        return stdPlugin;
+    }
+
     /**
      * JMPPlayer起動設定
      *
@@ -40,70 +129,61 @@ public class JMPLoader {
     public static boolean invoke(String[] args, ConfigDatabase config) {
         IPlugin stdPlugin = null;
         if (args.length > 0) {
-            File jms = null;
-            if (args[0].equalsIgnoreCase("-mkjmp") == true) {
+            if (args[0].equalsIgnoreCase(CMD_MKJMP) == true) {
+                args[0] = MakeJmpLib.CMD_CONSOLE;
                 MakeJmpLib.call(args);
                 return true;
             }
 
             for (int i = 0; i < args.length; i++) {
-                if (args[i].equalsIgnoreCase("-man") == true) {
-                    System.out.println("-jms [*.jms]");
-                    System.out.println("	プラグインのスタンドアロン起動モード");
-                    System.out.println("-nonplg");
-                    System.out.println("        プラグインをロードせず起動");
-                    System.out.println("-unsync");
-                    System.out.println("        非同期化オプション");
-                    System.out.println("-c");
-                    System.out.println("        コンソール出力有効化");
-                    System.out.println("-mkjmp");
-                    System.out.println("        プラグインパッケージ作成ライブラリを呼び出す。");
-                    System.out.println("        ※コマンドの先頭に記述すること");
+                if (args[i].equalsIgnoreCase(CMD_MANUAL) == true) {
+                    printManual();
                     return true;
                 }
-                else if (args[i].equalsIgnoreCase("-jms") == true) {
+                else if (args[i].equalsIgnoreCase(CMD_STDPLG) == true) {
                     i++;
                     if (i >= args.length) {
                         break;
                     }
 
                     String jmsName = args[i];
-                    String path = JMPCore.getSystemManager().getJmsDirPath();
-                    if (jmsName.endsWith(".jms") == false) {
-                        jmsName += ".jms";
-                    }
-                    path += Platform.getSeparator() + jmsName;
-
-                    jms = new File(path);
-                    if (jms.exists() == true) {
-                        if (Utility.checkExtension(jms.getPath(), PluginManager.SETUP_FILE_EX) == true) {
-                            stdPlugin = JMPCore.getPluginManager().readingPlugin(jms);
-                        }
-                    }
+                    stdPlugin = getStdPlugin(jmsName);
                 }
-                else if (args[i].equalsIgnoreCase("-nonplg") == true) {
+                else if (args[i].equalsIgnoreCase(CMD_NONPLG) == true) {
                     JMPFlags.NonPluginLoadFlag = true;
                 }
-                else if (args[i].equalsIgnoreCase("-debug") == true) {
+                else if (args[i].equalsIgnoreCase(CMD_PLGLST) == true) {
+                    printPlglst();
+                    return true;
+                }
+                else if (args[i].equalsIgnoreCase(CMD_DEBUG) == true) {
                     JMPFlags.DebugMode = true;
                 }
-                else if (args[i].equalsIgnoreCase("-unsync") == true) {
+                else if (args[i].equalsIgnoreCase(CMD_UNSYNC) == true) {
                     JMPFlags.UseUnsynchronizedMidiPacket = true;
                 }
-                else if (args[i].equalsIgnoreCase("-c") == true) {
+                else if (args[i].equalsIgnoreCase(CMD_SYSOUT) == true) {
                     JMPFlags.CoreConsoleOut = true;
                 }
                 /* ※コマンドの判定を優先するため、このelseifは最後に挿入すること */
                 else if (Utility.isExsistFile(args[i]) == true) {
-                    JMPFlags.RequestFileLoadFlag = true;
+                    File f = new File(args[i]);
+                    if (f.isFile() == true) {
 
-                    RequestFile = args[i];
+                        RequestFile = args[i];
 
-                    // ロード設定
-                    JMPFlags.StartupAutoConectSynth = true;
-                    JMPFlags.LoadToPlayFlag = true;
+                        // ロード設定
+                        JMPFlags.RequestFileLoadFlag = true;
+                        JMPFlags.StartupAutoConectSynth = true;
+                        JMPFlags.LoadToPlayFlag = true;
+                    }
                 }
             }
+        }
+
+        if (JMPFlags.NonPluginLoadFlag == true) {
+            // ※nonplgとstdplgコマンドは併用不可
+            stdPlugin = null;
         }
         return invoke(config, stdPlugin);
     }

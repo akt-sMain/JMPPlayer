@@ -14,6 +14,14 @@ public class MakeJmpLib {
 
     public static final String PKG_ZIP_EX = "jmz";
 
+    /* コマンド文字列 */
+    public static final String CMD_CONSOLE = "-cmd";
+    public static final String CMD_NAME = "-name";
+    public static final String CMD_JAR = "-jar";
+    public static final String CMD_DATA = "-data";
+    public static final String CMD_RES = "-res";
+    public static final String CMD_OUT = "-out";
+
     public static void call(String... args) {
         try {
             boolean isConsole = false;
@@ -25,34 +33,34 @@ public class MakeJmpLib {
 
             for (int i = 0; i < args.length; i++) {
                 String str = args[i];
-                if (str.equalsIgnoreCase("-cmd")) {
+                if (str.equalsIgnoreCase(CMD_CONSOLE)) {
                     isConsole = true;
                 }
-                else if (str.equalsIgnoreCase("-name")) {
+                else if (str.equalsIgnoreCase(CMD_NAME)) {
                     i++;
                     if (i < args.length && args[i].startsWith("-") == false) {
                         name = args[i];
                     }
                 }
-                else if (str.equalsIgnoreCase("-jar")) {
+                else if (str.equalsIgnoreCase(CMD_JAR)) {
                     i++;
                     if (i < args.length && args[i].startsWith("-") == false) {
                         jar = args[i];
                     }
                 }
-                else if (str.equalsIgnoreCase("-data")) {
+                else if (str.equalsIgnoreCase(CMD_DATA)) {
                     i++;
                     if (i < args.length && args[i].startsWith("-") == false) {
                         data = args[i];
                     }
                 }
-                else if (str.equalsIgnoreCase("-res")) {
+                else if (str.equalsIgnoreCase(CMD_RES)) {
                     i++;
                     if (i < args.length && args[i].startsWith("-") == false) {
                         res = args[i];
                     }
                 }
-                else if (str.equalsIgnoreCase("-out")) {
+                else if (str.equalsIgnoreCase(CMD_OUT)) {
                     i++;
                     if (i < args.length && args[i].startsWith("-") == false) {
                         out = args[i];
