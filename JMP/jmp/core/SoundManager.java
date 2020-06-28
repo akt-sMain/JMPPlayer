@@ -338,6 +338,9 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             }
         }
         catch (Exception e) {
+            if (JMPFlags.DebugMode == true) {
+                e.printStackTrace();
+            }
             loadResult = false;
             throw e;
         }

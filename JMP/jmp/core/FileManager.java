@@ -148,7 +148,6 @@ public class FileManager extends AbstractManager implements IFileManager {
                 }
             }
             catch (Exception e) {
-                // e.printStackTrace();
                 result.status = false;
                 result.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_5);
             }

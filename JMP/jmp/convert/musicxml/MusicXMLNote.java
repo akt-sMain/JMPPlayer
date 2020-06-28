@@ -28,6 +28,8 @@ public class MusicXMLNote extends MusicXMLElement {
 
     private String tieType = "";
 
+    private MusicXMLNotations notations = null;
+
     public MusicXMLNote() {
     }
 
@@ -148,6 +150,14 @@ public class MusicXMLNote extends MusicXMLElement {
 
     public void setTieType(String tieType) {
         this.tieType = tieType;
+    }
+
+    public MusicXMLNotations getNotations() {
+        return notations;
+    }
+
+    public void setNotations(MusicXMLNotations notations) {
+        this.notations = notations;
     }
 
 }

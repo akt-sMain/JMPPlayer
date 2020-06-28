@@ -19,6 +19,7 @@ import org.xml.sax.SAXException;
 import function.Utility;
 import jlib.midi.IMidiToolkit;
 import jmp.convert.IJMPDocumentReader;
+import jmp.convert.musicxml.MusicXMLElement.TiedType;
 import jmp.core.JMPCore;
 
 public class MusicXMLReader implements IJMPDocumentReader {
@@ -307,10 +308,54 @@ public class MusicXMLReader implements IJMPDocumentReader {
                     // staff element
                     mxmlNote.setStaff(childElement.getTextContent());
                 }
+                else if (childElement.getNodeName().equals("notations") == true) {
+                    // articulations element
+                    MusicXMLNotations mxmlNotations = readNotationsNodeList(childElement);
+                    mxmlNote.setNotations(mxmlNotations);
+                }
             }
         }
 
         return mxmlNote;
+    }
+
+    private MusicXMLNotations readNotationsNodeList(Element element) {
+        MusicXMLNotations mxmlNotations = new MusicXMLNotations();
+        NodeList nodeList = element.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element childElement = (Element) node;
+                if (childElement.getNodeName().equals("articulations") == true) {
+                    // articulations element
+                    MusicXMLArticulations mxmlArticulations = readArticulationsNodeList(childElement);
+                    mxmlNotations.setArticulations(mxmlArticulations);
+                }
+                if (childElement.getNodeName().equals("tied") == true) {
+                    String tiedType = childElement.getAttribute("type");
+                    if (tiedType != null) {
+                        mxmlNotations.setTied(tiedType);
+                    }
+                }
+            }
+        }
+        return mxmlNotations;
+    }
+
+    private MusicXMLArticulations readArticulationsNodeList(Element element) {
+        MusicXMLArticulations mxmlArticulations = new MusicXMLArticulations();
+        NodeList nodeList = element.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element childElement = (Element) node;
+                if (childElement.getNodeName().equals("staccato") == true) {
+                    // staccato element
+                    mxmlArticulations.setStaccato(true);
+                }
+            }
+        }
+        return mxmlArticulations;
     }
 
     private MusicXMLBackup readBackupNodeList(Element element) {
@@ -387,12 +432,39 @@ public class MusicXMLReader implements IJMPDocumentReader {
                             position += pastDuration;
                         }
 
+                        // アクセント記号の表現
+                        boolean isStaccato = false;
+                        TiedType tiedType = TiedType.NONE;
+                        MusicXMLNotations notations = mxNote.getNotations();
+                        if (notations != null) {
+                            MusicXMLArticulations articulations = notations.getArticulations();
+                            if (articulations != null) {
+                                // スタッカート
+                                isStaccato = articulations.isStaccato();
+                            }
+
+                            // タイ
+                            tiedType = notations.getTied();
+                        }
+
                         long duration = divisionValue * mxNote.getDurationInt();
                         if (mxNote.isRest() == false) {
                             /* NoteON, NoteOFFイベント作成 */
+                            long newDuration = duration;
+                            if (isStaccato == true) {
+                                // スタッカート加工
+                                newDuration *= 0.5;
+                            }
                             int midiNumber = convertToMidiNumber(mxNote.getStep(), mxNote.getAlterInt(), mxNote.getOctaveInt());
-                            track.add(toolkit.createNoteOnEvent(position, channel, midiNumber, FixedVelocity));
-                            track.add(toolkit.createNoteOffEvent(position + duration, channel, midiNumber, FixedVelocity));
+
+                            // NoteON発行
+                            if (tiedType == TiedType.NONE || tiedType == TiedType.START) {
+                                track.add(toolkit.createNoteOnEvent(position, channel, midiNumber, FixedVelocity));
+                            }
+                            // NoteOFF発行
+                            if (tiedType == TiedType.NONE || tiedType == TiedType.STOP) {
+                                track.add(toolkit.createNoteOffEvent(position + newDuration, channel, midiNumber, FixedVelocity));
+                            }
                         }
                         else {
                             /* 休符はDuration加算だけ行う */
