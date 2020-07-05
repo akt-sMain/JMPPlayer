@@ -21,6 +21,9 @@ public class MakeJmpLib {
     public static final String CMD_DATA = "-data";
     public static final String CMD_RES = "-res";
     public static final String CMD_OUT = "-out";
+    // 隠しコマンド
+    public static final String _CMD_WIN = "--win"; // windowを閉じたときにランタイムを終了しない(別のjavaソースからコールする用)
+    public static final String _CMD_EXP = "--exp"; // export後にExplolerを表示する
 
     public static void call(String... args) {
         try {
@@ -30,6 +33,8 @@ public class MakeJmpLib {
             String data = "";
             String res = "";
             String out = "";
+            boolean appExitFlag = true;
+            boolean showExplolerFlag = false;
 
             for (int i = 0; i < args.length; i++) {
                 String str = args[i];
@@ -66,10 +71,16 @@ public class MakeJmpLib {
                         out = args[i];
                     }
                 }
+                else if (str.equalsIgnoreCase(_CMD_WIN)) {
+                    appExitFlag = false;
+                }
+                else if (str.equalsIgnoreCase(_CMD_EXP)) {
+                    showExplolerFlag = true;
+                }
             }
 
             if (isConsole == false) {
-                MakeJmpPackege frame = new MakeJmpPackege(jar, data, res, out);
+                MakeJmpPackege frame = new MakeJmpPackege(jar, data, res, out, appExitFlag, showExplolerFlag);
                 frame.setVisible(true);
             }
             else {

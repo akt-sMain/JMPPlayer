@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jlib.core.IManager;
+import jlib.player.IPlayer;
+import jmp.JMPFlags;
+import jmp.task.CallbackPackage;
+import jmp.task.ICallbackFunction;
 import jmp.task.ITask;
 import jmp.task.TaskOfMidiEvent;
 import jmp.task.TaskOfSequence;
@@ -42,6 +46,9 @@ public class TaskManager extends AbstractManager implements IManager {
         // MIDIイベントタスク登録
         taskOfMidiEvent = new TaskOfMidiEvent();
         tasks.add(taskOfMidiEvent);
+
+        // アプリケーション共通コールバック関数の登録
+        registerCommonCallbackPackage();
         return true;
     }
 
@@ -93,5 +100,35 @@ public class TaskManager extends AbstractManager implements IManager {
                 th.join();
             }
         }
+    }
+
+    private void registerCommonCallbackPackage() {
+        CallbackPackage commonCallbackPkg = new CallbackPackage((long) 500);
+
+        /* ループ・繰り返し再生の判定 */
+        commonCallbackPkg.addCallbackFunction(new ICallbackFunction() {
+            @Override
+            public void callback() {
+                SoundManager sm = JMPCore.getSoundManager();
+                DataManager dm = JMPCore.getDataManager();
+                IPlayer player = sm.getCurrentPlayer();
+                if (player == null) {
+                    return;
+                }
+
+                long tickPos = player.getPosition();
+                long tickLength = player.getLength();
+                if (dm.getLoadedFile().isEmpty() == true) {
+                    return;
+                }
+
+                if (JMPFlags.NowLoadingFlag == false) {
+                    if (tickPos >= tickLength) {
+                        sm.playNextForList();
+                    }
+                }
+            }
+        });
+        getTaskOfTimer().addCallbackPackage(commonCallbackPkg);
     }
 }

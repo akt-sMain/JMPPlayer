@@ -371,6 +371,10 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         }
 
         for (File file : dir.listFiles()) {
+            if (file == null) {
+                continue;
+            }
+
             if (file.exists() == false) {
                 // 除外ケース
                 continue;
@@ -608,8 +612,24 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     @Override
     protected void notifyUpdateCommonRegister(String key) {
+        SystemManager system = JMPCore.getSystemManager();
         if (key.equals(SystemManager.CommonRegister.COMMON_REGKEY_USE_MIDI_TOOLKIT) == true) {
             updateMidiToolkit();
+        }
+        else if (key.equals(SystemManager.CommonRegister.COMMON_REGKEY_EXTENSION_MIDI) == true) {
+            String val = system.getCommonRegisterValue(key);
+            String[] exs = SystemManager.genStr2Extensions(val);
+            MidiPlayer.setSupportExtentions(exs);
+        }
+        else if (key.equals(SystemManager.CommonRegister.COMMON_REGKEY_EXTENSION_WAV) == true) {
+            String val = system.getCommonRegisterValue(key);
+            String[] exs = SystemManager.genStr2Extensions(val);
+            WavPlayer.setSupportExtentions(exs);
+        }
+        else if (key.equals(SystemManager.CommonRegister.COMMON_REGKEY_EXTENSION_MUSICXML) == true) {
+            String val = system.getCommonRegisterValue(key);
+            String[] exs = SystemManager.genStr2Extensions(val);
+            MusicXmlPlayer.setSupportExtentions(exs);
         }
         super.notifyUpdateCommonRegister(key);
     }

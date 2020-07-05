@@ -44,7 +44,7 @@ public abstract class AbstractManager implements IManager {
         return true;
     }
 
-    static boolean init() {
+    static boolean callInitFunc() {
         boolean result = true;
         JMPFlags.Log.cprintln("###");
         JMPFlags.Log.cprintln("## CORE initializing");
@@ -66,7 +66,7 @@ public abstract class AbstractManager implements IManager {
         return result;
     }
 
-    static boolean end() {
+    static boolean callEndFunc() {
         boolean result = true;
         JMPFlags.Log.cprintln("###");
         JMPFlags.Log.cprintln("## CORE exiting");
@@ -87,7 +87,22 @@ public abstract class AbstractManager implements IManager {
         return result;
     }
 
+    static void callNotifyUpdateConfig(String key) {
+        if (isFinishedAllInitialize() == false) {
+            return;
+        }
+
+        for (AbstractManager am : managers) {
+            if (am.isFinishedInitialize() == true) {
+                am.notifyUpdateConfig(key);
+            }
+        }
+    }
     static void callNotifyUpdateCommonRegister(String key) {
+        if (isFinishedAllInitialize() == false) {
+            return;
+        }
+
         for (AbstractManager am : managers) {
             if (am.isFinishedInitialize() == true) {
                 am.notifyUpdateCommonRegister(key);
@@ -154,6 +169,10 @@ public abstract class AbstractManager implements IManager {
             return false;
         }
         return true;
+    }
+
+    // Config更新通知
+    protected void notifyUpdateConfig(String key) {
     }
 
     // cReg更新通知

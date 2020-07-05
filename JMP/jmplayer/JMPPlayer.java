@@ -68,6 +68,7 @@ import jmp.gui.ui.SequencerSliderUI;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.task.CallbackPackage;
 import jmp.task.ICallbackFunction;
+import lib.MakeJmpLib;
 
 /**
  * MIDIプレイヤーメインウィンドウクラス
@@ -164,6 +165,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JMenuItem mntmFFmpegConverter;
     private JMenu mnTool;
     private JMenuItem mntmInitializeConfig;
+    private JMenuItem mntmCallMakeJMP;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -614,6 +616,11 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         configMenu.add(removeAllPluginMenuItem);
 
         mnExecuteBatFile = new JMenu("Execute BAT file");
+        configMenu.add(mnExecuteBatFile);
+
+        mntmCallMakeJMP = new JMenuItem("mkJMP");
+        configMenu.add(mntmCallMakeJMP);
+
         mnExecuteBatFile.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 mnExecuteBatFile.removeAll();
@@ -638,7 +645,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             public void actionPerformed(ActionEvent e) {
             }
         });
-        configMenu.add(mnExecuteBatFile);
         removeAllPluginMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
@@ -669,6 +675,11 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 else {
                     System.out.println("Not make zip dir.");
                 }
+            }
+        });
+        mntmCallMakeJMP.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MakeJmpLib.call(MakeJmpLib._CMD_WIN, MakeJmpLib._CMD_EXP);
             }
         });
 
@@ -1176,7 +1187,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 String path = file.getPath();
                 if (file.isDirectory() == false) {
                     // ファイルロード
-                    JMPCore.getFileManager().loadFile(path);
+                    JMPCore.getFileManager().loadFileToPlay(path);
                 }
                 break;
             default:

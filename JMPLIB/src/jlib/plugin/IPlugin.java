@@ -47,7 +47,7 @@ public interface IPlugin {
 
     /**
      * プラグインのオープン状態か判定
-     * 
+     *
      * @return 状態
      */
     default boolean isOpen() {
@@ -61,5 +61,21 @@ public interface IPlugin {
      *            ファイル
      */
     default void loadFile(File file) {
-    };
+    }
+
+    /**
+     * CommonRedister更新通知
+     *
+     * @param key キー名
+     */
+    default void notifyUpdateCommonRegister(String key) {
+    }
+
+    /**
+     * Config更新通知
+     *
+     * @param key キー名
+     */
+    default void notifyUpdateConfig(String key) {
+    }
 }

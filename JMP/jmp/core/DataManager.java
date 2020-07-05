@@ -12,6 +12,7 @@ import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.core.IDataManager;
 import jmp.ConfigDatabase;
+import jmp.JMPFlags;
 
 public class DataManager extends AbstractManager implements IDataManager {
 
@@ -88,7 +89,9 @@ public class DataManager extends AbstractManager implements IDataManager {
         if (makedConfigDatabaseFlag == false) {
             outputConfigFile();
         }
-        outputHistoryFile();
+        if (JMPFlags.LibraryMode == false) {
+            outputHistoryFile();
+        }
         return true;
     }
 
@@ -155,7 +158,7 @@ public class DataManager extends AbstractManager implements IDataManager {
         database.setConfigParam(key, value);
 
         // 設定変更通知
-        JMPCore.getWindowManager().updateConfig(key);
+        AbstractManager.callNotifyUpdateConfig(key);
     }
 
     @Override
@@ -229,9 +232,6 @@ public class DataManager extends AbstractManager implements IDataManager {
 
     public void setLanguage(int language) {
         setConfigParam(ConfigDatabase.CFG_KEY_LANGUAGE, String.valueOf(language));
-
-        // 言語更新
-        JMPCore.getWindowManager().updateLanguage();
     }
 
     public String getPlayListPath() {

@@ -76,10 +76,13 @@ public class MakeJmpPackege extends JFrame {
     /**
      * Create the frame.
      */
-    public MakeJmpPackege(String jar, String data, String res, String out) {
+    public MakeJmpPackege(String jar, String data, String res, String out, boolean appExitFlag, boolean showExploler) {
         setTitle("mkJMP");
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        if (appExitFlag == false) {
+            setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        }
         setBounds(100, 100, 616, 405);
         setTransferHandler(new DropFileHandler(new mkjDEvent()));
         contentPane = new JPanel();
@@ -174,6 +177,14 @@ public class MakeJmpPackege extends JFrame {
         btnExport.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 export();
+
+                if (showExploler == true) {
+                    try {
+                        Utility.openExproler(textFieldOutput.getText());
+                    }
+                    catch (IOException e1) {
+                    }
+                }
             }
         });
         btnExport.setBounds(493, 304, 91, 21);

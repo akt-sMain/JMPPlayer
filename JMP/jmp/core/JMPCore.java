@@ -20,7 +20,7 @@ public class JMPCore {
     /** 初期化・終了実行順位 */
     private static final int MANAGER_PRIORITY_RESOUCE = 0;
     private static final int MANAGER_PRIORITY_LANG = 5;
-    private static final int MANAGER_PRIORITY_SYSTEM = 10;
+    private static final int MANAGER_PRIORITY_SYSTEM = 15;
     private static final int MANAGER_PRIORITY_DATA = 20;
     private static final int MANAGER_PRIORITY_WINDOW = 30;
     private static final int MANAGER_PRIORITY_SOUND = 40;
@@ -40,13 +40,13 @@ public class JMPCore {
 
     public static boolean initFunc() {
         boolean result = true;
-        result = AbstractManager.init();
+        result = AbstractManager.callInitFunc();
         return result;
     }
 
     public static boolean endFunc() {
         boolean result = true;
-        result = AbstractManager.end();
+        result = AbstractManager.callEndFunc();
         return result;
     }
 

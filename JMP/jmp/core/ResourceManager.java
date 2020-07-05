@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import function.Platform;
 import function.Utility;
 import jlib.core.IManager;
+import jmp.JMPFlags;
 import jmp.skin.ImageResource;
 import jmp.skin.Resource;
 import jmp.skin.Skin;
@@ -38,7 +39,40 @@ public class ResourceManager extends AbstractManager implements IManager {
         // アイコン作成
         jmpImageIcon = createJmpIcon();
 
-        String confPath = Utility.pathCombin(Platform.getCurrentPath(false), "skin.txt");
+        // リソース生成
+        SkinGlobalConfig gConfig = new SkinGlobalConfig();
+
+        if (JMPFlags.LibraryMode == false) {
+            try {
+                String confPath = Utility.pathCombin(Platform.getCurrentPath(false), "skin.txt");
+                outputSkinConfig(confPath);
+
+                gConfig.read(new File(confPath));
+
+                String path = Utility.pathCombin(skinPath, gConfig.getName());
+                if (Utility.isExsistFile(path) == false) {
+                    gConfig.initialize();
+                }
+            }
+            catch (IOException e) {
+                gConfig.initialize();
+            }
+        }
+        else {
+            gConfig.initialize();
+        }
+
+        skin = new Skin(gConfig);
+        return true;
+    }
+
+    @Override
+    protected boolean endFunc() {
+        super.endFunc();
+        return true;
+    }
+
+    private void outputSkinConfig(String confPath) {
         File confFile = new File(confPath);
         if (confFile.exists() == false) {
             // Skin.txt作成
@@ -52,29 +86,6 @@ public class ResourceManager extends AbstractManager implements IManager {
             catch (Exception e) {
             }
         }
-
-        // リソース生成
-        SkinGlobalConfig gConfig = new SkinGlobalConfig();
-        try {
-            gConfig.read(new File(confPath));
-
-            String path = Utility.pathCombin(skinPath, gConfig.getName());
-            if (Utility.isExsistFile(path) == false) {
-                gConfig.initialize();
-            }
-        }
-        catch (IOException e) {
-            gConfig.initialize();
-        }
-
-        skin = new Skin(gConfig);
-        return true;
-    }
-
-    @Override
-    protected boolean endFunc() {
-        super.endFunc();
-        return true;
     }
 
     private Image getResourceImage(String name) {

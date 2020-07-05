@@ -5,11 +5,10 @@ import java.util.List;
 
 import javax.swing.JMenuItem;
 
-import function.Platform;
-import function.Platform.KindOfPlatform;
 import jlib.core.IWindowManager;
 import jlib.gui.IJmpWindow;
 import jlib.plugin.IPlugin;
+import jmp.ConfigDatabase;
 import jmp.gui.FFmpegConvertDialog;
 import jmp.gui.HistoryDialog;
 import jmp.gui.LicenseReaderDialog;
@@ -90,10 +89,8 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         new HistoryDialog();
         new MidiFileListDialog();
 
-        /* Windows用の処理 */
-        if (Platform.getRunPlatform() == KindOfPlatform.WINDOWS) {
-            new FFmpegConvertDialog();
-        }
+        /* Windows用のGUI */
+        new FFmpegConvertDialog();
 
         // メインウィンドウ登録
         JMPCore.getSystemManager().registerMainWindow(new JMPPlayer());
@@ -143,6 +140,14 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         return database.getPluginMenuItems();
     }
 
+    public void updateConfig(String key) {
+        for (IJmpWindow win : database.getAccessor()) {
+            if (win != null) {
+                win.updateConfig(key);
+            }
+        }
+    }
+
     public void updateLanguage() {
         for (IJmpWindow win : database.getAccessor()) {
             if (win != null) {
@@ -159,11 +164,14 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         }
     }
 
-    public void updateConfig(String key) {
-        for (IJmpWindow win : database.getAccessor()) {
-            if (win != null) {
-                win.updateConfig(key);
-            }
+    @Override
+    protected void notifyUpdateConfig(String key) {
+        super.notifyUpdateConfig(key);
+        updateConfig(key);
+
+        if (key.equals(ConfigDatabase.CFG_KEY_LANGUAGE) == true) {
+            // 言語更新
+            updateLanguage();
         }
     }
 }

@@ -16,6 +16,7 @@ public class SkinGlobalConfig {
     }
 
     public void read(File file) throws IOException {
+
         List<String> content = Utility.getTextFileContents(file.getPath());
 
         for (String line : content) {

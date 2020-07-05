@@ -99,6 +99,7 @@ public class MidiFileListDialog extends JMPFrame {
 
         model = new FileListTableModel(columnNames, 0);
         midiFileList = new JTable(model);
+        midiFileList.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 12));
         midiFileList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -237,7 +238,7 @@ public class MidiFileListDialog extends JMPFrame {
         });
         lblPath.setBackground(Color.BLACK);
         lblPath.setForeground(Color.WHITE);
-        lblPath.setFont(new Font("MS UI Gothic", Font.BOLD, 14));
+        lblPath.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 14));
         lblPath.setBounds(5, 8, 422, 21);
         lblPath.setOpaque(true);
         LineBorder border = new LineBorder(Color.LIGHT_GRAY, 1, false);
@@ -251,8 +252,11 @@ public class MidiFileListDialog extends JMPFrame {
                 File cur = new File(curPath);
 
                 cur = cur.getParentFile();
-                if (cur != null) {
+                if (cur != null && cur.getPath().equalsIgnoreCase("") == false) {
                     updateList(cur);
+                }
+                else {
+                    openPath();
                 }
             }
         });
@@ -401,11 +405,14 @@ public class MidiFileListDialog extends JMPFrame {
     }
 
     private void openPath() {
+        String path = JMPCore.getDataManager().getPlayListPath();
+        openPath(path);
+    }
+    private void openPath(String path) {
         JFileChooser filechooser = new JFileChooser();
         // filechooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         filechooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        String path = JMPCore.getDataManager().getPlayListPath();
         if (path != null && path.isEmpty() == false) {
             filechooser.setCurrentDirectory(new File(path));
         }
@@ -441,58 +448,73 @@ public class MidiFileListDialog extends JMPFrame {
         midiFileMap = JMPCore.getSoundManager().getFileList(file);
         removeAllRows();
 
+        /* リスト構築 */
         if (midiFileMap != null) {
             // ファイル名ソート
             Object[] keys = midiFileMap.keySet().toArray();
             Arrays.sort(keys);
 
-            List<String> list = new LinkedList<String>();
+            List<File> list = new LinkedList<File>();
+            // Deirectory
             for (Object key : keys) {
                 String sKey = key.toString();
                 File f = midiFileMap.get(sKey);
                 if (f.isDirectory() == true) {
                     if (midiFileMap.containsKey(sKey) == true) {
-                        list.add(sKey);
+                        list.add(f);
                     }
                 }
             }
+            // MIDI
             for (Object key : keys) {
                 String sKey = key.toString();
                 File f = midiFileMap.get(sKey);
                 if (f.isFile() == true) {
                     if (Utility.checkExtensions(sKey, DataManager.ExtentionForMIDI) == true) {
                         if (midiFileMap.containsKey(sKey) == true) {
-                            list.add(sKey);
+                            list.add(f);
                         }
                     }
                 }
             }
+            // WAV
             for (Object key : keys) {
                 String sKey = key.toString();
                 File f = midiFileMap.get(sKey);
                 if (f.isFile() == true) {
                     if (Utility.checkExtensions(sKey, DataManager.ExtentionForWAV) == true) {
                         if (midiFileMap.containsKey(sKey) == true) {
-                            list.add(sKey);
+                            list.add(f);
                         }
                     }
                 }
             }
+            // MusicXML
             for (Object key : keys) {
                 String sKey = key.toString();
                 File f = midiFileMap.get(sKey);
                 if (f.isFile() == true) {
                     if (Utility.checkExtensions(sKey, DataManager.ExtentionForMusicXML) == true) {
                         if (midiFileMap.containsKey(sKey) == true) {
-                            list.add(sKey);
+                            list.add(f);
                         }
                     }
                 }
             }
+            // Other
             for (Object key : keys) {
                 String sKey = key.toString();
-                if (list.contains(sKey) == false) {
-                    list.add(sKey);
+                File f = midiFileMap.get(sKey);
+                if (list.contains(f) == false) {
+                    list.add(f);
+                }
+            }
+
+            // 除外ケース
+            for (int i=list.size()-1; i>=0; i--) {
+                File f = list.get(i);
+                if (f.exists() == false || f.canRead() == false || f.isHidden() == true) {
+                    list.remove(i);
                 }
             }
 
@@ -502,8 +524,16 @@ public class MidiFileListDialog extends JMPFrame {
             ImageIcon xmlIcon = convertImageIcon(JMPCore.getResourceManager().getFileXmlIcon());
             ImageIcon otherIcon = convertImageIcon(JMPCore.getResourceManager().getFileOtherIcon());
 
-            for (String name : list) {
-                File f = midiFileMap.get(name);
+            for (File f : list) {
+                String name = "";
+                for (String key : midiFileMap.keySet()) {
+                    if (f == midiFileMap.get(key)) {
+                        /* 合致するキーを表示する */
+                        name = key;
+                        break;
+                    }
+                }
+
                 if (f.isDirectory() == true) {
                     Object[] row = createFileListRows(folderIcon, "DI", name);
                     model.addRow(row);
@@ -605,7 +635,11 @@ public class MidiFileListDialog extends JMPFrame {
 
         String text = "";
         String[] nodes = Utility.getFileNodeNames(file);
-        for (int i = 0; i < nodes.length; i++) {
+        int start = nodes.length - 2;
+        if (start < 0) {
+            start = 0;
+        }
+        for (int i = start; i < nodes.length; i++) {
             if (i > 0) {
                 text += String.format(fontFormat, SEP_COLOR, ">");
             }

@@ -24,6 +24,8 @@ import jmp.core.JMPCore;
 
 public class MusicXMLReader implements IJMPDocumentReader {
 
+    public static final int DEFAULT_BASE_OCTAVE = 4;
+
     private boolean loadResult = false;
     private File file = null;
     private MusicXML musicXML = null;
@@ -375,6 +377,9 @@ public class MusicXMLReader implements IJMPDocumentReader {
     }
 
     public Sequence convertToMidi() throws InvalidMidiDataException {
+        return convertToMidi(DEFAULT_BASE_OCTAVE);
+    }
+    public Sequence convertToMidi(int baseOctave) throws InvalidMidiDataException {
         IMidiToolkit toolkit = JMPCore.getSoundManager().getMidiToolkit();
         final int BaseDuration = 480;
         final int FixedVelocity = 80;
@@ -455,7 +460,7 @@ public class MusicXMLReader implements IJMPDocumentReader {
                                 // スタッカート加工
                                 newDuration *= 0.5;
                             }
-                            int midiNumber = convertToMidiNumber(mxNote.getStep(), mxNote.getAlterInt(), mxNote.getOctaveInt());
+                            int midiNumber = convertToMidiNumber(mxNote.getStep(), mxNote.getAlterInt(), mxNote.getOctaveInt(), baseOctave);
 
                             // NoteON発行
                             if (tiedType == TiedType.NONE || tiedType == TiedType.START) {
@@ -483,8 +488,7 @@ public class MusicXMLReader implements IJMPDocumentReader {
         return sequence;
     }
 
-    private int convertToMidiNumber(String step, int alter, int octave) {
-        final int baseOctave = 4;
+    private int convertToMidiNumber(String step, int alter, int octave, int baseOctave) {
         int midiNumber = convertToMidiNumber(step, alter);
         midiNumber += (12 * (octave - baseOctave));
         if (midiNumber < 0) {

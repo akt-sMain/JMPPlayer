@@ -172,7 +172,7 @@ public class PluginManager extends AbstractManager {
         File pluginDir = new File(JMPCore.getSystemManager().getJmsDirPath());
         for (File f : pluginDir.listFiles()) {
             if (Utility.checkExtension(f, SETUP_FILE_EX) == true) {
-                JmsProperty jms = getJmsProparty(f);
+                JmsProperty jms = JmsProperty.getJmsProparty(f);
                 String jar = "";
                 if (jms.getJar() != null) {
                     jar = jms.getJar().getPath();
@@ -333,7 +333,7 @@ public class PluginManager extends AbstractManager {
             return null;
         }
 
-        JmsProperty jms = getJmsProparty(file);
+        JmsProperty jms = JmsProperty.getJmsProparty(file);
 
         // プラグインをインポート
         String name = importPlugin(jms.getJar());
@@ -359,88 +359,12 @@ public class PluginManager extends AbstractManager {
                 continue;
             }
 
-            JmsProperty jms = getJmsProparty(f);
+
+            JmsProperty jms = JmsProperty.getJmsProparty(f);
 
             // プラグインをインポート
             importPlugin(jms.getJar());
         }
-    }
-
-    private JmsProperty getJmsProparty(File jmsFile) {
-        JmsProperty jms = null;
-
-        BufferedReader reader;
-        String line = "";
-        try {
-            File pluginFile = null;
-            File dataFile = null;
-            File resFile = null;
-
-            FileInputStream fs = new FileInputStream(jmsFile);
-            InputStreamReader isr = new InputStreamReader(fs, "UTF-8");
-            reader = new BufferedReader(isr);
-
-            boolean isData = false;
-            boolean isRes = false;
-
-            while ((line = reader.readLine()) != null) {
-                /* コメントを除外 */
-                String[] comment = line.split("#", 0);
-                if (comment.length > 0) {
-                    line = comment[0];
-                }
-
-                String[] sLine = line.split("=", 0);
-                if (sLine.length >= 2) {
-                    String key = sLine[0].trim();
-                    String param = sLine[1].trim();
-                    if (key.equalsIgnoreCase(SETUP_KEYNAME_PLUGIN) == true) {
-                        String plgPath = Utility.stringsCombin(JMPCore.getSystemManager().getJarDirPath(), Platform.getSeparator(), param);
-
-                        // プラグインファイルを保持
-                        pluginFile = new File(plgPath);
-                    }
-                    else if (key.equalsIgnoreCase(SETUP_KEYNAME_DATA) == true) {
-                        if (param.equalsIgnoreCase("TRUE") == true) {
-                            isData = true;
-                        }
-                    }
-                    else if (key.equalsIgnoreCase(SETUP_KEYNAME_RES) == true) {
-                        if (param.equalsIgnoreCase("TRUE") == true) {
-                            isRes = true;
-                        }
-                    }
-                }
-            }
-
-            if (isData == true) {
-                String dataPath = Utility.stringsCombin(JMPCore.getSystemManager().getDataFileLocationPath(), Platform.getSeparator(),
-                        Utility.getFileNameNotExtension(pluginFile));
-
-                dataFile = new File(dataPath);
-            }
-            if (isRes == true) {
-                String resPath = Utility.stringsCombin(JMPCore.getSystemManager().getResFileLocationPath(), Platform.getSeparator(),
-                        Utility.getFileNameNotExtension(pluginFile));
-
-                resFile = new File(resPath);
-            }
-
-            jms = new JmsProperty(pluginFile, dataFile, resFile);
-
-            String fileName = Utility.getFileNameAndExtension(jmsFile);
-            if (fileName.startsWith(SETUP_REMOVE_TAG) == true) {
-                jms.setDeleteRequest(true);
-            }
-            reader.close();
-        }
-        catch (Exception e) {
-            jms = null;
-        }
-        finally {
-            reader = null;
-        }
-        return jms;
     }
 
     public void removePlugin() {
@@ -463,7 +387,7 @@ public class PluginManager extends AbstractManager {
     }
 
     public void removePlugin(File jmsFile) {
-        JmsProperty jms = getJmsProparty(jmsFile);
+        JmsProperty jms = JmsProperty.getJmsProparty(jmsFile);
 
         File jar = jms.getJar();
         if (jar != null) {
@@ -668,6 +592,22 @@ public class PluginManager extends AbstractManager {
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    protected void notifyUpdateCommonRegister(String key) {
+        super.notifyUpdateCommonRegister(key);
+        for (IPlugin plugin : getPlugins()) {
+            plugin.notifyUpdateCommonRegister(key);
+        }
+    }
+
+    @Override
+    protected void notifyUpdateConfig(String key) {
+        super.notifyUpdateConfig(key);
+        for (IPlugin plugin : getPlugins()) {
+            plugin.notifyUpdateConfig(key);
         }
     }
 }

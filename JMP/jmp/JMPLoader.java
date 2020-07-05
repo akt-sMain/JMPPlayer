@@ -5,15 +5,11 @@ import java.io.File;
 import function.Platform;
 import function.Utility;
 import jlib.gui.IJmpMainWindow;
-import jlib.player.IPlayer;
 import jlib.plugin.IPlugin;
-import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
-import jmp.core.SoundManager;
 import jmp.core.TaskManager;
 import jmp.core.WindowManager;
-import jmp.task.CallbackPackage;
 import jmp.task.ICallbackFunction;
 import lib.MakeJmpLib;
 
@@ -119,6 +115,12 @@ public class JMPLoader {
         return stdPlugin;
     }
 
+    // コンソール出力だけで完結する方式の起動方法に必要なセットアップ処理を行う
+    private static void setupConsoleApplication() {
+        // システムパス設定
+        JMPCore.getSystemManager().makeSystemPath();
+    }
+
     /**
      * JMPPlayer起動設定
      *
@@ -137,6 +139,7 @@ public class JMPLoader {
 
             for (int i = 0; i < args.length; i++) {
                 if (args[i].equalsIgnoreCase(CMD_MANUAL) == true) {
+                    setupConsoleApplication();
                     printManual();
                     return true;
                 }
@@ -261,6 +264,7 @@ public class JMPLoader {
         if (exitFlag == true) {
             return;
         }
+        exitFlag = true;
 
         JMPCore.getWindowManager().setVisibleAll(false);
 
@@ -271,8 +275,6 @@ public class JMPLoader {
 
         // タスクの終了
         JMPCore.getTaskManager().taskExit();
-
-        exitFlag = true;
     }
 
     /**
@@ -296,6 +298,9 @@ public class JMPLoader {
 
         // スタンドアロンプラグイン設定
         JMPCore.StandAlonePlugin = plugin;
+
+        // システムパス設定
+        JMPCore.getSystemManager().makeSystemPath();
 
         // 設定値を先行して登録する
         JMPCore.getDataManager().setConfigDatabase(config);
@@ -349,9 +354,6 @@ public class JMPLoader {
                 JMPCore.StandAlonePlugin.open();
             }
 
-            // アプリケーション共通コールバック関数の登録
-            registerCommonCallbackPackage();
-
             // タスク開始
             TaskManager taskManager = JMPCore.getTaskManager();
             taskManager.taskStart();
@@ -380,36 +382,6 @@ public class JMPLoader {
 
         boolean result = JMPCore.endFunc();
         return result;
-    }
-
-    private static void registerCommonCallbackPackage() {
-        CallbackPackage commonCallbackPkg = new CallbackPackage((long) 500);
-
-        /* ループ・繰り返し再生の判定 */
-        commonCallbackPkg.addCallbackFunction(new ICallbackFunction() {
-            @Override
-            public void callback() {
-                SoundManager sm = JMPCore.getSoundManager();
-                DataManager dm = JMPCore.getDataManager();
-                IPlayer player = sm.getCurrentPlayer();
-                if (player == null) {
-                    return;
-                }
-
-                long tickPos = player.getPosition();
-                long tickLength = player.getLength();
-                if (dm.getLoadedFile().isEmpty() == true) {
-                    return;
-                }
-
-                if (JMPFlags.NowLoadingFlag == false) {
-                    if (tickPos >= tickLength) {
-                        sm.playNextForList();
-                    }
-                }
-            }
-        });
-        JMPCore.getTaskManager().getTaskOfTimer().addCallbackPackage(commonCallbackPkg);
     }
 
 }

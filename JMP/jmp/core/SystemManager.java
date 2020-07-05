@@ -73,12 +73,37 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     /** FFmpeg wrapper インスタンス */
     private FFmpegWrapper ffmpegWrapper = null;
 
+    // システムパス変数
+    private String dataFileLocationPath = "";
+    private String resFileLocationPath = "";
+    private String pluginsDirPath = "";
+    private String jmsDirPath = "";
+    private String jarDirPath = "";
+    private String zipDirPath = "";
+    private String outputPath = "";
+    private String activateFileLocationPath = "";
+
     public class CommonRegisterINI {
         public String key, value;
         public CommonRegisterINI(String key, String value) {
             this.key = key;
             this.value = value;
         }
+    }
+
+    public static String genExtensions2Str(String... ex) {
+        String ret = "";
+        for (int i = 0; i < ex.length; i++) {
+            if (i > 0) {
+                ret += ",";
+            }
+            ret += ex[i];
+        }
+        return ret;
+    }
+    public static String[] genStr2Extensions(String str) {
+        String[] ret = str.split(",");
+        return ret;
     }
 
     public class CommonRegister {
@@ -94,9 +119,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         private String[] cRegKeySet = null;
         private List<CommonRegisterINI> iniList = new ArrayList<CommonRegisterINI>() {
             {
-                add(new CommonRegisterINI(COMMON_REGKEY_EXTENSION_MIDI, genExtensionsStr(DataManager.ExtentionForMIDI)));
-                add(new CommonRegisterINI(COMMON_REGKEY_EXTENSION_WAV, genExtensionsStr(DataManager.ExtentionForWAV)));
-                add(new CommonRegisterINI(COMMON_REGKEY_EXTENSION_MUSICXML, genExtensionsStr(DataManager.ExtentionForMusicXML)));
+                add(new CommonRegisterINI(COMMON_REGKEY_EXTENSION_MIDI, genExtensions2Str(DataManager.ExtentionForMIDI)));
+                add(new CommonRegisterINI(COMMON_REGKEY_EXTENSION_WAV, genExtensions2Str(DataManager.ExtentionForWAV)));
+                add(new CommonRegisterINI(COMMON_REGKEY_EXTENSION_MUSICXML, genExtensions2Str(DataManager.ExtentionForMusicXML)));
                 add(new CommonRegisterINI(COMMON_REGKEY_USE_MIDI_TOOLKIT, USE_MIDI_TOOLKIT_CLASSNAME));
                 add(new CommonRegisterINI(COMMON_REGKEY_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(DEFAULT_PLAYER_BACK_COLOR)));
                 add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 1), "#8ec21f"));
@@ -136,17 +161,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
                 // キーセットを作成
                 cRegKeySet[i] = cri.key;
             }
-        }
-
-        private String genExtensionsStr(String... ex) {
-            String ret = "";
-            for (int i = 0; i < ex.length; i++) {
-                if (i > 0) {
-                    ret += ",";
-                }
-                ret += ex[i];
-            }
-            return ret;
         }
 
         public void add(String key, String value) {
@@ -329,15 +343,40 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         return cReg.getKeySet();
     }
 
+    public void makeSystemPath() {
+
+        // プラグイン格納ディレクトリパス
+        pluginsDirPath = Utility.stringsCombin(Platform.getCurrentPath(), PLUGINS_DIR_NAME);
+
+        // データファイル格納ディレクトリパス
+        dataFileLocationPath = Utility.stringsCombin(pluginsDirPath, Platform.getSeparator(), DATA_DIR_NAME);
+
+        // リソースファイル格納ディレクトリパス
+        resFileLocationPath = Utility.stringsCombin(pluginsDirPath, Platform.getSeparator(), RES_DIR_NAME);
+
+        // プラグインjms格納ディレクトリパス
+        jmsDirPath = Utility.stringsCombin(pluginsDirPath, Platform.getSeparator(), JMS_DIR_NAME);
+
+        // プラグインjar格納ディレクトリパス
+        jarDirPath = Utility.stringsCombin(pluginsDirPath, Platform.getSeparator(), JAR_DIR_NAME);
+
+        // zip格納ディレクトリパス
+        zipDirPath = Utility.stringsCombin(Platform.getCurrentPath(), ZIP_DIR_NAME);
+
+        // 出力ファイル格納ディレクトリパス
+        outputPath = Utility.stringsCombin(Platform.getCurrentPath(), OUTPUT_DIR_NAME);
+
+        // アクティベートファイルパス
+        activateFileLocationPath = Utility.stringsCombin(Platform.getCurrentPath(), Platform.getSeparator(), "activate");
+    }
+
     /**
      * データファイル格納ディレクトリパス
      *
      * @return パス
      */
     public String getDataFileLocationPath() {
-        String path = "";
-        path = Utility.stringsCombin(getPluginsDirPath(), Platform.getSeparator(), DATA_DIR_NAME);
-        return path;
+        return dataFileLocationPath;
     }
 
     /**
@@ -346,29 +385,27 @@ public class SystemManager extends AbstractManager implements ISystemManager {
      * @return
      */
     public String getResFileLocationPath() {
-        String path = "";
-        path = Utility.stringsCombin(getPluginsDirPath(), Platform.getSeparator(), RES_DIR_NAME);
-        return path;
+        return resFileLocationPath;
     }
 
     public String getPluginsDirPath() {
-        return Utility.stringsCombin(Platform.getCurrentPath(), PLUGINS_DIR_NAME);
+        return pluginsDirPath;
     }
 
     public String getJmsDirPath() {
-        return Utility.stringsCombin(getPluginsDirPath(), Platform.getSeparator(), JMS_DIR_NAME);
+        return jmsDirPath;
     }
 
     public String getJarDirPath() {
-        return Utility.stringsCombin(getPluginsDirPath(), Platform.getSeparator(), JAR_DIR_NAME);
+        return jarDirPath;
     }
 
     public String getZipDirPath() {
-        return Utility.stringsCombin(Platform.getCurrentPath(), ZIP_DIR_NAME);
+        return zipDirPath;
     }
 
     public String getOutputPath() {
-        return Utility.stringsCombin(Platform.getCurrentPath(), OUTPUT_DIR_NAME);
+        return outputPath;
     }
 
     /**
@@ -377,9 +414,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
      * @return
      */
     public String getActivateFileLocationPath() {
-        String path = "";
-        path = Utility.stringsCombin(Platform.getCurrentPath(), Platform.getSeparator(), "activate");
-        return path;
+        return activateFileLocationPath;
     }
 
     /**
