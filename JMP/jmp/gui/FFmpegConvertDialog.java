@@ -57,7 +57,7 @@ public class FFmpegConvertDialog extends JMPDialog {
     public FFmpegConvertDialog() {
         super();
         setTitle("FFmpeg convert");
-        setBounds(100, 100, 450, 330);
+        setBounds(100, 100, 450, 314);
         setResizable(false);
 
         contentPanel.setBackground(getJmpBackColor());
@@ -131,7 +131,7 @@ public class FFmpegConvertDialog extends JMPDialog {
         lblStatus = new JLabel("");
         lblStatus.setBackground(new Color(0, 0, 0));
         lblStatus.setForeground(Color.GREEN);
-        lblStatus.setBounds(12, 241, 420, 19);
+        lblStatus.setBounds(12, 227, 420, 19);
         contentPanel.add(lblStatus);
 
         chckbxLeave = new JCheckBox("Leave output file");

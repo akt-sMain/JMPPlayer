@@ -12,7 +12,7 @@ import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.core.IDataManager;
 import jmp.ConfigDatabase;
-import jmp.JMPFlags;
+import jmp.JMPLoader;
 
 public class DataManager extends AbstractManager implements IDataManager {
 
@@ -22,9 +22,6 @@ public class DataManager extends AbstractManager implements IDataManager {
     public static final String[] ExtentionForFFmpeg = { "*" };
     public static final String CONFIG_FILE = "config.txt";
     public static final String HISTORY_FILE = "history.txt";
-
-    // 作成済みの設定値を反映した場合、ファイルに出力しない
-    private boolean makedConfigDatabaseFlag = false;
 
     private DefaultListModel<String> historyModel = null;
     private JList<String> history = null;
@@ -54,10 +51,6 @@ public class DataManager extends AbstractManager implements IDataManager {
         if (database == null) {
             database = new ConfigDatabase();
             readingConfigFile();
-            makedConfigDatabaseFlag = false;
-        }
-        else {
-            makedConfigDatabaseFlag = true;
         }
         readingHistoryFile();
 
@@ -86,10 +79,10 @@ public class DataManager extends AbstractManager implements IDataManager {
                 }
             }
         }
-        if (makedConfigDatabaseFlag == false) {
+        if (JMPLoader.UseConfigFile == true) {
             outputConfigFile();
         }
-        if (JMPFlags.LibraryMode == false) {
+        if (JMPLoader.UseHistoryFile == true) {
             outputHistoryFile();
         }
         return true;

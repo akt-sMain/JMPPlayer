@@ -17,14 +17,14 @@ public interface ISystemManager {
      *
      * @return パス
      */
-    abstract String getDataFileLocationPath();
+    abstract String getDataFileLocationPath(IPlugin plugin);
 
     /**
      * データファイル格納ディレクトリパス
      *
      * @return パス
      */
-    abstract String getResFileLocationPath();
+    abstract String getResFileLocationPath(IPlugin plugin);
 
     /**
      * プラグイン名取得

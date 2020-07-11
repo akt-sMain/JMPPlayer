@@ -14,6 +14,7 @@ import function.Platform;
 import function.Utility;
 import jlib.core.IManager;
 import jmp.JMPFlags;
+import jmp.JMPLoader;
 import jmp.skin.ImageResource;
 import jmp.skin.Resource;
 import jmp.skin.Skin;
@@ -42,7 +43,7 @@ public class ResourceManager extends AbstractManager implements IManager {
         // リソース生成
         SkinGlobalConfig gConfig = new SkinGlobalConfig();
 
-        if (JMPFlags.LibraryMode == false) {
+        if (JMPLoader.UseSkinFile == true) {
             try {
                 String confPath = Utility.pathCombin(Platform.getCurrentPath(false), "skin.txt");
                 outputSkinConfig(confPath);

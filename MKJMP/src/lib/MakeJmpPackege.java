@@ -187,11 +187,11 @@ public class MakeJmpPackege extends JFrame {
                 }
             }
         });
-        btnExport.setBounds(493, 304, 91, 21);
+        btnExport.setBounds(493, 345, 91, 21);
         contentPane.add(btnExport);
 
         textFieldOutput = new JTextField();
-        textFieldOutput.setBounds(20, 305, 461, 19);
+        textFieldOutput.setBounds(20, 305, 564, 19);
         contentPane.add(textFieldOutput);
         textFieldOutput.setColumns(10);
 
@@ -255,7 +255,7 @@ public class MakeJmpPackege extends JFrame {
                 saveFileMkj(path);
             }
         });
-        btnWrite.setBounds(20, 345, 91, 21);
+        btnWrite.setBounds(287, 345, 91, 21);
         contentPane.add(btnWrite);
 
         btnRead = new JButton(MakeJmpConfig.EX.toUpperCase() + " Read");
@@ -267,7 +267,7 @@ public class MakeJmpPackege extends JFrame {
                 }
             }
         });
-        btnRead.setBounds(123, 345, 91, 21);
+        btnRead.setBounds(390, 345, 91, 21);
         contentPane.add(btnRead);
 
         loadFileJar(jar);

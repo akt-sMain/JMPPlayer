@@ -21,6 +21,12 @@ import lib.MakeJmpLib;
  */
 public class JMPLoader {
 
+    /** プラグインフォルダを使用するか */
+    public static boolean UsePluginDirectory = true;
+    public static boolean UseConfigFile = true;
+    public static boolean UseHistoryFile = true;
+    public static boolean UseSkinFile = true;
+
     /** 起動時にロードするファイルパスを保持する */
     private static String RequestFile = null;
 

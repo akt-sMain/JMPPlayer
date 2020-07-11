@@ -19,6 +19,7 @@ import jlib.core.ISystemManager;
 import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
 import jmp.JMPFlags;
+import jmp.JMPLoader;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.midi.toolkit.DefaultMidiToolkit;
 import jmp.task.ICallbackFunction;
@@ -211,10 +212,12 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         ffmpegWrapper = new ProcessingFFmpegWrapper();
         ffmpegWrapper.setOverwrite(true);
 
-        File pluginsDir = new File(getPluginsDirPath());
-        if (pluginsDir.exists() == false) {
-            // プラグインフォルダ作成
-            pluginsDir.mkdirs();
+        if (JMPLoader.UsePluginDirectory == true) {
+            File pluginsDir = new File(getPluginsDirPath());
+            if (pluginsDir.exists() == false) {
+                // プラグインフォルダ作成
+                pluginsDir.mkdirs();
+            }
         }
         File dataDir = new File(getDataFileLocationPath());
         if (dataDir.exists() == false) {
@@ -226,20 +229,22 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             // resフォルダ作成
             resDir.mkdirs();
         }
-        File jarDir = new File(getJarDirPath());
-        if (jarDir.exists() == false) {
-            // Jarフォルダ作成
-            jarDir.mkdirs();
-        }
-        File jmsDir = new File(getJmsDirPath());
-        if (jmsDir.exists() == false) {
-            // jmsフォルダ作成
-            jmsDir.mkdirs();
-        }
-        File outDir = new File(getOutputPath());
-        if (outDir.exists() == false) {
-            // outputフォルダ作成
-            outDir.mkdirs();
+        if (JMPLoader.UsePluginDirectory == true) {
+            File jarDir = new File(getJarDirPath());
+            if (jarDir.exists() == false) {
+                // Jarフォルダ作成
+                jarDir.mkdirs();
+            }
+            File jmsDir = new File(getJmsDirPath());
+            if (jmsDir.exists() == false) {
+                // jmsフォルダ作成
+                jmsDir.mkdirs();
+            }
+            File outDir = new File(getOutputPath());
+            if (outDir.exists() == false) {
+                // outputフォルダ作成
+                outDir.mkdirs();
+            }
         }
 
         // アクティベート処理
@@ -349,10 +354,20 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         pluginsDirPath = Utility.stringsCombin(Platform.getCurrentPath(), PLUGINS_DIR_NAME);
 
         // データファイル格納ディレクトリパス
-        dataFileLocationPath = Utility.stringsCombin(pluginsDirPath, Platform.getSeparator(), DATA_DIR_NAME);
+        if (JMPLoader.UsePluginDirectory == true) {
+            dataFileLocationPath = Utility.stringsCombin(pluginsDirPath, Platform.getSeparator(), DATA_DIR_NAME);
+        }
+        else {
+            dataFileLocationPath = Utility.stringsCombin(Platform.getCurrentPath(), DATA_DIR_NAME);
+        }
 
         // リソースファイル格納ディレクトリパス
-        resFileLocationPath = Utility.stringsCombin(pluginsDirPath, Platform.getSeparator(), RES_DIR_NAME);
+        if (JMPLoader.UsePluginDirectory == true) {
+            resFileLocationPath = Utility.stringsCombin(pluginsDirPath, Platform.getSeparator(), RES_DIR_NAME);
+        }
+        else {
+            resFileLocationPath = Utility.stringsCombin(Platform.getCurrentPath(), RES_DIR_NAME);
+        }
 
         // プラグインjms格納ディレクトリパス
         jmsDirPath = Utility.stringsCombin(pluginsDirPath, Platform.getSeparator(), JMS_DIR_NAME);
@@ -378,6 +393,14 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     public String getDataFileLocationPath() {
         return dataFileLocationPath;
     }
+    @Override
+    public String getDataFileLocationPath(IPlugin plugin) {
+        String path = getDataFileLocationPath();
+        if (JMPLoader.UsePluginDirectory == true) {
+            path += (Platform.getSeparator() + getPluginName(plugin));
+        }
+        return path;
+    }
 
     /**
      * リソースファイル格納ディレクトリパス
@@ -386,6 +409,14 @@ public class SystemManager extends AbstractManager implements ISystemManager {
      */
     public String getResFileLocationPath() {
         return resFileLocationPath;
+    }
+    @Override
+    public String getResFileLocationPath(IPlugin plugin) {
+        String path = getResFileLocationPath();
+        if (JMPLoader.UsePluginDirectory == true) {
+            path += (Platform.getSeparator() + getPluginName(plugin));
+        }
+        return path;
     }
 
     public String getPluginsDirPath() {
