@@ -251,7 +251,7 @@ public class JMPLoader {
                 exit();
 
                 String taskErrorMsg = "予期せぬエラーが発生しました。(Task error.)" + Platform.getNewLine() + "アプリケーションを強制終了します。";
-                JMPCore.getSystemManager().showErrorMessageDialogSync(taskErrorMsg);
+                JMPCore.getWindowManager().showErrorMessageDialogSync(taskErrorMsg);
             }
         }
 
@@ -341,7 +341,7 @@ public class JMPLoader {
             JMPCore.getPluginManager().startupPluginInstance();
 
             // メインウィンドウ登録
-            IJmpMainWindow win = JMPCore.getSystemManager().getMainWindow();
+            IJmpMainWindow win = JMPCore.getWindowManager().getMainWindow();
             win.initializeSetting();
             win.hideWindow();
 

@@ -198,7 +198,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     public void playForList(int index, boolean isLoadOnly) {
         LanguageManager lm = JMPCore.getLanguageManager();
-        IJmpMainWindow mainWindow = JMPCore.getSystemManager().getMainWindow();
+        IJmpMainWindow mainWindow = JMPCore.getWindowManager().getMainWindow();
         if (isValidPlayListIndex(index) == false) {
             mainWindow.setStatusText(lm.getLanguageStr(LangID.FILE_ERROR_6), false);
             return;

@@ -1,6 +1,5 @@
 package jlib.core;
 
-import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
 
 public interface ISystemManager {
@@ -61,11 +60,4 @@ public interface ISystemManager {
      * @return キーセット
      */
     abstract String[] getCommonKeySet();
-
-    /**
-     * メインウィンドウ取得
-     *
-     * @return メインウィンドウ
-     */
-    abstract IJmpMainWindow getMainWindow();
 }

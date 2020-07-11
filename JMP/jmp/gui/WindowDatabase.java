@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.swing.JMenuItem;
 
+import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jlib.plugin.IPlugin;
 
@@ -20,6 +21,9 @@ public class WindowDatabase {
 
     private List<JMenuItem> pluginMenuItems = null;
 
+    /** メインウィンドウ */
+    public IJmpMainWindow mainWindow = null;
+
     public WindowDatabase() {
         database = new HashMap<String, IJmpWindow>();
         database.clear();
@@ -29,6 +33,14 @@ public class WindowDatabase {
 
         pluginMenuItems = new ArrayList<JMenuItem>();
         pluginMenuItems.clear();
+    }
+
+    public void setMainWindow(IJmpMainWindow win) {
+        this.mainWindow = win;
+    }
+
+    public IJmpMainWindow getMainWindow() {
+        return mainWindow;
     }
 
     public boolean addWindow(IJmpWindow window) {

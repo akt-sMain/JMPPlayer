@@ -9,6 +9,7 @@ import jlib.gui.IJmpMainWindow;
 import jmp.core.JMPCore;
 import jmp.core.SystemManager;
 import jmp.core.SystemManager.CommonRegister;
+import jmp.core.WindowManager;
 
 public interface IJMPComponentUI {
     public static final int DEFAULT_WINDOW_OFFSET = 50;
@@ -29,9 +30,9 @@ public interface IJMPComponentUI {
     default Point getDefaultWindowLocation() {
         Point p = new Point(50, 50);
 
-        SystemManager system = JMPCore.getSystemManager();
-        if (system != null) {
-            IJmpMainWindow mainWindow = system.getMainWindow();
+        WindowManager wm = JMPCore.getWindowManager();
+        if (wm != null) {
+            IJmpMainWindow mainWindow = wm.getMainWindow();
             if (mainWindow instanceof Window) {
                 Window root = (Window) mainWindow;
                 if (root != null) {

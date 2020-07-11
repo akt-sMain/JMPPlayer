@@ -1,8 +1,16 @@
 package jlib.core;
 
+import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 
 public interface IWindowManager {
+
+    /**
+     * MainWindow取得
+     *
+     * @return MainWindow
+     */
+    abstract IJmpMainWindow getMainWindow();
 
     /**
      * Windowインスタンス取得

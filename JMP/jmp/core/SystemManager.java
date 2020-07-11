@@ -1,7 +1,6 @@
 package jmp.core;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,19 +9,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import function.Platform;
 import function.Utility;
 import jlib.core.ISystemManager;
-import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
-import jmp.lang.DefineLanguage.LangID;
 import jmp.midi.toolkit.DefaultMidiToolkit;
-import jmp.task.ICallbackFunction;
 import wffmpeg.FFmpegWrapper;
 import wrapper.IProcessingCallback;
 import wrapper.ProcessingFFmpegWrapper;
@@ -61,9 +56,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     /** デフォルトプレイヤーカラー */
     public static final Color DEFAULT_PLAYER_BACK_COLOR = Color.DARK_GRAY;
-
-    /** メインウィンドウ */
-    public IJmpMainWindow mainWindow = null;
 
     /** 共通レジスタ */
     private CommonRegister cReg = null;
@@ -468,87 +460,10 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
     }
 
-    /**
-     * メインウィンドウ取得
-     *
-     * @return メインウィンドウ
-     */
-    public IJmpMainWindow getMainWindow() {
-        return mainWindow;
-    }
-
-    /**
-     * メインウィンドウ登録
-     *
-     * @param mainWindow
-     *            メインウィンドウ
-     * @return 結果
-     */
-    public boolean registerMainWindow(IJmpMainWindow mainWindow) {
-        boolean ret = false;
-        if (this.mainWindow == null) {
-            // 未登録時のみ
-            this.mainWindow = mainWindow;
-            ret = true;
-        }
-        return ret;
-    }
-
     @Override
     public String getPluginName(IPlugin plugin) {
         // プラグインマネージャーに問い合わせ
         return JMPCore.getPluginManager().getPluginName(plugin);
-    }
-
-    public void showErrorMessageDialogSync(String message) {
-        IJmpMainWindow win = getMainWindow();
-        Component parent = null;
-        if (win instanceof Component) {
-            parent = (Component) win;
-        }
-        else {
-            parent = null;
-        }
-
-        JOptionPane.showMessageDialog(parent, message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
-        SystemManager.TempResisterEx = null;
-    }
-
-    public void showErrorMessageDialog(String message) {
-        if (SystemManager.TempResisterEx != null) {
-            String stackTrace = function.Error.getMsg(SystemManager.TempResisterEx);
-            showMessageDialog(Utility.stringsCombin(message, Platform.getNewLine(), Platform.getNewLine(), stackTrace),
-                    JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
-        }
-        else {
-            showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
-        }
-        SystemManager.TempResisterEx = null;
-    }
-
-    public void showInformationMessageDialog(String message) {
-        showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Message), JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public void showMessageDialog(String message, int option) {
-        showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Message), option);
-    }
-
-    public void showMessageDialog(String message, String title, int option) {
-        JMPCore.getTaskManager().getTaskOfSequence().queuing(new ICallbackFunction() {
-            @Override
-            public void callback() {
-                IJmpMainWindow win = getMainWindow();
-                Component parent = null;
-                if (win instanceof Component) {
-                    parent = (Component) win;
-                }
-                else {
-                    parent = null;
-                }
-                JOptionPane.showMessageDialog(parent, message, title, option);
-            }
-        });
     }
 
     public void executeBatFile(String path) {

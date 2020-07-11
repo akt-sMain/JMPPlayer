@@ -298,7 +298,7 @@ public class PluginManager extends AbstractManager {
                         // プラグインをメニューに追加
                         IPlugin plugin = getPlugin(name);
                         plugin.initialize();
-                        JMPCore.getSystemManager().getMainWindow().addPluginMenu(name, plugin);
+                        JMPCore.getWindowManager().getMainWindow().addPluginMenu(name, plugin);
                     }
                 }
             }
@@ -416,7 +416,7 @@ public class PluginManager extends AbstractManager {
         Utility.renameFile(jmsFile, Utility.stringsCombin(SETUP_REMOVE_TAG, name));
 
         if (isVisibleMsg == true) {
-            JMPCore.getSystemManager().showMessageDialog("再起動時に削除します。", JOptionPane.INFORMATION_MESSAGE);
+            JMPCore.getWindowManager().showMessageDialog("再起動時に削除します。", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 

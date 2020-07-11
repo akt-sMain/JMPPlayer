@@ -1,11 +1,16 @@
 package jmp.core;
 
+import java.awt.Component;
 import java.awt.Rectangle;
 import java.util.List;
 
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
+import function.Platform;
+import function.Utility;
 import jlib.core.IWindowManager;
+import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jlib.plugin.IPlugin;
 import jmp.ConfigDatabase;
@@ -18,6 +23,8 @@ import jmp.gui.MidiMessageMonitor;
 import jmp.gui.SelectLanguageDialog;
 import jmp.gui.WindowDatabase;
 import jmp.gui.ui.IJMPComponentUI;
+import jmp.lang.DefineLanguage.LangID;
+import jmp.task.ICallbackFunction;
 import jmplayer.JMPPlayer;
 
 public class WindowManager extends AbstractManager implements IWindowManager {
@@ -93,7 +100,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         new FFmpegConvertDialog();
 
         // メインウィンドウ登録
-        JMPCore.getSystemManager().registerMainWindow(new JMPPlayer());
+        registerMainWindow(new JMPPlayer());
     }
 
     public boolean register(IJmpWindow window) {
@@ -107,6 +114,17 @@ public class WindowManager extends AbstractManager implements IWindowManager {
             return false;
         }
         return database.setWindow(name, window);
+    }
+
+    public void registerMainWindow(IJmpMainWindow win) {
+        if (getMainWindow() == null) {
+            database.setMainWindow(win);
+        }
+    }
+
+    @Override
+    public IJmpMainWindow getMainWindow() {
+        return database.getMainWindow();
     }
 
     @Override
@@ -173,5 +191,56 @@ public class WindowManager extends AbstractManager implements IWindowManager {
             // 言語更新
             updateLanguage();
         }
+    }
+
+    public void showErrorMessageDialogSync(String message) {
+        IJmpMainWindow win = getMainWindow();
+        Component parent = null;
+        if (win instanceof Component) {
+            parent = (Component) win;
+        }
+        else {
+            parent = null;
+        }
+
+        JOptionPane.showMessageDialog(parent, message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
+        SystemManager.TempResisterEx = null;
+    }
+
+    public void showErrorMessageDialog(String message) {
+        if (SystemManager.TempResisterEx != null) {
+            String stackTrace = function.Error.getMsg(SystemManager.TempResisterEx);
+            showMessageDialog(Utility.stringsCombin(message, Platform.getNewLine(), Platform.getNewLine(), stackTrace),
+                    JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
+        }
+        else {
+            showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
+        }
+        SystemManager.TempResisterEx = null;
+    }
+
+    public void showInformationMessageDialog(String message) {
+        showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Message), JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void showMessageDialog(String message, int option) {
+        showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Message), option);
+    }
+
+    public void showMessageDialog(String message, String title, int option) {
+        JMPCore.getTaskManager().getTaskOfSequence().queuing(new ICallbackFunction() {
+            @Override
+            public void callback() {
+                IJmpMainWindow win = getMainWindow();
+                Component parent = null;
+                if (win instanceof Component) {
+                    parent = (Component) win;
+                }
+                else {
+                    parent = null;
+                }
+                JOptionPane.showMessageDialog(parent, message, title, option);
+            }
+        });
     }
 }

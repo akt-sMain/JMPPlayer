@@ -20,19 +20,19 @@ public class JMPCoreAccessor {
      */
     public static void register(IManager manager) {
         if (manager instanceof ISystemManager) {
-            systemManager = (ISystemManager) manager;
+            systemManager = (ISystemManager) (systemManager == null ? manager : systemManager);
         }
         else if (manager instanceof ISoundManager) {
-            soundManager = (ISoundManager) manager;
+            soundManager = (ISoundManager) (soundManager == null ? manager : soundManager);
         }
         else if (manager instanceof IDataManager) {
-            dataManager = (IDataManager) manager;
+            dataManager = (IDataManager) (dataManager == null ? manager : dataManager);
         }
         else if (manager instanceof IWindowManager) {
-            windowManager = (IWindowManager) manager;
+            windowManager = (IWindowManager) (windowManager == null ? manager : windowManager);
         }
         else if (manager instanceof IFileManager) {
-            fileManager = (IFileManager) manager;
+            fileManager = (IFileManager) (fileManager == null ? manager : fileManager);
         }
     }
 

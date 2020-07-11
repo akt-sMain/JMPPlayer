@@ -6,7 +6,7 @@ import jlib.plugin.IPlugin;
 import jmp.JMPLoader;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
-import jmp.core.SystemManager;
+import jmp.core.WindowManager;
 
 /**
  * 更新タスク
@@ -26,10 +26,10 @@ public class TaskOfUpdate extends Thread implements ITask {
 
     @Override
     public void run() {
-        SystemManager system = JMPCore.getSystemManager();
+        WindowManager wm = JMPCore.getWindowManager();
         PluginManager pm = JMPCore.getPluginManager();
 
-        IJmpMainWindow win = system.getMainWindow();
+        IJmpMainWindow win = wm.getMainWindow();
         while (isRunnable) {
             win.update();
             pm.update();

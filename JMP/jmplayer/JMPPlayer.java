@@ -54,7 +54,6 @@ import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.PluginManager;
 import jmp.core.SoundManager;
-import jmp.core.SystemManager;
 import jmp.core.WindowManager;
 import jmp.gui.JmpPlayerLaunch;
 import jmp.gui.JmpQuickLaunch;
@@ -176,16 +175,10 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     public JMPPlayer() throws HeadlessException {
         super();
 
-        getContentPane().setBackground(getJmpBackColor());
         setTitle(APP_TITLE);
         this.addWindowListener(this);
         this.setTransferHandler(new DropFileCallbackHandler(this));
-        setBounds(WindowManager.DEFAULT_PLAYER_WINDOW_SIZE);
-
-        Image jmpIcon = JMPCore.getResourceManager().getJmpImageIcon();
-        if (jmpIcon != null) {
-            setIconImage(jmpIcon);
-        }
+        this.setBounds(WindowManager.DEFAULT_PLAYER_WINDOW_SIZE);
 
         // ウィンドウマネージャーに登録
         JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_MAIN, this);
@@ -203,34 +196,28 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         panel.setLayout(new BorderLayout(0, 0));
 
         panel_1 = new JPanel();
-        panel_1.setBackground(getJmpBackColor());
         panel.add(panel_1, BorderLayout.CENTER);
         panel_1.setLayout(new GridLayout(0, 5, 15, 0));
 
         prev2Button = new JButton("←←");
         panel_1.add(prev2Button);
         prev2Button.setToolTipText("前の曲へ");
-        prev2Button.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
 
         prevButton = new JButton("←");
         panel_1.add(prevButton);
         prevButton.setToolTipText("巻き戻し");
-        prevButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
 
         playButton = new JButton("再生");
         panel_1.add(playButton);
         playButton.setToolTipText("再生/停止");
-        playButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
 
         nextButton = new JButton("→");
         panel_1.add(nextButton);
         nextButton.setToolTipText("早送り");
-        nextButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
 
         next2Button = new JButton("→→");
         panel_1.add(next2Button);
         next2Button.setToolTipText("次の曲へ");
-        next2Button.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
 
         panel_3 = new JPanel();
         panel_3.setBounds(36, 237, 495, 46);
@@ -240,16 +227,13 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         slider = new JSlider();
         panel_3.add(slider, BorderLayout.CENTER);
         slider.setForeground(new Color(255, 255, 255));
-        slider.setBackground(getJmpBackColor());
         slider.setValue(0);
 
         panel_4 = new JPanel();
-        panel_4.setBackground(getJmpBackColor());
         panel_3.add(panel_4, BorderLayout.SOUTH);
         panel_4.setLayout(new GridLayout(0, 2, 0, 0));
 
         panel_6 = new JmpPlayerLaunch();
-        panel_6.setBackground(getJmpBackColor());
         panel_4.add(panel_6);
 
         labelPositionTime = new JLabel(String.format(CURRENT_TIME_FORMAT, "00:00", "00:00"));
@@ -698,6 +682,24 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     @Override
     public void initializeSetting() {
         DataManager dm = JMPCore.getDataManager();
+
+        // アイコン設定
+        Image jmpIcon = JMPCore.getResourceManager().getJmpImageIcon();
+        if (jmpIcon != null) {
+            setIconImage(jmpIcon);
+        }
+
+        // 色設定
+        getContentPane().setBackground(getJmpBackColor());
+        panel_1.setBackground(getJmpBackColor());
+        slider.setBackground(getJmpBackColor());
+        panel_4.setBackground(getJmpBackColor());
+        panel_6.setBackground(getJmpBackColor());
+        prev2Button.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
+        prevButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
+        playButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
+        nextButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
+        next2Button.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
 
         // プラグイン追加
         for (String name : JMPCore.getPluginManager().getPluginsNameSet()) {
@@ -1362,25 +1364,25 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
     @Override
     public void catchDropFile(File file) {
-        SystemManager system = JMPCore.getSystemManager();
+        WindowManager wm = JMPCore.getWindowManager();
         LanguageManager lm = JMPCore.getLanguageManager();
 
         String path = file.getPath();
         if (Utility.checkExtension(path, PluginManager.PLUGIN_ZIP_EX) == true) {
             // プラグインロード
             if (JMPCore.getPluginManager().readingPluginZipPackage(path, true) == true) {
-                system.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
+                wm.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
             }
             else {
-                system.showErrorMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_ERROR));
+                wm.showErrorMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_ERROR));
             }
         }
         else if (Utility.checkExtension(path, PluginManager.SETUP_FILE_EX) == true) {
             if (JMPCore.getPluginManager().readingSetupFile(path) == true) {
-                system.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
+                wm.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
             }
             else {
-                system.showErrorMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_ERROR));
+                wm.showErrorMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_ERROR));
             }
         }
         else {
