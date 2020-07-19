@@ -15,11 +15,6 @@ import jmp.ConfigDatabase;
 import jmp.JMPLoader;
 
 public class DataManager extends AbstractManager implements IDataManager {
-
-    public static final String[] ExtentionForMIDI = { "mid", "midi" };
-    public static final String[] ExtentionForWAV = { "wav" };
-    public static final String[] ExtentionForMusicXML = { "xml", "musicxml", "mxl" };
-    public static final String[] ExtentionForFFmpeg = { "*" };
     public static final String CONFIG_FILE = "config.txt";
     public static final String HISTORY_FILE = "history.txt";
 

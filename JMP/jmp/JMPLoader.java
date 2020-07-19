@@ -137,6 +137,9 @@ public class JMPLoader {
     public static boolean invoke(String[] args, ConfigDatabase config) {
         IPlugin stdPlugin = null;
         if (args.length > 0) {
+            // システムパス設定
+            JMPCore.getSystemManager().makeSystemPath();
+
             if (args[0].equalsIgnoreCase(CMD_MKJMP) == true) {
                 args[0] = MakeJmpLib.CMD_CONSOLE;
                 MakeJmpLib.call(args);

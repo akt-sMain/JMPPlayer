@@ -20,7 +20,9 @@ import jlib.gui.IJmpWindow;
 import jlib.midi.IMidiEventListener;
 import jlib.midi.IMidiToolkit;
 import jlib.player.IPlayer;
+import jmp.CommonRegister;
 import jmp.JMPFlags;
+import jmp.JmpUtil;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.midi.MidiByteMessage;
 import jmp.midi.toolkit.MidiToolkitManager;
@@ -55,7 +57,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     FloatControl volumeCtrl;
 
-    private IMidiToolkit midiToolkit = MidiToolkitManager.getInstance().getDefaultMidiToolkit();
+    private IMidiToolkit midiToolkit = null;
 
     SoundManager(int pri) {
         super(pri, "sound");
@@ -68,26 +70,31 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             JMPFlags.StartupAutoConectSynth = true;
         }
 
+        // MidiToolKitを更新する
         updateMidiToolkit();
 
         PlayerAccessor = new PlayerAccessor();
 
         // プレイヤーインスタンス作成
-        MidiPlayer = new MidiPlayer();
-        WavPlayer = new WavPlayer();
-        MusicXmlPlayer = new MusicXmlPlayer();
-        FFmpegPlayer = new FFmpegPlayer();
+        SystemManager system = JMPCore.getSystemManager();
+        String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_EXTENSION_MIDI));
+        String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_EXTENSION_WAV));
+        String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_EXTENSION_MUSICXML));
 
-        MidiPlayer.setSupportExtentions(DataManager.ExtentionForMIDI);
+        MidiPlayer = new MidiPlayer();
+        MidiPlayer.setSupportExtentions(exMIDI);
         PlayerAccessor.register(MidiPlayer);
 
-        WavPlayer.setSupportExtentions(DataManager.ExtentionForWAV);
+        WavPlayer = new WavPlayer();
+        WavPlayer.setSupportExtentions(exWAV);
         PlayerAccessor.register(WavPlayer);
 
-        MusicXmlPlayer.setSupportExtentions(DataManager.ExtentionForMusicXML);
+        MusicXmlPlayer = new MusicXmlPlayer();
+        MusicXmlPlayer.setSupportExtentions(exMUSICXML);
         PlayerAccessor.register(MusicXmlPlayer);
 
-        FFmpegPlayer.setSupportExtentions(DataManager.ExtentionForFFmpeg);
+        FFmpegPlayer = new FFmpegPlayer();
+        FFmpegPlayer.setSupportExtentions("*");
         PlayerAccessor.register(FFmpegPlayer);
 
         // デフォルトはMIDIプレイヤーにする
@@ -613,22 +620,22 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     @Override
     protected void notifyUpdateCommonRegister(String key) {
         SystemManager system = JMPCore.getSystemManager();
-        if (key.equals(SystemManager.CommonRegister.COMMON_REGKEY_USE_MIDI_TOOLKIT) == true) {
+        if (key.equals(CommonRegister.COMMON_REGKEY_USE_MIDI_TOOLKIT) == true) {
             updateMidiToolkit();
         }
-        else if (key.equals(SystemManager.CommonRegister.COMMON_REGKEY_EXTENSION_MIDI) == true) {
+        else if (key.equals(CommonRegister.COMMON_REGKEY_EXTENSION_MIDI) == true) {
             String val = system.getCommonRegisterValue(key);
-            String[] exs = SystemManager.genStr2Extensions(val);
+            String[] exs = JmpUtil.genStr2Extensions(val);
             MidiPlayer.setSupportExtentions(exs);
         }
-        else if (key.equals(SystemManager.CommonRegister.COMMON_REGKEY_EXTENSION_WAV) == true) {
+        else if (key.equals(CommonRegister.COMMON_REGKEY_EXTENSION_WAV) == true) {
             String val = system.getCommonRegisterValue(key);
-            String[] exs = SystemManager.genStr2Extensions(val);
+            String[] exs = JmpUtil.genStr2Extensions(val);
             WavPlayer.setSupportExtentions(exs);
         }
-        else if (key.equals(SystemManager.CommonRegister.COMMON_REGKEY_EXTENSION_MUSICXML) == true) {
+        else if (key.equals(CommonRegister.COMMON_REGKEY_EXTENSION_MUSICXML) == true) {
             String val = system.getCommonRegisterValue(key);
-            String[] exs = SystemManager.genStr2Extensions(val);
+            String[] exs = JmpUtil.genStr2Extensions(val);
             MusicXmlPlayer.setSupportExtentions(exs);
         }
         super.notifyUpdateCommonRegister(key);
@@ -637,7 +644,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     public void updateMidiToolkit() {
         // 使用するツールキットを更新
         SystemManager system = JMPCore.getSystemManager();
-        String toolkitName = system.getCommonRegisterValue(SystemManager.CommonRegister.COMMON_REGKEY_USE_MIDI_TOOLKIT);
+        String toolkitName = system.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_USE_MIDI_TOOLKIT);
         midiToolkit = MidiToolkitManager.getInstance().getMidiToolkit(toolkitName);
     }
 

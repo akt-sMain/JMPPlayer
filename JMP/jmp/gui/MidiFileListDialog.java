@@ -37,12 +37,14 @@ import javax.swing.table.TableColumn;
 import function.Platform;
 import function.Platform.KindOfPlatform;
 import function.Utility;
+import jmp.CommonRegister;
 import jmp.ConfigDatabase;
 import jmp.JMPFlags;
-import jmp.core.DataManager;
+import jmp.JmpUtil;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
+import jmp.core.SystemManager;
 import jmp.core.WindowManager;
 import jmp.gui.ui.DropFileCallbackHandler;
 import jmp.gui.ui.FileListTableModel;
@@ -448,6 +450,11 @@ public class MidiFileListDialog extends JMPFrame {
         midiFileMap = JMPCore.getSoundManager().getFileList(file);
         removeAllRows();
 
+        SystemManager system = JMPCore.getSystemManager();
+        String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_EXTENSION_MIDI));
+        String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_EXTENSION_WAV));
+        String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_EXTENSION_MUSICXML));
+
         /* リスト構築 */
         if (midiFileMap != null) {
             // ファイル名ソート
@@ -470,7 +477,7 @@ public class MidiFileListDialog extends JMPFrame {
                 String sKey = key.toString();
                 File f = midiFileMap.get(sKey);
                 if (f.isFile() == true) {
-                    if (Utility.checkExtensions(sKey, DataManager.ExtentionForMIDI) == true) {
+                    if (Utility.checkExtensions(sKey, exMIDI) == true) {
                         if (midiFileMap.containsKey(sKey) == true) {
                             list.add(f);
                         }
@@ -482,7 +489,7 @@ public class MidiFileListDialog extends JMPFrame {
                 String sKey = key.toString();
                 File f = midiFileMap.get(sKey);
                 if (f.isFile() == true) {
-                    if (Utility.checkExtensions(sKey, DataManager.ExtentionForWAV) == true) {
+                    if (Utility.checkExtensions(sKey, exWAV) == true) {
                         if (midiFileMap.containsKey(sKey) == true) {
                             list.add(f);
                         }
@@ -494,7 +501,7 @@ public class MidiFileListDialog extends JMPFrame {
                 String sKey = key.toString();
                 File f = midiFileMap.get(sKey);
                 if (f.isFile() == true) {
-                    if (Utility.checkExtensions(sKey, DataManager.ExtentionForMusicXML) == true) {
+                    if (Utility.checkExtensions(sKey, exMUSICXML) == true) {
                         if (midiFileMap.containsKey(sKey) == true) {
                             list.add(f);
                         }
@@ -539,15 +546,15 @@ public class MidiFileListDialog extends JMPFrame {
                     model.addRow(row);
                 }
                 else {
-                    if (Utility.checkExtensions(name, DataManager.ExtentionForMIDI) == true) {
+                    if (Utility.checkExtensions(name, exMIDI) == true) {
                         Object[] row = createFileListRows(midiIcon, "MI", name);
                         model.addRow(row);
                     }
-                    else if (Utility.checkExtensions(name, DataManager.ExtentionForWAV) == true) {
+                    else if (Utility.checkExtensions(name, exWAV) == true) {
                         Object[] row = createFileListRows(wavIcon, "WA", name);
                         model.addRow(row);
                     }
-                    else if (Utility.checkExtensions(name, DataManager.ExtentionForMusicXML) == true) {
+                    else if (Utility.checkExtensions(name, exMUSICXML) == true) {
                         Object[] row = createFileListRows(xmlIcon, "XM", name);
                         model.addRow(row);
                     }

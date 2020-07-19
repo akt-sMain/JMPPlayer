@@ -7,10 +7,12 @@ import jlib.midi.IMidiToolkit;
 
 public class MidiToolkitManager {
 
-    private static DefaultMidiToolkit defaultMidiToolkit = new DefaultMidiToolkit();
+    public static final String DEFAULT_MIDI_TOOLKIT_NAME = DefaultMidiToolkit.class.getSimpleName();
+
+    private static DefaultMidiToolkit DefaultMidiToolkit = new DefaultMidiToolkit();
     private static List<IMidiToolkit> lst = new ArrayList<IMidiToolkit>() {
         {
-            add(defaultMidiToolkit);
+            add(DefaultMidiToolkit);
         }
     };
 
@@ -29,11 +31,7 @@ public class MidiToolkitManager {
                 return kit;
             }
         }
-        return defaultMidiToolkit;
-    }
-
-    public IMidiToolkit getDefaultMidiToolkit() {
-        return getMidiToolkit(DefaultMidiToolkit.class.getSimpleName());
+        return DefaultMidiToolkit;
     }
 
 }

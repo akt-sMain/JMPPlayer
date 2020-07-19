@@ -6,9 +6,9 @@ import java.awt.Window;
 
 import function.Utility;
 import jlib.gui.IJmpMainWindow;
+import jmp.CommonRegister;
 import jmp.core.JMPCore;
 import jmp.core.SystemManager;
-import jmp.core.SystemManager.CommonRegister;
 import jmp.core.WindowManager;
 
 public interface IJMPComponentUI {

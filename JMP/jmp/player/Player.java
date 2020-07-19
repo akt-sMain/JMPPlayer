@@ -3,6 +3,7 @@ package jmp.player;
 import java.io.File;
 
 import jlib.player.IPlayer;
+import jmp.JmpUtil;
 
 public abstract class Player implements IPlayer {
     private String[] supportExtentions = null;
@@ -70,5 +71,15 @@ public abstract class Player implements IPlayer {
      */
     public void setSupportExtentions(String... supportExtentions) {
         this.supportExtentions = supportExtentions;
+    }
+
+    /**
+     * サポートする拡張子を設定(文字列動的変換)
+     *
+     * @param supportExtentionsStr
+     *            サポートする拡張子
+     */
+    public void setSupportExtentionsString(String supportExtentionsStr) {
+        setSupportExtentions(JmpUtil.genStr2Extensions(supportExtentionsStr));
     }
 }

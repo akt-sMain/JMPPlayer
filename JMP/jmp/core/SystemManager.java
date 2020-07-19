@@ -1,13 +1,9 @@
 package jmp.core;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import javax.swing.UIManager;
 
@@ -15,9 +11,9 @@ import function.Platform;
 import function.Utility;
 import jlib.core.ISystemManager;
 import jlib.plugin.IPlugin;
+import jmp.CommonRegister;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
-import jmp.midi.toolkit.DefaultMidiToolkit;
 import wffmpeg.FFmpegWrapper;
 import wrapper.IProcessingCallback;
 import wrapper.ProcessingFFmpegWrapper;
@@ -49,19 +45,13 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     public static final String JAR_DIR_NAME = "jar";
 
     /** ZIPパッケージディレクトリ名 */
-    public static final String ZIP_DIR_NAME = "zip";
+    public static final String ZIP_DIR_NAME = "jmz";
 
     /** Outputディレクトリ名 */
     public static final String OUTPUT_DIR_NAME = "output";
 
-    /** デフォルトプレイヤーカラー */
-    public static final Color DEFAULT_PLAYER_BACK_COLOR = Color.DARK_GRAY;
-
     /** 共通レジスタ */
     private CommonRegister cReg = null;
-
-    /** デフォルトMidiToolkit名 */
-    public static final String USE_MIDI_TOOLKIT_CLASSNAME = DefaultMidiToolkit.class.getSimpleName();
 
     /** FFmpeg wrapper インスタンス */
     private FFmpegWrapper ffmpegWrapper = null;
@@ -75,110 +65,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     private String zipDirPath = "";
     private String outputPath = "";
     private String activateFileLocationPath = "";
-
-    public class CommonRegisterINI {
-        public String key, value;
-        public CommonRegisterINI(String key, String value) {
-            this.key = key;
-            this.value = value;
-        }
-    }
-
-    public static String genExtensions2Str(String... ex) {
-        String ret = "";
-        for (int i = 0; i < ex.length; i++) {
-            if (i > 0) {
-                ret += ",";
-            }
-            ret += ex[i];
-        }
-        return ret;
-    }
-    public static String[] genStr2Extensions(String str) {
-        String[] ret = str.split(",");
-        return ret;
-    }
-
-    public class CommonRegister {
-
-        public static final String COMMON_REGKEY_CH_COLOR_FORMAT = "ch_color_%d";
-
-        public static final String COMMON_REGKEY_PLAYER_BACK_COLOR = "player_back_color";
-        public static final String COMMON_REGKEY_EXTENSION_MIDI = "extension_midi";
-        public static final String COMMON_REGKEY_EXTENSION_WAV = "extension_wav";
-        public static final String COMMON_REGKEY_EXTENSION_MUSICXML = "extension_musicxml";
-        public static final String COMMON_REGKEY_USE_MIDI_TOOLKIT = "use_midi_toolkit";
-
-        private String[] cRegKeySet = null;
-        private List<CommonRegisterINI> iniList = new ArrayList<CommonRegisterINI>() {
-            {
-                add(new CommonRegisterINI(COMMON_REGKEY_EXTENSION_MIDI, genExtensions2Str(DataManager.ExtentionForMIDI)));
-                add(new CommonRegisterINI(COMMON_REGKEY_EXTENSION_WAV, genExtensions2Str(DataManager.ExtentionForWAV)));
-                add(new CommonRegisterINI(COMMON_REGKEY_EXTENSION_MUSICXML, genExtensions2Str(DataManager.ExtentionForMusicXML)));
-                add(new CommonRegisterINI(COMMON_REGKEY_USE_MIDI_TOOLKIT, USE_MIDI_TOOLKIT_CLASSNAME));
-                add(new CommonRegisterINI(COMMON_REGKEY_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(DEFAULT_PLAYER_BACK_COLOR)));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 1), "#8ec21f"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 2), "#3dc21f"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 3), "#1fc253"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 4), "#1fc2a4"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 5), "#1f8ec2"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 6), "#1f3dc2"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 7), "#531fc2"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 8), "#a41fc2"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 9), "#ffc0cb"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 10), "#c21f3d"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 11), "#c2531f"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 12), "#c2a41f"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 13), "#3d00c2"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 14), "#ffff29"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 15), "#bbff29"));
-                add(new CommonRegisterINI(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 16), "#f98608"));
-            }
-        };
-
-        private HashMap<String, String> map;
-
-        public CommonRegister() {
-            map = new HashMap<String, String>();
-        }
-
-        public void load() {
-        }
-
-        public void init() {
-            cRegKeySet = new String[iniList.size()];
-            for (int i=0; i<iniList.size(); i++) {
-                CommonRegisterINI cri = iniList.get(i);
-                add(cri.key, cri.value);
-
-                // キーセットを作成
-                cRegKeySet[i] = cri.key;
-            }
-        }
-
-        public void add(String key, String value) {
-            map.put(key, value);
-        }
-
-        public boolean setValue(String key, String value) {
-            if (map.containsKey(key) == true) {
-                map.put(key, value);
-                return true;
-            }
-            return false;
-        }
-
-        public String getValue(String key) {
-            if (map.containsKey(key) == true) {
-                return map.get(key);
-            }
-            return "";
-        }
-
-        public String[] getKeySet() {
-            return cRegKeySet;
-        }
-    }
 
     SystemManager(int pri) {
         super(pri, "system");
@@ -320,6 +206,10 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         if (cReg == null) {
             return false;
         }
+        if (JMPFlags.DebugMode == false) {
+            // デバッグモード時のみ設定可能
+            return false;
+        }
 
         boolean ret = cReg.setValue(key, value);
         if (ret == true) {
@@ -385,6 +275,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     public String getDataFileLocationPath() {
         return dataFileLocationPath;
     }
+
     @Override
     public String getDataFileLocationPath(IPlugin plugin) {
         String path = getDataFileLocationPath();
@@ -402,6 +293,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     public String getResFileLocationPath() {
         return resFileLocationPath;
     }
+
     @Override
     public String getResFileLocationPath(IPlugin plugin) {
         String path = getResFileLocationPath();
@@ -445,6 +337,8 @@ public class SystemManager extends AbstractManager implements ISystemManager {
      */
     private void setupLookAndFeel() {
         String lf = UIManager.getSystemLookAndFeelClassName();
+        // String lf = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
+        // String lf = "javax.swing.plaf.metal.MetalLookAndFeel";
         try {
             UIManager.setLookAndFeel(lf);
         }

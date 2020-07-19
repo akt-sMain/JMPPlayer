@@ -13,7 +13,6 @@ import javax.imageio.ImageIO;
 import function.Platform;
 import function.Utility;
 import jlib.core.IManager;
-import jmp.JMPFlags;
 import jmp.JMPLoader;
 import jmp.skin.ImageResource;
 import jmp.skin.Resource;
@@ -78,7 +77,7 @@ public class ResourceManager extends AbstractManager implements IManager {
         if (confFile.exists() == false) {
             // Skin.txt作成
             List<String> confFileContent = new LinkedList<String>();
-            confFileContent.add("# 使用するSkinフォルダ名");
+            confFileContent.add("# Skin folder name to use.");
             confFileContent.add(SkinGlobalConfig.KEY_USE + "=default");
             confFileContent.add("");
             try {

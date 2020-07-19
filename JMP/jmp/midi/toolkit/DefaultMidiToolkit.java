@@ -24,7 +24,7 @@ public class DefaultMidiToolkit implements IMidiToolkit {
             return false;
         }
 
-        if ((sMes.getCommand() == ShortMessage.NOTE_ON) && (sMes.getData2() > 0)) {
+        if ((sMes.getCommand() == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON) && (sMes.getData2() > 0)) {
             return true;
         }
         return false;

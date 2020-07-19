@@ -13,6 +13,7 @@ import jlib.core.IWindowManager;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jlib.plugin.IPlugin;
+import jmp.CommonRegister;
 import jmp.ConfigDatabase;
 import jmp.gui.FFmpegConvertDialog;
 import jmp.gui.HistoryDialog;
@@ -75,7 +76,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
 
     @Override
     protected void notifyUpdateCommonRegister(String key) {
-        if (key.equals(SystemManager.CommonRegister.COMMON_REGKEY_PLAYER_BACK_COLOR) == true) {
+        if (key.equals(CommonRegister.COMMON_REGKEY_PLAYER_BACK_COLOR) == true) {
             for (IJmpWindow win : database.getAccessor()) {
                 if (win != null) {
                     if (win instanceof IJMPComponentUI) {
