@@ -8,7 +8,7 @@ EXIT
 
 :yes
 rd /s /q plugins
-rd /s /q zip
+rd /s /q jmz
 del skin.txt
 del activate
 rem clean.bat

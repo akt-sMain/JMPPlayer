@@ -4,9 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import javax.sound.midi.MidiMessage;
@@ -14,13 +11,12 @@ import javax.swing.JOptionPane;
 
 import function.Platform;
 import function.Utility;
-import jlib.midi.IMidiEventListener;
-import jlib.player.IPlayerListener;
 import jlib.plugin.IPlugin;
 import jlib.plugin.ISupportExtensionConstraints;
 import jmp.JMPFlags;
 import jmp.plugin.JMPPluginLoader;
 import jmp.plugin.JmsProperty;
+import jmp.plugin.PluginObserver;
 import jmp.task.TaskOfMidiEvent.JmpMidiPacket;
 import lib.MakeJmpLib;
 
@@ -64,8 +60,8 @@ public class PluginManager extends AbstractManager {
     // 変数
     // ---------------------------------------------
 
-    /** プラグイン格納用コレクション */
-    private Map<String, IPlugin> aPlugins = new HashMap<String, IPlugin>();
+    /** プラグインオブザーバ */
+    private PluginObserver observers = null;
 
     // ---------------------------------------------
     // メソッド群
@@ -75,8 +71,10 @@ public class PluginManager extends AbstractManager {
     }
 
     protected boolean initFunc() {
-
         super.initFunc();
+
+        observers = new PluginObserver();
+
         return true;
     }
 
@@ -111,7 +109,7 @@ public class PluginManager extends AbstractManager {
                     if (Utility.checkExtension(f.getPath(), PLUGIN_ZIP_EX) == false) {
                         continue;
                     }
-                    if (readingPluginZipPackage(f.getPath(), false) == true) {
+                    if (readingJmzPackage(f.getPath(), false) == true) {
                         Utility.deleteFileDirectory(f);
                     }
                     Utility.threadSleep(100);
@@ -124,11 +122,11 @@ public class PluginManager extends AbstractManager {
         initialize();
     }
 
-    public boolean readingPluginZipPackage(String path) {
-        return readingPluginZipPackage(path, true);
+    public boolean readingJmzPackage(String path) {
+        return readingJmzPackage(path, true);
     }
 
-    public boolean readingPluginZipPackage(String path, boolean isImport) {
+    public boolean readingJmzPackage(String path, boolean isImport) {
         boolean ret = true;
         String tmpDirectoryPath = Utility.pathCombin(Platform.getCurrentPath(false),
                 Utility.stringsCombin("_", Utility.getFileNameNotExtension(path), Utility.getCurrentTimeStr()));
@@ -155,7 +153,7 @@ public class PluginManager extends AbstractManager {
             }
 
             if (jmsFile != null) {
-                readingSetupFile(jmsFile, isImport);
+                readingJmsFile(jmsFile, isImport);
             }
         }
         catch (Exception e) {
@@ -197,19 +195,19 @@ public class PluginManager extends AbstractManager {
         }
     }
 
-    public boolean readingSetupFile(String path) {
-        return readingSetupFile(new File(path), true);
+    public boolean readingJmsFile(String path) {
+        return readingJmsFile(new File(path), true);
     }
 
-    public boolean readingSetupFile(File file) {
-        return readingSetupFile(file, true);
+    public boolean readingJmsFile(File file) {
+        return readingJmsFile(file, true);
     }
 
-    public boolean readingSetupFile(String path, boolean isImport) {
-        return readingSetupFile(new File(path), isImport);
+    public boolean readingJmsFile(String path, boolean isImport) {
+        return readingJmsFile(new File(path), isImport);
     }
 
-    public boolean readingSetupFile(File file, boolean isImport) {
+    public boolean readingJmsFile(File file, boolean isImport) {
         boolean ret = true;
 
         // 削除オプション
@@ -437,90 +435,43 @@ public class PluginManager extends AbstractManager {
     }
 
     public boolean addPlugin(String name, IPlugin plugin, boolean isOverwrite) {
-        if (aPlugins.containsKey(name) == true) {
-            if (isOverwrite == true) {
-                IPlugin rem = aPlugins.remove(name);
-                if (rem != null) {
-                    rem.close();
-                    rem.exit();
-                }
-            }
-            else {
-                return false;
-            }
-        }
-        aPlugins.put(name, plugin);
-        return true;
+        return observers.addPlugin(name, plugin, isOverwrite);
     }
 
     public String getPluginName(IPlugin plugin) {
-        String name = "";
-        for (String key : aPlugins.keySet()) {
-            if (plugin == aPlugins.get(key)) {
-                name = key;
-            }
-        }
-        return name;
+        return observers.getPluginName(plugin);
     }
 
     public Set<String> getPluginsNameSet() {
-        return aPlugins.keySet();
+        return observers.getPluginsNameSet();
     }
 
     public IPlugin getPlugin(String name) {
-        if (aPlugins.containsKey(name) == false) {
-            return null;
-        }
-        return aPlugins.get(name);
-    }
-
-    public Collection<IPlugin> getPlugins() {
-        return aPlugins.values();
+        return observers.getPlugin(name);
     }
 
     public void initialize() {
-        for (IPlugin plugin : getPlugins()) {
-            plugin.initialize();
-        }
+        observers.initialize();
     }
 
     public void exit() {
-        for (IPlugin plugin : getPlugins()) {
-            plugin.exit();
-        }
+        observers.exit();
     }
 
     public void update() {
-        for (IPlugin plugin : getPlugins()) {
-            plugin.update();
-        }
+        observers.update();
     }
 
     public void startSequencer() {
-        for (IPlugin plugin : getPlugins()) {
-            if (plugin instanceof IPlayerListener) {
-                IPlayerListener pi = (IPlayerListener) plugin;
-                pi.startSequencer();
-            }
-        }
+        observers.startSequencer();
     }
 
     public void stopSequencer() {
-        for (IPlugin plugin : getPlugins()) {
-            if (plugin instanceof IPlayerListener) {
-                IPlayerListener pi = (IPlayerListener) plugin;
-                pi.stopSequencer();
-            }
-        }
+        observers.stopSequencer();
     }
 
     public void updateTickPosition(long before, long after) {
-        for (IPlugin plugin : getPlugins()) {
-            if (plugin instanceof IPlayerListener) {
-                IPlayerListener pi = (IPlayerListener) plugin;
-                pi.updateTickPosition(before, after);
-            }
-        }
+        observers.updateTickPosition(before, after);
     }
 
     public void catchMidiEvent(MidiMessage message, long timeStamp, short senderType) {
@@ -529,16 +480,11 @@ public class PluginManager extends AbstractManager {
     }
 
     public void send(JmpMidiPacket packet) {
-        for (IPlugin plugin : getPlugins()) {
-            if (plugin instanceof IMidiEventListener) {
-                IMidiEventListener mi = (IMidiEventListener) plugin;
-                mi.catchMidiEvent(packet.message, packet.timeStamp, packet.senderType);
-            }
-        }
+        observers.catchMidiEvent(packet.message, packet.timeStamp, packet.senderType);
     }
 
     void loadFile(File file) {
-        for (IPlugin plugin : getPlugins()) {
+        for (IPlugin plugin : observers.getPlugins()) {
             boolean ret = false;
             if (plugin instanceof ISupportExtensionConstraints) {
                 ISupportExtensionConstraints sec = (ISupportExtensionConstraints) plugin;
@@ -561,11 +507,7 @@ public class PluginManager extends AbstractManager {
     }
 
     public void closeAllPlugins() {
-        for (IPlugin plugin : getPlugins()) {
-            if (plugin.isOpen() == true) {
-                plugin.close();
-            }
-        }
+        observers.close();
     }
 
     public void closeNonSupportPlugins(String ex) {
@@ -574,7 +516,7 @@ public class PluginManager extends AbstractManager {
             return;
         }
 
-        for (IPlugin plugin : getPlugins()) {
+        for (IPlugin plugin : observers.getPlugins()) {
             if (plugin instanceof ISupportExtensionConstraints) {
                 ISupportExtensionConstraints sec = (ISupportExtensionConstraints) plugin;
                 String[] allowsEx = sec.allowedExtensionsArray();
@@ -598,16 +540,12 @@ public class PluginManager extends AbstractManager {
     @Override
     protected void notifyUpdateCommonRegister(String key) {
         super.notifyUpdateCommonRegister(key);
-        for (IPlugin plugin : getPlugins()) {
-            plugin.notifyUpdateCommonRegister(key);
-        }
+        observers.notifyUpdateCommonRegister(key);
     }
 
     @Override
     protected void notifyUpdateConfig(String key) {
         super.notifyUpdateConfig(key);
-        for (IPlugin plugin : getPlugins()) {
-            plugin.notifyUpdateConfig(key);
-        }
+        observers.notifyUpdateConfig(key);
     }
 }

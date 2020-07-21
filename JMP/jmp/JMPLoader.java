@@ -278,9 +278,7 @@ public class JMPLoader {
         JMPCore.getWindowManager().setVisibleAll(false);
 
         // 終了前に全てのプラグインを閉じる
-        for (IPlugin p : JMPCore.getPluginManager().getPlugins()) {
-            p.close();
-        }
+        JMPCore.getPluginManager().closeAllPlugins();
 
         // タスクの終了
         JMPCore.getTaskManager().taskExit();

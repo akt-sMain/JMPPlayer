@@ -1386,7 +1386,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         String path = file.getPath();
         if (Utility.checkExtension(path, PluginManager.PLUGIN_ZIP_EX) == true) {
             // プラグインロード
-            if (JMPCore.getPluginManager().readingPluginZipPackage(path, true) == true) {
+            if (JMPCore.getPluginManager().readingJmzPackage(path, true) == true) {
                 wm.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
             }
             else {
@@ -1394,7 +1394,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             }
         }
         else if (Utility.checkExtension(path, PluginManager.SETUP_FILE_EX) == true) {
-            if (JMPCore.getPluginManager().readingSetupFile(path) == true) {
+            if (JMPCore.getPluginManager().readingJmsFile(path) == true) {
                 wm.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
             }
             else {
