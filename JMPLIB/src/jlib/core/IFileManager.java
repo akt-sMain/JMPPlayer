@@ -42,4 +42,9 @@ public interface IFileManager {
     default void loadFileToPlay(String path) {
         loadFileToPlay(new File(path));
     }
+
+    /**
+     * リロード処理
+     */
+    abstract void reload();
 }

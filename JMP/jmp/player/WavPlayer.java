@@ -2,12 +2,15 @@ package jmp.player;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -28,6 +31,10 @@ public class WavPlayer extends Player {
         Platform.requestGarbageCollection();
 
         clip = c;
+    }
+
+    public Clip getClip() {
+        return clip;
     }
 
     // クリップの破棄
@@ -132,6 +139,11 @@ public class WavPlayer extends Player {
         }
     }
 
+    public FloatControl getFloatControl(FloatControl.Type type) {
+        FloatControl control = (FloatControl) clip.getControl(type);
+        return control;
+    }
+
     @Override
     public float getVolume() {
         if (isValid() == false) {
@@ -139,11 +151,11 @@ public class WavPlayer extends Player {
         }
         return 0;
         // FloatControl control =
-        // (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
+        // getFloatControl(FloatControl.Type.MASTER_GAIN);
         // float range = control.getMaximum() - control.getMinimum();
         // float volume = control.getValue() - control.getMinimum();
         // int pos = (int) ((volume * volumeSlider.getMaximum()) / range);
-        // return pos;
+        // return volume;
     }
 
     @Override
@@ -187,6 +199,7 @@ public class WavPlayer extends Player {
 
         // オーディオ入力ストリーム取得
         AudioInputStream ais = AudioSystem.getAudioInputStream(file);
+        tmpIs = ais;
         // オーディオフォーマット取得
         AudioFormat audioFormat = ais.getFormat();
         DataLine.Info dataLine = new DataLine.Info(Clip.class, audioFormat);
@@ -195,16 +208,33 @@ public class WavPlayer extends Player {
         return clip;
     }
 
-    protected void loadWavFile(File file) throws Exception {
-        try {
-            Clip clip = createClip(file);
-            setClip(clip);
+    private AudioInputStream tmpIs = null;
+
+    public ArrayList<Long> sampling(int samplingSize) throws IOException {
+        ArrayList<Long> data = new ArrayList<>();
+        if (tmpIs == null) {
+            return data;
         }
-        catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
-            throw e;
+        if (samplingSize < 0) {
+            return data;
         }
-        finally {
+        int sample_size = tmpIs.getFormat().getSampleSizeInBits() / 8;
+        while (data.size() < samplingSize) {
+            byte[] buffer = new byte[8];
+            tmpIs.read(buffer, 8 - sample_size, sample_size);
+            if (buffer[8 - sample_size] < 0) {
+                for (int i = 0; i < 8 - sample_size; i++) {
+                    buffer[i] = -1;
+                }
+            }
+            data.add(ByteBuffer.wrap(buffer).getLong());
         }
+        return data;
+    }
+
+    protected void loadWavFile(File file) throws LineUnavailableException, IOException, UnsupportedAudioFileException {
+        Clip clip = createClip(file);
+        setClip(clip);
     }
 
 }

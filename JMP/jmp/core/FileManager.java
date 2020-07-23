@@ -62,20 +62,20 @@ public class FileManager extends AbstractManager implements IFileManager {
             beginResult.status = false;
             beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_1);
         }
-        else if (sm.isSupportedExtensionAccessor(ex) == false) {
-            // サポート外
-            beginResult.status = false;
-            beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_2);
-        }
         else if (sm.isPlay() == true) {
             // 再生中
             beginResult.status = false;
             beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_3);
         }
-        else if (f.canRead() == false || f.exists() == false) {
+        else if (f.getPath().isEmpty() == true || f.canRead() == false || f.exists() == false) {
             // アクセス不可
             beginResult.status = false;
             beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_4);
+        }
+        else if (sm.isSupportedExtensionAccessor(ex) == false) {
+            // サポート外
+            beginResult.status = false;
+            beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_2);
         }
 
         // 事前判定の結果を通知
@@ -182,5 +182,11 @@ public class FileManager extends AbstractManager implements IFileManager {
         // ロード中フラグ解除
         JMPFlags.NowLoadingFlag = false;
         return result;
+    }
+
+    @Override
+    public void reload() {
+        String path = JMPCore.getDataManager().getLoadedFile();
+        loadFile(path);
     }
 }

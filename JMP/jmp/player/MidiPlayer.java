@@ -229,8 +229,8 @@ public class MidiPlayer extends Player implements IMidiFilter {
                     return false;
                 }
 
-                // SelectSoundFontDIalog dialog = new SelectSoundFontDIalog();
-                // dialog.start();
+//                SelectSoundFontDIalog dialog = new SelectSoundFontDIalog();
+//                dialog.start();
             }
             else {
                 String outName = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIOUT);

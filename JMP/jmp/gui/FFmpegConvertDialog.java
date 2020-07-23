@@ -446,4 +446,10 @@ public class FFmpegConvertDialog extends JMPDialog {
         checkBoxUsePlayer.setSelected(JMPCore.getDataManager().isUseFFmpegPlayer());
         super.updateConfig(key);
     }
+
+    @Override
+    public void updateBackColor() {
+        super.updateBackColor();
+        contentPanel.setBackground(getJmpBackColor());
+    }
 }

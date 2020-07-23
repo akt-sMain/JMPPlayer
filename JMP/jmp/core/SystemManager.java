@@ -1,5 +1,6 @@
 package jmp.core;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,6 +15,8 @@ import jlib.plugin.IPlugin;
 import jmp.CommonRegister;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
+import jmp.JmpUtil;
+import jmp.midi.toolkit.MidiToolkitManager;
 import wffmpeg.FFmpegWrapper;
 import wrapper.IProcessingCallback;
 import wrapper.ProcessingFFmpegWrapper;
@@ -50,6 +53,19 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     /** Outputディレクトリ名 */
     public static final String OUTPUT_DIR_NAME = "output";
 
+    /** デフォルトMidiToolkit名 */
+    public static final String USE_MIDI_TOOLKIT_CLASSNAME = MidiToolkitManager.DEFAULT_MIDI_TOOLKIT_NAME;
+
+    /** デフォルトプレイヤーカラー */
+    public static final Color DEFAULT_PLAYER_BACK_COLOR = Color.DARK_GRAY;
+
+    public static final String COMMON_REGKEY_CH_COLOR_FORMAT = "ch_color_%d";
+    public static final String COMMON_REGKEY_PLAYER_BACK_COLOR = "player_back_color";
+    public static final String COMMON_REGKEY_EXTENSION_MIDI = "extension_midi";
+    public static final String COMMON_REGKEY_EXTENSION_WAV = "extension_wav";
+    public static final String COMMON_REGKEY_EXTENSION_MUSICXML = "extension_musicxml";
+    public static final String COMMON_REGKEY_USE_MIDI_TOOLKIT = "use_midi_toolkit";
+
     /** 共通レジスタ */
     private CommonRegister cReg = null;
 
@@ -76,12 +92,30 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
         // 共通レジスタのインスタンス生成
         cReg = new CommonRegister();
-        cReg.init();
-        cReg.load();
+        cReg.add(COMMON_REGKEY_EXTENSION_MIDI, JmpUtil.genExtensions2Str("mid", "midi"));
+        cReg.add(COMMON_REGKEY_EXTENSION_WAV, JmpUtil.genExtensions2Str("wav"));
+        cReg.add(COMMON_REGKEY_EXTENSION_MUSICXML, JmpUtil.genExtensions2Str("xml", "musicxml", "mxl"));
+        cReg.add(COMMON_REGKEY_USE_MIDI_TOOLKIT, USE_MIDI_TOOLKIT_CLASSNAME);
+        cReg.add(COMMON_REGKEY_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(DEFAULT_PLAYER_BACK_COLOR));
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 1), "#8ec21f");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 2), "#3dc21f");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 3), "#1fc253");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 4), "#1fc2a4");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 5), "#1f8ec2");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 6), "#1f3dc2");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 7), "#531fc2");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 8), "#a41fc2");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 9), "#ffc0cb");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 10), "#c21f3d");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 11), "#c2531f");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 12), "#c2a41f");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 13), "#3d00c2");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 14), "#ffff29");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 15), "#bbff29");
+        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 16), "#f98608");
 
         // ResourceとcRegの同期
-        setCommonRegisterValue(CommonRegister.COMMON_REGKEY_PLAYER_BACK_COLOR,
-                Utility.convertHtmlColorToCode(JMPCore.getResourceManager().getAppBackgroundColor()));
+        setCommonRegisterValue(COMMON_REGKEY_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(JMPCore.getResourceManager().getAppBackgroundColor()));
 
         // ルックアンドフィールの設定
         setupLookAndFeel();
@@ -126,7 +160,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
 
         // アクティベート処理
-        executeActivate();
+        preActivate();
 
         if (initializeFlag == false) {
             initializeFlag = true;
@@ -136,32 +170,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     protected boolean endFunc() {
         /* アクティベート処理 */
-        boolean activateOutFlag = false;
-        if (JMPFlags.ActivateFlag == true) {
-            activateOutFlag = true;
-        }
-        if (JMPFlags.DebugMode == true || JMPCore.isEnableStandAlonePlugin() == true || JMPFlags.LibraryMode == true) {
-            // デバッグ・スタンドアロン実行は発行しない
-            activateOutFlag = false;
-        }
-        // ライセンス発行
-        if (activateOutFlag == true) {
-            if (Utility.isExsistFile(getActivateFileLocationPath()) == false) {
-                try {
-                    String text = "ライセンス認証のためのファイルです。" + Platform.getNewLine() + "このファイルを削除してもソフトウェアの動作には影響ありません。" + Platform.getNewLine()
-                            + Platform.getNewLine() + "File for license authentication." + Platform.getNewLine()
-                            + "Deleting this file does not affect the operation of the software.";
-
-                    Utility.outputTextFile(getActivateFileLocationPath(), text);
-                }
-                catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        postActivate();
         return true;
     }
 
@@ -187,7 +196,8 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         setFFmpegWrapperPath(JMPCore.getDataManager().getFFmpegPath());
     }
 
-    public void executeActivate() {
+    /** アクティベート前処理 */
+    private void preActivate() {
         /* アクティベート状況の確認 */
         if (Utility.isExsistFile(getActivateFileLocationPath()) == true) {
             JMPFlags.ActivateFlag = true;
@@ -199,6 +209,38 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         /* スタンドアロンモード or デバッグモード or ライブラリモードの際はアクティベートする */
         if (JMPFlags.DebugMode == true || JMPCore.isEnableStandAlonePlugin() == true || JMPFlags.LibraryMode == true) {
             JMPFlags.ActivateFlag = true;
+        }
+    }
+
+    /** アクティベート後処理 */
+    private void postActivate() {
+        boolean activateOutFlag = false;
+        if (JMPFlags.ActivateFlag == true) {
+            activateOutFlag = true;
+        }
+        if (JMPFlags.DebugMode == true || JMPCore.isEnableStandAlonePlugin() == true || JMPFlags.LibraryMode == true) {
+            // デバッグ・スタンドアロン実行は発行しない
+            activateOutFlag = false;
+        }
+        // ライセンス発行
+        if (activateOutFlag == true) {
+            if (Utility.isExsistFile(getActivateFileLocationPath()) == false) {
+                try {
+                    String text = "ライセンス認証のためのファイルです。" + Platform.getNewLine()//
+                            + "このファイルを削除してもソフトウェアの動作には影響ありません。" + Platform.getNewLine()//
+                            + Platform.getNewLine()//
+                            + "File for license authentication." + Platform.getNewLine()//
+                            + "Deleting this file does not affect the operation of the software.";
+
+                    Utility.outputTextFile(getActivateFileLocationPath(), text);
+                }
+                catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

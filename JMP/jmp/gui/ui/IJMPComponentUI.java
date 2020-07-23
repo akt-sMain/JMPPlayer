@@ -6,7 +6,6 @@ import java.awt.Window;
 
 import function.Utility;
 import jlib.gui.IJmpMainWindow;
-import jmp.CommonRegister;
 import jmp.core.JMPCore;
 import jmp.core.SystemManager;
 import jmp.core.WindowManager;
@@ -18,7 +17,7 @@ public interface IJMPComponentUI {
 
     default Color getJmpBackColor() {
         SystemManager sm = JMPCore.getSystemManager();
-        String colorStr = sm.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_PLAYER_BACK_COLOR);
+        String colorStr = sm.getCommonRegisterValue(SystemManager.COMMON_REGKEY_PLAYER_BACK_COLOR);
         if (colorStr.equalsIgnoreCase("") == false) {
             return Utility.convertCodeToHtmlColor(colorStr);
         }

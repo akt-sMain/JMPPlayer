@@ -12,9 +12,9 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import function.Utility;
-import jmp.CommonRegister;
 import jmp.core.JMPCore;
 import jmp.core.SoundManager;
+import jmp.core.SystemManager;
 
 public class JmpQuickLaunch extends JPanel implements MouseListener {
 
@@ -32,7 +32,7 @@ public class JmpQuickLaunch extends JPanel implements MouseListener {
     public JmpQuickLaunch() {
         setLayout(null);
 
-        setBackground(Utility.convertCodeToHtmlColor(JMPCore.getSystemManager().getCommonRegisterValue(CommonRegister.COMMON_REGKEY_PLAYER_BACK_COLOR)));
+        setBackground(Utility.convertCodeToHtmlColor(JMPCore.getSystemManager().getCommonRegisterValue(SystemManager.COMMON_REGKEY_PLAYER_BACK_COLOR)));
 
         addMouseListener(this);
 

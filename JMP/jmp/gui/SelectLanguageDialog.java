@@ -79,7 +79,7 @@ public class SelectLanguageDialog extends JMPDialog {
         lblTest.setBackground(new Color(0, 0, 0));
         lblTest.setForeground(new Color(175, 238, 238));
         lblTest.setHorizontalAlignment(SwingConstants.CENTER);
-        lblTest.setFont(new Font("MS UI Gothic", Font.BOLD, 26));
+        lblTest.setFont(new Font("Dialog", Font.BOLD, 26));
         lblTest.setBounds(12, 48, 235, 38);
         contentPanel.add(lblTest);
     }

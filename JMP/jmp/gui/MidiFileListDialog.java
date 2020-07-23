@@ -37,7 +37,6 @@ import javax.swing.table.TableColumn;
 import function.Platform;
 import function.Platform.KindOfPlatform;
 import function.Utility;
-import jmp.CommonRegister;
 import jmp.ConfigDatabase;
 import jmp.JMPFlags;
 import jmp.JmpUtil;
@@ -451,9 +450,9 @@ public class MidiFileListDialog extends JMPFrame {
         removeAllRows();
 
         SystemManager system = JMPCore.getSystemManager();
-        String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_EXTENSION_MIDI));
-        String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_EXTENSION_WAV));
-        String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_EXTENSION_MUSICXML));
+        String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MIDI));
+        String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_WAV));
+        String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MUSICXML));
 
         /* リスト構築 */
         if (midiFileMap != null) {

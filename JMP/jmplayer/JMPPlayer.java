@@ -18,6 +18,7 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -36,7 +37,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import function.Platform;
 import function.Platform.KindOfPlatform;
@@ -45,7 +45,6 @@ import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jlib.player.IPlayer;
 import jlib.plugin.IPlugin;
-import jmp.CommonRegister;
 import jmp.FileResult;
 import jmp.IFileResultCallback;
 import jmp.JMPFlags;
@@ -168,6 +167,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JMenu mnTool;
     private JMenuItem mntmInitializeConfig;
     private JMenuItem mntmCallMakeJMP;
+    private JMenuItem mntmDebugDummy;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -330,13 +330,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mntmReload = new JMenuItem("リロード");
         mntmReload.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String path = JMPCore.getDataManager().getLoadedFile();
-                if (path.isEmpty() == false) {
-                    File f = new File(path);
-                    if (f.exists() == true && f.canRead() == true) {
-                        JMPCore.getFileManager().loadFile(path);
-                    }
-                }
+                JMPCore.getFileManager().reload();
             }
         });
         fileMenu.add(mntmReload);
@@ -468,7 +462,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 // FileNameExtensionFilter filter = new
                 // FileNameExtensionFilter("PLUGIN SETUP Files(*.JMS)",
                 // PluginManager.SETUP_FILE_EX);
-                filechooser.setFileFilter(createFileFilter("PLUGIN Files", PluginManager.PLUGIN_ZIP_EX));
+                filechooser.setFileFilter(JmpUtil.createFileFilter("PLUGIN Files", PluginManager.PLUGIN_ZIP_EX));
                 File dir = new File(Platform.getCurrentPath());
                 filechooser.setCurrentDirectory(dir);
                 int selected = filechooser.showOpenDialog(getParent());
@@ -496,7 +490,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             public void actionPerformed(ActionEvent e) {
                 // ファイルフィルター
                 JFileChooser filechooser = new JFileChooser();
-                filechooser.setFileFilter(createFileFilter("PLUGIN SETUP Files", PluginManager.SETUP_FILE_EX));
+                filechooser.setFileFilter(JmpUtil.createFileFilter("PLUGIN SETUP Files", PluginManager.SETUP_FILE_EX));
 
                 File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
                 filechooser.setCurrentDirectory(dir);
@@ -610,6 +604,24 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
         mnExecuteBatFile = new JMenu("Execute BAT file");
         configMenu.add(mnExecuteBatFile);
+
+        mntmDebugDummy = new JMenuItem("Dummy");
+        mntmDebugDummy.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    List<Long> data = SoundManager.WavPlayer.sampling(100);
+                    for (long value : data) {
+                        System.out.println(value);
+                    }
+                }
+                catch (IOException e1) {
+                    // TODO 自動生成された catch ブロック
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+        configMenu.add(mntmDebugDummy);
 
         mnExecuteBatFile.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
@@ -1168,33 +1180,20 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         }
     }
 
-    private FileNameExtensionFilter createFileFilter(String exName, String... ex) {
-        String exs = "";
-        for (int i = 0; i < ex.length; i++) {
-            if (i > 0) {
-                exs += ", ";
-            }
-            exs += String.format("*.%s", ex[i]);
-        }
-
-        String description = String.format("%s (%s)", exName, exs);
-        return new FileNameExtensionFilter(description, ex);
-    }
-
     /**
      * ファイルオープン処理
      */
     public void fileOpenFunc() {
         SystemManager system = JMPCore.getSystemManager();
-        String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_EXTENSION_MIDI));
-        String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_EXTENSION_WAV));
-        String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(CommonRegister.COMMON_REGKEY_EXTENSION_MUSICXML));
+        String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MIDI));
+        String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_WAV));
+        String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MUSICXML));
 
         // ファイルフィルター
         JFileChooser filechooser = new JFileChooser();
-        filechooser.addChoosableFileFilter(createFileFilter("MIDI Files", exMIDI));
-        filechooser.addChoosableFileFilter(createFileFilter("WAV Files", exWAV));
-        filechooser.addChoosableFileFilter(createFileFilter("MusicXML Files", exMUSICXML));
+        filechooser.addChoosableFileFilter(JmpUtil.createFileFilter("MIDI Files", exMIDI));
+        filechooser.addChoosableFileFilter(JmpUtil.createFileFilter("WAV Files", exWAV));
+        filechooser.addChoosableFileFilter(JmpUtil.createFileFilter("MusicXML Files", exMUSICXML));
 
         File dir = new File(JMPCore.getDataManager().getPlayListPath());
         filechooser.setCurrentDirectory(dir);
@@ -1370,7 +1369,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mntmMidiMonitor.setText(lm.getLanguageStr(LangID.MIDI_message_monitor));
         mntmMidimessagesender.setText(lm.getLanguageStr(LangID.MIDI_message_sender));
         lblCommon.setText("-- " + lm.getLanguageStr(LangID.Common_settings) + " --");
-        menuItemLanguage.setText(lm.getLanguageStr(LangID.Language));
+        menuItemLanguage.setText(lm.getLanguageStr(LangID.Language) + "(Language)");
         mntmInitLayout.setText(lm.getLanguageStr(LangID.Layout_initialization));
 
         mnTool.setText(lm.getLanguageStr(LangID.Tool));
@@ -1409,5 +1408,12 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     @Override
     public void updateBackColor() {
         getContentPane().setBackground(getJmpBackColor());
+        slider.setBackground(getJmpBackColor());
+        panel_1.setBackground(getJmpBackColor());
+        panel_2.setBackground(getJmpBackColor());
+        panel_3.setBackground(getJmpBackColor());
+        panel_4.setBackground(getJmpBackColor());
+        panel_5.setBackground(getJmpBackColor());
+        panel_6.setBackground(getJmpBackColor());
     }
 }

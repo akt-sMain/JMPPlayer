@@ -17,9 +17,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import function.Platform;
+import jmp.JmpUtil;
 import jmp.core.JMPCore;
 import jmp.gui.ui.JMPDialog;
 
@@ -91,8 +91,7 @@ public class SelectSoundFontDIalog extends JMPDialog {
             public void actionPerformed(ActionEvent e) {
                 // ファイルフィルター
                 JFileChooser filechooser = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter("SoundFont Files(*.sf2)", "sf2");
-                filechooser.setFileFilter(filter);
+                filechooser.setFileFilter(JmpUtil.createFileFilter("SoundFont Files", "sf2"));
 
                 File dir = new File(Platform.getCurrentPath());
                 filechooser.setCurrentDirectory(dir);

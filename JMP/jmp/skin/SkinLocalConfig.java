@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.List;
 
 import function.Utility;
-import jmp.CommonRegister;
+import jmp.core.SystemManager;
 
 public class SkinLocalConfig {
     public static final String KEY_TRANSPARENT = "TRANSPARENT";
@@ -16,7 +16,7 @@ public class SkinLocalConfig {
 
     public static final Color DEFAULT_TRANS_COLOR = new Color(255, 127, 39);
     public static final Color DEFAULT_BTN_BACKGROUND = Utility.convertCodeToHtmlColor("#888888");
-    public static final Color DEFAULT_APP_BACKGROUND = CommonRegister.DEFAULT_PLAYER_BACK_COLOR;
+    public static final Color DEFAULT_APP_BACKGROUND = SystemManager.DEFAULT_PLAYER_BACK_COLOR;
 
     private boolean isConvertTransparent = false;
     private Color transparentColor = DEFAULT_TRANS_COLOR;
