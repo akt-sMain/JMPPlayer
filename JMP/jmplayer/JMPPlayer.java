@@ -69,6 +69,7 @@ import jmp.gui.ui.SequencerSliderUI;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.task.CallbackPackage;
 import jmp.task.ICallbackFunction;
+import lib.MakeJmpConfig;
 import lib.MakeJmpLib;
 
 /**
@@ -167,6 +168,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JMenu mnTool;
     private JMenuItem mntmInitializeConfig;
     private JMenuItem mntmCallMakeJMP;
+    private JMenuItem mntmReloadJmzFolder;
     private JMenuItem mntmDebugDummy;
 
     /**
@@ -593,17 +595,25 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         lblDebugMenu.setHorizontalAlignment(SwingConstants.LEFT);
         configMenu.add(lblDebugMenu);
 
-        zipGenerateMenuItem = new JMenuItem("Generate importing JMZ");
-        configMenu.add(zipGenerateMenuItem);
-
         removeAllPluginMenuItem = new JMenuItem("Remove all plugins");
         configMenu.add(removeAllPluginMenuItem);
 
         mntmCallMakeJMP = new JMenuItem("Invoke \"mkJMP\"");
         configMenu.add(mntmCallMakeJMP);
 
-        mnExecuteBatFile = new JMenu("Execute BAT file");
+        zipGenerateMenuItem = new JMenuItem("Generate importing \"jmz\"");
+        configMenu.add(zipGenerateMenuItem);
+
+        mnExecuteBatFile = new JMenu("Execute \"mkj\" file");
         configMenu.add(mnExecuteBatFile);
+
+        mntmReloadJmzFolder = new JMenuItem("Reload \"jmz\" Folder");
+        mntmReloadJmzFolder.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JMPCore.getPluginManager().readingJmzDirectory();
+            }
+        });
+        configMenu.add(mntmReloadJmzFolder);
 
         mntmDebugDummy = new JMenuItem("Dummy");
         mntmDebugDummy.addActionListener(new ActionListener() {
@@ -615,7 +625,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     }
                 }
                 catch (IOException e1) {
-                    // TODO 自動生成された catch ブロック
                     e1.printStackTrace();
                 }
 
@@ -629,13 +638,19 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
                 File current = new File(Platform.getCurrentPath(false));
                 for (File f : current.listFiles()) {
-                    if (Utility.checkExtension(f, "bat") == true) {
+                    if (Utility.checkExtension(f, MakeJmpLib.PKG_PROJECT_CFG_EX) == true) {
                         JMenuItem item = new JMenuItem(Utility.getFileNameAndExtension(f));
                         item.addActionListener(new ActionListener() {
 
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                JMPCore.getSystemManager().executeBatFile(f.getAbsolutePath());
+                                MakeJmpConfig mkjConfig = null;
+                                try {
+                                    mkjConfig = new MakeJmpConfig(f);
+                                    MakeJmpLib.exportPackage(mkjConfig);
+                                }
+                                catch (Exception ioe) {
+                                }
                             }
                         });
                         mnExecuteBatFile.add(item);

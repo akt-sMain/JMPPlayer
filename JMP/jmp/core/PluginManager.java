@@ -87,6 +87,7 @@ public class PluginManager extends AbstractManager {
     }
 
     public void startupPluginInstance() {
+
         // プラグイン読み込み
         if (JMPCore.isEnableStandAlonePlugin() == true) {
             // スタンドアロンプラグインを登録
@@ -96,30 +97,37 @@ public class PluginManager extends AbstractManager {
             }
         }
         else {
-
             // 起動時に削除予定のプラグインを削除する
             removePlugin();
 
-            if (JMPFlags.NonPluginLoadFlag == false) {
-                File zipDir = new File(JMPCore.getSystemManager().getZipDirPath());
-                if (zipDir.exists() == false) {
-                    zipDir.mkdirs();
-                }
-                for (File f : zipDir.listFiles()) {
-                    if (Utility.checkExtension(f.getPath(), PLUGIN_ZIP_EX) == false) {
-                        continue;
-                    }
-                    if (readingJmzPackage(f.getPath(), false) == true) {
-                        Utility.deleteFileDirectory(f);
-                    }
-                    Utility.threadSleep(100);
-                }
-                readingPlugin();
-            }
+            // プラグインディレクトリのロード
+            readingPlugin();
         }
 
         // プラグイン初期化
         initialize();
+
+        if (JMPFlags.NonPluginLoadFlag == false) {
+            // jmzフォルダ内のインポート処理
+            readingJmzDirectory();
+        }
+
+    }
+
+    public void readingJmzDirectory() {
+        File zipDir = new File(JMPCore.getSystemManager().getZipDirPath());
+        if (zipDir.exists() == false) {
+            zipDir.mkdirs();
+        }
+        for (File f : zipDir.listFiles()) {
+            if (Utility.checkExtension(f.getPath(), PLUGIN_ZIP_EX) == false) {
+                continue;
+            }
+            if (readingJmzPackage(f.getPath(), true) == true) {
+                Utility.deleteFileDirectory(f);
+            }
+            Utility.threadSleep(100);
+        }
     }
 
     public boolean readingJmzPackage(String path) {

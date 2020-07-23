@@ -14,6 +14,8 @@ public class MakeJmpLib {
 
     public static final String PKG_ZIP_EX = "jmz";
 
+    public static final String PKG_PROJECT_CFG_EX = "mkj";
+
     /* コマンド文字列 */
     public static final String CMD_CONSOLE = "-cmd";
     public static final String CMD_NAME = "-name";

@@ -247,18 +247,18 @@ public class MakeJmpPackege extends JFrame {
         textFieldResPath.setTransferHandler(new DropFileHandler(new ResDEvent()));
         textFieldOutput.setTransferHandler(new DropFileHandler(new OutputDEvent()));
 
-        JButton btnWrite = new JButton(MakeJmpConfig.EX.toUpperCase() + " Write");
+        JButton btnWrite = new JButton(MakeJmpLib.PKG_PROJECT_CFG_EX.toUpperCase() + " Write");
         btnWrite.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String name = textFieldPluginName.getText();
-                String path = Platform.getCurrentPath(true) + name + "." + MakeJmpConfig.EX;
+                String path = Platform.getCurrentPath(true) + name + "." + MakeJmpLib.PKG_PROJECT_CFG_EX;
                 saveFileMkj(path);
             }
         });
         btnWrite.setBounds(287, 345, 91, 21);
         contentPane.add(btnWrite);
 
-        btnRead = new JButton(MakeJmpConfig.EX.toUpperCase() + " Read");
+        btnRead = new JButton(MakeJmpLib.PKG_PROJECT_CFG_EX.toUpperCase() + " Read");
         btnRead.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 File ret = Utility.OpenLoadFileDialog(null, new File(Platform.getCurrentPath()));

@@ -11,8 +11,6 @@ import function.Utility;
 
 public class MakeJmpConfig {
 
-    public static final String EX = "mkj";
-
     public static final String KEY_PLGNAME = "plg_name";
     public static final String KEY_JAR = "jar_path";
     public static final String KEY_RES = "res_path";
@@ -34,6 +32,10 @@ public class MakeJmpConfig {
         this.data = data;
         this.addData = addData;
         this.output = output;
+    }
+
+    public MakeJmpConfig(File file) throws IOException {
+        read(file);
     }
 
     public MakeJmpConfig() {
