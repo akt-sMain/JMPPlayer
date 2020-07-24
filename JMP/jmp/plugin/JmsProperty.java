@@ -20,12 +20,14 @@ public class JmsProperty {
     private File data;
     private File res;
     private File jar;
+    private String version = "";
     private boolean isDeleteRequest = false;
 
-    public JmsProperty(File jar, File data, File res) {
+    public JmsProperty(File jar, File data, File res, String version) {
         setRes(res);
         setData(data);
         setJar(jar);
+        setVersion(version);
         this.isDeleteRequest = false;
     }
 
@@ -45,6 +47,7 @@ public class JmsProperty {
 
             boolean isData = false;
             boolean isRes = false;
+            String version = "";
 
             while ((line = reader.readLine()) != null) {
                 /* コメントを除外 */
@@ -73,6 +76,9 @@ public class JmsProperty {
                             isRes = true;
                         }
                     }
+                    else if (key.equalsIgnoreCase(PluginManager.SETUP_KEYNAME_VERSION) == true) {
+                        version = param;
+                    }
                 }
             }
 
@@ -89,7 +95,7 @@ public class JmsProperty {
                 resFile = new File(resPath);
             }
 
-            jms = new JmsProperty(pluginFile, dataFile, resFile);
+            jms = new JmsProperty(pluginFile, dataFile, resFile, version);
 
             String fileName = Utility.getFileNameAndExtension(jmsFile);
             if (fileName.startsWith(PluginManager.SETUP_REMOVE_TAG) == true) {
@@ -136,5 +142,13 @@ public class JmsProperty {
 
     public void setRes(File res) {
         this.res = res;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

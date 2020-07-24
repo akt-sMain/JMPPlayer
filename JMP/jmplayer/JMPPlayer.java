@@ -610,7 +610,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mntmReloadJmzFolder = new JMenuItem("Reload \"jmz\" Folder");
         mntmReloadJmzFolder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JMPCore.getPluginManager().readingJmzDirectory();
+                JMPCore.getPluginManager().readingJmzDirectoryConfirm();
             }
         });
         configMenu.add(mntmReloadJmzFolder);
@@ -759,6 +759,9 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             zipGenerateMenuItem.setVisible(false);
             removeAllPluginMenuItem.setVisible(false);
             mnExecuteBatFile.setVisible(false);
+            mntmCallMakeJMP.setVisible(false);
+            mntmReloadJmzFolder.setVisible(false);
+            mntmDebugDummy.setVisible(false);
         }
 
         /* Windows用の処理 */
@@ -1400,7 +1403,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         String path = file.getPath();
         if (Utility.checkExtension(path, PluginManager.PLUGIN_ZIP_EX) == true) {
             // プラグインロード
-            if (JMPCore.getPluginManager().readingJmzPackage(path, true) == true) {
+            if (JMPCore.getPluginManager().readingJmzPackageConfirm(path) == true) {
                 wm.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
             }
             else {

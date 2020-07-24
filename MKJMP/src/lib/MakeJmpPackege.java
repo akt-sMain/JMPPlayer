@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.TransferHandler;
@@ -26,6 +27,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import function.Platform;
 import function.Utility;
+import jlib.JMPLIB;
 
 public class MakeJmpPackege extends JFrame {
 
@@ -38,6 +40,7 @@ public class MakeJmpPackege extends JFrame {
     private JTextField textFieldResPath;
     private JCheckBox chckbxAddBlankData;
     private JButton btnRead;
+    private JTextField textFieldCompVersion;
 
     /**
      * Launch the application.
@@ -76,7 +79,7 @@ public class MakeJmpPackege extends JFrame {
     /**
      * Create the frame.
      */
-    public MakeJmpPackege(String jar, String data, String res, String out, boolean appExitFlag, boolean showExploler) {
+    public MakeJmpPackege(String jar, String data, String res, String out, boolean appExitFlag, boolean showExploler, String version) {
         setTitle("mkJMP");
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -155,6 +158,7 @@ public class MakeJmpPackege extends JFrame {
 
                 File dir = new File(Platform.getCurrentPath());
                 filechooser.setCurrentDirectory(dir);
+                filechooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 int selected = filechooser.showOpenDialog(getParent());
                 switch (selected) {
                     case JFileChooser.APPROVE_OPTION:
@@ -215,6 +219,7 @@ public class MakeJmpPackege extends JFrame {
 
                 File dir = new File(Platform.getCurrentPath());
                 filechooser.setCurrentDirectory(dir);
+                filechooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 int selected = filechooser.showOpenDialog(getParent());
                 switch (selected) {
                     case JFileChooser.APPROVE_OPTION:
@@ -234,9 +239,18 @@ public class MakeJmpPackege extends JFrame {
         panel_2.add(buttonRes);
 
         textFieldJarPath.setTransferHandler(new DropFileHandler(new JarDEvent()));
+
+        textFieldCompVersion = new JTextField();
+        textFieldCompVersion.setBounds(138, 44, 96, 19);
+        panel.add(textFieldCompVersion);
+        textFieldCompVersion.setColumns(10);
+
+        JLabel lblVersion = new JLabel("Version");
+        lblVersion.setBounds(94, 50, 50, 13);
+        panel.add(lblVersion);
         textFieldDataPath.setTransferHandler(new DropFileHandler(new DataDEvent()));
 
-        chckbxAddBlankData = new JCheckBox("空のDATAフォルダ追加");
+        chckbxAddBlankData = new JCheckBox("Add empty DATA Folder");
         chckbxAddBlankData.setBounds(84, 40, 216, 21);
         panel_1.add(chckbxAddBlankData);
         chckbxAddBlankData.addActionListener(new ActionListener() {
@@ -274,6 +288,7 @@ public class MakeJmpPackege extends JFrame {
         loadFileData(data);
         loadFileRes(res);
         loadFileOutput(out);
+        textFieldCompVersion.setText(JMPLIB.BUILD_VERSION);
     }
 
     public void export() {
@@ -282,8 +297,9 @@ public class MakeJmpPackege extends JFrame {
         String res = textFieldResPath.getText();
         String plg = textFieldPluginName.getText();
         String out = textFieldOutput.getText();
+        String ver = textFieldCompVersion.getText();
 
-        MakeJmpConfig config = new MakeJmpConfig(plg, jar, res, chckbxAddBlankData.isSelected(), data, out);
+        MakeJmpConfig config = new MakeJmpConfig(plg, jar, res, chckbxAddBlankData.isSelected(), data, out, ver);
         MakeJmpLib.exportPackage(config);
     }
 
@@ -298,6 +314,7 @@ public class MakeJmpPackege extends JFrame {
     public void loadFileJar(String path) {
         textFieldJarPath.setText(path);
         textFieldPluginName.setText(Utility.getFileNameNotExtension(path));
+        textFieldCompVersion.setText(JMPLIB.BUILD_VERSION);
     }
 
     public void loadFileOutput(String path) {
@@ -323,7 +340,7 @@ public class MakeJmpPackege extends JFrame {
 
     public void saveFileMkj(String path) {
         MakeJmpConfig cfg = new MakeJmpConfig(textFieldPluginName.getText(), textFieldJarPath.getText(), textFieldResPath.getText(),
-                chckbxAddBlankData.isSelected(), textFieldDataPath.getText(), textFieldOutput.getText());
+                chckbxAddBlankData.isSelected(), textFieldDataPath.getText(), textFieldOutput.getText(), textFieldCompVersion.getText());
         try {
             cfg.write(new File(path));
         }

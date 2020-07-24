@@ -89,6 +89,8 @@ public class DefineLanguage {
         Use_FFmpeg_player,
         Automatically_assign_MIDI_channel,
         Automatically_assign_Program_change_number,
+        Confirm_jms_with_different_versions,
+        Confirm_jmz_with_different_versions,
     }
 
     static java.util.HashMap<LangID, LanguageWords> langMap = new java.util.HashMap<LangID, LanguageWords>() {
@@ -175,6 +177,11 @@ public class DefineLanguage {
             put(LangID.Automatically_assign_MIDI_channel, new LanguageWords("Automatically assign MIDI channel", "「MIDIチャンネル」を自動的に割り当てる", "自动分配MIDI通道"));
             put(LangID.Automatically_assign_Program_change_number,
                     new LanguageWords("Automatically assign Program change number", "「プログラムチェンジ」を自動的に割り当てる", "自动分配程序更改号"));
+            put(LangID.Confirm_jms_with_different_versions, new LanguageWords("There are plugins with different versions. Do you want to load it?",
+                    "バージョンが異なるプラグインが存在します。ロードしますか？", "有不同版本的插件。是否要加载？"));
+            put(LangID.Confirm_jmz_with_different_versions,
+                    new LanguageWords("The version of the plugin you are trying to add is different. Do you want to add it?",
+                            "追加しようとしているプラグインのバージョンが異なります。追加しますか？", "您尝试添加的插件版本不同。 您要添加吗？"));
         }
     };
 }

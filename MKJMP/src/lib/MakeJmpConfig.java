@@ -8,6 +8,7 @@ import java.util.List;
 
 import function.Platform;
 import function.Utility;
+import jlib.JMPLIB;
 
 public class MakeJmpConfig {
 
@@ -24,14 +25,16 @@ public class MakeJmpConfig {
     protected String data = "";
     protected boolean addData = false;
     protected String output = "";
+    protected String version = "";
 
-    public MakeJmpConfig(String pluginName, String jar, String res, boolean addData, String data, String output) {
+    public MakeJmpConfig(String pluginName, String jar, String res, boolean addData, String data, String output, String version) {
         this.pluginName = pluginName;
         this.jar = jar;
         this.res = res;
         this.data = data;
         this.addData = addData;
         this.output = output;
+        this.version = version;
     }
 
     public MakeJmpConfig(File file) throws IOException {
@@ -63,6 +66,10 @@ public class MakeJmpConfig {
 
     public String getOutput() {
         return output;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
     public void write(File file) throws FileNotFoundException, UnsupportedEncodingException {
@@ -106,6 +113,9 @@ public class MakeJmpConfig {
                 }
             }
         }
+
+        // version新規発行
+        version = JMPLIB.BUILD_VERSION;
     }
 
 }

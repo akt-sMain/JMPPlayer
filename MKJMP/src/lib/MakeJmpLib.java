@@ -16,6 +16,12 @@ public class MakeJmpLib {
 
     public static final String PKG_PROJECT_CFG_EX = "mkj";
 
+    /* jmsキー名 */
+    public static final String JMS_KEY_VERSION = "VERSION";
+    public static final String JMS_KEY_PLUGIN = "PLUGIN";
+    public static final String JMS_KEY_DATA = "DATA";
+    public static final String JMS_KEY_RES = "RES";
+
     /* コマンド文字列 */
     public static final String CMD_CONSOLE = "-cmd";
     public static final String CMD_NAME = "-name";
@@ -23,6 +29,7 @@ public class MakeJmpLib {
     public static final String CMD_DATA = "-data";
     public static final String CMD_RES = "-res";
     public static final String CMD_OUT = "-out";
+    public static final String CMD_VERSION = "-ver";
     // 隠しコマンド
     public static final String _CMD_WIN = "--win"; // windowを閉じたときにランタイムを終了しない(別のjavaソースからコールする用)
     public static final String _CMD_EXP = "--exp"; // export後にExplolerを表示する
@@ -35,6 +42,7 @@ public class MakeJmpLib {
             String data = "";
             String res = "";
             String out = "";
+            String ver = "";
             boolean appExitFlag = true;
             boolean showExplolerFlag = false;
 
@@ -73,6 +81,12 @@ public class MakeJmpLib {
                         out = args[i];
                     }
                 }
+                else if (str.equalsIgnoreCase(CMD_VERSION)) {
+                    i++;
+                    if (i < args.length && args[i].startsWith("-") == false) {
+                        ver = args[i];
+                    }
+                }
                 else if (str.equalsIgnoreCase(_CMD_WIN)) {
                     appExitFlag = false;
                 }
@@ -82,7 +96,7 @@ public class MakeJmpLib {
             }
 
             if (isConsole == false) {
-                MakeJmpPackege frame = new MakeJmpPackege(jar, data, res, out, appExitFlag, showExplolerFlag);
+                MakeJmpPackege frame = new MakeJmpPackege(jar, data, res, out, appExitFlag, showExplolerFlag, ver);
                 frame.setVisible(true);
             }
             else {
@@ -93,7 +107,7 @@ public class MakeJmpLib {
                 /*
                  * dataがEmptyの場合は、data==FALSEになる
                  */
-                MakeJmpLib.exportPackage(jar, data, res, name, out);
+                MakeJmpLib.exportPackage(jar, data, res, name, out, ver);
             }
         }
         catch (Exception e) {
@@ -103,27 +117,33 @@ public class MakeJmpLib {
 
     public static void exportPackage(MakeJmpConfig config) {
         if (config.isAddData() == true) {
-            MakeJmpLib.exportPackageForBlankData(config.getJar(), config.getRes(), config.getPluginName(), config.getOutput());
+            MakeJmpLib.exportPackageForBlankData(config.getJar(), config.getRes(), config.getPluginName(), config.getOutput(), config.getVersion());
         }
         else {
-            MakeJmpLib.exportPackage(config.getJar(), config.getData(), config.getRes(), config.getPluginName(), config.getOutput());
+            MakeJmpLib.exportPackage(config.getJar(), config.getData(), config.getRes(), config.getPluginName(), config.getOutput(), config.getVersion());
         }
     }
 
-    public static void exportPackageForBlankData(String jar, String res, String pluginName, String exportDir) {
-        exportPackage(jar, true, "", res, pluginName, exportDir);
+    public static void exportPackageForBlankData(String jar, String res, String pluginName, String exportDir, String version) {
+        exportPackage(jar, true, "", res, pluginName, exportDir, version);
     }
 
-    public static void exportPackage(String jar, String data, String res, String pluginName, String exportDir) {
-        exportPackage(jar, false, data, res, pluginName, exportDir);
+    public static void exportPackage(String jar, String data, String res, String pluginName, String exportDir, String version) {
+        exportPackage(jar, false, data, res, pluginName, exportDir, version);
     }
 
-    private static void exportPackage(String jar, boolean isAddBlankData, String data, String res, String pluginName, String exportDir) {
+    private static void exportPackage(String jar, boolean isAddBlankData, String data, String res, String pluginName, String exportDir, String version) {
         String jmsContents = "";
+        jmsContents += "#-- JamPlayer plugin structure file --#";
+
+        jmsContents += Platform.getNewLine();
+        jmsContents += Utility.stringsCombin(JMS_KEY_VERSION + " = ", version);
+
         if (jar.isEmpty() != true) {
             String jarPath = jar;
             if (Utility.isExsistFile(jarPath) == true) {
-                jmsContents += Utility.stringsCombin("PLUGIN = ", Utility.getFileNameAndExtension(jarPath));
+                jmsContents += Platform.getNewLine();
+                jmsContents += Utility.stringsCombin(JMS_KEY_PLUGIN + " = ", Utility.getFileNameAndExtension(jarPath));
             }
         }
 
@@ -140,10 +160,10 @@ public class MakeJmpLib {
         boolean isRes = (res.isEmpty() == true) ? false : true;
 
         jmsContents += Platform.getNewLine();
-        jmsContents += Utility.stringsCombin("DATA = " + (isData ? "TRUE" : "FALSE"));
+        jmsContents += Utility.stringsCombin(JMS_KEY_DATA + " = " + (isData ? "TRUE" : "FALSE"));
 
         jmsContents += Platform.getNewLine();
-        jmsContents += Utility.stringsCombin("RES = " + (isRes ? "TRUE" : "FALSE"));
+        jmsContents += Utility.stringsCombin(JMS_KEY_RES + " = " + (isRes ? "TRUE" : "FALSE"));
 
         try {
             String plgDirName = pluginName;
@@ -156,9 +176,9 @@ public class MakeJmpLib {
             Utility.outputTextFile(jmsPath, jmsContents);
             Utility.copyFile(jar, Utility.pathCombin(plgDirName, pluginName + ".jar"));
             if (isAddBlankData == false) {
-                Utility.copyFile(data, Utility.pathCombin(plgDirName, "DATA"));
+                Utility.copyFile(data, Utility.pathCombin(plgDirName, JMS_KEY_DATA));
             }
-            Utility.copyFile(res, Utility.pathCombin(plgDirName, "RES"));
+            Utility.copyFile(res, Utility.pathCombin(plgDirName, JMS_KEY_RES));
 
             String outDir = exportDir;
             File od = new File(outDir);
@@ -185,5 +205,4 @@ public class MakeJmpLib {
             e1.printStackTrace();
         }
     }
-
 }

@@ -14,6 +14,7 @@ import function.Utility;
 import jlib.plugin.IPlugin;
 import jlib.plugin.ISupportExtensionConstraints;
 import jmp.JMPFlags;
+import jmp.lang.DefineLanguage.LangID;
 import jmp.plugin.JMPPluginLoader;
 import jmp.plugin.JmsProperty;
 import jmp.plugin.PluginObserver;
@@ -42,13 +43,16 @@ public class PluginManager extends AbstractManager {
     public static final String SETUP_FILE_EX = MakeJmpLib.PKG_SETUP_EX;
 
     /** setup プラグインキー名 */
-    public static final String SETUP_KEYNAME_PLUGIN = "PLUGIN";
+    public static final String SETUP_KEYNAME_VERSION = MakeJmpLib.JMS_KEY_VERSION;
+
+    /** setup プラグインキー名 */
+    public static final String SETUP_KEYNAME_PLUGIN = MakeJmpLib.JMS_KEY_PLUGIN;
 
     /** setup データキー名 */
-    public static final String SETUP_KEYNAME_DATA = "DATA";
+    public static final String SETUP_KEYNAME_DATA = MakeJmpLib.JMS_KEY_DATA;
 
     /** setup リソースキー名 */
-    public static final String SETUP_KEYNAME_RES = "RES";
+    public static final String SETUP_KEYNAME_RES = MakeJmpLib.JMS_KEY_RES;
 
     /** リムーブタグ */
     public static final String SETUP_REMOVE_TAG = "~";
@@ -68,13 +72,11 @@ public class PluginManager extends AbstractManager {
     // ---------------------------------------------
     PluginManager(int pri) {
         super(pri, "plugin");
+        observers = new PluginObserver();
     }
 
     protected boolean initFunc() {
         super.initFunc();
-
-        observers = new PluginObserver();
-
         return true;
     }
 
@@ -100,8 +102,18 @@ public class PluginManager extends AbstractManager {
             // 起動時に削除予定のプラグインを削除する
             removePlugin();
 
-            // プラグインディレクトリのロード
-            readingPlugin();
+            boolean isLoadPlg = true;
+            if (checkJmsCompliantVersion() == false) {
+                int ret = Utility.openWarningDialog(null, "confirm", JMPCore.getLanguageManager().getLanguageStr(LangID.Confirm_jms_with_different_versions));
+                if (ret != Utility.CONFIRM_RESULT_YES) {
+                    isLoadPlg = false;
+                }
+            }
+
+            if (isLoadPlg == true) {
+                // プラグインディレクトリのロード
+                readingPlugin();
+            }
         }
 
         // プラグイン初期化
@@ -109,9 +121,137 @@ public class PluginManager extends AbstractManager {
 
         if (JMPFlags.NonPluginLoadFlag == false) {
             // jmzフォルダ内のインポート処理
-            readingJmzDirectory();
+            readingJmzDirectoryConfirm();
         }
 
+    }
+
+    public boolean checkJmsCompliantVersion() {
+        if (JMPFlags.LibraryMode == true || JMPCore.isEnableStandAlonePlugin() == true) {
+            // 制限なし
+            return true;
+        }
+
+        /* プラグインディレクトリの存在を確認 */
+        File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
+        if (dir.exists() == false) {
+            if (dir.mkdir() == false) {
+                return true;
+            }
+        }
+
+        boolean ret = true;
+        for (File f : dir.listFiles()) {
+
+            if (Utility.checkExtension(f.getPath(), SETUP_FILE_EX) == false) {
+                continue;
+            }
+            String fileName = Utility.getFileNameNotExtension(f.getPath());
+            if (fileName.startsWith(SETUP_SKIP_TAG) == true) {
+                // "_"で始まるファイルはスキップ
+                continue;
+            }
+
+            if (checkJmsCompliantVersion(f) == false) {
+                ret = false;
+                break;
+            }
+        }
+        return ret;
+    }
+
+    public boolean checkJmsCompliantVersion(File f) {
+        if (JMPFlags.LibraryMode == true || JMPCore.isEnableStandAlonePlugin() == true) {
+            // 制限なし
+            return true;
+        }
+
+        JmsProperty jms = JmsProperty.getJmsProparty(f);
+        if (JMPCore.LIBRALY_VERSION.equals(jms.getVersion()) == true) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkJmzCompliantVersion() {
+        if (JMPFlags.LibraryMode == true || JMPCore.isEnableStandAlonePlugin() == true) {
+            // 制限なし
+            return true;
+        }
+
+        File zipDir = new File(JMPCore.getSystemManager().getZipDirPath());
+        if (zipDir.exists() == false) {
+            zipDir.mkdirs();
+        }
+
+        boolean ret = true;
+        for (File f : zipDir.listFiles()) {
+            if (Utility.checkExtension(f.getPath(), PLUGIN_ZIP_EX) == false) {
+                continue;
+            }
+            if (checkJmzCompliantVersion(f) == false) {
+                ret = false;
+                break;
+            }
+            Utility.threadSleep(100);
+        }
+        return ret;
+    }
+
+    public boolean checkJmzCompliantVersion(File f) {
+        if (JMPFlags.LibraryMode == true || JMPCore.isEnableStandAlonePlugin() == true) {
+            // 制限なし
+            return true;
+        }
+
+        boolean ret = false;
+        String path = f.getPath();
+        String tmpDirectoryPath = Utility.pathCombin(Platform.getCurrentPath(false),
+                Utility.stringsCombin("_", Utility.getFileNameNotExtension(path), Utility.getCurrentTimeStr()));
+
+        File tmpDir = new File(tmpDirectoryPath);
+        if (tmpDir.exists() == false) {
+            tmpDir.mkdir();
+        }
+
+        try {
+            Utility.unZip(path, tmpDirectoryPath);
+
+            File jmsFile = null;
+            for (File cf : tmpDir.listFiles()) {
+                if (Utility.checkExtension(cf, SETUP_FILE_EX) == true) {
+                    jmsFile = cf;
+                    break;
+                }
+            }
+
+            JmsProperty jms = JmsProperty.getJmsProparty(jmsFile);
+            if (JMPCore.LIBRALY_VERSION.equals(jms.getVersion()) == true) {
+                ret = true;
+            }
+        }
+        catch (Exception e) {
+            ret = false;
+            SystemManager.TempResisterEx = e;
+        }
+        finally {
+            Utility.deleteFileDirectory(tmpDir);
+        }
+        return ret;
+    }
+
+    public void readingJmzDirectoryConfirm() {
+        boolean isLoadPlg = true;
+        if (checkJmzCompliantVersion() == false) {
+            int ret = Utility.openWarningDialog(null, "confirm", JMPCore.getLanguageManager().getLanguageStr(LangID.Confirm_jmz_with_different_versions));
+            if (ret != Utility.CONFIRM_RESULT_YES) {
+                isLoadPlg = false;
+            }
+        }
+
+        if (isLoadPlg == true) {
+            readingJmzDirectory();
+        }
     }
 
     public void readingJmzDirectory() {
@@ -128,6 +268,25 @@ public class PluginManager extends AbstractManager {
             }
             Utility.threadSleep(100);
         }
+    }
+
+    public boolean readingJmzPackageConfirm(String path) {
+        boolean isLoadPlg = true;
+        File f = new File(path);
+        if (checkJmzCompliantVersion(f) == false) {
+            int ret = Utility.openWarningDialog(null, "confirm", JMPCore.getLanguageManager().getLanguageStr(LangID.Confirm_jmz_with_different_versions));
+            if (ret != Utility.CONFIRM_RESULT_YES) {
+                isLoadPlg = false;
+            }
+        }
+
+        boolean res = false;
+        if (isLoadPlg == true) {
+            if (readingJmzPackage(path, true) == true) {
+                res = true;
+            }
+        }
+        return res;
     }
 
     public boolean readingJmzPackage(String path) {
@@ -191,13 +350,17 @@ public class PluginManager extends AbstractManager {
                 if (jms.getRes() != null) {
                     res = jms.getRes().getPath();
                 }
+                String ver = "";
+                if (jms.getVersion() != null) {
+                    ver = jms.getVersion();
+                }
 
                 if (Utility.isExsistFile(data) == true) {
                     // DATA無
-                    MakeJmpLib.exportPackageForBlankData(jar, res, Utility.getFileNameNotExtension(f), dirPath);
+                    MakeJmpLib.exportPackageForBlankData(jar, res, Utility.getFileNameNotExtension(f), dirPath, ver);
                 }
                 else {
-                    MakeJmpLib.exportPackage(jar, data, res, Utility.getFileNameNotExtension(f), dirPath);
+                    MakeJmpLib.exportPackage(jar, data, res, Utility.getFileNameNotExtension(f), dirPath, ver);
                 }
             }
         }
