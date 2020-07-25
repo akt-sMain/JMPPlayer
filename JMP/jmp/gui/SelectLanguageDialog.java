@@ -17,7 +17,6 @@ import javax.swing.border.EmptyBorder;
 
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
-import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage;
 import jmp.lang.DefineLanguage.LangID;
@@ -43,7 +42,6 @@ public class SelectLanguageDialog extends JMPDialog {
         contentPanel.setLayout(null);
 
         contentPanel.setBackground(getJmpBackColor());
-        JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_LANGUAGE, this);
 
         comboBoxLang = new JComboBox<String>();
         comboBoxLang.setFont(new Font("Dialog", Font.PLAIN, 15));

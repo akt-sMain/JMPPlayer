@@ -220,6 +220,8 @@ public class JMPLoader {
      */
     public static boolean invoke(ConfigDatabase config, IPlugin standAlonePlugin) {
 
+        JMPFlags.LibraryMode = false;
+
         // ライブラリ初期化処理
         boolean result = initLibrary(config, standAlonePlugin);
 

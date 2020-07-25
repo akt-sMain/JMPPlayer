@@ -27,7 +27,6 @@ import jlib.midi.MidiByte;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
-import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 
@@ -125,7 +124,6 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
             }
             updateCounterLabel();
         }
-        JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_MIDI_MONITOR, this);
         {
             JPanel buttonPane = new JPanel();
             buttonPane.setBackground(getJmpBackColor());

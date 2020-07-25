@@ -20,7 +20,6 @@ import function.Utility;
 import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
-import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 
@@ -49,7 +48,6 @@ public class LicenseReaderDialog extends JMPDialog {
         setBounds(100, 100, 725, 550);
         getContentPane().setLayout(new BorderLayout());
 
-        JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_LICENSE, this);
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(null);

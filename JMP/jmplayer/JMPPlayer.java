@@ -169,6 +169,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JMenuItem mntmInitializeConfig;
     private JMenuItem mntmCallMakeJMP;
     private JMenuItem mntmReloadJmzFolder;
+    private JMenuItem mntmMidiExport;
     private JMenuItem mntmDebugDummy;
 
     /**
@@ -180,15 +181,13 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     public JMPPlayer() throws HeadlessException {
         super();
 
+        versionInfoDialog = new VersionInfoDialog();
+
         setTitle(APP_TITLE);
         this.addWindowListener(this);
         this.setTransferHandler(new DropFileCallbackHandler(this));
         this.setBounds(WindowManager.DEFAULT_PLAYER_WINDOW_SIZE);
 
-        // ウィンドウマネージャーに登録
-        JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_MAIN, this);
-
-        // Midiリストダイアログ
         getContentPane().setLayout(new BorderLayout(0, 0));
 
         panel_2 = new JPanel();
@@ -596,47 +595,84 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         configMenu.add(lblDebugMenu);
 
         removeAllPluginMenuItem = new JMenuItem("Remove all plugins");
+        removeAllPluginMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int res = Utility.openInfomationDialog(JMPPlayer.this, "", "Are you sure you want to remove all plugins?");
+                if (res != Utility.CONFIRM_RESULT_YES) {
+                    return;
+                }
+
+                File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
+                for (File f : dir.listFiles()) {
+
+                    if (Utility.checkExtension(f.getPath(), PluginManager.SETUP_FILE_EX) == false) {
+                        continue;
+                    }
+                    JMPCore.getPluginManager().reserveRemovePlugin(f, false);
+                }
+            }
+        });
         configMenu.add(removeAllPluginMenuItem);
 
         mntmCallMakeJMP = new JMenuItem("Invoke \"mkJMP\"");
+        mntmCallMakeJMP.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MakeJmpLib.call(MakeJmpLib._CMD_WIN, MakeJmpLib._CMD_EXP);
+            }
+        });
         configMenu.add(mntmCallMakeJMP);
 
         zipGenerateMenuItem = new JMenuItem("Generate importing \"jmz\"");
+        zipGenerateMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String path = Utility.pathCombin(Platform.getCurrentPath(false), "_jmz");
+                File dir = new File(path);
+                if (dir.exists() == false) {
+                    dir.mkdir();
+                }
+                if (dir.exists() == true) {
+                    JMPCore.getPluginManager().generatePluginZipPackage(dir.getPath());
+                    try {
+                        Utility.openExproler(dir);
+                    }
+                    catch (IOException e1) {
+                    }
+                }
+                else {
+                    System.out.println("Not make zip dir.");
+                }
+            }
+        });
         configMenu.add(zipGenerateMenuItem);
 
         mnExecuteBatFile = new JMenu("Execute \"mkj\" file");
-        configMenu.add(mnExecuteBatFile);
-
-        mntmReloadJmzFolder = new JMenuItem("Reload \"jmz\" Folder");
-        mntmReloadJmzFolder.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JMPCore.getPluginManager().readingJmzDirectoryConfirm();
-            }
-        });
-        configMenu.add(mntmReloadJmzFolder);
-
-        mntmDebugDummy = new JMenuItem("Dummy");
-        mntmDebugDummy.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    List<Long> data = SoundManager.WavPlayer.sampling(100);
-                    for (long value : data) {
-                        System.out.println(value);
-                    }
-                }
-                catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-
-            }
-        });
-        configMenu.add(mntmDebugDummy);
-
         mnExecuteBatFile.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
+                File current = new File(Platform.getCurrentPath(false));
+
                 mnExecuteBatFile.removeAll();
 
-                File current = new File(Platform.getCurrentPath(false));
+                JMenuItem execAllItem = new JMenuItem("ExecuteAll");
+                execAllItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        for (File f : current.listFiles()) {
+                            if (Utility.checkExtension(f, MakeJmpLib.PKG_PROJECT_CFG_EX) == true) {
+                                MakeJmpConfig mkjConfig = null;
+                                try {
+                                    mkjConfig = new MakeJmpConfig(f);
+                                    MakeJmpLib.exportPackage(mkjConfig);
+                                }
+                                catch (Exception ioe) {
+                                }
+                            }
+                        }
+                    }
+                });
+                mnExecuteBatFile.add(execAllItem);
+                mnExecuteBatFile.addSeparator();
+
                 for (File f : current.listFiles()) {
                     if (Utility.checkExtension(f, MakeJmpLib.PKG_PROJECT_CFG_EX) == true) {
                         JMenuItem item = new JMenuItem(Utility.getFileNameAndExtension(f));
@@ -658,54 +694,59 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 }
             }
         });
-        mnExecuteBatFile.addActionListener(new ActionListener() {
+        configMenu.add(mnExecuteBatFile);
+
+        mntmReloadJmzFolder = new JMenuItem("Reload \"jmz\" Folder");
+        mntmReloadJmzFolder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                JMPCore.getPluginManager().readingJmzDirectoryConfirm();
             }
         });
-        removeAllPluginMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int res = Utility.openInfomationDialog(JMPPlayer.this, "", "Are you sure you want to remove all plugins?");
-                if (res != Utility.CONFIRM_RESULT_YES) {
-                    return;
-                }
+        configMenu.add(mntmReloadJmzFolder);
 
-                File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
-                for (File f : dir.listFiles()) {
-
-                    if (Utility.checkExtension(f.getPath(), PluginManager.SETUP_FILE_EX) == false) {
-                        continue;
-                    }
-                    JMPCore.getPluginManager().reserveRemovePlugin(f, false);
-                }
-            }
-        });
-        zipGenerateMenuItem.addActionListener(new ActionListener() {
+        mntmMidiExport = new JMenuItem("Midi export");
+        mntmMidiExport.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String path = Utility.pathCombin(Platform.getCurrentPath(false), "_jmz");
-                File dir = new File(path);
-                if (dir.exists() == false) {
-                    dir.mkdir();
-                }
-                if (dir.exists() == true) {
-                    JMPCore.getPluginManager().generatePluginZipPackage(dir.getPath());
-                    try {
-                        Utility.openExproler(dir);
-                    }
-                    catch (IOException e1) {
+                SystemManager system = JMPCore.getSystemManager();
+                String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MIDI));
+                String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MUSICXML));
+
+                File defaultDir = new File(Platform.getCurrentPath());
+                String loadedFile = JMPCore.getDataManager().getLoadedFile();
+                if (Utility.checkExtensions(loadedFile, exMIDI) == true || Utility.checkExtensions(loadedFile, exMUSICXML) == true) {
+                    String defaultFileName = Utility.getFileNameAndExtension(loadedFile);
+                    defaultFileName = Utility.getFileNameNotExtension(defaultFileName) + ".mid";
+                    File dst = Utility.openSaveFileDialog(null, defaultDir, defaultFileName);
+                    if (dst != null) {
+                        try {
+                            SoundManager.MidiPlayer.saveFile(dst);
+                            Utility.openExproler(dst);
+                        }
+                        catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
                     }
                 }
-                else {
-                    System.out.println("Not make zip dir.");
-                }
             }
         });
-        mntmCallMakeJMP.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                MakeJmpLib.call(MakeJmpLib._CMD_WIN, MakeJmpLib._CMD_EXP);
-            }
-        });
+        configMenu.add(mntmMidiExport);
 
-        versionInfoDialog = new VersionInfoDialog();
+        mntmDebugDummy = new JMenuItem("Dummy");
+        mntmDebugDummy.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    List<Long> data = SoundManager.WavPlayer.sampling(100);
+                    for (long value : data) {
+                        System.out.println(value);
+                    }
+                }
+                catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+            }
+        });
+        configMenu.add(mntmDebugDummy);
     }
 
     @Override
@@ -728,16 +769,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         }
 
         // 色設定
-        getContentPane().setBackground(getJmpBackColor());
-        panel_1.setBackground(getJmpBackColor());
-        slider.setBackground(getJmpBackColor());
-        panel_4.setBackground(getJmpBackColor());
-        panel_6.setBackground(getJmpBackColor());
-        prev2Button.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
-        prevButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
-        playButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
-        nextButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
-        next2Button.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
+        updateBackColor();
 
         // プラグイン追加
         for (String name : JMPCore.getPluginManager().getPluginsNameSet()) {
@@ -761,6 +793,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             mnExecuteBatFile.setVisible(false);
             mntmCallMakeJMP.setVisible(false);
             mntmReloadJmzFolder.setVisible(false);
+            mntmMidiExport.setVisible(false);
             mntmDebugDummy.setVisible(false);
         }
 
@@ -1426,12 +1459,14 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     @Override
     public void updateBackColor() {
         getContentPane().setBackground(getJmpBackColor());
-        slider.setBackground(getJmpBackColor());
         panel_1.setBackground(getJmpBackColor());
-        panel_2.setBackground(getJmpBackColor());
-        panel_3.setBackground(getJmpBackColor());
+        slider.setBackground(getJmpBackColor());
         panel_4.setBackground(getJmpBackColor());
-        panel_5.setBackground(getJmpBackColor());
         panel_6.setBackground(getJmpBackColor());
+        prev2Button.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
+        prevButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
+        playButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
+        nextButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
+        next2Button.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
     }
 }

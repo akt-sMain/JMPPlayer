@@ -232,7 +232,6 @@ public class PluginManager extends AbstractManager {
         }
         catch (Exception e) {
             ret = false;
-            SystemManager.TempResisterEx = e;
         }
         finally {
             Utility.deleteFileDirectory(tmpDir);

@@ -23,7 +23,6 @@ import function.Utility;
 import jlib.midi.MidiByte;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
-import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 
@@ -89,7 +88,6 @@ public class MidiDataTransportDialog extends JMPDialog {
         contentPanel.setBackground(getJmpBackColor());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         setJmpIcon();
-        JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_MIDI_SENDER, this);
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(null);
 

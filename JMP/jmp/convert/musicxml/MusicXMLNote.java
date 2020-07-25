@@ -29,6 +29,7 @@ public class MusicXMLNote extends MusicXMLElement {
     private String tieType = "";
 
     private MusicXMLNotations notations = null;
+    private MusicXMLTimeModification timeModification = null;
 
     public MusicXMLNote() {
     }
@@ -158,6 +159,14 @@ public class MusicXMLNote extends MusicXMLElement {
 
     public void setNotations(MusicXMLNotations notations) {
         this.notations = notations;
+    }
+
+    public MusicXMLTimeModification getTimeModification() {
+        return timeModification;
+    }
+
+    public void setTimeModification(MusicXMLTimeModification timeModification) {
+        this.timeModification = timeModification;
     }
 
 }

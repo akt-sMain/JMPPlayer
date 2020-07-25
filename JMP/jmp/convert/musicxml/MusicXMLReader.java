@@ -315,6 +315,11 @@ public class MusicXMLReader implements IJMPDocumentReader {
                     MusicXMLNotations mxmlNotations = readNotationsNodeList(childElement);
                     mxmlNote.setNotations(mxmlNotations);
                 }
+                else if (childElement.getNodeName().equals("time-modification") == true) {
+                    // time-modification element
+                    MusicXMLTimeModification mxmlTimeModification = readTimeModificationNodeList(childElement);
+                    mxmlNote.setTimeModification(mxmlTimeModification);
+                }
             }
         }
 
@@ -342,6 +347,24 @@ public class MusicXMLReader implements IJMPDocumentReader {
             }
         }
         return mxmlNotations;
+    }
+
+    private MusicXMLTimeModification readTimeModificationNodeList(Element element) {
+        MusicXMLTimeModification mxmlTimeModification = new MusicXMLTimeModification();
+        NodeList nodeList = element.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element childElement = (Element) node;
+                if (childElement.getNodeName().equals("actual-notes") == true) {
+                    mxmlTimeModification.setActualNotes(childElement.getTextContent());
+                }
+                if (childElement.getNodeName().equals("normal-notes") == true) {
+                    mxmlTimeModification.setNormalNotes(childElement.getTextContent());
+                }
+            }
+        }
+        return mxmlTimeModification;
     }
 
     private MusicXMLArticulations readArticulationsNodeList(Element element) {

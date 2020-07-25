@@ -15,7 +15,6 @@ import javax.swing.border.EmptyBorder;
 import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
-import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 
@@ -44,8 +43,6 @@ public class HistoryDialog extends JMPDialog {
         if (jmpIcon != null) {
             setIconImage(jmpIcon);
         }
-
-        JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_HISTORY, this);
 
         contentPanel.setLayout(new BorderLayout(0, 0));
         {

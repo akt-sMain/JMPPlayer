@@ -89,15 +89,15 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     }
 
     private void makeWindowInstance() {
-        new LicenseReaderDialog();
-        new MidiMessageMonitor();
-        new MidiDataTransportDialog();
-        new SelectLanguageDialog();
-        new HistoryDialog();
-        new MidiFileListDialog();
+        register(WINDOW_NAME_LICENSE, new LicenseReaderDialog());
+        register(WINDOW_NAME_MIDI_MONITOR, new MidiMessageMonitor());
+        register(WINDOW_NAME_MIDI_SENDER, new MidiDataTransportDialog());
+        register(WINDOW_NAME_LANGUAGE, new SelectLanguageDialog());
+        register(WINDOW_NAME_HISTORY, new HistoryDialog());
+        register(WINDOW_NAME_FILE_LIST, new MidiFileListDialog());
 
         /* Windows用のGUI */
-        new FFmpegConvertDialog();
+        register(WINDOW_NAME_FFMPEG, new FFmpegConvertDialog());
 
         // メインウィンドウ登録
         registerMainWindow(new JMPPlayer());
@@ -119,6 +119,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     public void registerMainWindow(IJmpMainWindow win) {
         if (getMainWindow() == null) {
             database.setMainWindow(win);
+            register(WINDOW_NAME_MAIN, win);
         }
     }
 

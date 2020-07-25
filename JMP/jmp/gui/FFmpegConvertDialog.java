@@ -27,7 +27,6 @@ import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SystemManager;
-import jmp.core.WindowManager;
 import jmp.gui.ui.DropFileCallbackHandler;
 import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.JMPDialog;
@@ -66,8 +65,6 @@ public class FFmpegConvertDialog extends JMPDialog {
         if (jmpIcon != null) {
             setIconImage(jmpIcon);
         }
-
-        JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_FFMPEG, this);
 
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));

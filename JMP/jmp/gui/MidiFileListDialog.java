@@ -44,7 +44,6 @@ import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
 import jmp.core.SystemManager;
-import jmp.core.WindowManager;
 import jmp.gui.ui.DropFileCallbackHandler;
 import jmp.gui.ui.FileListTableModel;
 import jmp.gui.ui.IDropFileCallback;
@@ -95,8 +94,6 @@ public class MidiFileListDialog extends JMPFrame {
                 updateList(file);
             }
         }));
-
-        JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_FILE_LIST, this);
 
         model = new FileListTableModel(columnNames, 0);
         midiFileList = new JTable(model);

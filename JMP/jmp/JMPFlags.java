@@ -32,7 +32,7 @@ public class JMPFlags {
     }
 
     /** ライブラリモード */
-    public static boolean LibraryMode = false;
+    public static boolean LibraryMode = true;
 
     /** デバッグモード */
     public static boolean DebugMode = false;
