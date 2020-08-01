@@ -91,6 +91,7 @@ public class DefineLanguage {
         Automatically_assign_Program_change_number,
         Confirm_jms_with_different_versions,
         Confirm_jmz_with_different_versions,
+        D_and_D_the_playback_file_here,
     }
 
     static java.util.HashMap<LangID, LanguageWords> langMap = new java.util.HashMap<LangID, LanguageWords>() {
@@ -182,6 +183,7 @@ public class DefineLanguage {
             put(LangID.Confirm_jmz_with_different_versions,
                     new LanguageWords("The version of the plugin you are trying to add is different. Do you want to add it?",
                             "追加しようとしているプラグインのバージョンが異なります。追加しますか？", "您尝试添加的插件版本不同。 您要添加吗？"));
+            put(LangID.D_and_D_the_playback_file_here, new LanguageWords("Drag and drop the playback file here.", "再生ファイルをここにドラッグ&ドロップしてください。", "将播放文件拖放到此处。"));
         }
     };
 }

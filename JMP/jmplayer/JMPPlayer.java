@@ -771,6 +771,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         // 色設定
         updateBackColor();
 
+        setStatusText(JMPCore.getLanguageManager().getLanguageStr(LangID.D_and_D_the_playback_file_here), Color.ORANGE);
+
         // プラグイン追加
         for (String name : JMPCore.getPluginManager().getPluginsNameSet()) {
             IPlugin plugin = JMPCore.getPluginManager().getPlugin(name);
@@ -1452,7 +1454,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             }
         }
         else {
-            JMPCore.getFileManager().loadFile(path);
+            JMPCore.getFileManager().loadFileToPlay(path);
         }
     }
 
