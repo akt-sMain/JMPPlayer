@@ -1,9 +1,9 @@
 package jlib.core;
 
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequencer;
 
+import jlib.midi.IMidiController;
+import jlib.midi.IMidiEventListener;
 import jlib.midi.IMidiToolkit;
 
 public interface ISoundManager {
@@ -149,56 +149,14 @@ public interface ISoundManager {
     abstract IMidiToolkit getMidiToolkit();
 
     /**
-     * Midiメッセージ送信
+     * Midiコントローラ取得
      *
-     * @param msg
-     * @param timeStamp
+     * @param senderType センダータイプ
      * @return
      */
-    abstract boolean sendMidiMessage(MidiMessage msg, long timeStamp);
-
-    /**
-     * ノートオンイベント送信
-     *
-     * @param channel
-     *            チャンネル
-     * @param midiNumber
-     *            MIDI番号
-     * @param velocity
-     *            ベロシティ
-     * @throws InvalidMidiDataException
-     */
-    default boolean sendNoteOn(int channel, int midiNumber, int velocity, long timeStamp) throws InvalidMidiDataException {
-        MidiMessage sMes = getMidiToolkit().createNoteOnMessage(channel, midiNumber, velocity);
-        return sendMidiMessage(sMes, timeStamp);
-    }
-
-    /**
-     * ノートオフイベント送信
-     *
-     * @param channel
-     *            チャンネル
-     * @param midiNumber
-     *            MIDI番号
-     * @throws InvalidMidiDataException
-     */
-    default boolean sendNoteOff(int channel, int midiNumber, long timeStamp) throws InvalidMidiDataException {
-        MidiMessage sMes = getMidiToolkit().createNoteOffMessage(channel, midiNumber, 0);
-        return sendMidiMessage(sMes, timeStamp);
-    }
-
-    /**
-     * プログラムチェンジ送信
-     *
-     * @param channel
-     *            チャンネル
-     * @param programNumber
-     *            プログラム番号
-     * @throws InvalidMidiDataException
-     */
-    default boolean sendProgramChange(int channel, int programNumber, long timeStamp) throws InvalidMidiDataException {
-        MidiMessage sMes = getMidiToolkit().createProgramChangeMessage(channel, programNumber);
-        return sendMidiMessage(sMes, timeStamp);
+    abstract IMidiController getMidiController(short senderType);
+    default IMidiController getMidiController() {
+        return getMidiController(IMidiEventListener.SENDER_MIDI_OUT);
     }
 
 }

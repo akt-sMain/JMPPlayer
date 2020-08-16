@@ -1,6 +1,5 @@
 package jmp.task;
 
-import function.Utility;
 import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
 import jmp.JMPLoader;
@@ -14,42 +13,36 @@ import jmp.core.WindowManager;
  * @author abs
  *
  */
-public class TaskOfUpdate extends Thread implements ITask {
-    // ! 一定周期再描画時間（ms）
-    public static long CyclicRepaintTime = 20;
-
-    private boolean isRunnable = true;
-
+public class TaskOfUpdate extends TaskOfBase {
     public TaskOfUpdate() {
-
+        super(50);
     }
 
     @Override
-    public void run() {
+    void begin() {
+    }
+
+    @Override
+    void loop() {
         WindowManager wm = JMPCore.getWindowManager();
         PluginManager pm = JMPCore.getPluginManager();
-
         IJmpMainWindow win = wm.getMainWindow();
-        while (isRunnable) {
-            win.update();
-            pm.update();
 
-            // スタンドアロンプラグインが閉じられているか確認
-            if (JMPCore.isEnableStandAlonePlugin() == true) {
-                IPlugin plg = JMPCore.StandAlonePlugin;
-                if (plg != null) {
-                    if (plg.isOpen() == false) {
-                        JMPLoader.exit();
-                    }
+        win.update();
+        pm.update();
+
+        // スタンドアロンプラグインが閉じられているか確認
+        if (JMPCore.isEnableStandAlonePlugin() == true) {
+            IPlugin plg = JMPCore.StandAlonePlugin;
+            if (plg != null) {
+                if (plg.isOpen() == false) {
+                    JMPLoader.exit();
                 }
             }
-
-            Utility.threadSleep(CyclicRepaintTime);
         }
     }
 
     @Override
-    public void exit() {
-        isRunnable = false;
+    void end() {
     }
 }

@@ -52,12 +52,66 @@ public class MusicXMLReader implements IJMPDocumentReader {
             loadResult = true;
         }
 
-        // printResult();
+        printResult();
     }
 
     public void load(File file) throws SAXException, IOException, ParserConfigurationException {
         this.file = file;
         load();
+    }
+
+    @SuppressWarnings("unused")
+    private void printResult() {
+        MusicXMLPartList partList = musicXML.getPartList();
+        for (MusicXMLScorePart sp : partList.getScorePart()) {
+            System.out.println("---- PART_ID(" + sp.getPartID() + ") ----");
+            System.out.println(" :Port = " + sp.getPort());
+            System.out.println(" :Channel = " + sp.getChannel());
+            System.out.println(" :Program = " + sp.getProgram());
+            System.out.println(" :Volume = " + sp.getVolume());
+            System.out.println(" :Pan = " + sp.getPan());
+        }
+
+        for (int i = 0; i < musicXML.partSize(); i++) {
+            MusicXMLPart part = musicXML.getPart(i);
+            for (MusicXMLMeasure meas : part.getMeasures()) {
+                System.out.println("---- MEASURE(" + meas.getNumber() + ") ----");
+                for (MusicXMLElement element : meas.getElements()) {
+                    if (element instanceof MusicXMLAttributes) {
+                        MusicXMLAttributes attr = (MusicXMLAttributes) element;
+                        System.out.println(" ● Attributes");
+                        System.out.println(" :Divisions = " + attr.getDivisions());
+                        System.out.println(" :Fifths = " + attr.getFifths());
+                        System.out.println(" :Mode = " + attr.getMode());
+                        System.out.println(" :Staves = " + attr.getStaves());
+                        System.out.println(" :Beats = " + attr.getBeats());
+                        System.out.println(" :BeatsType = " + attr.getBeatsType());
+                    }
+                    else if (element instanceof MusicXMLDirection) {
+                        MusicXMLDirection dir = (MusicXMLDirection) element;
+                        System.out.println(" ● Direction");
+                        System.out.println(" :Tempo = " + dir.getTempo());
+                    }
+                    else if (element instanceof MusicXMLNote) {
+                        MusicXMLNote note = (MusicXMLNote) element;
+                        System.out.println(" ● Note");
+                        System.out.println(" :Duration = " + note.getDuration());
+                        if (note.isRest() == false) {
+                            System.out.println(" :Step = " + note.getStep());
+                            System.out.println(" :Octave = " + note.getOctave());
+                        }
+                        else {
+                            System.out.println(" :Rest");
+                        }
+                        System.out.println(" :Accidental = " + note.getAccidental());
+                        System.out.println(" :Type = " + note.getType());
+                        System.out.println(" :Stem = " + note.getStem());
+                        System.out.println(" :Staff = " + note.getStaff());
+                        System.out.println(" :Voice = " + note.getVoice());
+                    }
+                }
+            }
+        }
     }
 
     public MusicXML getMusicXML() {
@@ -550,60 +604,6 @@ public class MusicXMLReader implements IJMPDocumentReader {
             midiNumber = 60;
         }
         return midiNumber + alter;
-    }
-
-    @SuppressWarnings("unused")
-    private void printResult() {
-        MusicXMLPartList partList = musicXML.getPartList();
-        for (MusicXMLScorePart sp : partList.getScorePart()) {
-            System.out.println("---- PART_ID(" + sp.getPartID() + ") ----");
-            System.out.println(" :Port = " + sp.getPort());
-            System.out.println(" :Channel = " + sp.getChannel());
-            System.out.println(" :Program = " + sp.getProgram());
-            System.out.println(" :Volume = " + sp.getVolume());
-            System.out.println(" :Pan = " + sp.getPan());
-        }
-
-        for (int i = 0; i < musicXML.partSize(); i++) {
-            MusicXMLPart part = musicXML.getPart(i);
-            for (MusicXMLMeasure meas : part.getMeasures()) {
-                System.out.println("---- MEASURE(" + meas.getNumber() + ") ----");
-                for (MusicXMLElement element : meas.getElements()) {
-                    if (element instanceof MusicXMLAttributes) {
-                        MusicXMLAttributes attr = (MusicXMLAttributes) element;
-                        System.out.println(" ● Attributes");
-                        System.out.println(" :Divisions = " + attr.getDivisions());
-                        System.out.println(" :Fifths = " + attr.getFifths());
-                        System.out.println(" :Mode = " + attr.getMode());
-                        System.out.println(" :Staves = " + attr.getStaves());
-                        System.out.println(" :Beats = " + attr.getBeats());
-                        System.out.println(" :BeatsType = " + attr.getBeatsType());
-                    }
-                    else if (element instanceof MusicXMLDirection) {
-                        MusicXMLDirection dir = (MusicXMLDirection) element;
-                        System.out.println(" ● Direction");
-                        System.out.println(" :Tempo = " + dir.getTempo());
-                    }
-                    else if (element instanceof MusicXMLNote) {
-                        MusicXMLNote note = (MusicXMLNote) element;
-                        System.out.println(" ● Note");
-                        System.out.println(" :Duration = " + note.getDuration());
-                        if (note.isRest() == false) {
-                            System.out.println(" :Step = " + note.getStep());
-                            System.out.println(" :Octave = " + note.getOctave());
-                        }
-                        else {
-                            System.out.println(" :Rest");
-                        }
-                        System.out.println(" :Accidental = " + note.getAccidental());
-                        System.out.println(" :Type = " + note.getType());
-                        System.out.println(" :Stem = " + note.getStem());
-                        System.out.println(" :Staff = " + note.getStaff());
-                        System.out.println(" :Voice = " + note.getVoice());
-                    }
-                }
-            }
-        }
     }
 
     public boolean isLoadResult() {

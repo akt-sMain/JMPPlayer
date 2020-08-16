@@ -134,12 +134,10 @@ public class JMPLoader {
      * @param config
      * @return
      */
-    public static boolean invoke(String[] args, ConfigDatabase config) {
+    public static boolean invoke(String[] args, ConfigDatabaseWrapper config) {
+        String jmsName = "";
         IPlugin stdPlugin = null;
         if (args.length > 0) {
-            // システムパス設定
-            JMPCore.getSystemManager().makeSystemPath();
-
             if (args[0].equalsIgnoreCase(CMD_MKJMP) == true) {
                 args[0] = MakeJmpLib.CMD_CONSOLE;
                 MakeJmpLib.call(args);
@@ -158,13 +156,13 @@ public class JMPLoader {
                         break;
                     }
 
-                    String jmsName = args[i];
-                    stdPlugin = getStdPlugin(jmsName);
+                    jmsName = args[i];
                 }
                 else if (args[i].equalsIgnoreCase(CMD_NONPLG) == true) {
                     JMPFlags.NonPluginLoadFlag = true;
                 }
                 else if (args[i].equalsIgnoreCase(CMD_PLGLST) == true) {
+                    setupConsoleApplication();
                     printPlglst();
                     return true;
                 }
@@ -195,7 +193,16 @@ public class JMPLoader {
 
         if (JMPFlags.NonPluginLoadFlag == true) {
             // ※nonplgとstdplgコマンドは併用不可
-            stdPlugin = null;
+            jmsName = "";
+        }
+
+        /* スタンドアロンプラグインの特殊処理 */
+        if (jmsName.isEmpty() == false) {
+            // システムパス設定
+            JMPCore.getSystemManager().makeSystemPath();
+
+            // プラグインを探索
+            stdPlugin = getStdPlugin(jmsName);
         }
         return invoke(config, stdPlugin);
     }
@@ -218,8 +225,9 @@ public class JMPLoader {
      *            スタンドアロンプラグイン
      * @return
      */
-    public static boolean invoke(ConfigDatabase config, IPlugin standAlonePlugin) {
+    public static boolean invoke(ConfigDatabaseWrapper config, IPlugin standAlonePlugin) {
 
+        // invokeメソッドからの起動はLibralyモードではない
         JMPFlags.LibraryMode = false;
 
         // ライブラリ初期化処理
@@ -292,7 +300,7 @@ public class JMPLoader {
      * @param config
      * @return
      */
-    public static boolean initLibrary(ConfigDatabase config) {
+    public static boolean initLibrary(ConfigDatabaseWrapper config) {
         return initLibrary(config, null);
     }
 
@@ -303,7 +311,7 @@ public class JMPLoader {
      * @param plugin
      * @return
      */
-    public static boolean initLibrary(ConfigDatabase config, IPlugin plugin) {
+    public static boolean initLibrary(ConfigDatabaseWrapper config, IPlugin plugin) {
 
         // スタンドアロンプラグイン設定
         JMPCore.StandAlonePlugin = plugin;
@@ -312,7 +320,12 @@ public class JMPLoader {
         JMPCore.getSystemManager().makeSystemPath();
 
         // 設定値を先行して登録する
-        JMPCore.getDataManager().setConfigDatabase(config);
+        if (config == null) {
+            JMPCore.getDataManager().setConfigDatabase(null);
+        }
+        else {
+            JMPCore.getDataManager().setConfigDatabase(config.getConfigDatabase());
+        }
 
         // 管理クラス初期化処理
         boolean result = JMPCore.initFunc();
@@ -332,8 +345,9 @@ public class JMPLoader {
                 }
             }
         }
+
+        /* プレイヤーロード */
         if (result == true) {
-            /* プレイヤーロード */
             result = JMPCore.getSoundManager().openPlayer();
         }
 

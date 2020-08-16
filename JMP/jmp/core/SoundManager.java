@@ -8,6 +8,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequencer;
+import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 import javax.sound.sampled.FloatControl;
 import javax.swing.DefaultListModel;
@@ -17,13 +18,14 @@ import function.Utility;
 import jlib.core.ISoundManager;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
+import jlib.midi.IMidiController;
 import jlib.midi.IMidiEventListener;
+import jlib.midi.IMidiFilter;
 import jlib.midi.IMidiToolkit;
 import jlib.player.IPlayer;
 import jmp.JMPFlags;
-import jmp.JmpUtil;
 import jmp.lang.DefineLanguage.LangID;
-import jmp.midi.MidiByteMessage;
+import jmp.midi.MidiController;
 import jmp.midi.toolkit.MidiToolkitManager;
 import jmp.player.FFmpegPlayer;
 import jmp.player.MidiPlayer;
@@ -31,6 +33,7 @@ import jmp.player.MusicXmlPlayer;
 import jmp.player.Player;
 import jmp.player.PlayerAccessor;
 import jmp.player.WavPlayer;
+import jmp.util.JmpUtil;
 
 /**
  * サウンド管理クラス
@@ -49,14 +52,17 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     private static PlayerAccessor PlayerAccessor = null;
 
     // プレイヤーインスタンス
-    public static MidiPlayer MidiPlayer = null;
-    public static WavPlayer WavPlayer = null;
-    public static MusicXmlPlayer MusicXmlPlayer = null;
-    public static FFmpegPlayer FFmpegPlayer = null;
+    public static MidiPlayer SMidiPlayer = null;
+    public static WavPlayer SWavPlayer = null;
+    public static MusicXmlPlayer SMusicXmlPlayer = null;
+    public static FFmpegPlayer SFFmpegPlayer = null;
 
     FloatControl volumeCtrl;
 
+    private IMidiFilter defaultMidiFilter = null;
     private IMidiToolkit midiToolkit = null;
+    private IMidiController midiInController = null;
+    private IMidiController midiOutController = null;
 
     SoundManager(int pri) {
         super(pri, "sound");
@@ -74,30 +80,67 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
         PlayerAccessor = new PlayerAccessor();
 
-        // プレイヤーインスタンス作成
+        /* プレイヤーインスタンス作成 */
         SystemManager system = JMPCore.getSystemManager();
         String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MIDI));
         String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_WAV));
         String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MUSICXML));
 
-        MidiPlayer = new MidiPlayer();
-        MidiPlayer.setSupportExtentions(exMIDI);
-        PlayerAccessor.register(MidiPlayer);
+        // midi
+        SMidiPlayer = new MidiPlayer();
+        SMidiPlayer.setSupportExtentions(exMIDI);
+        PlayerAccessor.register(SMidiPlayer);
 
-        WavPlayer = new WavPlayer();
-        WavPlayer.setSupportExtentions(exWAV);
-        PlayerAccessor.register(WavPlayer);
+        // wav
+        SWavPlayer = new WavPlayer();
+        SWavPlayer.setSupportExtentions(exWAV);
+        PlayerAccessor.register(SWavPlayer);
 
-        MusicXmlPlayer = new MusicXmlPlayer();
-        MusicXmlPlayer.setSupportExtentions(exMUSICXML);
-        PlayerAccessor.register(MusicXmlPlayer);
+        // musicxml
+        SMusicXmlPlayer = new MusicXmlPlayer();
+        SMusicXmlPlayer.setSupportExtentions(exMUSICXML);
+        PlayerAccessor.register(SMusicXmlPlayer);
 
-        FFmpegPlayer = new FFmpegPlayer();
-        FFmpegPlayer.setSupportExtentions("*");
-        PlayerAccessor.register(FFmpegPlayer);
+        // ffmpeg
+        SFFmpegPlayer = new FFmpegPlayer();
+        SFFmpegPlayer.setSupportExtentions("*");
+        PlayerAccessor.register(SFFmpegPlayer);
 
         // デフォルトはMIDIプレイヤーにする
-        PlayerAccessor.change(MidiPlayer);
+        PlayerAccessor.change(SMidiPlayer);
+
+        // デフォルトMIDIフィルター
+        defaultMidiFilter = new IMidiFilter() {
+            @Override
+            public boolean filter(MidiMessage message, short senderType) {
+                IMidiToolkit toolkit = getMidiToolkit();
+                int transpose = JMPCore.getDataManager().getTranspose();
+                if (transpose != 0) {
+                    if (message instanceof ShortMessage) {
+                        ShortMessage sMes = (ShortMessage)message;
+                        if (toolkit.isNoteOn(sMes) == true || toolkit.isNoteOff(sMes) == true) {
+                            int status = sMes.getStatus();
+                            int data1 = sMes.getData1();
+                            int data2 = sMes.getData2();
+                            data1 += transpose;
+
+                            try {
+                                sMes.setMessage(status, data1, data2);
+                            }
+                            catch (InvalidMidiDataException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+        };
+        addFilter(defaultMidiFilter);
+
+        // Midiコントローラーの準備
+        midiInController = new MidiController(IMidiEventListener.SENDER_MIDI_IN);    // INコントローラインターフェース
+        midiOutController = new MidiController(IMidiEventListener.SENDER_MIDI_OUT);  // OUTコントローラインターフェース
 
         // Port lineIn;
 
@@ -116,21 +159,49 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         // volumeCtrl = null;
         // }
 
-        if (initializeFlag == false) {
-            initializeFlag = true;
-        }
+        super.initFunc();
         return true;
     }
 
     @Override
     protected boolean endFunc() {
-        if (initializeFlag == false) {
+        if (super.endFunc() == false) {
             return false;
         }
         stop();
         PlayerAccessor.stopAllPlayer();
         PlayerAccessor.close();
         return true;
+    }
+
+    public boolean filter(MidiMessage message, short senderType) {
+        if (SMidiPlayer.filter(message, senderType) == false) {
+            return false;
+        }
+        return true;
+    }
+
+    public void addFilter(IMidiFilter f) {
+        SMidiPlayer.addFilter(f);
+    }
+
+    public void removeFilter(IMidiFilter f) {
+        SMidiPlayer.removeFilter(f);
+    }
+
+    @Override
+    public IMidiController getMidiController(short senderType) {
+        IMidiController controller = null;
+        switch (senderType) {
+            case IMidiEventListener.SENDER_MIDI_IN:
+                controller = midiInController;
+                break;
+            case IMidiEventListener.SENDER_MIDI_OUT:
+            default:
+                controller = midiOutController;
+                break;
+        }
+        return controller;
     }
 
     public boolean openPlayer() {
@@ -154,7 +225,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
      * @return MIDIシーケンサー
      */
     public Sequencer getSequencer() {
-        return MidiPlayer.getSequencer();
+        return SMidiPlayer.getSequencer();
     }
 
     public IPlayer getCurrentPlayer() {
@@ -504,35 +575,19 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         return player.isSupportedExtension(extension);
     }
 
-    public boolean sendMidiMessage(byte[] data, long timeStamp) {
-        return sendMidiMessage(new MidiByteMessage(data), timeStamp);
-    }
-
-    @Override
-    public boolean sendMidiMessage(MidiMessage msg, long timeStamp) {
-        if (getCurrentReciever() == null) {
-            return false;
-        }
-
-        getCurrentReciever().send(msg, timeStamp);
-
-        JMPCore.getPluginManager().catchMidiEvent(msg, timeStamp, IMidiEventListener.SENDER_MIDI_IN);
-        return true;
-    }
-
     public Receiver getCurrentReciever() {
-        return MidiPlayer.getCurrentReciver();
+        return SMidiPlayer.getCurrentReciver();
     }
 
     public Transmitter getCurrentTransmitter() {
-        return MidiPlayer.getCurrentTransmitter();
+        return SMidiPlayer.getCurrentTransmitter();
     }
 
     public void changeMidiPlayer() {
         // MidiPlayerに変更する
-        if (PlayerAccessor.getCurrent() != SoundManager.MidiPlayer) {
+        if (PlayerAccessor.getCurrent() != SoundManager.SMidiPlayer) {
             PlayerAccessor.getCurrent().stop();
-            PlayerAccessor.change(SoundManager.MidiPlayer);
+            PlayerAccessor.change(SoundManager.SMidiPlayer);
         }
     }
 
@@ -584,7 +639,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     public void resetProgramChange(int ch) {
         try {
-            JMPCore.getSoundManager().sendProgramChange(ch, 0, 0);
+            JMPCore.getSoundManager().getMidiController().sendProgramChange(ch, 0, 0);
         }
         catch (InvalidMidiDataException e1) {
         }
@@ -625,19 +680,30 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         else if (key.equals(SystemManager.COMMON_REGKEY_EXTENSION_MIDI) == true) {
             String val = system.getCommonRegisterValue(key);
             String[] exs = JmpUtil.genStr2Extensions(val);
-            MidiPlayer.setSupportExtentions(exs);
+            SMidiPlayer.setSupportExtentions(exs);
         }
         else if (key.equals(SystemManager.COMMON_REGKEY_EXTENSION_WAV) == true) {
             String val = system.getCommonRegisterValue(key);
             String[] exs = JmpUtil.genStr2Extensions(val);
-            WavPlayer.setSupportExtentions(exs);
+            SWavPlayer.setSupportExtentions(exs);
         }
         else if (key.equals(SystemManager.COMMON_REGKEY_EXTENSION_MUSICXML) == true) {
             String val = system.getCommonRegisterValue(key);
             String[] exs = JmpUtil.genStr2Extensions(val);
-            MusicXmlPlayer.setSupportExtentions(exs);
+            SMusicXmlPlayer.setSupportExtentions(exs);
         }
         super.notifyUpdateCommonRegister(key);
+    }
+
+    @Override
+    protected void notifyUpdateConfig(String key) {
+        super.notifyUpdateConfig(key);
+
+        //DataManager dm = JMPCore.getDataManager();
+        if (key.equals(DataManager.CFG_KEY_MIDIIN) == true) {
+        }
+        else if (key.equals(DataManager.CFG_KEY_MIDIOUT) == true) {
+        }
     }
 
     public void updateMidiToolkit() {

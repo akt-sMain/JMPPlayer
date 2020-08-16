@@ -19,14 +19,14 @@ public class JMPCore {
 
     /** 初期化・終了実行順位 */
     private static final int MANAGER_PRIORITY_RESOUCE = 0;
-    private static final int MANAGER_PRIORITY_LANG = 5;
-    private static final int MANAGER_PRIORITY_SYSTEM = 15;
-    private static final int MANAGER_PRIORITY_DATA = 20;
-    private static final int MANAGER_PRIORITY_WINDOW = 30;
-    private static final int MANAGER_PRIORITY_SOUND = 40;
-    private static final int MANAGER_PRIORITY_PLUGIN = 50;
-    private static final int MANAGER_PRIORITY_TASK = 60;
-    private static final int MANAGER_PRIORITY_FILE = 70;
+    private static final int MANAGER_PRIORITY_LANG = 10;
+    private static final int MANAGER_PRIORITY_SYSTEM = 20;
+    private static final int MANAGER_PRIORITY_TASK = 30;
+    private static final int MANAGER_PRIORITY_DATA = 40;
+    private static final int MANAGER_PRIORITY_WINDOW = 50;
+    private static final int MANAGER_PRIORITY_SOUND = 60;
+    private static final int MANAGER_PRIORITY_PLUGIN = 70;
+    private static final int MANAGER_PRIORITY_FILE = 80;
 
     private static SystemManager systemManager = new SystemManager(MANAGER_PRIORITY_SYSTEM);
     private static DataManager dataManager = new DataManager(MANAGER_PRIORITY_DATA);

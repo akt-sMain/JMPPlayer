@@ -1,7 +1,7 @@
 package std;
 
 import jlib.plugin.IPlugin;
-import jmp.ConfigDatabase;
+import jmp.ConfigDatabaseWrapper;
 import jmp.JMPLoader;
 
 /**
@@ -15,8 +15,17 @@ public class StandAlonePluginInvoker {
         exec(args, null, plugin);
     }
 
-    public static void exec(String args[], ConfigDatabase config, IPlugin plugin) {
+    public static void exec(String args[], ConfigDatabaseWrapper config, IPlugin plugin) {
         boolean res = JMPLoader.invoke(config, plugin);
         System.exit(res ? 0 : 1);
+    }
+
+    public static void execSimple(String args[], IPlugin plugin) {
+        JMPLoader.UsePluginDirectory = false;
+        JMPLoader.UseConfigFile = false;
+        JMPLoader.UseHistoryFile = false;
+        JMPLoader.UseSkinFile = false;
+
+        exec(args, null, plugin);
     }
 }

@@ -10,7 +10,7 @@ import jmp.core.SystemManager;
 
 public class FFmpegPlayer extends Player {
 
-    private Player wavPlayer = SoundManager.WavPlayer;
+    private Player wavPlayer = SoundManager.SWavPlayer;
 
     @Override
     public void play() {

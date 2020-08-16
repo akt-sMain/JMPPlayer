@@ -19,9 +19,9 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import function.Platform;
-import jmp.JmpUtil;
 import jmp.core.JMPCore;
 import jmp.gui.ui.JMPDialog;
+import jmp.util.JmpUtil;
 
 public class SelectSoundFontDIalog extends JMPDialog {
 

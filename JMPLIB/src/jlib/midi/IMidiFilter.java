@@ -1,7 +1,7 @@
 package jlib.midi;
 
-import javax.sound.midi.ShortMessage;
+import javax.sound.midi.MidiMessage;
 
 public interface IMidiFilter {
-    abstract void transpose(ShortMessage sMes, int transpose);
+    default boolean filter(MidiMessage message, short senderType) { return true; }
 }

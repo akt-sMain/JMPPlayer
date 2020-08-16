@@ -37,9 +37,8 @@ import javax.swing.table.TableColumn;
 import function.Platform;
 import function.Platform.KindOfPlatform;
 import function.Utility;
-import jmp.ConfigDatabase;
 import jmp.JMPFlags;
-import jmp.JmpUtil;
+import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
@@ -49,6 +48,7 @@ import jmp.gui.ui.FileListTableModel;
 import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.JMPFrame;
 import jmp.lang.DefineLanguage.LangID;
+import jmp.util.JmpUtil;
 
 public class MidiFileListDialog extends JMPFrame {
 
@@ -673,7 +673,7 @@ public class MidiFileListDialog extends JMPFrame {
 
     @Override
     public void updateConfig(String key) {
-        if (key.equalsIgnoreCase(ConfigDatabase.CFG_KEY_AUTOPLAY) == true) {
+        if (key.equalsIgnoreCase(DataManager.CFG_KEY_AUTOPLAY) == true) {
             updateGUI();
         }
     }

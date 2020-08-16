@@ -28,9 +28,8 @@ public class TaskManager extends AbstractManager implements IManager {
 
     @Override
     protected boolean initFunc() {
-        if (initializeFlag == false) {
-            initializeFlag = true;
-        }
+        super.initFunc();
+
         // 更新タスク登録
         taskOfUpdate = new TaskOfUpdate();
         tasks.add(taskOfUpdate);
@@ -54,9 +53,7 @@ public class TaskManager extends AbstractManager implements IManager {
 
     @Override
     protected boolean endFunc() {
-        if (initializeFlag == false) {
-            return false;
-        }
+        super.endFunc();
         return true;
     }
 
@@ -79,26 +76,20 @@ public class TaskManager extends AbstractManager implements IManager {
     public void taskStart() {
         /* Threadインスタンスのstart処理 */
         for (ITask task : tasks) {
-            if (task instanceof Thread) {
-                Thread th = (Thread) task;
-                th.start();
-            }
+            task.startTask();
         }
     }
 
     public void taskExit() {
-        for (ITask t : tasks) {
-            t.exit();
+        for (ITask task : tasks) {
+            task.exitTask();
         }
     }
 
     public void join() throws InterruptedException {
         // Threadインスタンスのjoin処理
         for (ITask task : tasks) {
-            if (task instanceof Thread) {
-                Thread th = (Thread) task;
-                th.join();
-            }
+            task.joinTask();
         }
     }
 

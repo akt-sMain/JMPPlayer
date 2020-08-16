@@ -2,13 +2,15 @@ package jmp.task;
 
 import java.util.ArrayList;
 
+import jmp.core.JMPCore;
+
 public class CallbackPackage {
     private ArrayList<ICallbackFunction> callbackFunctions = new ArrayList<ICallbackFunction>();
     private int currentCount = 0;
     private int callMillsCount = -1;
 
     public CallbackPackage(long callMills) {
-        callMillsCount = (int) (callMills / TaskOfTimer.CYCLIC_TIME);
+        callMillsCount = (int) (callMills / JMPCore.getTaskManager().getTaskOfTimer().getSleepTime());
     }
 
     public CallbackPackage(int callMillsCount) {

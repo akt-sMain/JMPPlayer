@@ -2,16 +2,19 @@ package jmp.midi;
 
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
-import javax.sound.midi.ShortMessage;
 
 import jlib.midi.IMidiEventListener;
-import jlib.midi.IMidiFilter;
-import jlib.player.IPlayer;
 import jmp.core.JMPCore;
 
+/**
+ * MIDI_OUT用Receiverのラッパークラス
+ *
+ * @author akkut
+ *
+ */
 public class MOReceiver implements Receiver {
 
-    Receiver abstractReciever = null;
+    private Receiver abstractReciever = null;
 
     public MOReceiver(Receiver abstractReciever) {
         this.abstractReciever = abstractReciever;
@@ -23,16 +26,8 @@ public class MOReceiver implements Receiver {
 
     @Override
     public void send(MidiMessage message, long timeStamp) {
-        int transpose = JMPCore.getDataManager().getTranspose();
-        if (transpose != 0) {
-            IPlayer p = JMPCore.getSoundManager().getCurrentPlayer();
-            if (p instanceof IMidiFilter) {
-                if (message instanceof ShortMessage) {
-                    IMidiFilter filter = (IMidiFilter) p;
-                    ShortMessage sMes = (ShortMessage) message;
-                    filter.transpose(sMes, transpose);
-                }
-            }
+        if (JMPCore.getSoundManager().filter(message, IMidiEventListener.SENDER_MIDI_OUT) == false) {
+            return;
         }
 
         if (abstractReciever != null) {

@@ -49,7 +49,6 @@ import jmp.FileResult;
 import jmp.IFileResultCallback;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
-import jmp.JmpUtil;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
@@ -69,6 +68,7 @@ import jmp.gui.ui.SequencerSliderUI;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.task.CallbackPackage;
 import jmp.task.ICallbackFunction;
+import jmp.util.JmpUtil;
 import lib.MakeJmpConfig;
 import lib.MakeJmpLib;
 
@@ -537,7 +537,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mntmMidiDeviceSetup = new JMenuItem("MIDIデバイス設定");
         mntmMidiDeviceSetup.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                SoundManager.MidiPlayer.getSelectSynthsizerDialog().start();
+                SoundManager.SMidiPlayer.getSelectSynthsizerDialog().start();
             }
         });
 
@@ -719,7 +719,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     File dst = Utility.openSaveFileDialog(null, defaultDir, defaultFileName);
                     if (dst != null) {
                         try {
-                            SoundManager.MidiPlayer.saveFile(dst);
+                            SoundManager.SMidiPlayer.saveFile(dst);
                             Utility.openExproler(dst);
                         }
                         catch (Exception e1) {
@@ -735,7 +735,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mntmDebugDummy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    List<Long> data = SoundManager.WavPlayer.sampling(100);
+                    List<Long> data = SoundManager.SWavPlayer.sampling(100);
                     for (long value : data) {
                         System.out.println(value);
                     }
@@ -771,7 +771,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         // 色設定
         updateBackColor();
 
-        setStatusText(JMPCore.getLanguageManager().getLanguageStr(LangID.D_and_D_the_playback_file_here), Color.ORANGE);
+        setInitializeStatusText();
 
         // プラグイン追加
         for (String name : JMPCore.getPluginManager().getPluginsNameSet()) {
@@ -851,6 +851,10 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 }
             }
         });
+    }
+
+    public void setInitializeStatusText() {
+        setStatusText(JMPCore.getLanguageManager().getLanguageStr(LangID.D_and_D_the_playback_file_here), Color.ORANGE);
     }
 
     // private Color getCtrlBorderColor() {
@@ -1428,6 +1432,10 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mnTool.setText(lm.getLanguageStr(LangID.Tool));
         mntmFFmpegConverter.setText(lm.getLanguageStr(LangID.FFmpeg_converter));
         mntmInitializeConfig.setText(lm.getLanguageStr(LangID.Initialize_setting));
+
+        if (JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_LOADED_FILE).isEmpty() == true) {
+            setInitializeStatusText();
+        }
     }
 
     @Override

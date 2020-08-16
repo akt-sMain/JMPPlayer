@@ -12,11 +12,14 @@ import function.Platform;
 import function.Utility;
 import jlib.core.ISystemManager;
 import jlib.plugin.IPlugin;
+import jlib.util.IUtilityToolkit;
 import jmp.CommonRegister;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
-import jmp.JmpUtil;
 import jmp.midi.toolkit.MidiToolkitManager;
+import jmp.util.JmpUtil;
+import jmp.util.toolkit.DefaultUtilityToolkit;
+import jmp.util.toolkit.UtilityToolkitManager;
 import wffmpeg.FFmpegWrapper;
 import wrapper.IProcessingCallback;
 import wrapper.ProcessingFFmpegWrapper;
@@ -53,8 +56,14 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     /** Outputディレクトリ名 */
     public static final String OUTPUT_DIR_NAME = "output";
 
+    /** saveディレクトリ名 */
+    public static final String SAVE_DIR_NAME = "save";
+
     /** デフォルトMidiToolkit名 */
     public static final String USE_MIDI_TOOLKIT_CLASSNAME = MidiToolkitManager.DEFAULT_MIDI_TOOLKIT_NAME;
+
+    /** デフォルトUtilToolkit名 */
+    public static final String USE_UTIL_TOOLKIT_CLASSNAME = UtilityToolkitManager.DEFAULT_UTIL_TOOLKIT_NAME;
 
     /** デフォルトプレイヤーカラー */
     public static final Color DEFAULT_PLAYER_BACK_COLOR = Color.DARK_GRAY;
@@ -65,12 +74,19 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     public static final String COMMON_REGKEY_EXTENSION_WAV = "extension_wav";
     public static final String COMMON_REGKEY_EXTENSION_MUSICXML = "extension_musicxml";
     public static final String COMMON_REGKEY_USE_MIDI_TOOLKIT = "use_midi_toolkit";
+    public static final String COMMON_REGKEY_USE_UTIL_TOOLKIT = "use_util_toolkit";
+
+    /** デバッグモード */
+    public static final String COMMON_REGKEY_DEBUGMODE = "debug_mode";
 
     /** 共通レジスタ */
     private CommonRegister cReg = null;
 
     /** FFmpeg wrapper インスタンス */
     private FFmpegWrapper ffmpegWrapper = null;
+
+    /** Utilityツールキット */
+    private IUtilityToolkit utilToolkit = null;
 
     // システムパス変数
     private String dataFileLocationPath = "";
@@ -80,6 +96,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     private String jarDirPath = "";
     private String zipDirPath = "";
     private String outputPath = "";
+    private String savePath = "";
     private String activateFileLocationPath = "";
 
     SystemManager(int pri) {
@@ -87,8 +104,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     }
 
     protected boolean initFunc() {
-        boolean result = true;
         TempResisterEx = null;
+
+        utilToolkit = new DefaultUtilityToolkit();
 
         // 共通レジスタのインスタンス生成
         cReg = new CommonRegister();
@@ -96,7 +114,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         cReg.add(COMMON_REGKEY_EXTENSION_WAV, JmpUtil.genExtensions2Str("wav"));
         cReg.add(COMMON_REGKEY_EXTENSION_MUSICXML, JmpUtil.genExtensions2Str("xml", "musicxml", "mxl"));
         cReg.add(COMMON_REGKEY_USE_MIDI_TOOLKIT, USE_MIDI_TOOLKIT_CLASSNAME);
+        cReg.add(COMMON_REGKEY_USE_UTIL_TOOLKIT, USE_UTIL_TOOLKIT_CLASSNAME);
         cReg.add(COMMON_REGKEY_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(DEFAULT_PLAYER_BACK_COLOR));
+        cReg.add(COMMON_REGKEY_DEBUGMODE, JMPFlags.DebugMode ? "TRUE" : "FALSE");
         cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 1), "#8ec21f");
         cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 2), "#3dc21f");
         cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 3), "#1fc253");
@@ -141,6 +161,13 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             // resフォルダ作成
             resDir.mkdirs();
         }
+        if (JMPLoader.UseHistoryFile == true || JMPLoader.UseConfigFile == true) {
+            File saveDir = new File(getSavePath());
+            if (saveDir.exists() == false) {
+                // saveフォルダ作成
+                saveDir.mkdirs();
+            }
+        }
         if (JMPLoader.UsePluginDirectory == true) {
             File jarDir = new File(getJarDirPath());
             if (jarDir.exists() == false) {
@@ -157,21 +184,31 @@ public class SystemManager extends AbstractManager implements ISystemManager {
                 // outputフォルダ作成
                 outDir.mkdirs();
             }
+            File zipDir = new File(getZipDirPath());
+            if (zipDir.exists() == false) {
+                zipDir.mkdirs();
+            }
         }
 
         // アクティベート処理
         preActivate();
 
-        if (initializeFlag == false) {
-            initializeFlag = true;
-        }
-        return result;
+        return super.initFunc();
     }
 
     protected boolean endFunc() {
+        super.endFunc();
+
         /* アクティベート処理 */
         postActivate();
         return true;
+    }
+
+    public void updateUtilToolkit() {
+        // 使用するツールキットを更新
+        SystemManager system = JMPCore.getSystemManager();
+        String toolkitName = system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_USE_UTIL_TOOLKIT);
+        utilToolkit = UtilityToolkitManager.getInstance().getUtilityToolkit(toolkitName);
     }
 
     @Override
@@ -253,6 +290,11 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             return false;
         }
 
+        if (key.equalsIgnoreCase(COMMON_REGKEY_DEBUGMODE) == true) {
+            // Readonryのキー
+            return true;
+        }
+
         boolean ret = cReg.setValue(key, value);
         if (ret == true) {
             // 全てのマネージャーに通知
@@ -272,7 +314,13 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         return cReg.getKeySet();
     }
 
+    private boolean makeSystemPathFlag = false;
     public void makeSystemPath() {
+        if (makeSystemPathFlag == true) {
+            // 多重呼び出し禁止
+            return;
+        }
+        makeSystemPathFlag = true;
 
         // プラグイン格納ディレクトリパス
         pluginsDirPath = Utility.stringsCombin(Platform.getCurrentPath(), PLUGINS_DIR_NAME);
@@ -305,8 +353,27 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         // 出力ファイル格納ディレクトリパス
         outputPath = Utility.stringsCombin(Platform.getCurrentPath(), OUTPUT_DIR_NAME);
 
+        // セーブデータ格納ディレクトリパス
+        savePath = Utility.stringsCombin(Platform.getCurrentPath(), SAVE_DIR_NAME);
+
         // アクティベートファイルパス
-        activateFileLocationPath = Utility.stringsCombin(Platform.getCurrentPath(), Platform.getSeparator(), "activate");
+        activateFileLocationPath = Utility.stringsCombin(savePath, Platform.getSeparator(), "activate");
+
+        JMPFlags.Log.cprintln("###");
+        JMPFlags.Log.cprintln("## Directory list");
+        JMPFlags.Log.cprintln("##");
+        JMPFlags.Log.cprintln(pluginsDirPath);
+        JMPFlags.Log.cprintln(pluginsDirPath);
+        JMPFlags.Log.cprintln(dataFileLocationPath);
+        JMPFlags.Log.cprintln(resFileLocationPath);
+        JMPFlags.Log.cprintln(jmsDirPath);
+        JMPFlags.Log.cprintln(jarDirPath);
+        JMPFlags.Log.cprintln(zipDirPath);
+        JMPFlags.Log.cprintln(outputPath);
+        JMPFlags.Log.cprintln(savePath);
+        JMPFlags.Log.cprintln(activateFileLocationPath);
+        JMPFlags.Log.cprintln("##");
+        JMPFlags.Log.cprintln();
     }
 
     /**
@@ -372,6 +439,10 @@ public class SystemManager extends AbstractManager implements ISystemManager {
      */
     public String getActivateFileLocationPath() {
         return activateFileLocationPath;
+    }
+
+    public String getSavePath() {
+        return savePath;
     }
 
     /**
@@ -457,5 +528,29 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             return pfw.getPath();
         }
         return "";
+    }
+
+    @Override
+    public IUtilityToolkit getUtilityToolkit() {
+        return utilToolkit;
+    }
+
+    @Override
+    protected void notifyUpdateCommonRegister(String key) {
+        super.notifyUpdateCommonRegister(key);
+        if (key.equals(SystemManager.COMMON_REGKEY_USE_UTIL_TOOLKIT) == true) {
+            updateUtilToolkit();
+        }
+    }
+
+    @Override
+    protected void notifyUpdateConfig(String key) {
+        super.notifyUpdateConfig(key);
+
+        DataManager dm = JMPCore.getDataManager();
+        if (JmpUtil.checkConfigKey(key, DataManager.CFG_KEY_FFMPEG_PATH) == true) {
+            String val = dm.getConfigParam(DataManager.CFG_KEY_FFMPEG_PATH);
+            setFFmpegWrapperPath(val);
+        }
     }
 }

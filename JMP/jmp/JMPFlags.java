@@ -29,6 +29,9 @@ public class JMPFlags {
         public static void cprintln(String msg) {
             cprintImpl(msg, true);
         }
+        public static void cprintln() {
+            cprintImpl("", true);
+        }
     }
 
     /** ライブラリモード */

@@ -1,6 +1,7 @@
 package jlib.core;
 
 import jlib.plugin.IPlugin;
+import jlib.util.IUtilityToolkit;
 
 public interface ISystemManager {
 
@@ -60,4 +61,11 @@ public interface ISystemManager {
      * @return キーセット
      */
     abstract String[] getCommonKeySet();
+
+    /**
+     * 便利関数ツールキット取得
+     *
+     * @return ツールキット
+     */
+    abstract IUtilityToolkit getUtilityToolkit();
 }

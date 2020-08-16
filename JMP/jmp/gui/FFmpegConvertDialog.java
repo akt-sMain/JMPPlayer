@@ -22,8 +22,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import function.Platform;
 import function.Utility;
-import jmp.ConfigDatabase;
 import jmp.JMPFlags;
+import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SystemManager;
@@ -187,7 +187,7 @@ public class FFmpegConvertDialog extends JMPDialog {
                 JFileChooser filechooser = new JFileChooser();
                 filechooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-                String path = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_FFMPEG_OUTPUT);
+                String path = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_FFMPEG_OUTPUT);
                 if (path != null && path.isEmpty() == false) {
                     filechooser.setCurrentDirectory(new File(path));
                 }

@@ -58,7 +58,7 @@ public class JMPConfig extends JMidiPlugin {
         /*
          * ノートオンイベントを送信した際の処理を記述します。
          */
-        MainFrame.setNoteOn(channel);
+        MainFrame.setNoteOn(channel, midiNumber);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class JMPConfig extends JMidiPlugin {
         /*
          * ノートオフイベントを送信した際の処理を記述します。
          */
-        MainFrame.setNoteOff(channel);
+        MainFrame.setNoteOff(channel, midiNumber);
     }
 
     @Override

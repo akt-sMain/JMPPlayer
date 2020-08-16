@@ -8,7 +8,7 @@ EXIT
 
 :yes
 rd /s /q output
-del config.txt
-del history.txt
+del save\config.txt
+del save\history.txt
 
 pause

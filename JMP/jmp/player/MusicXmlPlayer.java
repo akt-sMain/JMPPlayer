@@ -13,7 +13,7 @@ import jmp.gui.MusicXMLConfirmDialog;
 public class MusicXmlPlayer extends Player {
 
     private MusicXMLConfirmDialog confirmDialog = null;
-    private MidiPlayer midiPlayer = SoundManager.MidiPlayer;
+    private MidiPlayer midiPlayer = SoundManager.SMidiPlayer;
 
     public MusicXmlPlayer() {
         confirmDialog = new MusicXMLConfirmDialog();

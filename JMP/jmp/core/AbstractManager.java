@@ -15,7 +15,7 @@ public abstract class AbstractManager implements IManager {
     private static List<AbstractManager> managers = null;
     protected int priority = 0;
     protected String name = "";
-    protected boolean initializeFlag = false;
+    private boolean initializeFlag = false;
 
     AbstractManager(int pri, String name) {
         this.priority = pri;

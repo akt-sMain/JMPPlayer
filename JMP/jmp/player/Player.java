@@ -3,7 +3,7 @@ package jmp.player;
 import java.io.File;
 
 import jlib.player.IPlayer;
-import jmp.JmpUtil;
+import jmp.util.JmpUtil;
 
 public abstract class Player implements IPlayer {
     private String[] supportExtentions = null;

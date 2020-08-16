@@ -1,10 +1,14 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.TransferHandler;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -22,7 +27,7 @@ import jlib.gui.IJmpWindow;
 public class JMPConfigFrame extends JFrame {
 
     public static final Color COLOR_NOTE_ON = Color.GREEN;
-    public static final Color COLOR_NOTE_OFF = Color.RED;
+    public static final Color COLOR_NOTE_OFF = Color.BLACK;
 
     public static final String TYPE_CONFIG = "CFG";
     public static final String TYPE_SYSTEM = "SYS";
@@ -40,7 +45,7 @@ public class JMPConfigFrame extends JFrame {
     private JLabel label_3;
     private JLabel label_4;
 
-    private JLabel[] chMonitor = null;
+    private JLabel[] noteMonitor = null;
     private JPanel panel_1;
     private JLabel label_5;
     private JLabel label_6;
@@ -49,11 +54,9 @@ public class JMPConfigFrame extends JFrame {
     private JLabel label_9;
     private JLabel label_10;
     private JLabel label_11;
-    private JLabel label_12;
-    private JLabel label_13;
-    private JLabel label_14;
-    private JLabel label_15;
     private JButton btnPlayStop;
+
+    private Color[] chColor;
 
     /**
      * Create the frame.
@@ -163,18 +166,6 @@ public class JMPConfigFrame extends JFrame {
         label_11 = new JLabel("■");
         panel_1.add(label_11);
 
-        label_12 = new JLabel("■");
-        panel_1.add(label_12);
-
-        label_13 = new JLabel("■");
-        panel_1.add(label_13);
-
-        label_14 = new JLabel("■");
-        panel_1.add(label_14);
-
-        label_15 = new JLabel("■");
-        panel_1.add(label_15);
-
         btnPlayStop = new JButton("Play/Stop");
         btnPlayStop.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -183,12 +174,84 @@ public class JMPConfigFrame extends JFrame {
         });
         panel_1.add(btnPlayStop);
 
-        chMonitor = new JLabel[] { label, label_1, label_2, label_3, label_4, label_5, label_6, label_7, label_8, label_9, label_10, label_11, label_12,
-                label_13, label_14, label_15, };
+        noteMonitor = new JLabel[] { label, label_1, label_2, label_3, label_4, label_5, label_6, label_7, label_8, label_9, label_10, label_11, };
 
-        for (JLabel lb : chMonitor) {
+        String ckKeyFormat = "ch_color_%d";
+        chColor = new Color[16];
+        for (int ch = 0; ch < chColor.length; ch++) {
+            String key = String.format(ckKeyFormat, (ch + 1));
+            String value = JMPCoreAccessor.getSystemManager().getCommonRegisterValue(key);
+            if (value.isEmpty() == false) {
+                chColor[ch] = JMPCoreAccessor.getSystemManager().getUtilityToolkit().convertCodeToHtmlColor(value);
+            }
+            else {
+                chColor[ch] = COLOR_NOTE_ON;
+            }
+        }
+
+        for (JLabel lb : noteMonitor) {
             lb.setForeground(COLOR_NOTE_OFF);
         }
+
+        setTransferHandler(new TransferHandler() {
+            /**
+             * ドロップされたものを受け取るか判断 (アイテムのときだけ受け取る)
+             */
+            @Override
+            public boolean canImport(TransferSupport support) {
+                if (support.isDrop() == false) {
+                    // ドロップ操作でない場合は受け取らない
+                    return false;
+                }
+
+                if (support.isDataFlavorSupported(DataFlavor.javaFileListFlavor) == false) {
+                    // ファイルでない場合は受け取らない
+                    return false;
+                }
+
+                return true;
+            }
+
+            /**
+             * ドロップされたアイテムを受け取る
+             */
+            @Override
+            public boolean importData(TransferSupport support) {
+                // ドロップアイテム受理の確認
+                if (canImport(support) == false) {
+                    return false;
+                }
+
+                // ドロップ処理
+                Transferable t = support.getTransferable();
+                try {
+                    // ドロップアイテム取得
+                    Object item = t.getTransferData(DataFlavor.javaFileListFlavor);
+
+                    @SuppressWarnings("unchecked")
+                    List<File> files = (List<File>) item;
+
+                    // 一番先頭のファイルを取得
+                    if ((files != null) && (files.size() > 0)) {
+                        String path = files.get(0).getPath();
+                        File file = new File(path);
+                        actionFileDrop(file);
+                    }
+                    return true;
+                }
+                catch (Exception e) {
+                    /* 受け取らない */
+                }
+                return false;
+            }
+        });
+    }
+
+    private void actionFileDrop(File file) {
+        /*
+         * ファイルをロードする
+         */
+        JMPCoreAccessor.getFileManager().loadFile(file);
     }
 
     private void actionPlayStop() {
@@ -266,15 +329,21 @@ public class JMPConfigFrame extends JFrame {
         }
     }
 
-    public void setNoteOn(int channel) {
-        if (0 <= channel && channel < chMonitor.length) {
-            chMonitor[channel].setForeground(COLOR_NOTE_ON);
+    public void setNoteOn(int channel, int midiNumber) {
+        if (0 <= channel && channel < noteMonitor.length) {
+            int index = midiNumber % 12;
+            if (0 <= index && index < 12) {
+                noteMonitor[index].setForeground(chColor[channel]);
+            }
         }
     }
 
-    public void setNoteOff(int channel) {
-        if (0 <= channel && channel < chMonitor.length) {
-            chMonitor[channel].setForeground(COLOR_NOTE_OFF);
+    public void setNoteOff(int channel, int midiNumber) {
+        if (0 <= channel && channel < noteMonitor.length) {
+            int index = midiNumber % 12;
+            if (0 <= index && index < 12) {
+                noteMonitor[index].setForeground(COLOR_NOTE_OFF);
+            }
         }
     }
 

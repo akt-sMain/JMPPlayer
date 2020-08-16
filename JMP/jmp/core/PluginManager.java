@@ -89,6 +89,9 @@ public class PluginManager extends AbstractManager {
     }
 
     public void startupPluginInstance() {
+        if (JMPFlags.NonPluginLoadFlag == true) {
+            return;
+        }
 
         // プラグイン読み込み
         if (JMPCore.isEnableStandAlonePlugin() == true) {
@@ -119,11 +122,8 @@ public class PluginManager extends AbstractManager {
         // プラグイン初期化
         initialize();
 
-        if (JMPFlags.NonPluginLoadFlag == false) {
-            // jmzフォルダ内のインポート処理
-            readingJmzDirectoryConfirm();
-        }
-
+        // jmzフォルダ内のインポート処理
+        readingJmzDirectoryConfirm();
     }
 
     public boolean checkJmsCompliantVersion() {
@@ -135,9 +135,7 @@ public class PluginManager extends AbstractManager {
         /* プラグインディレクトリの存在を確認 */
         File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
         if (dir.exists() == false) {
-            if (dir.mkdir() == false) {
-                return true;
-            }
+            return true;
         }
 
         boolean ret = true;
@@ -181,7 +179,7 @@ public class PluginManager extends AbstractManager {
 
         File zipDir = new File(JMPCore.getSystemManager().getZipDirPath());
         if (zipDir.exists() == false) {
-            zipDir.mkdirs();
+            return true;
         }
 
         boolean ret = true;
@@ -256,7 +254,7 @@ public class PluginManager extends AbstractManager {
     public void readingJmzDirectory() {
         File zipDir = new File(JMPCore.getSystemManager().getZipDirPath());
         if (zipDir.exists() == false) {
-            zipDir.mkdirs();
+            return;
         }
         for (File f : zipDir.listFiles()) {
             if (Utility.checkExtension(f.getPath(), PLUGIN_ZIP_EX) == false) {
@@ -512,9 +510,7 @@ public class PluginManager extends AbstractManager {
         /* プラグインディレクトリの存在を確認 */
         File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
         if (dir.exists() == false) {
-            if (dir.mkdir() == false) {
-                return;
-            }
+            return;
         }
         for (File f : dir.listFiles()) {
 
@@ -526,7 +522,6 @@ public class PluginManager extends AbstractManager {
                 // "_"で始まるファイルはスキップ
                 continue;
             }
-
 
             JmsProperty jms = JmsProperty.getJmsProparty(f);
 
@@ -716,6 +711,15 @@ public class PluginManager extends AbstractManager {
     @Override
     protected void notifyUpdateConfig(String key) {
         super.notifyUpdateConfig(key);
-        observers.notifyUpdateConfig(key);
+        if (key.equals(DataManager.CFG_KEY_INITIALIZE) == true) {
+            // 初期化はすべてのキーは通知する
+            DataManager dm = JMPCore.getDataManager();
+            for (String k : dm.getKeySet()) {
+                observers.notifyUpdateConfig(k);
+            }
+        }
+        else {
+            observers.notifyUpdateConfig(key);
+        }
     }
 }

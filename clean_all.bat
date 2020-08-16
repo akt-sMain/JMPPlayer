@@ -9,11 +9,9 @@ EXIT
 :yes
 rd /s /q plugins
 rd /s /q jmz
-del skin.txt
-del activate
-rem clean.bat
+rd /s /q save
 rd /s /q output
-del config.txt
-del history.txt
+del skin.txt
+rem clean.bat
 
 pause

@@ -7,14 +7,13 @@ import java.util.List;
 
 import javax.sound.midi.MidiMessage;
 
-import function.Utility;
 import jlib.midi.IMidiEventListener;
 import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
 import jmp.core.WindowManager;
 
-public class TaskOfMidiEvent extends Thread implements ITask {
+public class TaskOfMidiEvent extends TaskOfBase {
 
     public class JmpMidiPacket {
         public MidiMessage message = null;
@@ -28,41 +27,10 @@ public class TaskOfMidiEvent extends Thread implements ITask {
         }
     }
 
-    // ! 一定周期時間（ms）
-    public static long CyclicTime = 20;
-
-    private boolean isRunnable = true;
-
     private List<JmpMidiPacket> stack = null;
-
     public TaskOfMidiEvent() {
+        super(20);
         stack = Collections.synchronizedList(new LinkedList<JmpMidiPacket>());
-    }
-
-    @Override
-    public void run() {
-        WindowManager wm = JMPCore.getWindowManager();
-        PluginManager pm = JMPCore.getPluginManager();
-
-        IMidiEventListener midiEventMonitor = (IMidiEventListener) wm.getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
-
-        while (isRunnable) {
-            synchronized (stack) {
-                // スタックされたパケットをプラグインに送信
-                Iterator<JmpMidiPacket> i = stack.iterator();
-                while (i.hasNext()) {
-                    JmpMidiPacket packet = i.next();
-
-                    pm.send(packet);
-                    if (midiEventMonitor != null) {
-                        midiEventMonitor.catchMidiEvent(packet.message, packet.timeStamp, packet.senderType);
-                    }
-
-                    i.remove();
-                }
-            }
-            Utility.threadSleep(CyclicTime);
-        }
     }
 
     public void add(MidiMessage message, long timeStamp, short senderType) {
@@ -83,8 +51,38 @@ public class TaskOfMidiEvent extends Thread implements ITask {
     }
 
     @Override
-    public void exit() {
-        isRunnable = false;
+    void begin() {
+    }
+
+    @Override
+    void loop() {
+        WindowManager wm = JMPCore.getWindowManager();
+        PluginManager pm = JMPCore.getPluginManager();
+        IMidiEventListener midiEventMonitor = (IMidiEventListener) wm.getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
+
+        synchronized (stack) {
+            // スタックされたパケットをプラグインに送信
+            Iterator<JmpMidiPacket> i = stack.iterator();
+            while (i.hasNext()) {
+                JmpMidiPacket packet = i.next();
+
+                pm.send(packet);
+                if (midiEventMonitor != null) {
+                    midiEventMonitor.catchMidiEvent(packet.message, packet.timeStamp, packet.senderType);
+                }
+
+                i.remove();
+            }
+        }
+    }
+
+    @Override
+    void end() {
+    }
+
+    @Override
+    protected void notifySleepTimeCalc(long sleepTime) {
+        //System.out.println("" + sleepTime);
     }
 
 }

@@ -22,8 +22,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import function.Utility;
-import jmp.ConfigDatabase;
 import jmp.JMPFlags;
+import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.WindowManager;
@@ -281,6 +281,11 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
     @Override
     public void showWindow() {
+        if (JMPCore.isFinishedInitialize() == true) {
+            if (JMPCore.getSoundManager().isPlay() == true) {
+                JMPCore.getSoundManager().stop();
+            }
+        }
         start();
     }
 
@@ -320,7 +325,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
         // 設定値を復元(MIDIOUT)
         {
-            String saveInfoOfRecv = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIOUT);
+            String saveInfoOfRecv = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
             if (saveInfoOfRecv.isEmpty() == false) {
                 comboRecvMode.setSelectedIndex(0);
                 for (int i = 0; i < infosOfRecv.length; i++) {
@@ -337,7 +342,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
         // 設定値を復元(MIDIIN)
         {
-            String saveInfoOfTrans = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIIN);
+            String saveInfoOfTrans = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
             if (saveInfoOfTrans.isEmpty() == false) {
                 comboTransMode.setSelectedIndex(0);
                 for (int i = 0; i < infosOfTrans.length; i++) {
@@ -358,8 +363,8 @@ public class SelectSynthsizerDialog extends JMPDialog {
     protected void commit() {
         isOkActionClose = true;
 
-        String pastMidiOutName = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIOUT);
-        String pastMidiInName = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIIN);
+        String pastMidiOutName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
+        String pastMidiInName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
 
         try {
 
@@ -372,14 +377,14 @@ public class SelectSynthsizerDialog extends JMPDialog {
                     inDev.open();
                 }
                 inReciever = inDev.getReceiver();
-                JMPCore.getDataManager().setConfigParam(ConfigDatabase.CFG_KEY_MIDIOUT, inDev.getDeviceInfo().getName());
+                JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, inDev.getDeviceInfo().getName());
             }
             else {
                 /* デフォルト使用 */
                 inReciever = MidiSystem.getReceiver();
-                JMPCore.getDataManager().setConfigParam(ConfigDatabase.CFG_KEY_MIDIOUT, "");
+                JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
             }
-            if ((startupFlag == false) || (pastMidiOutName.equals(JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIOUT)) == false)) {
+            if ((startupFlag == false) || (pastMidiOutName.equals(JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT)) == false)) {
                 commitListener.commitMidiOut(inReciever);
             }
 
@@ -391,14 +396,14 @@ public class SelectSynthsizerDialog extends JMPDialog {
                 if (outDev.isOpen() == false) {
                     outDev.open();
                 }
-                JMPCore.getDataManager().setConfigParam(ConfigDatabase.CFG_KEY_MIDIIN, outDev.getDeviceInfo().getName());
+                JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIIN, outDev.getDeviceInfo().getName());
 
-                if ((startupFlag == false) || (pastMidiInName.equals(JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIIN)) == false)) {
+                if ((startupFlag == false) || (pastMidiInName.equals(JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN)) == false)) {
                     commitListener.commitMidiIn(outDev.getTransmitter());
                 }
             }
             else {
-                JMPCore.getDataManager().setConfigParam(ConfigDatabase.CFG_KEY_MIDIIN, "");
+                JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIIN, "");
             }
 
         }

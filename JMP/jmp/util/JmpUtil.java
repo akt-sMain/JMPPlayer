@@ -1,6 +1,8 @@
-package jmp;
+package jmp.util;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import jmp.core.DataManager;
 
 public class JmpUtil {
     private JmpUtil() {
@@ -33,5 +35,12 @@ public class JmpUtil {
 
         String description = String.format("%s (%s)", exName, exs);
         return new FileNameExtensionFilter(description, ex);
+    }
+
+    public static boolean checkConfigKey(String key, String dKey) {
+        if (key.equals(dKey) == true || key.equals(DataManager.CFG_KEY_INITIALIZE) == true) {
+            return true;
+        }
+        return false;
     }
 }

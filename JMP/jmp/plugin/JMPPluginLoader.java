@@ -8,15 +8,14 @@ import function.Utility;
 import jlib.plugin.IPlugin;
 
 public class JMPPluginLoader {
-
-    public static IPlugin load(File jarFile) {
+    public static IPlugin load(File jarFile, String className) {
         IPlugin plugin = null;
         try {
             URL[] urls = { jarFile.toURI().toURL() };
             ClassLoader loader = URLClassLoader.newInstance(urls);
 
             // クラスをロード
-            Class<?> c = loader.loadClass(Utility.getFileNameNotExtension(jarFile.getPath()));
+            Class<?> c = loader.loadClass(className);
             if (IPlugin.class.isAssignableFrom(c) == true) {
                 try {
                     plugin = (IPlugin) c.newInstance();
@@ -29,6 +28,12 @@ public class JMPPluginLoader {
             plugin = null;
         }
         return plugin;
+    }
+
+    public static IPlugin load(File jarFile) {
+        // Jar名をクラス名とする
+        String className = Utility.getFileNameNotExtension(jarFile.getPath());
+        return load(jarFile, className);
     }
 
 }

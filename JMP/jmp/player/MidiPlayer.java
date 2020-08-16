@@ -3,29 +3,33 @@ package jmp.player;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
-import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 
 import jlib.midi.IMidiFilter;
-import jlib.midi.IMidiToolkit;
-import jmp.ConfigDatabase;
 import jmp.JMPFlags;
+import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.gui.SelectSynthsizerDialog;
 import jmp.gui.SelectSynthsizerDialogListener;
 import jmp.midi.JMPSequencer;
 import jmp.midi.MIReceiver;
+import jmp.midi.MITransmitter;
 import jmp.midi.MOReceiver;
 
-public class MidiPlayer extends Player implements IMidiFilter {
+public class MidiPlayer extends Player {
+
+    private List<IMidiFilter> filters = null;
 
     // MIDI Synth
     private JMPSequencer sequencer;
@@ -48,24 +52,24 @@ public class MidiPlayer extends Player implements IMidiFilter {
     };
 
     public MidiPlayer() {
+        filters = new LinkedList<IMidiFilter>();
     }
 
-    @Override
-    public void transpose(ShortMessage sMes, int transpose) {
-        IMidiToolkit toolkit = JMPCore.getSoundManager().getMidiToolkit();
-        if (toolkit.isNoteOn(sMes) == true || toolkit.isNoteOff(sMes) == true) {
-            int status = sMes.getStatus();
-            int data1 = sMes.getData1();
-            int data2 = sMes.getData2();
+    public void addFilter(IMidiFilter f) {
+        filters.add(f);
+    }
 
-            data1 += transpose;
-            try {
-                sMes.setMessage(status, data1, data2);
-            }
-            catch (InvalidMidiDataException e) {
-                e.printStackTrace();
+    public void removeFilter(IMidiFilter f) {
+        filters.remove(f);
+    }
+
+    public boolean filter(MidiMessage message, short senderType) {
+        for (IMidiFilter f : filters) {
+            if (f.filter(message, senderType) == false) {
+                return false;
             }
         }
+        return true;
     }
 
     public static MidiDevice.Info[] getMidiDeviceInfo() {
@@ -233,11 +237,11 @@ public class MidiPlayer extends Player implements IMidiFilter {
 //                dialog.start();
             }
             else {
-                String outName = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIOUT);
+                String outName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
                 Receiver inReciever = null;
                 MidiDevice.Info recInfo = null;
 
-                String inName = JMPCore.getDataManager().getConfigParam(ConfigDatabase.CFG_KEY_MIDIIN);
+                String inName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
                 Transmitter outTransmitter = null;
                 MidiDevice.Info transInfo = null;
 
@@ -289,32 +293,39 @@ public class MidiPlayer extends Player implements IMidiFilter {
     }
 
     private static MOReceiver s_MOReceiver = null;
-
-    private void updateMidiOut(Receiver rec) throws MidiUnavailableException {
-        if (currentReceiver != null) {
-            currentReceiver.close();
+    public void updateMidiOut(Receiver rec) throws MidiUnavailableException {
+        if (s_MOReceiver != null) {
+            s_MOReceiver.close();
         }
-        currentReceiver = rec;
         if (s_MOReceiver == null) {
-            s_MOReceiver = new MOReceiver(currentReceiver);
-            JMPCore.getSoundManager().getSequencer().getTransmitter().setReceiver(s_MOReceiver);
+            s_MOReceiver = new MOReceiver(rec);
+            getSequencer().getTransmitter().setReceiver(s_MOReceiver);
         }
         else {
-            s_MOReceiver.changeAbsReceiver(currentReceiver);
+            s_MOReceiver.changeAbsReceiver(rec);
         }
+        currentReceiver = s_MOReceiver;
 
         if (s_MIReceiver != null) {
             s_MIReceiver.changeAbsReceiver(currentReceiver);
         }
     }
 
+    private static MITransmitter s_MITransmitter = null;
     private static MIReceiver s_MIReceiver = null;
-
-    private void updateMidiIn(Transmitter trans) throws MidiUnavailableException {
-        if (currentTransmitter != null) {
-            currentTransmitter.close();
+    public void updateMidiIn(Transmitter trans) throws MidiUnavailableException {
+        if (s_MITransmitter != null) {
+            s_MITransmitter.close();
         }
-        currentTransmitter = trans;
+
+        if (s_MITransmitter == null) {
+            s_MITransmitter = new MITransmitter(trans);
+        }
+        else {
+            s_MITransmitter.changeAbsTransmitter(trans);
+        }
+        currentTransmitter = s_MITransmitter;
+
         if (s_MIReceiver == null) {
             s_MIReceiver = new MIReceiver(currentReceiver);
         }

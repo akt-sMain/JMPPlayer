@@ -13,7 +13,6 @@ import jlib.core.IWindowManager;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jlib.plugin.IPlugin;
-import jmp.ConfigDatabase;
 import jmp.gui.FFmpegConvertDialog;
 import jmp.gui.HistoryDialog;
 import jmp.gui.LicenseReaderDialog;
@@ -25,6 +24,7 @@ import jmp.gui.WindowDatabase;
 import jmp.gui.ui.IJMPComponentUI;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.task.ICallbackFunction;
+import jmp.util.JmpUtil;
 import jmplayer.JMPPlayer;
 
 public class WindowManager extends AbstractManager implements IWindowManager {
@@ -53,20 +53,16 @@ public class WindowManager extends AbstractManager implements IWindowManager {
 
     @Override
     protected boolean initFunc() {
-        boolean result = true;
-        if (initializeFlag == false) {
-            initializeFlag = true;
-        }
 
         // Windowインスタンス作成
         makeWindowInstance();
 
-        return result;
+        return super.initFunc();
     }
 
     @Override
     protected boolean endFunc() {
-        if (initializeFlag == false) {
+        if (super.endFunc() == false) {
             return false;
         }
         setVisibleAll(false);
@@ -188,7 +184,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         super.notifyUpdateConfig(key);
         updateConfig(key);
 
-        if (key.equals(ConfigDatabase.CFG_KEY_LANGUAGE) == true) {
+        if (JmpUtil.checkConfigKey(key, DataManager.CFG_KEY_LANGUAGE) == true) {
             // 言語更新
             updateLanguage();
         }

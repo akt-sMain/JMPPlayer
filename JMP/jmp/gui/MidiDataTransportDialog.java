@@ -349,7 +349,7 @@ public class MidiDataTransportDialog extends JMPDialog {
                 String str = String.format("ch=%d, stat=%d, data1=%d, data2=%d,", ch + 1, status, data1, data2);
                 labelInfo.setText(str);
 
-                JMPCore.getSoundManager().sendMidiMessage(data, 0);
+                JMPCore.getSoundManager().getMidiController().sendMidiMessage(data, 0);
             }
         }
     }
