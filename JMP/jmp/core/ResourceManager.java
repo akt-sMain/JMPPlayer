@@ -22,6 +22,7 @@ import jmp.skin.SkinGlobalConfig;
 public class ResourceManager extends AbstractManager implements IManager {
 
     public static final String SKIN_FOLDER_NAME = "skin";
+    public static final String GROBAL_SKIN_FILE_NAME = "skin.txt";
 
     private Skin skin = null;
     private Image jmpImageIcon = null;
@@ -44,7 +45,7 @@ public class ResourceManager extends AbstractManager implements IManager {
 
         if (JMPLoader.UseSkinFile == true) {
             try {
-                String confPath = Utility.pathCombin(Platform.getCurrentPath(false), "skin.txt");
+                String confPath = Utility.pathCombin(Platform.getCurrentPath(false), GROBAL_SKIN_FILE_NAME);
                 outputSkinConfig(confPath);
 
                 gConfig.read(new File(confPath));
