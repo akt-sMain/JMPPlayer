@@ -7,94 +7,94 @@ public class DefineLanguage {
     public static final int NUMBER_OF_INDEX_LANG = 3;
     static final LangID[] titles = new LangID[] { LangID.English, LangID.Japanese, LangID.Chinese, };
 
-    public static enum LangID {
-        Language,
-        Japanese,
-        English,
-        Korean,
-        Chinese,
-        File,
-        Save,
-        Open,
-        Reload,
-        Version,
-        Exit,
-        Window,
-        Allways_on_top,
-        Player,
-        Loop_playback,
-        Continuous_playback,
-        Playlist,
-        History,
-        Plugin,
-        Add_plugin,
-        Remove_plugin,
-        Close_all_plugin,
-        Setting,
-        MIDI_settings,
-        MIDI_device_settings,
-        Open_MIDI_device_settings_on_startup,
-        PC_reset,
-        MIDI_message_monitor,
-        MIDI_message_sender,
-        Now_loading,
-        Plugin_error,
-        FILE_ERROR_1,
-        FILE_ERROR_2,
-        FILE_ERROR_3,
-        FILE_ERROR_4,
-        FILE_ERROR_5,
-        FILE_ERROR_6,
-        FILE_LOAD_SUCCESS,
-        PLUGIN_LOAD_SUCCESS,
-        PLUGIN_LOAD_ERROR,
-        Clear,
-        Playback,
-        Stop,
-        Fast_forward,
-        Rewind,
-        Next,
-        Previous,
-        Close,
-        Add,
-        Remove,
-        Open_with_Explorer,
-        MIDI_Data_byte,
-        Send,
-        Invalid_byte_data,
-        License,
-        Above_conditions,
-        Accept,
-        Reject,
-        Copied_to_clipboard,
-        Original_copy,
-        Common_settings,
-        Apply,
-        Error,
-        Message,
-        Layout_initialization,
-        Tool,
-        FFmpeg_converter,
-        FFmpeg_path,
-        Output_directory,
-        Input_file,
-        Play_after_convert,
-        Convert,
-        A_is_invalid,
-        Conversion_failed,
-        Conversion_completed,
-        Now_converting,
-        Initialize_setting,
-        Leave_output_file,
-        Use_FFmpeg_player,
-        Automatically_assign_MIDI_channel,
-        Automatically_assign_Program_change_number,
-        Confirm_jms_with_different_versions,
-        Confirm_jmz_with_different_versions,
-        D_and_D_the_playback_file_here,
-    }
+    public static enum LangID {//
+        Language, //
+        Japanese, //
+        English, //
+        Korean, //
+        Chinese, //
+        File, //
+        Save, //
+        Open, //
+        Reload, //
+        Version, //
+        Exit, //
+        Window, //
+        Allways_on_top, //
+        Player, //
+        Loop_playback, //
+        Continuous_playback, //
+        Playlist, //
+        History, //
+        Plugin, //
+        Add_plugin, //
+        Remove_plugin, //
+        Close_all_plugin, //
+        Setting, //
+        MIDI_settings, //
+        MIDI_device_settings, //
+        Open_MIDI_device_settings_on_startup, //
+        PC_reset, //
+        MIDI_message_monitor, //
+        MIDI_message_sender, //
+        Now_loading, //
+        Plugin_error, //
+        FILE_ERROR_1, //
+        FILE_ERROR_2, //
+        FILE_ERROR_3, //
+        FILE_ERROR_4, //
+        FILE_ERROR_5, //
+        FILE_ERROR_6, //
+        FILE_LOAD_SUCCESS, //
+        PLUGIN_LOAD_SUCCESS, //
+        PLUGIN_LOAD_ERROR, //
+        Clear, //
+        Playback, //
+        Stop, //
+        Fast_forward, //
+        Rewind, //
+        Next, //
+        Previous, //
+        Close, //
+        Add, //
+        Remove, //
+        Open_with_Explorer, //
+        MIDI_Data_byte, //
+        Send, //
+        Invalid_byte_data, //
+        License, //
+        Above_conditions, //
+        Accept, //
+        Reject, //
+        Copied_to_clipboard, //
+        Original_copy, //
+        Common_settings, //
+        Apply, //
+        Error, //
+        Message, //
+        Layout_initialization, //
+        Tool, //
+        FFmpeg_converter, //
+        FFmpeg_path, //
+        Output_directory, //
+        Input_file, //
+        Play_after_convert, //
+        Convert, //
+        A_is_invalid, //
+        Conversion_failed, //
+        Conversion_completed, //
+        Now_converting, //
+        Initialize_setting, //
+        Leave_output_file, //
+        Use_FFmpeg_player, //
+        Automatically_assign_MIDI_channel, //
+        Automatically_assign_Program_change_number, //
+        Confirm_jms_with_different_versions, //
+        Confirm_jmz_with_different_versions, //
+        D_and_D_the_playback_file_here,//
+    }//
 
-    static java.util.HashMap<LangID, LanguageWords> langMap = new java.util.HashMap<LangID, LanguageWords>() {
+    static LangMap langMap = new LangMap() {
         {
             put(LangID.Language, new LanguageWords("Language", "言語", "语言"));
             put(LangID.Japanese, new LanguageWords("日本語", "日本語", "日本语"));
