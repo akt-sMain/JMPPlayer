@@ -17,7 +17,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import function.Platform;
 
 public class WavPlayer extends Player {
-
     private Clip clip = null;
 
     public WavPlayer() {
@@ -161,7 +160,59 @@ public class WavPlayer extends Player {
     @Override
     public boolean loadFile(File file) throws Exception {
         loadWavFile(file);
+
+        Player.Info info = createInfo();
+        info.put(Player.Info.PLAYER_ABS_INFO_KEY_FILENAME, file.getName());
+        info.update();
+        setInfo(info);
+
         return true;
+    }
+
+    public Player.Info createInfo() {
+        Player.Info info = new Player.Info();
+
+        Clip clip = getClip();
+        if (clip == null) {
+            info.update();
+            return info;
+        }
+
+        AudioFormat format = clip.getFormat();
+        if (format == null) {
+            info.update();
+            return info;
+        }
+
+        String sEnc = "";
+        AudioFormat.Encoding enc = format.getEncoding();
+        if (enc == AudioFormat.Encoding.ALAW) {
+            sEnc = "ALAW";
+        }
+        else if (enc == AudioFormat.Encoding.PCM_FLOAT) {
+            sEnc = "PCM_FLOAT";
+        }
+        else if (enc == AudioFormat.Encoding.PCM_SIGNED) {
+            sEnc = "PCM_SIGNED";
+        }
+        else if (enc == AudioFormat.Encoding.PCM_UNSIGNED) {
+            sEnc = "PCM_UNSIGNED";
+        }
+        else if (enc == AudioFormat.Encoding.ULAW) {
+            sEnc = "ULAW";
+        }
+        else {
+            sEnc = "UNKNOWN";
+        }
+        info.put("Channels", String.valueOf(format.getChannels()));
+        info.put("Encoding", sEnc);
+        info.put("Frame Rate", String.valueOf(format.getFrameRate()));
+        info.put("Frame Size", String.valueOf(format.getFrameSize()));
+        info.put("Sample Rate", String.valueOf(format.getSampleRate()));
+        info.put("Sample Size", String.valueOf(format.getSampleSizeInBits()));
+
+        info.update();
+        return info;
     }
 
     @Override

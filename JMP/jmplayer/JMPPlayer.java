@@ -112,7 +112,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     // Utility.convertCodeToHtmlColor("#888888");
 
     // ! カレントタイムフォーマット
-    public static final String CURRENT_TIME_FORMAT = "%s／%s ";
+    public static final String CURRENT_TIME_FORMAT = "%s / %s ";
 
     private static long s_tmpSliderTick = -1;
 

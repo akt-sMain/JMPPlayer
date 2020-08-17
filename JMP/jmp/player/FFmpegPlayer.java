@@ -134,4 +134,14 @@ public class FFmpegPlayer extends Player {
         return super.isSupportedExtension(extension);
     }
 
+    @Override
+    public Info getInfo() {
+        return wavPlayer.getInfo();
+    }
+
+    @Override
+    protected void setInfo(Info info) {
+        wavPlayer.setInfo(info);
+    }
+
 }

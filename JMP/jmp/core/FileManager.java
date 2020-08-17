@@ -173,6 +173,13 @@ public class FileManager extends AbstractManager implements IFileManager {
             String successFileName = Utility.getFileNameAndExtension(dm.getLoadedFile());
             String successMsg = lm.getLanguageStr(LangID.FILE_LOAD_SUCCESS);
             result.statusMsg = String.format(SUCCESS_MSG_FOAMET_LOAD, successFileName, successMsg);
+
+            if (JMPCore.getSoundManager().getCurrentPlayerInfo() != null) {
+                JMPCore.getSoundManager().getCurrentPlayerInfo().update();
+
+                JMPFlags.Log.cprintln(">> PlayerInfo");
+                JMPFlags.Log.cprintln(JMPCore.getSoundManager().getCurrentPlayerInfo().getMessage());
+            }
         }
         else {
             // 前のファイル名に戻す

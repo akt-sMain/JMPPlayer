@@ -232,6 +232,10 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         return PlayerAccessor.getCurrent();
     }
 
+    public Player.Info getCurrentPlayerInfo() {
+        return PlayerAccessor.getCurrent().getInfo();
+    }
+
     public void clearPlayList() {
         playListModel.removeAllElements();
     }

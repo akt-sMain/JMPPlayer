@@ -28,6 +28,20 @@ import jmp.midi.MITransmitter;
 import jmp.midi.MOReceiver;
 
 public class MidiPlayer extends Player {
+    public class MidiInfo extends Player.Info{
+        public static final String PLAYER_MIDI_INFO_KEY_BPM = "BPM";
+
+        public MidiInfo() {
+            super();
+            put(PLAYER_MIDI_INFO_KEY_BPM, "");
+        }
+
+        @Override
+        public void update() {
+            super.update();
+            put(PLAYER_MIDI_INFO_KEY_BPM, (sequencer != null) ? String.valueOf(sequencer.getTempoInBPM()) : "0.0");
+        }
+    }
 
     private List<IMidiFilter> filters = null;
 
@@ -461,7 +475,52 @@ public class MidiPlayer extends Player {
             return false;
         }
         loadMidiFile(file);
+
+        Player.Info info = createInfo();
+        info.put(Player.Info.PLAYER_ABS_INFO_KEY_FILENAME, file.getName());
+        info.update();
+        setInfo(info);
+
         return true;
+    }
+
+    public Player.Info createInfo() {
+        Player.Info info = new MidiInfo();
+        if (sequencer == null) {
+            info.update();
+            return info;
+        }
+
+        Sequence sequence = sequencer.getSequence();
+        if (sequence == null) {
+            info.update();
+            return info;
+        }
+
+        String sDivisionType = "UNKNOWN";
+        float divisionType = sequence.getDivisionType();
+        if (divisionType == Sequence.PPQ) {
+            sDivisionType = "PPQ";
+        }
+        else if (divisionType == Sequence.SMPTE_24) {
+            sDivisionType = "SMPTE_24";
+        }
+        else if (divisionType == Sequence.SMPTE_25) {
+            sDivisionType = "SMPTE_25";
+        }
+        else if (divisionType == Sequence.SMPTE_30) {
+            sDivisionType = "SMPTE_30";
+        }
+        else if (divisionType == Sequence.SMPTE_30DROP) {
+            sDivisionType = "SMPTE_30DROP";
+        }
+        info.put("Division Type", sDivisionType);
+        info.put("Resolution", String.valueOf(sequence.getResolution()));
+        info.put("Tick Length", String.valueOf(sequence.getTickLength()));
+        info.put("Tracks", String.valueOf(sequence.getTracks().length));
+
+        info.update();
+        return info;
     }
 
     @Override

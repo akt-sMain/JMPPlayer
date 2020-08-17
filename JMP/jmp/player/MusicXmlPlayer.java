@@ -125,12 +125,28 @@ public class MusicXmlPlayer extends Player {
                 Utility.deleteFileDirectory(tmpDir);
             }
         }
+
+        Player.Info info = midiPlayer.createInfo();
+        info.put(Player.Info.PLAYER_ABS_INFO_KEY_FILENAME, (file.getName() + "(midi)"));
+        info.update();
+        setInfo(info);
+
         return result;
     }
 
     @Override
     public boolean saveFile(File file) throws Exception {
         return midiPlayer.saveFile(file);
+    }
+
+    @Override
+    public Info getInfo() {
+        return midiPlayer.getInfo();
+    }
+
+    @Override
+    protected void setInfo(Info info) {
+        midiPlayer.setInfo(info);
     }
 
 }
