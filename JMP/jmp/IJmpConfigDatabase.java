@@ -88,14 +88,23 @@ public interface IJmpConfigDatabase {
     }
 
     default boolean isUseFFmpegPlayer() {
-        if (Platform.getRunPlatform() != KindOfPlatform.WINDOWS) {
-            return false;
-        }
         String sValue = getConfigParam(DataManager.CFG_KEY_USE_FFMPEG_PLAYER);
         return Utility.tryParseBoolean(sValue, false);
     }
 
     default void setUseFFmpegPlayer(boolean isUse) {
         setConfigParam(DataManager.CFG_KEY_USE_FFMPEG_PLAYER, isUse ? "TRUE" : "FALSE");
+    }
+
+    default boolean isFFmpegInstalled() {
+        if (Platform.getRunPlatform() != KindOfPlatform.WINDOWS) {
+            return true;
+        }
+        String sValue = getConfigParam(DataManager.CFG_KEY_FFMPEG_INSTALLED);
+        return Utility.tryParseBoolean(sValue, false);
+    }
+
+    default void setFFmpegInstalled(boolean isEnableEnvironmentVariable) {
+        setConfigParam(DataManager.CFG_KEY_FFMPEG_INSTALLED, isEnableEnvironmentVariable? "TRUE" : "FALSE");
     }
 }

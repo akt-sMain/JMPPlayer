@@ -22,6 +22,9 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
     /** waitあり */
     protected boolean waitFor = false;
 
+    /** 環境変数定義有効 */
+    protected boolean isFFmpegInstalled = false;
+
     private IProcessingCallback callback = null;
 
     public class LogingRunnable implements Runnable {
@@ -120,6 +123,9 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
 
     @Override
     public boolean isValid() {
+        if (isFFmpegInstalled() == true) {
+            return true;
+        }
         File f = new File(path);
         return f.exists();
     }
@@ -157,7 +163,18 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
      * @throws InterruptedException
      */
     public void exec(List<String> cmd) throws IOException {
-        cmd.add(0, path);
+
+        if (isFFmpegInstalled() == false) {
+            cmd.add(0, path);
+        }
+        else {
+            cmd.add(0, "ffmpeg");
+        }
+
+        for (String c : cmd) {
+            System.out.print(c + " ");
+        }
+        System.out.println();
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.inheritIO();
@@ -185,5 +202,13 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
             }
         }
 
+    }
+
+    public boolean isFFmpegInstalled() {
+        return isFFmpegInstalled;
+    }
+
+    public void setFFmpegInstalled(boolean isFFmpegInstalled) {
+        this.isFFmpegInstalled = isFFmpegInstalled;
     }
 }

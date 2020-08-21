@@ -7,8 +7,6 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
-import function.Platform;
-import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.core.IDataManager;
 import jmp.ConfigDatabase;
@@ -43,10 +41,11 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
     public static final String CFG_KEY_FFMPEG_OUTPUT = "FFMPEG_OUTPUT";
     public static final String CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE = "FFMPEG_LEAVE_OUTPUT_FILE";
     public static final String CFG_KEY_USE_FFMPEG_PLAYER = "USE_FFMPEG_PLAYER";
+    public static final String CFG_KEY_FFMPEG_INSTALLED = "FFMPEG_INSTALLED";
     // ↓KEY追加後、必ずCFG_KEYSETに追加すること!!
     public static final String[] CFG_KEYSET = { CFG_KEY_PLAYLIST, CFG_KEY_MIDIOUT, CFG_KEY_MIDIIN, CFG_KEY_AUTOPLAY, CFG_KEY_LOOPPLAY,
             CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, CFG_KEY_LANGUAGE, CFG_KEY_LOADED_FILE, CFG_KEY_FFMPEG_PATH, CFG_KEY_FFMPEG_OUTPUT,
-            CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, CFG_KEY_USE_FFMPEG_PLAYER, };
+            CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, CFG_KEY_USE_FFMPEG_PLAYER, CFG_KEY_FFMPEG_INSTALLED, };
 
     // 初期化キー
     public static final String CFG_KEY_INITIALIZE = "INITIALIZE";
@@ -71,8 +70,9 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
         convertedFiles = new LinkedList<File>();
 
-        // 設定ファイルのFFmpegパスを同期
+        // 設定ファイルのFFmpeg設定を同期
         JMPCore.getSystemManager().setFFmpegWrapperPath(getFFmpegPath());
+        JMPCore.getSystemManager().setFFmpegInstalled(isFFmpegInstalled());
 
         // ロードファイルの初期化
         setLoadedFile("");
@@ -223,18 +223,5 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
     public void addConvertedFile(File file) {
         convertedFiles.add(file);
-    }
-
-    @Override
-    public void setFFmpegPath(String filePath) {
-        IJmpConfigDatabase.super.setFFmpegPath(filePath);
-    }
-
-    @Override
-    public boolean isUseFFmpegPlayer() {
-        if (Platform.getRunPlatform() != KindOfPlatform.WINDOWS) {
-            return false;
-        }
-        return IJmpConfigDatabase.super.isUseFFmpegPlayer();
     }
 }

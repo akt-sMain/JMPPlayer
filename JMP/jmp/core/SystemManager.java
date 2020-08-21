@@ -549,8 +549,25 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
         DataManager dm = JMPCore.getDataManager();
         if (JmpUtil.checkConfigKey(key, DataManager.CFG_KEY_FFMPEG_PATH) == true) {
-            String val = dm.getConfigParam(DataManager.CFG_KEY_FFMPEG_PATH);
-            setFFmpegWrapperPath(val);
+            setFFmpegWrapperPath(dm.getFFmpegPath());
+        }
+        if (JmpUtil.checkConfigKey(key, DataManager.CFG_KEY_FFMPEG_INSTALLED) == true) {
+            setFFmpegInstalled(dm.isFFmpegInstalled());
+        }
+    }
+
+    public boolean isFFmpegInstalled() {
+        if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
+            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
+            return pfw.isFFmpegInstalled();
+        }
+        return false;
+    }
+
+    public void setFFmpegInstalled(boolean isEnableEnvironmentVariable) {
+        if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
+            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
+            pfw.setFFmpegInstalled(isEnableEnvironmentVariable);
         }
     }
 }

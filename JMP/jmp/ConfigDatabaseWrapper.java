@@ -35,6 +35,7 @@ public class ConfigDatabaseWrapper implements IJmpConfigDatabase {
         database.setConfigParam(DataManager.CFG_KEY_FFMPEG_OUTPUT, "output");
         database.setConfigParam(DataManager.CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, "FALSE");
         database.setConfigParam(DataManager.CFG_KEY_USE_FFMPEG_PLAYER, "FALSE");
+        database.setConfigParam(DataManager.CFG_KEY_FFMPEG_INSTALLED, "FALSE");
     }
 
     private String getDesktopPath(String defaultPath) {
