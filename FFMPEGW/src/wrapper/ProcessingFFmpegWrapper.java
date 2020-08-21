@@ -168,7 +168,7 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
             cmd.add(0, path);
         }
         else {
-            cmd.add(0, "ffmpeg");
+            cmd.add(0, "/Usr/local/bin/ffmpeg");
         }
 
         for (String c : cmd) {
