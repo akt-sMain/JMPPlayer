@@ -19,6 +19,7 @@ import jmp.gui.LicenseReaderDialog;
 import jmp.gui.MidiDataTransportDialog;
 import jmp.gui.MidiFileListDialog;
 import jmp.gui.MidiMessageMonitor;
+import jmp.gui.PluginManagerDialog;
 import jmp.gui.SelectLanguageDialog;
 import jmp.gui.WindowDatabase;
 import jmp.gui.ui.IJMPComponentUI;
@@ -40,8 +41,9 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     public static final String WINDOW_NAME_LANGUAGE = "LANGUAGE";
     public static final String WINDOW_NAME_LICENSE = "LICENSE";
     public static final String WINDOW_NAME_FFMPEG = "FFMPEG";
+    public static final String WINDOW_NAME_PLUGIN_MANAGER = "PLUGIN_MANAGER";
     public static final String[] WINDOW_NAMELIST = { WINDOW_NAME_MAIN, WINDOW_NAME_FILE_LIST, WINDOW_NAME_HISTORY, WINDOW_NAME_MIDI_SETUP,
-            WINDOW_NAME_MIDI_MONITOR, WINDOW_NAME_MIDI_SENDER, WINDOW_NAME_LANGUAGE, WINDOW_NAME_LICENSE, WINDOW_NAME_FFMPEG };
+            WINDOW_NAME_MIDI_MONITOR, WINDOW_NAME_MIDI_SENDER, WINDOW_NAME_LANGUAGE, WINDOW_NAME_LICENSE, WINDOW_NAME_FFMPEG, WINDOW_NAME_PLUGIN_MANAGER };
 
     private WindowDatabase database = null;
 
@@ -91,6 +93,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         register(WINDOW_NAME_LANGUAGE, new SelectLanguageDialog());
         register(WINDOW_NAME_HISTORY, new HistoryDialog());
         register(WINDOW_NAME_FILE_LIST, new MidiFileListDialog());
+        register(WINDOW_NAME_PLUGIN_MANAGER, new PluginManagerDialog());
 
         /* Windows用のGUI */
         register(WINDOW_NAME_FFMPEG, new FFmpegConvertDialog());

@@ -615,6 +615,15 @@ public class PluginManager extends AbstractManager {
         return observers.getPlugin(name);
     }
 
+    public void setPluginConnection(String name, boolean state) {
+        IPlugin p = observers.getPlugin(name);
+        observers.getPluginWrapper(p).setConnected(state);
+    }
+    public boolean isPluginConnection(String name) {
+        IPlugin p = observers.getPlugin(name);
+        return observers.getPluginWrapper(p).isConnected();
+    }
+
     public void initialize() {
         observers.initialize();
     }

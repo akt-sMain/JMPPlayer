@@ -171,6 +171,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JMenuItem mntmReloadJmzFolder;
     private JMenuItem mntmMidiExport;
     private JMenuItem mntmDebugDummy;
+    private JMenuItem mntmPluginManager;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -513,6 +514,14 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             }
         });
         pluginMenu.add(removePluginMenuItem);
+
+        mntmPluginManager = new JMenuItem("プラグイン管理");
+        mntmPluginManager.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_PLUGIN_MANAGER).showWindow();
+            }
+        });
+        pluginMenu.add(mntmPluginManager);
 
         allClosePluginMenuItem = new JMenuItem("すべて閉じる");
         allClosePluginMenuItem.addActionListener(new ActionListener() {
@@ -1186,6 +1195,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
         pluginMenu.add(addPluginMenuItem);
         pluginMenu.add(removePluginMenuItem);
+        pluginMenu.add(mntmPluginManager);
         pluginMenu.add(allClosePluginMenuItem);
         pluginMenu.addSeparator();
         for (JMenuItem item : JMPCore.getWindowManager().getPluginMenuItems()) {
@@ -1432,6 +1442,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mnTool.setText(lm.getLanguageStr(LangID.Tool));
         mntmFFmpegConverter.setText(lm.getLanguageStr(LangID.FFmpeg_converter));
         mntmInitializeConfig.setText(lm.getLanguageStr(LangID.Initialize_setting));
+        mntmPluginManager.setText(lm.getLanguageStr(LangID.Plugin_manager));
 
         if (JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_LOADED_FILE).isEmpty() == true) {
             setInitializeStatusText();

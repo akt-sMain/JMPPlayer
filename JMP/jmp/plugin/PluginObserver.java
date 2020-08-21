@@ -1,7 +1,9 @@
 package jmp.plugin;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,11 +15,32 @@ import jlib.plugin.IPlugin;
 
 public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListener {
 
+    public class PluginWrapper {
+        private IPlugin plugin = null;
+        private boolean isConnected = true;
+
+        public PluginWrapper(IPlugin plg) {
+            this.plugin = plg;
+        }
+        public IPlugin getPlugin() {
+            return plugin;
+        }
+        public boolean isConnected() {
+            return isConnected;
+        }
+        public void setConnected(boolean isConnected) {
+            this.isConnected = isConnected;
+        }
+    }
+
     /** プラグイン格納用コレクション */
-    private Map<String, IPlugin> aPlugins = null;
+    private Map<String, PluginWrapper> aPlugins = null;
+
+    private List<IPlugin> accessor = null;
 
     public PluginObserver() {
-        aPlugins = new HashMap<String, IPlugin>();
+        aPlugins = new HashMap<String, PluginWrapper>();
+        accessor = new ArrayList<IPlugin>();
         aPlugins.clear();
     }
 
@@ -28,24 +51,38 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
     public boolean addPlugin(String name, IPlugin plugin, boolean isOverwrite) {
         if (aPlugins.containsKey(name) == true) {
             if (isOverwrite == true) {
-                IPlugin rem = aPlugins.remove(name);
+                PluginWrapper rem = aPlugins.remove(name);
                 if (rem != null) {
-                    rem.close();
-                    rem.exit();
+                    rem.getPlugin().close();
+                    rem.getPlugin().exit();
                 }
             }
             else {
                 return false;
             }
         }
-        aPlugins.put(name, plugin);
+        aPlugins.put(name, new PluginWrapper(plugin));
+
+        accessor.clear();
+        for (PluginWrapper pw : aPlugins.values()) {
+            accessor.add(pw.getPlugin());
+        }
         return true;
+    }
+
+    public PluginWrapper getPluginWrapper(IPlugin plugin) {
+        PluginWrapper pw = null;
+        String name = getPluginName(plugin);
+        if (aPlugins.containsKey(name) == true) {
+            pw = aPlugins.get(name);
+        }
+        return pw;
     }
 
     public String getPluginName(IPlugin plugin) {
         String name = "";
         for (String key : aPlugins.keySet()) {
-            if (plugin == aPlugins.get(key)) {
+            if (plugin == aPlugins.get(key).getPlugin()) {
                 name = key;
             }
         }
@@ -60,11 +97,11 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
         if (aPlugins.containsKey(name) == false) {
             return null;
         }
-        return aPlugins.get(name);
+        return aPlugins.get(name).getPlugin();
     }
 
     public Collection<IPlugin> getPlugins() {
-        return aPlugins.values();
+        return accessor;
     }
 
     @Override
@@ -134,9 +171,13 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
 
     @Override
     public void catchMidiEvent(MidiMessage message, long timeStamp, short senderType) {
-        for (IPlugin plugin : getPlugins()) {
-            if (plugin instanceof IMidiEventListener) {
-                IMidiEventListener mi = (IMidiEventListener) plugin;
+        for (PluginWrapper pluginWrap : aPlugins.values()) {
+            if (pluginWrap.isConnected() == false) {
+                continue;
+            }
+
+            if (pluginWrap.getPlugin() instanceof IMidiEventListener) {
+                IMidiEventListener mi = (IMidiEventListener) pluginWrap.getPlugin();
                 mi.catchMidiEvent(message, timeStamp, senderType);
             }
         }
