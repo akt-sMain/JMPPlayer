@@ -35,7 +35,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import function.Platform;
-import function.Platform.KindOfPlatform;
 import function.Utility;
 import jmp.JMPFlags;
 import jmp.core.DataManager;
@@ -300,10 +299,6 @@ public class MidiFileListDialog extends JMPFrame {
         String listPath = JMPCore.getDataManager().getPlayListPath();
         if ((listPath.isEmpty() == true) || (Utility.isExsistFile(listPath) == false)) {
             updateList(Platform.getCurrentPath());
-        }
-
-        if (Platform.getRunPlatform() != KindOfPlatform.WINDOWS) {
-            btnExproler.setVisible(false);
         }
     }
 
