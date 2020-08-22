@@ -13,6 +13,7 @@ import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
+import javax.sound.midi.Transmitter;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -193,7 +194,6 @@ public class SelectSynthsizerDialog extends JMPDialog {
                 public void itemStateChanged(ItemEvent e) {
                     try {
                         String listName = comboRecvMode.getSelectedItem().toString().trim();
-                        // String devName = getOrgDeviceName(listName);
                         int devIndex = getOrgDeviceIndex(listName);
 
                         String vendor = "Vendor : ";
@@ -201,10 +201,12 @@ public class SelectSynthsizerDialog extends JMPDialog {
                         String description = "Description : ";
                         String port = "";
 
-                        MidiDevice dev = MidiSystem.getMidiDevice(infosOfRecv[devIndex]);
-                        vendor += dev.getDeviceInfo().getVendor();
-                        version += dev.getDeviceInfo().getVersion();
-                        description += dev.getDeviceInfo().getDescription();
+                        if (listName.equals(DEFAULT_ITEM_NAME) == false) {
+                            MidiDevice dev = MidiSystem.getMidiDevice(infosOfRecv[devIndex]);
+                            vendor += dev.getDeviceInfo().getVendor();
+                            version += dev.getDeviceInfo().getVersion();
+                            description += dev.getDeviceInfo().getDescription();
+                        }
 
                         lblVendorOfRecv.setText(vendor);
                         lblVersionOfRecv.setText(version);
@@ -221,7 +223,6 @@ public class SelectSynthsizerDialog extends JMPDialog {
                 public void itemStateChanged(ItemEvent e) {
                     try {
                         String listName = comboTransMode.getSelectedItem().toString().trim();
-                        // String devName = getOrgDeviceName(listName);
                         int devIndex = getOrgDeviceIndex(listName);
 
                         String vendor = "Vendor : ";
@@ -229,10 +230,12 @@ public class SelectSynthsizerDialog extends JMPDialog {
                         String description = "Description : ";
                         String port = "";
 
-                        MidiDevice dev = MidiSystem.getMidiDevice(infosOfTrans[devIndex]);
-                        vendor += dev.getDeviceInfo().getVendor();
-                        version += dev.getDeviceInfo().getVersion();
-                        description += dev.getDeviceInfo().getDescription();
+                        if (listName.equals("") == false) {
+                            MidiDevice dev = MidiSystem.getMidiDevice(infosOfTrans[devIndex]);
+                            vendor += dev.getDeviceInfo().getVendor();
+                            version += dev.getDeviceInfo().getVersion();
+                            description += dev.getDeviceInfo().getDescription();
+                        }
 
                         lblVendorOfTrans.setText(vendor);
                         lblVersionOfTrans.setText(version);
@@ -307,7 +310,6 @@ public class SelectSynthsizerDialog extends JMPDialog {
         // レシーバー
         comboRecvMode.removeAllItems();
         infosOfRecv = MidiPlayer.getMidiDeviceInfo(false, true);
-
         comboRecvMode.addItem(DEFAULT_ITEM_NAME);
         for (int i = 0; i < infosOfRecv.length; i++) {
             String line = createItemName(i, infosOfRecv[i].getName());
@@ -369,37 +371,39 @@ public class SelectSynthsizerDialog extends JMPDialog {
         try {
 
             String listName = comboRecvMode.getSelectedItem().toString().trim();
-            Receiver inReciever = null;
-            int inDevIndex = getOrgDeviceIndex(listName);
-            if (inDevIndex != -1) {
-                MidiDevice inDev = MidiSystem.getMidiDevice(infosOfRecv[inDevIndex]);
-                if (inDev.isOpen() == false) {
-                    inDev.open();
+            Receiver outReciever = null;
+            int outDevIndex = getOrgDeviceIndex(listName);
+            if (outDevIndex != -1) {
+                MidiDevice outDev = MidiSystem.getMidiDevice(infosOfRecv[outDevIndex]);
+                if (outDev.isOpen() == false) {
+                    outDev.open();
                 }
-                inReciever = inDev.getReceiver();
-                JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, inDev.getDeviceInfo().getName());
+                outReciever = outDev.getReceiver();
+                JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, outDev.getDeviceInfo().getName());
             }
             else {
                 /* デフォルト使用 */
-                inReciever = MidiSystem.getReceiver();
+                outReciever = MidiSystem.getReceiver();
                 JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
             }
             if ((startupFlag == false) || (pastMidiOutName.equals(JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT)) == false)) {
-                commitListener.commitMidiOut(inReciever);
+                commitListener.commitMidiOut(outReciever);
             }
 
             listName = comboTransMode.getSelectedItem().toString().trim();
             // String devName = getOrgDeviceName(listName);
-            int outDevIndex = getOrgDeviceIndex(listName);
-            if (listName.equals("") == false && outDevIndex != -1) {
-                MidiDevice outDev = MidiSystem.getMidiDevice(infosOfTrans[outDevIndex]);
-                if (outDev.isOpen() == false) {
-                    outDev.open();
+            Transmitter inTransmitter = null;
+            int inDevIndex = getOrgDeviceIndex(listName);
+            if (listName.equals("") == false && inDevIndex != -1) {
+                MidiDevice inDev = MidiSystem.getMidiDevice(infosOfTrans[inDevIndex]);
+                if (inDev.isOpen() == false) {
+                    inDev.open();
                 }
-                JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIIN, outDev.getDeviceInfo().getName());
+                inTransmitter = inDev.getTransmitter();
+                JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIIN, inDev.getDeviceInfo().getName());
 
                 if ((startupFlag == false) || (pastMidiInName.equals(JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN)) == false)) {
-                    commitListener.commitMidiIn(outDev.getTransmitter());
+                    commitListener.commitMidiIn(inTransmitter);
                 }
             }
             else {

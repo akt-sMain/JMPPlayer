@@ -37,7 +37,16 @@ public class MidiController implements IMidiController {
 
     @Override
     public boolean sendMidiMessage(byte[] data, long timeStamp) {
-        return sendMidiMessage(new MidiByteMessage(data), timeStamp);
+        MidiMessage sendMsg = null;
+        MidiByteMessage byteMessage = new MidiByteMessage(data);
+        try {
+            // 可能であればShortMessageに変換する
+            sendMsg = byteMessage.convertShortMessage();
+        }
+        catch (InvalidMidiDataException e) {
+            sendMsg = byteMessage;
+        }
+        return sendMidiMessage(sendMsg, timeStamp);
     }
 
     @Override
@@ -46,10 +55,7 @@ public class MidiController implements IMidiController {
         if (rec == null) {
             return false;
         }
-
         rec.send(msg, timeStamp);
-
-        JMPCore.getPluginManager().catchMidiEvent(msg, timeStamp, this.senderType);
         return true;
     }
 

@@ -14,7 +14,7 @@ import jmp.core.JMPCore;
  */
 public class MIReceiver implements Receiver {
 
-    Receiver abstractReciever = null;
+    private Receiver abstractReciever = null;
 
     public MIReceiver(Receiver abstractReciever) {
         this.abstractReciever = abstractReciever;
@@ -26,14 +26,13 @@ public class MIReceiver implements Receiver {
 
     @Override
     public void send(MidiMessage message, long timeStamp) {
-        if (abstractReciever == null) {
-            return;
-        }
-
         if (JMPCore.getSoundManager().filter(message, IMidiEventListener.SENDER_MIDI_IN) == false) {
             return;
         }
-        abstractReciever.send(message, timeStamp);
+
+        if (abstractReciever != null) {
+            abstractReciever.send(message, timeStamp);
+        }
 
         JMPCore.getPluginManager().catchMidiEvent(message, timeStamp, IMidiEventListener.SENDER_MIDI_IN);
     }

@@ -350,6 +350,17 @@ public class MidiDataTransportDialog extends JMPDialog {
                 labelInfo.setText(str);
 
                 JMPCore.getSoundManager().getMidiController().sendMidiMessage(data, 0);
+
+                if ((status & 0xf0) == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON) {
+                    // 対になるNoteOffに変更する
+                    String sChannel = comboBoxChannel.getSelectedItem().toString();
+                    String sData1 = comboBoxData1.getSelectedItem().toString();
+                    changedCommandCombo();
+                    comboBoxCommand.setSelectedItem(MidiByte.convertByteToChannelCommandString(MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_OFF));
+                    comboBoxChannel.setSelectedItem(sChannel);
+                    comboBoxData1.setSelectedItem(sData1);
+                    comboBoxData2.setSelectedItem("0");
+                }
             }
         }
     }
