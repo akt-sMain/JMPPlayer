@@ -25,6 +25,9 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
     /** 環境変数定義有効 */
     protected boolean isFFmpegInstalled = false;
 
+    /** コマンド */
+    protected String ffmpegCommand = "ffmpeg";
+
     private IProcessingCallback callback = null;
 
     public class LogingRunnable implements Runnable {
@@ -168,7 +171,7 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
             cmd.add(0, path);
         }
         else {
-            cmd.add(0, "/Usr/local/bin/ffmpeg");
+            cmd.add(0, getFFmpegCommand());
         }
 
         for (String c : cmd) {
@@ -210,5 +213,13 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
 
     public void setFFmpegInstalled(boolean isFFmpegInstalled) {
         this.isFFmpegInstalled = isFFmpegInstalled;
+    }
+
+    public String getFFmpegCommand() {
+        return ffmpegCommand;
+    }
+
+    public void setFFmpegCommand(String ffmpegCommand) {
+        this.ffmpegCommand = ffmpegCommand;
     }
 }

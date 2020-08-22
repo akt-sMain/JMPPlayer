@@ -94,8 +94,6 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         register(WINDOW_NAME_HISTORY, new HistoryDialog());
         register(WINDOW_NAME_FILE_LIST, new MidiFileListDialog());
         register(WINDOW_NAME_PLUGIN_MANAGER, new PluginManagerDialog());
-
-        /* Windows用のGUI */
         register(WINDOW_NAME_FFMPEG, new FFmpegConvertDialog());
 
         // メインウィンドウ登録

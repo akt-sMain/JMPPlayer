@@ -98,8 +98,8 @@ public class DefineLanguage {
     static LangMap langMap = new LangMap() {
         {
             put(LangID.Language, new LanguageWords("Language", "言語", "语言"));
-            put(LangID.Japanese, new LanguageWords("日本語", "日本語", "日本语"));
-            put(LangID.English, new LanguageWords("English", "English", "英语"));
+            put(LangID.Japanese, new LanguageWords("日本語", "日本語", "日本語"));
+            put(LangID.English, new LanguageWords("English", "English", "English"));
             put(LangID.Korean, new LanguageWords("한국어", "한국어", "한국어"));
             put(LangID.Chinese, new LanguageWords("中文", "中文", "中文"));
             put(LangID.File, new LanguageWords("File", "ファイル", "文件"));

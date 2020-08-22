@@ -1,15 +1,23 @@
 package jmp;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import function.Utility;
+
 public class CommonRegister {
+    private static final String KER_SEPARATOR = "<->";
+
     public class CommonRegisterINI {
         public String key, value;
+        public boolean isWrite = false;
 
-        public CommonRegisterINI(String key, String value) {
+        public CommonRegisterINI(String key, String value, boolean isWrite) {
             this.key = key;
             this.value = value;
+            this.isWrite = isWrite;
         }
     }
 
@@ -39,11 +47,14 @@ public class CommonRegister {
     }
 
     public void add(String key, String value) {
+        add(key, value, false);
+    }
+    public void add(String key, String value, boolean isWrite) {
         if (containsKey(key) == true) {
             setValue(key, value);
             return;
         }
-        iniList.add(new CommonRegisterINI(key, value));
+        iniList.add(new CommonRegisterINI(key, value, isWrite));
     }
 
     public boolean setValue(String key, String value) {
@@ -68,5 +79,54 @@ public class CommonRegister {
             lst[i] = iniList.get(i).key;
         }
         return lst;
+    }
+
+    public void read(String path) {
+        File file = new File(path);
+        if (file.exists() == false) {
+            return;
+        }
+        if (file.canRead() == false) {
+            return;
+        }
+
+        try {
+            List<String> textContents = Utility.getTextFileContents(path);
+
+            for (String line : textContents) {
+                String[] sLine = line.split(KER_SEPARATOR);
+                if (sLine.length >= 1) {
+                    String key = sLine[0].trim();
+                    for (String ckey : getKeySet()) {
+                        if (key.equals(ckey) == true) {
+                            String value = (sLine.length >= 2) ? sLine[1] : "";
+                            setValue(key, value);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+        }
+    }
+
+    public void write(String path) {
+        File file = new File(path);
+        if (file != null && file.getParentFile() != null && file.getParentFile().exists() == false) {
+            return;
+        }
+
+        try {
+            List<String> textContents = new LinkedList<String>();
+            for (CommonRegisterINI ini : iniList) {
+                if (ini.isWrite == true) {
+                    textContents.add(ini.key + KER_SEPARATOR + ini.value);
+                }
+            }
+            Utility.outputTextFile(path, textContents);
+        }
+        catch (Exception e) {
+        }
     }
 }
