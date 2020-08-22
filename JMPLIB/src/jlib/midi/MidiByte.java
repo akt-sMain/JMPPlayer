@@ -35,6 +35,70 @@ public class MidiByte {
     }
 
     /**
+     * ステータスバイト取得
+     *
+     * @param data
+     * @param length
+     * @return
+     */
+    public static int getStatus(byte[] data, int length) {
+        if (length < 1) {
+            return 0;
+        }
+        return (data[0] & 0xff);
+    }
+
+    /**
+     * チャンネル取得
+     *
+     * @param data
+     * @param length
+     * @return
+     */
+    public static int getChannel(byte[] data, int length) {
+        return (getStatus(data, length) & 0x0f);
+    }
+
+    /**
+     * コマンド取得
+     *
+     * @param data
+     * @param length
+     * @return
+     */
+    public static int getCommand(byte[] data, int length) {
+        return (getStatus(data, length) & 0xf0);
+    }
+
+    /**
+     * 第1データバイト取得
+     *
+     * @param data
+     * @param length
+     * @return
+     */
+    public static int getData1(byte[] data, int length) {
+        if (length < 2) {
+            return 0;
+        }
+        return (data[1] & 0xff);
+    }
+
+    /**
+     * 第2データバイト取得
+     *
+     * @param data
+     * @param length
+     * @return
+     */
+    public static int getData2(byte[] data, int length) {
+        if (length < 3) {
+            return 0;
+        }
+        return (data[2] & 0xff);
+    }
+
+    /**
      * ステータスバイトがチャンネルメッセージか
      *
      * @param statusByte

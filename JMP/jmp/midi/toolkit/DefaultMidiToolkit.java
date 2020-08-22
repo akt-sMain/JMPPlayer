@@ -16,15 +16,13 @@ public class DefaultMidiToolkit implements IMidiToolkit {
 
     @Override
     public boolean isNoteOn(MidiMessage mes) {
-        ShortMessage sMes = null;
-        if (mes instanceof ShortMessage) {
-            sMes = (ShortMessage) mes;
-        }
-        else {
+        if (mes.getLength() < 3) {
             return false;
         }
 
-        if ((sMes.getCommand() == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON) && (sMes.getData2() > 0)) {
+        int command = MidiByte.getCommand(mes.getMessage(), mes.getLength());
+        int data2 = MidiByte.getData2(mes.getMessage(), mes.getLength());
+        if ((command == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON) && (data2 > 0)) {
             return true;
         }
         return false;
@@ -32,16 +30,13 @@ public class DefaultMidiToolkit implements IMidiToolkit {
 
     @Override
     public boolean isNoteOff(MidiMessage mes) {
-        ShortMessage sMes = null;
-        if (mes instanceof ShortMessage) {
-            sMes = (ShortMessage) mes;
-        }
-        else {
+        if (mes.getLength() < 3) {
             return false;
         }
 
-        if ((sMes.getCommand() == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_OFF)
-                || (sMes.getCommand() == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON && sMes.getData2() <= 0)) {
+        int command = MidiByte.getCommand(mes.getMessage(), mes.getLength());
+        int data2 = MidiByte.getData2(mes.getMessage(), mes.getLength());
+        if ((command == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_OFF) || (command == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON && data2 <= 0)) {
             return true;
         }
         return false;
@@ -49,15 +44,12 @@ public class DefaultMidiToolkit implements IMidiToolkit {
 
     @Override
     public boolean isProgramChange(MidiMessage mes) {
-        ShortMessage sMes = null;
-        if (mes instanceof ShortMessage) {
-            sMes = (ShortMessage) mes;
-        }
-        else {
+        if (mes.getLength() < 3) {
             return false;
         }
 
-        if (sMes.getCommand() == MidiByte.Status.Channel.ChannelVoice.Fst.PROGRAM_CHANGE) {
+        int command = MidiByte.getCommand(mes.getMessage(), mes.getLength());
+        if (command == MidiByte.Status.Channel.ChannelVoice.Fst.PROGRAM_CHANGE) {
             return true;
         }
         return false;
@@ -65,15 +57,12 @@ public class DefaultMidiToolkit implements IMidiToolkit {
 
     @Override
     public boolean isPitchBend(MidiMessage mes) {
-        ShortMessage sMes = null;
-        if (mes instanceof ShortMessage) {
-            sMes = (ShortMessage) mes;
-        }
-        else {
+        if (mes.getLength() < 3) {
             return false;
         }
 
-        if (sMes.getCommand() == MidiByte.Status.Channel.ChannelVoice.Fst.PITCH_BEND) {
+        int command = MidiByte.getCommand(mes.getMessage(), mes.getLength());
+        if (command == MidiByte.Status.Channel.ChannelVoice.Fst.PITCH_BEND) {
             return true;
         }
         return false;

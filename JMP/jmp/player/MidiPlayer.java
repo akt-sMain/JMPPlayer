@@ -257,73 +257,46 @@ public class MidiPlayer extends Player {
         }
         else {
             String outName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
-            Receiver inReciever = null;
-            MidiDevice.Info recInfo = null;
+            updateMidiOut(outName);
 
             String inName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
-            Transmitter outTransmitter = null;
-            MidiDevice.Info transInfo = null;
-
-            for (MidiDevice.Info info : getMidiDeviceInfo(false, true)) {
-                if (info.getName().equals(outName) == true) {
-                    recInfo = info;
-                    break;
-                }
-            }
-            for (MidiDevice.Info info : getMidiDeviceInfo(true, false)) {
-                if (info.getName().equals(inName) == true) {
-                    transInfo = info;
-                    break;
-                }
-            }
-
-            MidiDevice inDev = null;
-            MidiDevice outDev = null;
-            try {
-                if (recInfo != null) {
-                    inDev = MidiSystem.getMidiDevice(recInfo);
-                    if (inDev.isOpen() == false) {
-                        inDev.open();
-                    }
-                    inReciever = inDev.getReceiver();
-                }
-                else {
-                    inReciever = MidiSystem.getReceiver();
-                }
-                updateMidiOut(inReciever);
-            }
-            catch (MidiUnavailableException e) {
-                if (inDev != null && inDev.isOpen() == true) {
-                    inDev.close();
-                }
-                JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
-            }
-
-            try {
-                if (transInfo != null) {
-                    outDev = MidiSystem.getMidiDevice(transInfo);
-                    if (outDev.isOpen() == false) {
-                        outDev.open();
-                    }
-                    outTransmitter = outDev.getTransmitter();
-                }
-                else {
-                    outTransmitter = MidiSystem.getTransmitter();
-                }
-                updateMidiIn(outTransmitter);
-            }
-            catch (MidiUnavailableException e) {
-                if (outDev != null && outDev.isOpen() == true) {
-                    outDev.close();
-                }
-                JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIIN, "");
-            }
+            updateMidiIn(inName);
         }
         return result;
     }
 
     private static MOReceiver s_MOReceiver = null;
 
+    public void updateMidiOut(String name) {
+        Receiver inReciever = null;
+        MidiDevice.Info recInfo = null;
+        MidiDevice inDev = null;
+        for (MidiDevice.Info info : getMidiDeviceInfo(false, true)) {
+            if (info.getName().equals(name) == true) {
+                recInfo = info;
+                break;
+            }
+        }
+        try {
+            if (recInfo != null) {
+                inDev = MidiSystem.getMidiDevice(recInfo);
+                if (inDev.isOpen() == false) {
+                    inDev.open();
+                }
+                inReciever = inDev.getReceiver();
+            }
+            else {
+                inReciever = MidiSystem.getReceiver();
+            }
+            updateMidiOut(inReciever);
+        }
+        catch (MidiUnavailableException e) {
+            if (inDev != null && inDev.isOpen() == true) {
+                inDev.close();
+            }
+            JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
+        }
+    }
     public void updateMidiOut(Receiver rec) throws MidiUnavailableException {
         if (s_MOReceiver != null) {
             s_MOReceiver.close();
@@ -345,6 +318,36 @@ public class MidiPlayer extends Player {
     private static MITransmitter s_MITransmitter = null;
     private static MIReceiver s_MIReceiver = null;
 
+    public void updateMidiIn(String name) {
+        MidiDevice outDev = null;
+        Transmitter outTransmitter = null;
+        MidiDevice.Info transInfo = null;
+        for (MidiDevice.Info info : getMidiDeviceInfo(true, false)) {
+            if (info.getName().equals(name) == true) {
+                transInfo = info;
+                break;
+            }
+        }
+        try {
+            if (transInfo != null) {
+                outDev = MidiSystem.getMidiDevice(transInfo);
+                if (outDev.isOpen() == false) {
+                    outDev.open();
+                }
+                outTransmitter = outDev.getTransmitter();
+            }
+            else {
+                outTransmitter = MidiSystem.getTransmitter();
+            }
+            updateMidiIn(outTransmitter);
+        }
+        catch (MidiUnavailableException e) {
+            if (outDev != null && outDev.isOpen() == true) {
+                outDev.close();
+            }
+            JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIIN, "");
+        }
+    }
     public void updateMidiIn(Transmitter trans) throws MidiUnavailableException {
         if (s_MITransmitter != null) {
             s_MITransmitter.close();

@@ -1,6 +1,6 @@
 package jlib.midi;
 
-import javax.sound.midi.ShortMessage;
+import javax.sound.midi.MidiMessage;
 
 /**
  * MIDI解析系の補助メソッド群
@@ -12,12 +12,12 @@ public class MidiUtility {
     /**
      * PitchBendイベントをシフト量に変換する
      *
-     * @param sMes
+     * @param mes
      * @return
      */
-    public static int convertPitchBendValue(ShortMessage sMes) {
-        int lsb = sMes.getData1();
-        int msb = sMes.getData2();
+    public static int convertPitchBendValue(MidiMessage mes) {
+        int lsb = MidiByte.getData1(mes.getMessage(), mes.getLength());
+        int msb = MidiByte.getData2(mes.getMessage(), mes.getLength());
         int pbValue = MidiByte.mergeLsbMsbValue(lsb, msb);
         return pbValue;
     }

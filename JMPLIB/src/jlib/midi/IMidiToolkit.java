@@ -9,7 +9,7 @@ public interface IMidiToolkit {
     /**
      * NoteOnイベントか判定
      *
-     * @param sMes
+     * @param mes
      * @return
      */
     abstract boolean isNoteOn(MidiMessage mes);
@@ -17,7 +17,7 @@ public interface IMidiToolkit {
     /**
      * NoteOffイベントか判定
      *
-     * @param sMes
+     * @param mes
      * @return
      */
     abstract boolean isNoteOff(MidiMessage mes);
@@ -33,7 +33,7 @@ public interface IMidiToolkit {
     /**
      * PitchBendイベントか判定
      *
-     * @param sMes
+     * @param mes
      * @return
      */
     abstract boolean isPitchBend(MidiMessage mes);

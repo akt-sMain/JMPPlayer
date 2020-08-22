@@ -236,7 +236,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         postActivate();
 
         // syscommon dump
-        cReg.write(getSyscommonPath());
+        if (Utility.isExsistFile(getSavePath()) == true) {
+            cReg.write(getSyscommonPath());
+        }
         return true;
     }
 
@@ -267,6 +269,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
         // 設定ファイルのFFmpegパスを同期
         setFFmpegWrapperPath(JMPCore.getDataManager().getFFmpegPath());
+        setFFmpegInstalled(JMPCore.getDataManager().isFFmpegInstalled());
     }
 
     /** アクティベート前処理 */

@@ -1,11 +1,11 @@
 package jlib.plugin;
 
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.ShortMessage;
 
 import jlib.core.JMPCoreAccessor;
 import jlib.midi.IMidiEventListener;
 import jlib.midi.IMidiToolkit;
+import jlib.midi.MidiByte;
 import jlib.midi.MidiUtility;
 
 public abstract class JMidiPlugin extends JMPlugin implements IMidiEventListener {
@@ -87,22 +87,39 @@ public abstract class JMidiPlugin extends JMPlugin implements IMidiEventListener
         }
 
         try {
-            if (message instanceof ShortMessage) {
-                IMidiToolkit toolkit = JMPCoreAccessor.getSoundManager().getMidiToolkit();
-                ShortMessage sMes = (ShortMessage) message;
-                if (toolkit.isNoteOn(sMes) == true) {
-                    noteOn(sMes.getChannel(), sMes.getData1(), sMes.getData2(), timeStamp, senderType);
-                }
-                else if (toolkit.isNoteOff(sMes) == true) {
-                    noteOff(sMes.getChannel(), sMes.getData1(), timeStamp, senderType);
-                }
-                else if (toolkit.isProgramChange(sMes) == true) {
-                    programChange(sMes.getChannel(), sMes.getData1(), timeStamp, senderType);
-                }
-                else if (toolkit.isPitchBend(sMes) == true) {
-                    int pbValue = MidiUtility.convertPitchBendValue(sMes);
-                    pitchBend(sMes.getChannel(), pbValue, timeStamp, senderType);
-                }
+            IMidiToolkit toolkit = JMPCoreAccessor.getSoundManager().getMidiToolkit();
+            if (toolkit.isNoteOn(message) == true) {
+                noteOn(//
+                        MidiByte.getChannel(message.getMessage(), message.getLength()), //
+                        MidiByte.getData1(message.getMessage(), message.getLength()), //
+                        MidiByte.getData2(message.getMessage(), message.getLength()), //
+                        timeStamp, //
+                        senderType//
+                );//
+            }
+            else if (toolkit.isNoteOff(message) == true) {
+                noteOff(//
+                        MidiByte.getChannel(message.getMessage(), message.getLength()), //
+                        MidiByte.getData1(message.getMessage(), message.getLength()), //
+                        timeStamp, //
+                        senderType//
+                );//
+            }
+            else if (toolkit.isProgramChange(message) == true) {
+                programChange(//
+                        MidiByte.getChannel(message.getMessage(), message.getLength()), //
+                        MidiByte.getData1(message.getMessage(), message.getLength()), //
+                        timeStamp, //
+                        senderType//
+                );//
+            }
+            else if (toolkit.isPitchBend(message) == true) {
+                pitchBend(//
+                        MidiByte.getChannel(message.getMessage(), message.getLength()), //
+                        MidiUtility.convertPitchBendValue(message), //
+                        timeStamp, //
+                        senderType//
+                );//
             }
         }
         catch (Exception e) {

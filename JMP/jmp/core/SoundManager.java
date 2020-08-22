@@ -703,11 +703,18 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     protected void notifyUpdateConfig(String key) {
         super.notifyUpdateConfig(key);
 
-        //DataManager dm = JMPCore.getDataManager();
-        if (key.equals(DataManager.CFG_KEY_MIDIIN) == true) {
-        }
-        else if (key.equals(DataManager.CFG_KEY_MIDIOUT) == true) {
-        }
+//        if (key.equals(DataManager.CFG_KEY_MIDIIN) == true) {
+//            if (isFinishedAllInitialize() == true) {
+//                String inName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
+//                SMidiPlayer.updateMidiIn(inName);
+//            }
+//        }
+//        else if (key.equals(DataManager.CFG_KEY_MIDIOUT) == true) {
+//            if (isFinishedAllInitialize() == true) {
+//                String outName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
+//                SMidiPlayer.updateMidiOut(outName);
+//            }
+//        }
     }
 
     public void updateMidiToolkit() {
