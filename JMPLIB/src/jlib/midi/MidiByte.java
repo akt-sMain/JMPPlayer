@@ -123,6 +123,20 @@ public class MidiByte {
     }
 
     /**
+     * メタメッセージか
+     *
+     * @param statusByte
+     *            ステータスバイト
+     * @return
+     */
+    public static boolean isMetaMessage(int statusByte) {
+        if (statusByte == META) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * LSB(7bit)とMSB(7bit)を結合した14bitの値を取得する
      *
      * @param lsb
@@ -203,6 +217,118 @@ public class MidiByte {
     public static int convertNoteStringToByte(String ident) {
         return DefineNoteNumberGM.identToData(ident);
     }
+
+    public static String convertByteToMetaString(int type) {
+        return DefineMeta.dataToIdent(type);
+    }
+
+    public static int convertTypeStringToByte(String ident) {
+        return DefineMeta.identToData(ident);
+    }
+
+    /**
+     * Metaヘッダーバイト
+     *
+     */
+    public static final int META = 0xff;
+
+    /**
+     * シーケンス番号を記す。<br>
+     * トラック最初の０でないデルタタイムの前で送出可能なMIDIイベントの前に置く。<br>
+     * フォーマット２において、各パターンの呼び出しに使用する。
+     */
+    public static final MetaInfo SEQUENCE_NUMBER = new MetaInfo(DefineMeta.SEQUENCE_NUMBER, 2);
+
+    /**
+     * 任意のテキスト（文字列）をSMF内に記載するために使う。
+     */
+    public static final MetaInfo TEXT = new MetaInfo(DefineMeta.TEXT, MetaInfo.NON);
+
+    /**
+     * 著作権表示用のテキスト文字列。トラックチャンクの先頭イベント（タイム０）とする。
+     */
+    public static final MetaInfo COPYRIGHT_NOTICE = new MetaInfo(DefineMeta.COPYRIGHT_NOTICE, MetaInfo.NON);
+
+    /**
+     * シーケンス／トラック名を記述するテキスト文字列。<br>
+     * シーケンス名はフォーマット０のトラック内か、 フォーマット１の最初のトラック内に記載する。<br>
+     * その他の場合は、トラック名として扱う。
+     */
+    public static final MetaInfo TRACK_NAME = new MetaInfo(DefineMeta.TRACK_NAME, MetaInfo.NON);
+
+    /**
+     * 各チャンネルに対応する楽器名を記述する。
+     */
+    public static final MetaInfo INSTRUMENT_NAME = new MetaInfo(DefineMeta.INSTRUMENT_NAME, MetaInfo.NON);
+
+    /**
+     * 歌詞を記述する場合に使用するテキスト文字列。
+     */
+    public static final MetaInfo LYRICS = new MetaInfo(DefineMeta.LYRICS, MetaInfo.NON);
+
+    /**
+     * フォーマット０／１の最初のトラックで使用し、シーケンス内のポイント名を記述するテキスト文字列。
+     */
+    public static final MetaInfo MARKER = new MetaInfo(DefineMeta.MARKER, MetaInfo.NON);
+
+    /**
+     * ビデオなどに対して指示を出すときに使う。テキスト文字列。
+     */
+    public static final MetaInfo CUE_POINT = new MetaInfo(DefineMeta.CUE_POINT, MetaInfo.NON);
+
+    /**
+     *
+     */
+    public static final MetaInfo PROGRAM_NAME = new MetaInfo(DefineMeta.PROGRAM_NAME, MetaInfo.NON);
+
+    /**
+     *
+     */
+    public static final MetaInfo DEVICE_NAME = new MetaInfo(DefineMeta.DEVICE_NAME, MetaInfo.NON);
+
+    /**
+     * メタイベントやSysExイベントなどチャンネル属性を持たないイベントに対して、チャンネル属性を 付加させる。<br>
+     * MIDIイベントや次のチャンネルプリフィックスがでてくるまで有効。
+     */
+    public static final MetaInfo CHANNEL_PREFIX = new MetaInfo(DefineMeta.CHANNEL_PREFIX, 1);
+
+    /**
+     *
+     */
+    public static final MetaInfo PORT = new MetaInfo(DefineMeta.PORT, MetaInfo.NON);
+
+    /**
+     * トラックの終了を示す。トラックの最終位置に必ず配置する。データはないので、データ長は０。
+     */
+    public static final MetaInfo END_OF_TRACK = new MetaInfo(DefineMeta.END_OF_TRACK, 0);
+
+    /**
+     * ４分音符の長さを?sec単位で表し、一拍当たりの時間でテンポを表す。
+     */
+    public static final MetaInfo SET_TEMPO = new MetaInfo(DefineMeta.SET_TEMPO, 3);
+
+    /**
+     * トラックチャンクがスタートすべきSMPTE時間を示す。<br>
+     * トラックの始まりの全ての０でないデルタタイムの MIDIイベントの前に置く。
+     */
+    public static final MetaInfo SMPTE_OFFSET = new MetaInfo(DefineMeta.SMPTE_OFFSET, 5);
+
+    /**
+     * [nn:dd:cc:bb]拍子記号の分子nn、２のdd乗で表される分母（ddが２の場合４、３の場合８）、
+     * メトロノーム１カウントあたりのMIDIクロック数cc、４分音符中の３２分音符数bb。
+     */
+    public static final MetaInfo BEAT = new MetaInfo(DefineMeta.BEAT, 4);
+
+    /**
+     * [sf:mi]シャープまたはフラット記号の数を表すsf、メジャー／マイナーを示すmi。<br>
+     * sfはフラットの数を 表すときはマイナス数値になる。また、miはメジャーのとき０、マイナのとき１になる。
+     */
+    public static final MetaInfo KEY_SEGNATURE = new MetaInfo(DefineMeta.KEY_SEGNATURE, 2);
+
+    /**
+     * シーケンサ固有のデータに使用。データは初めにマニファクチャラーズＩＤを表記する。
+     */
+    public static final MetaInfo SEQUENCER_SPECFIC = new MetaInfo(DefineMeta.SEQUENCER_SPECFIC, MetaInfo.NON);
 
     /**
      * ステータスバイト定義

@@ -175,7 +175,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
                 comboBox = new JComboBox<String>();
                 buttonPane.add(comboBox);
                 comboBox.setModel(new DefaultComboBoxModel<String>(
-                        new String[] { "All", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16" }));
+                        new String[] { "All", "Meta_SysEx", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", }));
             }
         }
     }
@@ -187,16 +187,29 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
 
     public void addMidiMessage(MidiMessage mes) {
         try {
-            int ch = mes.getStatus() & 0x0f;
+            // チャンネルフィルター
             String combo = comboBox.getSelectedItem().toString();
-            if (combo.equalsIgnoreCase("All") == false) {
+            if (combo.equalsIgnoreCase("Meta_SysEx") == true) {
+                int statusByte = mes.getStatus();
+                if (MidiByte.isMetaMessage(statusByte) || MidiByte.isSystemMessage(statusByte)) {
+                    /* Meta と SysEx を許可 */
+                }
+                else {
+                    return;
+                }
+            }
+            else if (combo.equalsIgnoreCase("All") == true) {
+                /* 全て許可 */
+            }
+            else {
+                /* チャンネル指定 */
+                int ch = mes.getStatus() & 0x0f;
                 if ((Utility.tryParseInt(combo, -1) - 1) != ch) {
                     return;
                 }
             }
 
             String[] rowData = getMessageInfoStr(mes);
-
             synchronized (model) {
                 model.insertRow(0, rowData);
                 if (model.getRowCount() > MAX_STACK) {
@@ -218,17 +231,19 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
     private String[] getMessageInfoStr(MidiMessage mes) {
 
         SoundManager sm = JMPCore.getSoundManager();
-        byte[] data = mes.getMessage();
-        int ch = data.length >= 1 ? (data[0] & 0x0f) : 0;
-        int status = data.length >= 1 ? Byte.toUnsignedInt(data[0]) : 0;
-        int command = data.length >= 1 ? (data[0] & 0xf0) : 0;
-        int data1 = data.length >= 2 ? (data[1] & 0xff) : 0;
-        int data2 = data.length >= 3 ? (data[2] & 0xff) : 0;
-        String byteStr = getByteMessageStr(mes);
-        String time = String.format(TIME_STR_FORMAT, sm.getSequencer().getTickPosition(), sm.getPositionTimeString());
-        String sub = "";
 
+        String time = String.format(TIME_STR_FORMAT, sm.getSequencer().getTickPosition(), sm.getPositionTimeString());
         String[] rowData = new String[model.getColumnCount()];
+        String byteStr = getByteMessageStr(mes);
+        String sub = "";
+        byte[] data = mes.getMessage();
+        int length = mes.getLength();
+        int ch = length >= 1 ? (data[0] & 0x0f) : 0;
+        int status = length >= 1 ? Byte.toUnsignedInt(data[0]) : 0;
+        int command = length >= 1 ? (data[0] & 0xf0) : 0;
+        int data1 = length >= 2 ? (data[1] & 0xff) : 0;
+        int data2 = length >= 3 ? (data[2] & 0xff) : 0;
+
         rowData[INDEX_OF_COLUMN_TIME] = time;
         rowData[INDEX_OF_COLUMN_BYTES] = byteStr;
         if (MidiByte.isChannelMessage(status) == true) {
@@ -251,6 +266,13 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
             rowData[INDEX_OF_COLUMN_COMMAND] = MidiByte.convertByteToChannelCommandString(status);
             rowData[INDEX_OF_COLUMN_DATA1] = sub + String.valueOf(data1);
             rowData[INDEX_OF_COLUMN_DATA2] = String.valueOf(data2);
+        }
+        else if (MidiByte.isMetaMessage(status) == true) {
+            // メタメッセージ
+            rowData[INDEX_OF_COLUMN_CHANNEL] = "--";
+            rowData[INDEX_OF_COLUMN_COMMAND] = (length >= 2) ? MidiByte.convertByteToMetaString(data[1] & 0xff) : "--";
+            rowData[INDEX_OF_COLUMN_DATA1] = sub + "--";
+            rowData[INDEX_OF_COLUMN_DATA2] = "--";
         }
         else if (MidiByte.isSystemMessage(status) == true) {
             // システムメッセージ

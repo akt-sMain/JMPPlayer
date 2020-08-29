@@ -5,6 +5,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -16,6 +20,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
+import function.Platform;
 import function.Utility;
 import jmp.JMPFlags;
 import jmp.core.JMPCore;
@@ -67,8 +72,26 @@ public class LicenseReaderDialog extends JMPDialog {
 
         buttonCopy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                labelClipMes.setVisible(true);
-                Utility.setClipboard(textAreaLisence.getText());
+                //labelClipMes.setVisible(true);
+                //Utility.setClipboard(textAreaLisence.getText());
+                String contents = JMPCore.getLanguageManager().getReadmeContent();
+                File defaultDirectory = new File(Platform.getCurrentPath());
+                File saveFile = Utility.openSaveFileDialog(LicenseReaderDialog.this, defaultDirectory, "license.txt");
+                if (saveFile != null) {
+                    try {
+                        Utility.outputTextFile(saveFile.getPath(), contents);
+                        Utility.openExproler(saveFile);
+                    }
+                    catch (FileNotFoundException e1) {
+                        e1.printStackTrace();
+                    }
+                    catch (UnsupportedEncodingException e1) {
+                        e1.printStackTrace();
+                    }
+                    catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
             }
         });
         buttonCopy.setBounds(12, 424, 106, 21);
@@ -160,7 +183,8 @@ public class LicenseReaderDialog extends JMPDialog {
         labelAccept.setText(lm.getLanguageStr(LangID.Above_conditions));
         rdbtnReject.setText(lm.getLanguageStr(LangID.Reject));
         rdbtnAccept.setText(lm.getLanguageStr(LangID.Accept));
-        labelClipMes.setText(lm.getLanguageStr(LangID.Copied_to_clipboard));
+        //labelClipMes.setText(lm.getLanguageStr(LangID.Copied_to_clipboard));
+        labelClipMes.setText("");
         buttonCopy.setText(lm.getLanguageStr(LangID.Original_copy));
     }
 }

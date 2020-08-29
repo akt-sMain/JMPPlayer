@@ -72,23 +72,10 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     public static final Color DEFAULT_PLAYER_BACK_COLOR = Color.DARK_GRAY;
 
     public static final String COMMON_REGKEY_CH_COLOR_FORMAT = "ch_color_%d";
-    public static final String COMMON_REGKEY_PLAYER_BACK_COLOR = "player_back_color";
-    public static final String COMMON_REGKEY_EXTENSION_MIDI = "extension_midi";
-    public static final String COMMON_REGKEY_EXTENSION_WAV = "extension_wav";
-    public static final String COMMON_REGKEY_EXTENSION_MUSICXML = "extension_musicxml";
-    public static final String COMMON_REGKEY_USE_MIDI_TOOLKIT = "use_midi_toolkit";
-    public static final String COMMON_REGKEY_USE_UTIL_TOOLKIT = "use_util_toolkit";
-
-    /** デバッグモード */
-    public static final String COMMON_REGKEY_DEBUGMODE = "debug_mode";
-
-    /** FFmpeg コマンド */
-    public static final String COMMON_REGKEY_FFMPEG_WIN = "ffmpeg_win";
-    public static final String COMMON_REGKEY_FFMPEG_MAC = "ffmpeg_mac";
-    public static final String COMMON_REGKEY_FFMPEG_OTHER = "ffmpeg_other";
 
     /** 共通レジスタ */
     private CommonRegister cReg = null;
+    private String[] cRegKeys = null;
 
     /** FFmpeg wrapper インスタンス */
     private FFmpegWrapper ffmpegWrapper = null;
@@ -121,34 +108,69 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         ffmpegWrapper = new ProcessingFFmpegWrapper();
         ffmpegWrapper.setOverwrite(true);
 
-        // 共通レジスタのインスタンス生成
+        // 共通レジスタのキー名登録
+        cRegKeys = new String[NUMBER_OF_COMMON_REGKEY];
+        cRegKeys[COMMON_REGKEY_NO_EXTENSION_MIDI] = "extension_midi";
+        cRegKeys[COMMON_REGKEY_NO_EXTENSION_WAV] = "extension_wav";
+        cRegKeys[COMMON_REGKEY_NO_EXTENSION_MUSICXML] = "extension_musicxml";
+        cRegKeys[COMMON_REGKEY_NO_USE_MIDI_TOOLKIT] = "use_midi_toolkit";
+        cRegKeys[COMMON_REGKEY_NO_USE_UTIL_TOOLKIT] = "use_util_toolkit";
+        cRegKeys[COMMON_REGKEY_NO_PLAYER_BACK_COLOR] = "player_back_color";
+        cRegKeys[COMMON_REGKEY_NO_DEBUGMODE] = "debug_mode";
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT] = "ch_color_format";
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_1] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 1);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_2] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 2);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_3] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 3);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_4] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 4);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_5] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 5);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_6] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 6);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_7] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 7);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_8] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 8);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_9] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 9);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_10] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 10);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_11] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 11);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_12] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 12);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_13] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 13);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_14] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 14);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_15] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 15);
+        cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_16] = String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 16);
+        cRegKeys[COMMON_REGKEY_NO_FFMPEG_OUTPUT] = "ffmpeg_output";
+        cRegKeys[COMMON_REGKEY_NO_FFMPEG_WIN] = "ffmpeg_env_win";
+        cRegKeys[COMMON_REGKEY_NO_FFMPEG_MAC] = "ffmpeg_env_mac";
+        cRegKeys[COMMON_REGKEY_NO_FFMPEG_OTHER] = "ffmpeg_env_other";
+        cRegKeys[COMMON_REGKEY_NO_LYRIC_CHARCODE] = "lyric_charcode";
+
+        // 共通レジスタのインスタンス生成・パラメータ登録
         cReg = new CommonRegister();
-        cReg.add(COMMON_REGKEY_EXTENSION_MIDI, JmpUtil.genExtensions2Str("mid", "midi"));
-        cReg.add(COMMON_REGKEY_EXTENSION_WAV, JmpUtil.genExtensions2Str("wav"));
-        cReg.add(COMMON_REGKEY_EXTENSION_MUSICXML, JmpUtil.genExtensions2Str("xml", "musicxml", "mxl"));
-        cReg.add(COMMON_REGKEY_USE_MIDI_TOOLKIT, USE_MIDI_TOOLKIT_CLASSNAME);
-        cReg.add(COMMON_REGKEY_USE_UTIL_TOOLKIT, USE_UTIL_TOOLKIT_CLASSNAME);
-        cReg.add(COMMON_REGKEY_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(DEFAULT_PLAYER_BACK_COLOR));
-        cReg.add(COMMON_REGKEY_DEBUGMODE, JMPFlags.DebugMode ? "TRUE" : "FALSE");
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 1), "#8ec21f", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 2), "#3dc21f", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 3), "#1fc253", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 4), "#1fc2a4", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 5), "#1f8ec2", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 6), "#1f3dc2", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 7), "#531fc2", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 8), "#a41fc2", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 9), "#ffc0cb", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 10), "#c21f3d", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 11), "#c2531f", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 12), "#c2a41f", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 13), "#3d00c2", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 14), "#ffff29", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 15), "#bbff29", true);
-        cReg.add(String.format(COMMON_REGKEY_CH_COLOR_FORMAT, 16), "#f98608", true);
-        cReg.add(COMMON_REGKEY_FFMPEG_WIN, "ffmpeg", true);
-        cReg.add(COMMON_REGKEY_FFMPEG_MAC, "/Usr/local/bin/ffmpeg", true);
-        cReg.add(COMMON_REGKEY_FFMPEG_OTHER, "/Usr/local/bin/ffmpeg", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_EXTENSION_MIDI], JmpUtil.genExtensions2Str("mid", "midi"));
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_EXTENSION_WAV], JmpUtil.genExtensions2Str("wav"));
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_EXTENSION_MUSICXML], JmpUtil.genExtensions2Str("xml", "musicxml", "mxl"));
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_USE_MIDI_TOOLKIT], USE_MIDI_TOOLKIT_CLASSNAME);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_USE_UTIL_TOOLKIT], USE_UTIL_TOOLKIT_CLASSNAME);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_PLAYER_BACK_COLOR], Utility.convertHtmlColorToCode(DEFAULT_PLAYER_BACK_COLOR));
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_DEBUGMODE], JMPFlags.DebugMode ? "TRUE" : "FALSE");
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT], COMMON_REGKEY_CH_COLOR_FORMAT);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_1], "#8ec21f", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_2], "#3dc21f", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_3], "#1fc253", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_4], "#1fc2a4", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_5], "#1f8ec2", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_6], "#1f3dc2", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_7], "#531fc2", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_8], "#a41fc2", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_9], "#ffc0cb", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_10], "#c21f3d", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_11], "#c2531f", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_12], "#c2a41f", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_13], "#3d00c2", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_14], "#ffff29", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_15], "#bbff29", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_16], "#f98608", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_FFMPEG_OUTPUT], "output");
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_FFMPEG_WIN], "ffmpeg", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_FFMPEG_MAC], "/Usr/local/bin/ffmpeg", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_FFMPEG_OTHER], "/Usr/local/bin/ffmpeg", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_LYRIC_CHARCODE], "SJIS", true);
 
         // syscommon読み込み
         cReg.read(getSyscommonPath());
@@ -157,22 +179,22 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
             switch (Platform.getRunPlatform()) {
                 case WINDOWS:
-                    ((ProcessingFFmpegWrapper)ffmpegWrapper).setFFmpegCommand(cReg.getValue(COMMON_REGKEY_FFMPEG_WIN));
+                    ((ProcessingFFmpegWrapper)ffmpegWrapper).setFFmpegCommand(getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_WIN));
                     break;
                 case MAC:
-                    ((ProcessingFFmpegWrapper)ffmpegWrapper).setFFmpegCommand(cReg.getValue(COMMON_REGKEY_FFMPEG_MAC));
+                    ((ProcessingFFmpegWrapper)ffmpegWrapper).setFFmpegCommand(getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_MAC));
                     break;
                 case LINUX:
                 case SUN_OS:
                 case OTHER:
                 default:
-                    ((ProcessingFFmpegWrapper)ffmpegWrapper).setFFmpegCommand(cReg.getValue(COMMON_REGKEY_FFMPEG_OTHER));
+                    ((ProcessingFFmpegWrapper)ffmpegWrapper).setFFmpegCommand(getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_OTHER));
                     break;
             }
         }
 
         // ResourceとcRegの同期
-        setCommonRegisterValue(COMMON_REGKEY_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(JMPCore.getResourceManager().getAppBackgroundColor()));
+        setCommonRegisterValue(COMMON_REGKEY_NO_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(JMPCore.getResourceManager().getAppBackgroundColor()));
 
         // ルックアンドフィールの設定
         setupLookAndFeel();
@@ -245,7 +267,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     public void updateUtilToolkit() {
         // 使用するツールキットを更新
         SystemManager system = JMPCore.getSystemManager();
-        String toolkitName = system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_USE_UTIL_TOOLKIT);
+        String toolkitName = system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_USE_UTIL_TOOLKIT);
         utilToolkit = UtilityToolkitManager.getInstance().getUtilityToolkit(toolkitName);
     }
 
@@ -298,6 +320,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             // デバッグ・スタンドアロン実行は発行しない
             activateOutFlag = false;
         }
+        
         // ライセンス発行
         if (activateOutFlag == true) {
             if (Utility.isExsistFile(getActivateFileLocationPath()) == false) {
@@ -329,7 +352,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             return false;
         }
 
-        if (key.equalsIgnoreCase(COMMON_REGKEY_DEBUGMODE) == true) {
+        if (key.equalsIgnoreCase(getCommonRegisterKeyName(COMMON_REGKEY_NO_DEBUGMODE)) == true) {
             // Readonryのキー
             return true;
         }
@@ -361,45 +384,47 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
         makeSystemPathFlag = true;
 
+        String currentPath = Platform.getCurrentPath(false);
+
         // プラグイン格納ディレクトリパス
-        pluginsDirPath = Utility.stringsCombin(Platform.getCurrentPath(), PLUGINS_DIR_NAME);
+        pluginsDirPath = Utility.pathCombin(currentPath, PLUGINS_DIR_NAME);
 
         // データファイル格納ディレクトリパス
         if (JMPLoader.UsePluginDirectory == true) {
-            dataFileLocationPath = Utility.stringsCombin(pluginsDirPath, Platform.getSeparator(), DATA_DIR_NAME);
+            dataFileLocationPath = Utility.pathCombin(pluginsDirPath, DATA_DIR_NAME);
         }
         else {
-            dataFileLocationPath = Utility.stringsCombin(Platform.getCurrentPath(), DATA_DIR_NAME);
+            dataFileLocationPath = Utility.pathCombin(currentPath, DATA_DIR_NAME);
         }
 
         // リソースファイル格納ディレクトリパス
         if (JMPLoader.UsePluginDirectory == true) {
-            resFileLocationPath = Utility.stringsCombin(pluginsDirPath, Platform.getSeparator(), RES_DIR_NAME);
+            resFileLocationPath = Utility.pathCombin(pluginsDirPath, RES_DIR_NAME);
         }
         else {
-            resFileLocationPath = Utility.stringsCombin(Platform.getCurrentPath(), RES_DIR_NAME);
+            resFileLocationPath = Utility.pathCombin(currentPath, RES_DIR_NAME);
         }
 
         // プラグインjms格納ディレクトリパス
-        jmsDirPath = Utility.stringsCombin(pluginsDirPath, Platform.getSeparator(), JMS_DIR_NAME);
+        jmsDirPath = Utility.pathCombin(pluginsDirPath, JMS_DIR_NAME);
 
         // プラグインjar格納ディレクトリパス
-        jarDirPath = Utility.stringsCombin(pluginsDirPath, Platform.getSeparator(), JAR_DIR_NAME);
+        jarDirPath = Utility.pathCombin(pluginsDirPath, JAR_DIR_NAME);
 
         // zip格納ディレクトリパス
-        zipDirPath = Utility.stringsCombin(Platform.getCurrentPath(), ZIP_DIR_NAME);
+        zipDirPath = Utility.pathCombin(currentPath, ZIP_DIR_NAME);
 
         // 出力ファイル格納ディレクトリパス
-        outputPath = Utility.stringsCombin(Platform.getCurrentPath(), OUTPUT_DIR_NAME);
+        outputPath = Utility.pathCombin(currentPath, OUTPUT_DIR_NAME);
 
         // セーブデータ格納ディレクトリパス
-        savePath = Utility.stringsCombin(Platform.getCurrentPath(), SAVE_DIR_NAME);
+        savePath = Utility.pathCombin(currentPath, SAVE_DIR_NAME);
 
         // アクティベートファイルパス
-        activateFileLocationPath = Utility.stringsCombin(savePath, Platform.getSeparator(), "activate");
+        activateFileLocationPath = Utility.pathCombin(savePath, "activate");
 
         // syscommon
-        syscommonPath  = Utility.stringsCombin(savePath, Platform.getSeparator(), COMMON_SYS_FILENAME);
+        syscommonPath  = Utility.pathCombin(savePath, COMMON_SYS_FILENAME);
 
         JMPFlags.Log.cprintln("###");
         JMPFlags.Log.cprintln("## Directory list");
@@ -496,18 +521,19 @@ public class SystemManager extends AbstractManager implements ISystemManager {
      * ルックアンドフィールの設定
      */
     private void setupLookAndFeel() {
-        String lf = UIManager.getSystemLookAndFeelClassName();
+        final String systemlf = UIManager.getSystemLookAndFeelClassName();
+        final String crosslf = UIManager.getCrossPlatformLookAndFeelClassName();
         // String lf = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
         // String lf = "javax.swing.plaf.metal.MetalLookAndFeel";
         try {
-            UIManager.setLookAndFeel(lf);
+            UIManager.setLookAndFeel(systemlf);
         }
         catch (Exception e) {
             System.out.println("lferror");
 
             // 念のためMetalを再設定
             try {
-                UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                UIManager.setLookAndFeel(crosslf);
             }
             catch (Exception e2) {
             }
@@ -585,7 +611,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     @Override
     protected void notifyUpdateCommonRegister(String key) {
         super.notifyUpdateCommonRegister(key);
-        if (key.equals(SystemManager.COMMON_REGKEY_USE_UTIL_TOOLKIT) == true) {
+        if (key.equals(getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_USE_UTIL_TOOLKIT)) == true) {
             updateUtilToolkit();
         }
     }
@@ -616,5 +642,21 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
             pfw.setFFmpegInstalled(isEnableEnvironmentVariable);
         }
+    }
+
+    public String getFFmpegCommand() {
+        if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
+            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
+            return pfw.getFFmpegCommand();
+        }
+        return "";
+    }
+
+    @Override
+    public String getCommonRegisterKeyName(int keyNo) {
+        if (NUMBER_OF_COMMON_REGKEY < keyNo || keyNo < 0) {
+            return "";
+        }
+        return cRegKeys[keyNo];
     }
 }

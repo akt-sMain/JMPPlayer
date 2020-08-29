@@ -52,7 +52,7 @@ public class MusicXMLReader implements IJMPDocumentReader {
             loadResult = true;
         }
 
-        printResult();
+        //printResult();
     }
 
     public void load(File file) throws SAXException, IOException, ParserConfigurationException {

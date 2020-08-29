@@ -82,9 +82,9 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
         /* プレイヤーインスタンス作成 */
         SystemManager system = JMPCore.getSystemManager();
-        String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MIDI));
-        String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_WAV));
-        String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MUSICXML));
+        String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MIDI));
+        String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_WAV));
+        String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
 
         // midi
         SMidiPlayer = new MidiPlayer();
@@ -117,7 +117,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
                 int transpose = JMPCore.getDataManager().getTranspose();
                 if (transpose != 0) {
                     if (message instanceof ShortMessage) {
-                        ShortMessage sMes = (ShortMessage)message;
+                        ShortMessage sMes = (ShortMessage) message;
                         if (toolkit.isNoteOn(sMes) == true || toolkit.isNoteOff(sMes) == true) {
                             int status = sMes.getStatus();
                             int data1 = sMes.getData1();
@@ -139,8 +139,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         addFilter(defaultMidiFilter);
 
         // Midiコントローラーの準備
-        midiInController = new MidiController(IMidiEventListener.SENDER_MIDI_IN);    // INコントローラインターフェース
-        midiOutController = new MidiController(IMidiEventListener.SENDER_MIDI_OUT);  // OUTコントローラインターフェース
+        midiInController = new MidiController(IMidiEventListener.SENDER_MIDI_IN); // INコントローラインターフェース
+        midiOutController = new MidiController(IMidiEventListener.SENDER_MIDI_OUT); // OUTコントローラインターフェース
 
         // Port lineIn;
 
@@ -490,6 +490,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             initPosition();
         }
         player.play();
+
+        JMPCore.getWindowManager().getMainWindow().setLyric("");
     }
 
     @Override
@@ -511,6 +513,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         if (backupVisible == true) {
             midiMinitor.showWindow();
         }
+
+        JMPCore.getWindowManager().getMainWindow().setLyric("");
     }
 
     @Override
@@ -678,20 +682,20 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     @Override
     protected void notifyUpdateCommonRegister(String key) {
         SystemManager system = JMPCore.getSystemManager();
-        if (key.equals(SystemManager.COMMON_REGKEY_USE_MIDI_TOOLKIT) == true) {
+        if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_USE_MIDI_TOOLKIT)) == true) {
             updateMidiToolkit();
         }
-        else if (key.equals(SystemManager.COMMON_REGKEY_EXTENSION_MIDI) == true) {
+        else if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_EXTENSION_MIDI)) == true) {
             String val = system.getCommonRegisterValue(key);
             String[] exs = JmpUtil.genStr2Extensions(val);
             SMidiPlayer.setSupportExtentions(exs);
         }
-        else if (key.equals(SystemManager.COMMON_REGKEY_EXTENSION_WAV) == true) {
+        else if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_EXTENSION_WAV)) == true) {
             String val = system.getCommonRegisterValue(key);
             String[] exs = JmpUtil.genStr2Extensions(val);
             SWavPlayer.setSupportExtentions(exs);
         }
-        else if (key.equals(SystemManager.COMMON_REGKEY_EXTENSION_MUSICXML) == true) {
+        else if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML)) == true) {
             String val = system.getCommonRegisterValue(key);
             String[] exs = JmpUtil.genStr2Extensions(val);
             SMusicXmlPlayer.setSupportExtentions(exs);
@@ -703,24 +707,26 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     protected void notifyUpdateConfig(String key) {
         super.notifyUpdateConfig(key);
 
-//        if (key.equals(DataManager.CFG_KEY_MIDIIN) == true) {
-//            if (isFinishedAllInitialize() == true) {
-//                String inName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
-//                SMidiPlayer.updateMidiIn(inName);
-//            }
-//        }
-//        else if (key.equals(DataManager.CFG_KEY_MIDIOUT) == true) {
-//            if (isFinishedAllInitialize() == true) {
-//                String outName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
-//                SMidiPlayer.updateMidiOut(outName);
-//            }
-//        }
+        // if (key.equals(DataManager.CFG_KEY_MIDIIN) == true) {
+        // if (isFinishedAllInitialize() == true) {
+        // String inName =
+        // JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
+        // SMidiPlayer.updateMidiIn(inName);
+        // }
+        // }
+        // else if (key.equals(DataManager.CFG_KEY_MIDIOUT) == true) {
+        // if (isFinishedAllInitialize() == true) {
+        // String outName =
+        // JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
+        // SMidiPlayer.updateMidiOut(outName);
+        // }
+        // }
     }
 
     public void updateMidiToolkit() {
         // 使用するツールキットを更新
         SystemManager system = JMPCore.getSystemManager();
-        String toolkitName = system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_USE_MIDI_TOOLKIT);
+        String toolkitName = system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_USE_MIDI_TOOLKIT);
         midiToolkit = MidiToolkitManager.getInstance().getMidiToolkit(toolkitName);
     }
 

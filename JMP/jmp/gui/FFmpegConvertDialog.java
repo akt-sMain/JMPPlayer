@@ -24,7 +24,6 @@ import function.Platform;
 import function.Platform.KindOfPlatform;
 import function.Utility;
 import jmp.JMPFlags;
-import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SystemManager;
@@ -38,19 +37,19 @@ public class FFmpegConvertDialog extends JMPDialog {
 
     private final JPanel contentPanel = new JPanel();
     private JTextField textFieldFFmpegExePath;
-    private JTextField textFieldOutputDirectory;
     private JTextField textFieldInputFile;
     private JLabel lblStatus;
     private JCheckBox chckbxLeave;
     private JCheckBox chckbxToPlay;
     private JButton convertButton;
     private JLabel lblPath;
-    private JLabel lblOutputDirectory;
     private JLabel lblInputFile;
     private JButton btnExpButton;
     private JCheckBox checkBoxUsePlayer;
     private JTextField dstExtTextField;
     private JCheckBox chckbxInstalled;
+    private JButton buttonOpenInput;
+    private JButton btnOpenExe;
 
     /**
      * Create the dialog.
@@ -58,7 +57,7 @@ public class FFmpegConvertDialog extends JMPDialog {
     public FFmpegConvertDialog() {
         super();
         setTitle("FFmpeg convert");
-        setBounds(100, 100, 450, 314);
+        setBounds(100, 100, 450, 267);
         setResizable(false);
 
         contentPanel.setBackground(getJmpBackColor());
@@ -91,33 +90,15 @@ public class FFmpegConvertDialog extends JMPDialog {
         lblPath.setBounds(12, 25, 373, 19);
         contentPanel.add(lblPath);
 
-        lblOutputDirectory = new JLabel("Output directory");
-        lblOutputDirectory.setForeground(Color.WHITE);
-        lblOutputDirectory.setFont(new Font("Dialog", Font.PLAIN, 12));
-        lblOutputDirectory.setBounds(12, 77, 373, 19);
-        contentPanel.add(lblOutputDirectory);
-
-        textFieldOutputDirectory = new JTextField();
-        textFieldOutputDirectory.setColumns(10);
-        textFieldOutputDirectory.setBounds(12, 100, 373, 19);
-        contentPanel.add(textFieldOutputDirectory);
-        textFieldOutputDirectory.setTransferHandler(new DropFileCallbackHandler(new IDropFileCallback() {
-
-            @Override
-            public void catchDropFile(File file) {
-                setOutputDirectory(file.getPath());
-            }
-        }));
-
         lblInputFile = new JLabel("Input file");
         lblInputFile.setForeground(Color.WHITE);
         lblInputFile.setFont(new Font("Dialog", Font.PLAIN, 12));
-        lblInputFile.setBounds(12, 129, 373, 19);
+        lblInputFile.setBounds(12, 83, 373, 19);
         contentPanel.add(lblInputFile);
 
         textFieldInputFile = new JTextField();
         textFieldInputFile.setColumns(10);
-        textFieldInputFile.setBounds(12, 152, 373, 19);
+        textFieldInputFile.setBounds(12, 106, 373, 19);
         contentPanel.add(textFieldInputFile);
         textFieldInputFile.setTransferHandler(new DropFileCallbackHandler(new IDropFileCallback() {
 
@@ -130,7 +111,7 @@ public class FFmpegConvertDialog extends JMPDialog {
         lblStatus = new JLabel("");
         lblStatus.setBackground(new Color(0, 0, 0));
         lblStatus.setForeground(Color.GREEN);
-        lblStatus.setBounds(12, 227, 420, 19);
+        lblStatus.setBounds(12, 181, 373, 19);
         contentPanel.add(lblStatus);
 
         chckbxLeave = new JCheckBox("Leave output file");
@@ -142,10 +123,10 @@ public class FFmpegConvertDialog extends JMPDialog {
                 JMPCore.getDataManager().setFFmpegLeaveOutputFile(chckbxLeave.isSelected());
             }
         });
-        chckbxLeave.setBounds(190, 177, 174, 21);
+        chckbxLeave.setBounds(224, 131, 174, 21);
         contentPanel.add(chckbxLeave);
 
-        JButton btnOpenExe = new JButton("...");
+        btnOpenExe = new JButton("...");
         btnOpenExe.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // ファイルフィルター
@@ -183,30 +164,7 @@ public class FFmpegConvertDialog extends JMPDialog {
         btnOpenExe.setBounds(385, 47, 47, 21);
         contentPanel.add(btnOpenExe);
 
-        JButton buttonOpenOut = new JButton("...");
-        buttonOpenOut.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser filechooser = new JFileChooser();
-                filechooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-                String path = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_FFMPEG_OUTPUT);
-                if (path != null && path.isEmpty() == false) {
-                    filechooser.setCurrentDirectory(new File(path));
-                }
-
-                int selected = filechooser.showSaveDialog(getParent());
-                if (selected == JFileChooser.APPROVE_OPTION) {
-                    File file = filechooser.getSelectedFile();
-                    if (file.exists() == true && file.canRead() == true) {
-                        setOutputDirectory(file.getPath());
-                    }
-                }
-            }
-        });
-        buttonOpenOut.setBounds(385, 99, 47, 21);
-        contentPanel.add(buttonOpenOut);
-
-        JButton buttonOpenInput = new JButton("...");
+        buttonOpenInput = new JButton("...");
         buttonOpenInput.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // ファイルフィルター
@@ -227,7 +185,7 @@ public class FFmpegConvertDialog extends JMPDialog {
                 }
             }
         });
-        buttonOpenInput.setBounds(385, 151, 47, 21);
+        buttonOpenInput.setBounds(385, 105, 47, 21);
         contentPanel.add(buttonOpenInput);
 
         chckbxToPlay = new JCheckBox("Play after convert");
@@ -239,7 +197,7 @@ public class FFmpegConvertDialog extends JMPDialog {
         chckbxToPlay.setFont(new Font("Dialog", Font.PLAIN, 12));
         chckbxToPlay.setForeground(new Color(255, 255, 255));
         chckbxToPlay.setBackground(getJmpBackColor());
-        chckbxToPlay.setBounds(12, 177, 174, 21);
+        chckbxToPlay.setBounds(12, 131, 174, 21);
         contentPanel.add(chckbxToPlay);
 
         checkBoxUsePlayer = new JCheckBox("Use FFmpeg player");
@@ -251,13 +209,13 @@ public class FFmpegConvertDialog extends JMPDialog {
         checkBoxUsePlayer.setForeground(Color.WHITE);
         checkBoxUsePlayer.setFont(new Font("Dialog", Font.PLAIN, 12));
         checkBoxUsePlayer.setBackground(Color.DARK_GRAY);
-        checkBoxUsePlayer.setBounds(12, 200, 174, 21);
+        checkBoxUsePlayer.setBounds(12, 154, 174, 21);
         contentPanel.add(checkBoxUsePlayer);
 
         dstExtTextField = new JTextField();
         dstExtTextField.setHorizontalAlignment(SwingConstants.RIGHT);
         dstExtTextField.setText("wav");
-        dstExtTextField.setBounds(315, 123, 70, 19);
+        dstExtTextField.setBounds(362, 83, 70, 19);
         contentPanel.add(dstExtTextField);
         dstExtTextField.setColumns(10);
 
@@ -311,6 +269,14 @@ public class FFmpegConvertDialog extends JMPDialog {
 
     private void updateGuiState() {
         textFieldFFmpegExePath.setEnabled(!JMPCore.getDataManager().isFFmpegInstalled());
+        btnOpenExe.setEnabled(!JMPCore.getDataManager().isFFmpegInstalled());
+        lblPath.setEnabled(!JMPCore.getDataManager().isFFmpegInstalled());
+        if (JMPCore.getDataManager().isFFmpegInstalled() == true) {
+            textFieldFFmpegExePath.setText(JMPCore.getSystemManager().getFFmpegCommand());
+        }
+        else {
+            textFieldFFmpegExePath.setText(JMPCore.getDataManager().getFFmpegPath());
+        }
     }
 
     private FileNameExtensionFilter createFileFilter(String exName, String... ex) {
@@ -327,15 +293,12 @@ public class FFmpegConvertDialog extends JMPDialog {
     }
 
     public void setExePath(String path) {
+        if (JMPCore.getSystemManager().isFFmpegInstalled() == true) {
+            return;
+        }
         JMPCore.getDataManager().setFFmpegPath(path);
 
         textFieldFFmpegExePath.setText(JMPCore.getDataManager().getFFmpegPath());
-    }
-
-    public void setOutputDirectory(String path) {
-        JMPCore.getDataManager().setFFmpegOutputPath(path);
-
-        textFieldOutputDirectory.setText(JMPCore.getDataManager().getFFmpegOutputPath());
     }
 
     public void setInputPath(String path) {
@@ -343,7 +306,7 @@ public class FFmpegConvertDialog extends JMPDialog {
     }
 
     public void openOutputFolder() {
-        File outdir = new File(textFieldOutputDirectory.getText());
+        File outdir = new File(JMPCore.getSystemManager().getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_FFMPEG_OUTPUT));
         if (outdir.exists() == true) {
             try {
                 Utility.openExproler(outdir);
@@ -372,7 +335,7 @@ public class FFmpegConvertDialog extends JMPDialog {
             return;
         }
         String inname = Utility.getFileNameNotExtension(inpath);
-        File outdir = new File(textFieldOutputDirectory.getText());
+        File outdir = new File(JMPCore.getSystemManager().getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_FFMPEG_OUTPUT));
 
         String dstExt = dstExtTextField.getText();
         if (dstExt.isEmpty() == true) {
@@ -446,7 +409,6 @@ public class FFmpegConvertDialog extends JMPDialog {
 
         setTitle(lm.getLanguageStr(LangID.FFmpeg_converter));
         lblPath.setText(lm.getLanguageStr(LangID.FFmpeg_path));
-        lblOutputDirectory.setText(lm.getLanguageStr(LangID.Output_directory));
         lblInputFile.setText(lm.getLanguageStr(LangID.Input_file));
         convertButton.setText(lm.getLanguageStr(LangID.Convert));
         btnExpButton.setText(lm.getLanguageStr(LangID.Open_with_Explorer));
@@ -458,7 +420,6 @@ public class FFmpegConvertDialog extends JMPDialog {
     @Override
     public void updateConfig(String key) {
         textFieldFFmpegExePath.setText(JMPCore.getDataManager().getFFmpegPath());
-        textFieldOutputDirectory.setText(JMPCore.getDataManager().getFFmpegOutputPath());
         chckbxLeave.setSelected(JMPCore.getDataManager().isFFmpegLeaveOutputFile());
         checkBoxUsePlayer.setSelected(JMPCore.getDataManager().isUseFFmpegPlayer());
         chckbxInstalled.setSelected(JMPCore.getDataManager().isFFmpegInstalled());
@@ -469,6 +430,8 @@ public class FFmpegConvertDialog extends JMPDialog {
             chckbxInstalled.setEnabled(true);
         }
         super.updateConfig(key);
+
+        updateGuiState();
     }
 
     @Override

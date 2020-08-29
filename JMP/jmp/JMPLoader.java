@@ -227,7 +227,7 @@ public class JMPLoader {
      */
     public static boolean invoke(ConfigDatabaseWrapper config, IPlugin standAlonePlugin) {
 
-        // invokeメソッドからの起動はLibralyモードではない
+        // invokeメソッドからの起動はLibraryモードではない
         JMPFlags.LibraryMode = false;
 
         // ライブラリ初期化処理

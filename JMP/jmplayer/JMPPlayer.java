@@ -118,6 +118,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
     private VersionInfoDialog versionInfoDialog = null;
 
+    private String lyric = "";
+
     // コンポーネント
     private JMenu pluginMenu;
     private JLabel statusLabel;
@@ -172,6 +174,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JMenuItem mntmMidiExport;
     private JMenuItem mntmDebugDummy;
     private JMenuItem mntmPluginManager;
+    private JCheckBoxMenuItem chckbxmntmLyricView;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -411,6 +414,14 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 }
             }
         });
+
+        chckbxmntmLyricView = new JCheckBoxMenuItem("Lyric");
+        chckbxmntmLyricView.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JMPCore.getDataManager().setLyricView(chckbxmntmLyricView.isSelected());
+            }
+        });
+        playerMenu.add(chckbxmntmLyricView);
 
         pluginMenu = new JMenu("プラグイン");
         pluginMenu.addMenuListener(new JmpMenuListener());
@@ -717,8 +728,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mntmMidiExport.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 SystemManager system = JMPCore.getSystemManager();
-                String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MIDI));
-                String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MUSICXML));
+                String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MIDI));
+                String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
 
                 File defaultDir = new File(Platform.getCurrentPath());
                 String loadedFile = JMPCore.getDataManager().getLoadedFile();
@@ -1239,6 +1250,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         loopPlayCheckBoxMenuItem.setSelected(dm.isLoopPlay());
         autoPlayCheckBox.setSelected(dm.isAutoPlay());
         alwayTopCheckBox.setSelected(isAlwaysOnTop());
+        chckbxmntmLyricView.setSelected(dm.isLyricView());
 
         if (JMPCore.getSoundManager().getSequencer() != null) {
             // Sequencerが実行中の場合は設定不可
@@ -1252,9 +1264,9 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
      */
     public void fileOpenFunc() {
         SystemManager system = JMPCore.getSystemManager();
-        String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MIDI));
-        String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_WAV));
-        String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MUSICXML));
+        String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MIDI));
+        String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_WAV));
+        String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
 
         // ファイルフィルター
         JFileChooser filechooser = new JFileChooser();
@@ -1351,6 +1363,15 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         }
     }
 
+    private void setStatusTextForLyric() {
+        if (lyric.isEmpty() == true) {
+            setStatusTextForFile();
+        }
+        else {
+            setStatusText(lyric, Color.PINK);
+        }
+    }
+
     @Override
     public void windowOpened(WindowEvent e) {
     }
@@ -1444,6 +1465,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mntmInitializeConfig.setText(lm.getLanguageStr(LangID.Initialize_setting));
         mntmPluginManager.setText(lm.getLanguageStr(LangID.Plugin_manager));
 
+        chckbxmntmLyricView.setText(lm.getLanguageStr(LangID.Lyrics_display));
+
         if (JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_LOADED_FILE).isEmpty() == true) {
             setInitializeStatusText();
         }
@@ -1478,6 +1501,21 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     }
 
     @Override
+    public void updateConfig(String key) {
+        IJmpMainWindow.super.updateConfig(key);
+        if (JmpUtil.checkConfigKey(key, DataManager.CFG_KEY_LYRIC_VIEW) == true) {
+            lyric = "";
+            setStatusTextForLyric();
+            if (JMPCore.getDataManager().getLoadedFile().equals("") == true) {
+                setInitializeStatusText();
+            }
+            else {
+                setStatusTextForFile();
+            }
+        }
+    }
+
+    @Override
     public void updateBackColor() {
         getContentPane().setBackground(getJmpBackColor());
         panel_1.setBackground(getJmpBackColor());
@@ -1489,5 +1527,13 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         playButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
         nextButton.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
         next2Button.setBackground(JMPCore.getResourceManager().getBtnBackgroundColor());
+    }
+
+    @Override
+    public void setLyric(String text) {
+        if (JMPCore.getDataManager().isLyricView() == true) {
+            lyric = text;
+            setStatusTextForLyric();
+        }
     }
 }

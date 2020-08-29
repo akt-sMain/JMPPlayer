@@ -442,9 +442,9 @@ public class MidiFileListDialog extends JMPFrame {
         removeAllRows();
 
         SystemManager system = JMPCore.getSystemManager();
-        String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MIDI));
-        String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_WAV));
-        String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_EXTENSION_MUSICXML));
+        String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MIDI));
+        String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_WAV));
+        String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
 
         /* リスト構築 */
         if (midiFileMap != null) {
@@ -453,7 +453,7 @@ public class MidiFileListDialog extends JMPFrame {
             Arrays.sort(keys);
 
             List<File> list = new LinkedList<File>();
-            // Deirectory
+            // Directory
             for (Object key : keys) {
                 String sKey = key.toString();
                 File f = midiFileMap.get(sKey);
@@ -516,11 +516,11 @@ public class MidiFileListDialog extends JMPFrame {
                 }
             }
 
-            ImageIcon folderIcon = convertImageIcon(JMPCore.getResourceManager().getFileFolderIcon());
-            ImageIcon midiIcon = convertImageIcon(JMPCore.getResourceManager().getFileMidiIcon());
-            ImageIcon wavIcon = convertImageIcon(JMPCore.getResourceManager().getFileWavIcon());
-            ImageIcon xmlIcon = convertImageIcon(JMPCore.getResourceManager().getFileXmlIcon());
-            ImageIcon otherIcon = convertImageIcon(JMPCore.getResourceManager().getFileOtherIcon());
+            ImageIcon folderIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileFolderIcon());
+            ImageIcon midiIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileMidiIcon());
+            ImageIcon wavIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileWavIcon());
+            ImageIcon xmlIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileXmlIcon());
+            ImageIcon otherIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileOtherIcon());
 
             for (File f : list) {
                 String name = "";
@@ -569,10 +569,6 @@ public class MidiFileListDialog extends JMPFrame {
             Object[] row = { ex, fileName };
             return row;
         }
-    }
-
-    private ImageIcon convertImageIcon(Image img) {
-        return img == null ? null : new ImageIcon(img);
     }
 
     public void loadPlayList(String path) {

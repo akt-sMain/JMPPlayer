@@ -37,15 +37,15 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
     public static final String CFG_KEY_SHOW_STARTUP_DEVICE_SETUP = "SHOW_STARTUP_DEVICE_SETUP";
     public static final String CFG_KEY_LANGUAGE = "LANGUAGE";
     public static final String CFG_KEY_LOADED_FILE = "LOADED_FILE";
+    public static final String CFG_KEY_LYRIC_VIEW = "LYRIC_VIEW";
     public static final String CFG_KEY_FFMPEG_PATH = "FFMPEG_PATH";
-    public static final String CFG_KEY_FFMPEG_OUTPUT = "FFMPEG_OUTPUT";
     public static final String CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE = "FFMPEG_LEAVE_OUTPUT_FILE";
     public static final String CFG_KEY_USE_FFMPEG_PLAYER = "USE_FFMPEG_PLAYER";
     public static final String CFG_KEY_FFMPEG_INSTALLED = "FFMPEG_INSTALLED";
     // ↓KEY追加後、必ずCFG_KEYSETに追加すること!!
     public static final String[] CFG_KEYSET = { CFG_KEY_PLAYLIST, CFG_KEY_MIDIOUT, CFG_KEY_MIDIIN, CFG_KEY_AUTOPLAY, CFG_KEY_LOOPPLAY,
-            CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, CFG_KEY_LANGUAGE, CFG_KEY_LOADED_FILE, CFG_KEY_FFMPEG_PATH, CFG_KEY_FFMPEG_OUTPUT,
-            CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, CFG_KEY_USE_FFMPEG_PLAYER, CFG_KEY_FFMPEG_INSTALLED, };
+            CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, CFG_KEY_LANGUAGE, CFG_KEY_LOADED_FILE, CFG_KEY_LYRIC_VIEW, CFG_KEY_FFMPEG_PATH, CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE,
+            CFG_KEY_USE_FFMPEG_PLAYER, CFG_KEY_FFMPEG_INSTALLED, };
 
     // 初期化キー
     public static final String CFG_KEY_INITIALIZE = "INITIALIZE";
@@ -69,6 +69,8 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         readingHistoryFile();
 
         convertedFiles = new LinkedList<File>();
+        readingConvertedFile();
+        deletedCachedFiles();
 
         // 設定ファイルのFFmpeg設定を同期
         JMPCore.getSystemManager().setFFmpegWrapperPath(getFFmpegPath());
@@ -86,14 +88,8 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         }
 
         if (isFFmpegLeaveOutputFile() == false) {
-            if (convertedFiles.size() > 0) {
-                for (File f : convertedFiles) {
-                    if (f.exists() == true) {
-                        Utility.deleteFileDirectory(f);
-                        Utility.threadSleep(200);
-                    }
-                }
-            }
+            deletedCachedFiles();
+            outputConvertedFile();
         }
         if (JMPLoader.UseConfigFile == true) {
             outputConfigFile();
@@ -106,6 +102,20 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
     public void setConfigDatabase(ConfigDatabase db) {
         database = db;
+    }
+
+    private void deletedCachedFiles() {
+        if (convertedFiles.size() > 0) {
+            for (int i = convertedFiles.size() - 1; i >= 0; i--) {
+                File f = convertedFiles.get(i);
+                if (f.exists() == true) {
+                    if (Utility.deleteFileDirectory(f) == true) {
+                        convertedFiles.remove(i);
+                    }
+                    Utility.threadSleep(200);
+                }
+            }
+        }
     }
 
     public void initializeConfigDatabase() {
@@ -151,6 +161,32 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         return ret;
     }
 
+    private boolean readingConvertedFile() {
+        boolean ret = true;
+        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), "cached");
+        File file = new File(path);
+        if (file.exists() == false) {
+            return false;
+        }
+
+        try {
+            List<String> textContents = Utility.getTextFileContents(path);
+
+            for (String line : textContents) {
+                File f = new File(line);
+                if (f.exists() == true) {
+                    convertedFiles.add(f);
+                }
+            }
+        }
+        catch (Exception e) {
+            ret = false;
+        }
+
+        Utility.deleteFileDirectory(file);
+        return ret;
+    }
+
     private boolean outputConfigFile() {
         String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), CONFIG_FILE);
         return database.output(path);
@@ -163,6 +199,32 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         List<String> list = new LinkedList<String>();
         for (int i = 0; i < historyModel.getSize(); i++) {
             list.add(historyModel.get(i));
+        }
+
+        try {
+            Utility.outputTextFile(path, list);
+        }
+        catch (Exception e) {
+            ret = false;
+        }
+        return ret;
+    }
+
+    private boolean outputConvertedFile() {
+        boolean ret = true;
+        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), "cached");
+        if (Utility.isExsistFile(JMPCore.getSystemManager().getSavePath()) == false) {
+            return false;
+        }
+
+        if (convertedFiles.size() <= 0) {
+            return true;
+        }
+
+        List<String> list = new LinkedList<String>();
+        for (int i = 0; i < convertedFiles.size(); i++) {
+            File f = convertedFiles.get(i);
+            list.add(f.getAbsolutePath());
         }
 
         try {

@@ -32,7 +32,7 @@ public class JmpQuickLaunch extends JPanel implements MouseListener {
     public JmpQuickLaunch() {
         setLayout(null);
 
-        setBackground(Utility.convertCodeToHtmlColor(JMPCore.getSystemManager().getCommonRegisterValue(SystemManager.COMMON_REGKEY_PLAYER_BACK_COLOR)));
+        setBackground(Utility.convertCodeToHtmlColor(JMPCore.getSystemManager().getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_PLAYER_BACK_COLOR)));
 
         addMouseListener(this);
 

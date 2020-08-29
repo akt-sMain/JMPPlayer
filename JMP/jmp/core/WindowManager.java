@@ -73,7 +73,8 @@ public class WindowManager extends AbstractManager implements IWindowManager {
 
     @Override
     protected void notifyUpdateCommonRegister(String key) {
-        if (key.equals(SystemManager.COMMON_REGKEY_PLAYER_BACK_COLOR) == true) {
+        SystemManager system = JMPCore.getSystemManager();
+        if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_PLAYER_BACK_COLOR)) == true) {
             for (IJmpWindow win : database.getAccessor()) {
                 if (win != null) {
                     if (win instanceof IJMPComponentUI) {

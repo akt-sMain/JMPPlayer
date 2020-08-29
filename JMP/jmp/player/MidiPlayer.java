@@ -2,11 +2,14 @@ package jmp.player;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaEventListener;
+import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
@@ -16,10 +19,14 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 
+import jlib.midi.IMidiEventListener;
 import jlib.midi.IMidiFilter;
+import jlib.midi.MidiByte;
 import jmp.JMPFlags;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
+import jmp.core.SystemManager;
+import jmp.core.WindowManager;
 import jmp.gui.SelectSynthsizerDialog;
 import jmp.gui.SelectSynthsizerDialogListener;
 import jmp.midi.JMPSequencer;
@@ -206,6 +213,17 @@ public class MidiPlayer extends Player {
         return sequencer;
     }
 
+    private String getEncText(byte[] data) {
+        String charcode = JMPCore.getSystemManager().getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_LYRIC_CHARCODE);
+        String str = "";
+        try {
+            str = new String(data, charcode);
+        }
+        catch (UnsupportedEncodingException e) {
+        }
+        return str;
+    }
+
     @Override
     public boolean open() {
         boolean result = true;
@@ -216,13 +234,29 @@ public class MidiPlayer extends Player {
                 sequencer.close();
             }
 
-//            sequencer.addMetaEventListener(new MetaEventListener() {
-//
-//                @Override
-//                public void meta(MetaMessage meta) {
-//                    System.out.println("" + meta.getType());
-//                }
-//            });
+            sequencer.addMetaEventListener(new MetaEventListener() {
+
+                @Override
+                public void meta(MetaMessage meta) {
+                    if (MidiByte.COPYRIGHT_NOTICE.type == meta.getType()) {
+                        //System.out.println(getEncText(meta.getData()));
+                    }
+                    else if (MidiByte.TEXT.type == meta.getType()) {
+                        //System.out.println(getEncText(meta.getData()));
+                    }
+                    else if (MidiByte.LYRICS.type == meta.getType()) {
+                        JMPCore.getWindowManager().getMainWindow().setLyric(getEncText(meta.getData()));
+                    }
+                    else if (MidiByte.END_OF_TRACK.type == meta.getType()) {
+                        JMPCore.getWindowManager().getMainWindow().setLyric("");
+                    }
+
+                    IMidiEventListener l = (IMidiEventListener)JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
+                    if (l != null) {
+                        l.catchMidiEvent(meta, 0, IMidiEventListener.SENDER_MIDI_OUT);
+                    }
+                }
+            });
 
             sequencer.open();
         }
@@ -262,6 +296,7 @@ public class MidiPlayer extends Player {
             String inName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
             updateMidiIn(inName);
         }
+
         return result;
     }
 

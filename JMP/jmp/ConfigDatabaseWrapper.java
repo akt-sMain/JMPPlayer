@@ -31,8 +31,8 @@ public class ConfigDatabaseWrapper implements IJmpConfigDatabase {
         database.setConfigParam(DataManager.CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, "TRUE");
         database.setConfigParam(DataManager.CFG_KEY_LANGUAGE, "0");
         database.setConfigParam(DataManager.CFG_KEY_LOADED_FILE, "");
+        database.setConfigParam(DataManager.CFG_KEY_LYRIC_VIEW, "TRUE");
         database.setConfigParam(DataManager.CFG_KEY_FFMPEG_PATH, "ffmpeg.exe");
-        database.setConfigParam(DataManager.CFG_KEY_FFMPEG_OUTPUT, "output");
         database.setConfigParam(DataManager.CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, "FALSE");
         database.setConfigParam(DataManager.CFG_KEY_USE_FFMPEG_PLAYER, "FALSE");
         database.setConfigParam(DataManager.CFG_KEY_FFMPEG_INSTALLED, "FALSE");

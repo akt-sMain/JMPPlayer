@@ -28,6 +28,14 @@ public class CommonRegister {
         iniList.clear();
     }
 
+    public CommonRegister(CommonRegisterINI... inis) {
+        this();
+
+        for (int i=0; i<inis.length; i++) {
+            add(inis[i]);
+        }
+    }
+
     private CommonRegisterINI getIni(String key) {
         for (CommonRegisterINI ini : iniList) {
             if (ini.key.equalsIgnoreCase(key) == true) {
@@ -55,6 +63,13 @@ public class CommonRegister {
             return;
         }
         iniList.add(new CommonRegisterINI(key, value, isWrite));
+    }
+    public void add(CommonRegisterINI ini) {
+        if (containsKey(ini.key) == true) {
+            setValue(ini.key, ini.value);
+            return;
+        }
+        iniList.add(ini);
     }
 
     public boolean setValue(String key, String value) {

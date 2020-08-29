@@ -92,7 +92,8 @@ public class DefineLanguage {
         Confirm_jms_with_different_versions, //
         Confirm_jmz_with_different_versions, //
         D_and_D_the_playback_file_here, //
-        Plugin_manager,//
+        Plugin_manager, //
+        Lyrics_display,//
     }//
 
     static LangMap langMap = new LangMap() {
@@ -186,6 +187,7 @@ public class DefineLanguage {
                             "追加しようとしているプラグインのバージョンが異なります。追加しますか？", "您尝试添加的插件版本不同。 您要添加吗？"));
             put(LangID.D_and_D_the_playback_file_here, new LanguageWords("Drag and drop the playback file here.", "再生ファイルをここにドラッグ&ドロップしてください。", "将播放文件拖放到此处。"));
             put(LangID.Plugin_manager, new LanguageWords("Plugin manager", "プラグイン管理", "插件管理"));
+            put(LangID.Lyrics_display, new LanguageWords("Lyrics display", "歌詞表示", "歌词显示"));
         }
     };
 }

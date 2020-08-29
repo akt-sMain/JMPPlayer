@@ -2,7 +2,7 @@ package jmp.task;
 
 import function.Utility;
 
-public abstract class TaskOfBase implements ITask {
+public abstract class TaskOfBase implements ITask, Runnable {
 
     private boolean isRunnable = true;
     private Thread thread = null;
@@ -11,29 +11,29 @@ public abstract class TaskOfBase implements ITask {
     public TaskOfBase(long sleepTime) {
         this.sleepTime = sleepTime;
         this.isRunnable = true;
-        this.thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                begin();
+        this.thread = new Thread(this);
+    }
 
-                while (isRunnable) {
+    @Override
+    public void run() {
+        begin();
 
-                    long pastTime = System.currentTimeMillis();
+        while (isRunnable) {
 
-                    loop();
+            long pastTime = System.currentTimeMillis();
 
-                    long newTime = System.currentTimeMillis();
-                    long pSleepTime = sleepTime - (newTime - pastTime);
-                    if (pSleepTime < 1) {
-                        pSleepTime = 1;
-                    }
-                    notifySleepTimeCalc(pSleepTime);
-                    Utility.threadSleep(pSleepTime);
-                }
+            loop();
 
-                end();
+            long newTime = System.currentTimeMillis();
+            long pSleepTime = sleepTime - (newTime - pastTime);
+            if (pSleepTime < 1) {
+                pSleepTime = 1;
             }
-        });
+            notifySleepTimeCalc(pSleepTime);
+            Utility.threadSleep(pSleepTime);
+        }
+
+        end();
     }
 
     /**

@@ -1,5 +1,8 @@
 package jmp.util;
 
+import java.awt.Image;
+
+import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import jmp.core.DataManager;
@@ -42,5 +45,9 @@ public class JmpUtil {
             return true;
         }
         return false;
+    }
+
+    public static ImageIcon convertImageIcon(Image img) {
+        return img == null ? null : new ImageIcon(img);
     }
 }

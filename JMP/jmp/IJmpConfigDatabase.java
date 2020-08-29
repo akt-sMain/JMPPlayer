@@ -62,20 +62,21 @@ public interface IJmpConfigDatabase {
         setConfigParam(DataManager.CFG_KEY_LOADED_FILE, filePath);
     }
 
+    default boolean isLyricView() {
+        String sValue = getConfigParam(DataManager.CFG_KEY_LYRIC_VIEW);
+        return Utility.tryParseBoolean(sValue, false);
+    }
+
+    default void setLyricView(boolean isLyricView) {
+        setConfigParam(DataManager.CFG_KEY_LYRIC_VIEW, isLyricView ? "TRUE" : "FALSE");
+    }
+
     default String getFFmpegPath() {
         return getConfigParam(DataManager.CFG_KEY_FFMPEG_PATH);
     }
 
     default void setFFmpegPath(String filePath) {
         setConfigParam(DataManager.CFG_KEY_FFMPEG_PATH, filePath);
-    }
-
-    default String getFFmpegOutputPath() {
-        return getConfigParam(DataManager.CFG_KEY_FFMPEG_OUTPUT);
-    }
-
-    default void setFFmpegOutputPath(String filePath) {
-        setConfigParam(DataManager.CFG_KEY_FFMPEG_OUTPUT, filePath);
     }
 
     default boolean isFFmpegLeaveOutputFile() {

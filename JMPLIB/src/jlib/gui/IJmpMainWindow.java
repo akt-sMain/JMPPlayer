@@ -44,4 +44,11 @@ public interface IJmpMainWindow extends IJmpWindow {
      */
     default void initializeSetting() {
     }
+
+    /**
+     * 歌詞表示
+     *
+     * @param text
+     */
+    abstract void setLyric(String text);
 }

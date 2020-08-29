@@ -76,7 +76,7 @@ public class FFmpegPlayer extends Player {
         String inpath = file.getPath();
 
         String inname = Utility.getFileNameNotExtension(inpath);
-        File outdir = new File(JMPCore.getDataManager().getFFmpegOutputPath());
+        File outdir = new File(JMPCore.getSystemManager().getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_FFMPEG_OUTPUT));
 
         String outpath = Utility.pathCombin(outdir.getPath(), (inname + ".wav"));
 
