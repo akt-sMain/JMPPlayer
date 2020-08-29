@@ -108,4 +108,13 @@ public interface IJmpConfigDatabase {
     default void setFFmpegInstalled(boolean isEnableEnvironmentVariable) {
         setConfigParam(DataManager.CFG_KEY_FFMPEG_INSTALLED, isEnableEnvironmentVariable? "TRUE" : "FALSE");
     }
+
+    default boolean isSendMidiSystemSetup() {
+        String sValue = getConfigParam(DataManager.CFG_KEY_SEND_MIDI_SYSTEMSETUP);
+        return Utility.tryParseBoolean(sValue, false);
+    }
+
+    default void setSendMidiSystemSetup(boolean isSendMidiSystemSetup) {
+        setConfigParam(DataManager.CFG_KEY_SEND_MIDI_SYSTEMSETUP, isSendMidiSystemSetup ? "TRUE" : "FALSE");
+    }
 }

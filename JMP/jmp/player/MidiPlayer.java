@@ -19,6 +19,7 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 
+import function.Utility;
 import jlib.midi.IMidiEventListener;
 import jlib.midi.IMidiFilter;
 import jlib.midi.MidiByte;
@@ -536,6 +537,18 @@ public class MidiPlayer extends Player {
         info.put(Player.Info.PLAYER_ABS_INFO_KEY_FILENAME, file.getName());
         info.update();
         setInfo(info);
+
+        // ロード時にシステムセットアップを送信する
+        if (JMPCore.getDataManager().isSendMidiSystemSetup() == true) {
+            // GMシステムオン
+            byte[] gmSysOn = new byte[]{ (byte)0xf0, 0x7e , 0x7f, 0x09, 0x01, (byte)0xf7};
+            JMPCore.getSoundManager().getMidiController().sendMidiMessage(gmSysOn, 0);
+            Utility.threadSleep(50);
+            // GSリセット
+            byte[] gsReset = new byte[]{ (byte)0xf0, 0x41 , 0x10, 0x42, 0x12, 0x40, 0x00, 0x7f, 0x00, 0x41, (byte)0xf7};
+            JMPCore.getSoundManager().getMidiController().sendMidiMessage(gsReset, 0);
+            Utility.threadSleep(50);
+        }
 
         return true;
     }
