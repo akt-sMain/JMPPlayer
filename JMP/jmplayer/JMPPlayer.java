@@ -175,6 +175,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     private JMenuItem mntmDebugDummy;
     private JMenuItem mntmPluginManager;
     private JCheckBoxMenuItem chckbxmntmLyricView;
+    private JCheckBoxMenuItem chckbxmntmSendSystemSetupBeforePlayback;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -415,14 +416,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             }
         });
 
-        chckbxmntmLyricView = new JCheckBoxMenuItem("Lyric");
-        chckbxmntmLyricView.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JMPCore.getDataManager().setLyricView(chckbxmntmLyricView.isSelected());
-            }
-        });
-        playerMenu.add(chckbxmntmLyricView);
-
         pluginMenu = new JMenu("プラグイン");
         pluginMenu.addMenuListener(new JmpMenuListener());
 
@@ -607,6 +600,23 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
             }
         });
         configMenu.add(mntmPcreset);
+
+        chckbxmntmLyricView = new JCheckBoxMenuItem("Lyric");
+        chckbxmntmLyricView.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JMPCore.getDataManager().setLyricView(chckbxmntmLyricView.isSelected());
+            }
+        });
+        configMenu.add(chckbxmntmLyricView);
+
+        chckbxmntmSendSystemSetupBeforePlayback = new JCheckBoxMenuItem("Send system setup before playback");
+        chckbxmntmSendSystemSetupBeforePlayback.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JMPCore.getDataManager().setSendMidiSystemSetup(chckbxmntmSendSystemSetupBeforePlayback.isSelected());
+            }
+        });
+        chckbxmntmSendSystemSetupBeforePlayback.setSelected(JMPCore.getDataManager().isSendMidiSystemSetup());
+        configMenu.add(chckbxmntmSendSystemSetupBeforePlayback);
 
         lblDebugMenu = new JLabel("-- Developer menu --");
         lblDebugMenu.setForeground(Color.DARK_GRAY);
@@ -1466,6 +1476,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mntmPluginManager.setText(lm.getLanguageStr(LangID.Plugin_manager));
 
         chckbxmntmLyricView.setText(lm.getLanguageStr(LangID.Lyrics_display));
+        chckbxmntmSendSystemSetupBeforePlayback.setText(lm.getLanguageStr(LangID.Send_system_setup_before_playback));
 
         if (JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_LOADED_FILE).isEmpty() == true) {
             setInitializeStatusText();

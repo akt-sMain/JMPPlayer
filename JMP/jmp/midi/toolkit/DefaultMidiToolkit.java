@@ -138,7 +138,7 @@ public class DefaultMidiToolkit implements IMidiToolkit {
         data[0] = new Long(mpq / 0x10000).byteValue();
         data[1] = new Long((mpq / 0x100) % 0x100).byteValue();
         data[2] = new Long(mpq % 0x100).byteValue();
-        MetaMessage meta = new MetaMessage(0x51, data, data.length);
+        MetaMessage meta = new MetaMessage(MidiByte.SET_TEMPO.type, data, data.length);
         return meta;
     }
 
