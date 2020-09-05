@@ -13,6 +13,7 @@ public class UtilityToolkitManager {
     private List<IUtilityToolkit> lst = null;
 
     private static UtilityToolkitManager instance = new UtilityToolkitManager();
+
     public static UtilityToolkitManager getInstance() {
         return instance;
     }

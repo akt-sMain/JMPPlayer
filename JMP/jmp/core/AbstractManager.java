@@ -98,6 +98,7 @@ public abstract class AbstractManager implements IManager {
             }
         }
     }
+
     static void callNotifyUpdateCommonRegister(String key) {
         if (isFinishedAllInitialize() == false) {
             return;

@@ -19,7 +19,6 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 
-import function.Utility;
 import jlib.midi.IMidiEventListener;
 import jlib.midi.IMidiFilter;
 import jlib.midi.MidiByte;
@@ -240,10 +239,10 @@ public class MidiPlayer extends Player {
                 @Override
                 public void meta(MetaMessage meta) {
                     if (MidiByte.COPYRIGHT_NOTICE.type == meta.getType()) {
-                        //System.out.println(getEncText(meta.getData()));
+                        // System.out.println(getEncText(meta.getData()));
                     }
                     else if (MidiByte.TEXT.type == meta.getType()) {
-                        //System.out.println(getEncText(meta.getData()));
+                        // System.out.println(getEncText(meta.getData()));
                     }
                     else if (MidiByte.LYRICS.type == meta.getType()) {
                         JMPCore.getWindowManager().getMainWindow().setLyric(getEncText(meta.getData()));
@@ -252,7 +251,7 @@ public class MidiPlayer extends Player {
                         JMPCore.getWindowManager().getMainWindow().setLyric("");
                     }
 
-                    IMidiEventListener l = (IMidiEventListener)JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
+                    IMidiEventListener l = (IMidiEventListener) JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
                     if (l != null) {
                         l.catchMidiEvent(meta, 0, IMidiEventListener.SENDER_MIDI_OUT);
                     }
@@ -333,6 +332,7 @@ public class MidiPlayer extends Player {
             JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
         }
     }
+
     public void updateMidiOut(Receiver rec) throws MidiUnavailableException {
         if (s_MOReceiver != null) {
             s_MOReceiver.close();
@@ -384,6 +384,7 @@ public class MidiPlayer extends Player {
             JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIIN, "");
         }
     }
+
     public void updateMidiIn(Transmitter trans) throws MidiUnavailableException {
         if (s_MITransmitter != null) {
             s_MITransmitter.close();
@@ -537,22 +538,6 @@ public class MidiPlayer extends Player {
         info.put(Player.Info.PLAYER_ABS_INFO_KEY_FILENAME, file.getName());
         info.update();
         setInfo(info);
-
-        // ロード時にシステムセットアップを送信する
-        if (JMPCore.getDataManager().isSendMidiSystemSetup() == true) {
-            // GMシステムオン
-            byte[] gmSysOn = new byte[]{ (byte)0xf0, 0x7e , 0x7f, 0x09, 0x01, (byte)0xf7};
-            JMPCore.getSoundManager().getMidiController().sendMidiMessage(gmSysOn, 0);
-            Utility.threadSleep(50);
-            // XGシステムオン
-            byte[] xgSysOn = new byte[]{ (byte)0xf0, 0x43 , 0x10, 0x4c, 0x00, 0x00, 0x7e, 0x00, (byte)0xf7};
-            JMPCore.getSoundManager().getMidiController().sendMidiMessage(xgSysOn, 0);
-            Utility.threadSleep(50);
-            // GSリセット
-            byte[] gsReset = new byte[]{ (byte)0xf0, 0x41 , 0x10, 0x42, 0x12, 0x40, 0x00, 0x7f, 0x00, 0x41, (byte)0xf7};
-            JMPCore.getSoundManager().getMidiController().sendMidiMessage(gsReset, 0);
-            Utility.threadSleep(50);
-        }
 
         return true;
     }

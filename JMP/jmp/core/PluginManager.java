@@ -619,6 +619,7 @@ public class PluginManager extends AbstractManager {
         IPlugin p = observers.getPlugin(name);
         observers.getPluginWrapper(p).setConnected(state);
     }
+
     public boolean isPluginConnection(String name) {
         IPlugin p = observers.getPlugin(name);
         return observers.getPluginWrapper(p).isConnected();

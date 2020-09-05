@@ -16,6 +16,7 @@ public abstract class Player implements IPlayer {
 
         private List<String> columns = null;
         private Map<String, String> data = null;
+
         public Info() {
             columns = new ArrayList<String>();
             data = new HashMap<String, String>();

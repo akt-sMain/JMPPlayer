@@ -832,7 +832,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         /* Windows用の処理 */
         if (Platform.getRunPlatform() != KindOfPlatform.WINDOWS) {
             mnExecuteBatFile.setVisible(false);
-            //mntmFFmpegConverter.setVisible(false);
+            // mntmFFmpegConverter.setVisible(false);
         }
 
         /* スタンドアロンモード用メニュー表示 */

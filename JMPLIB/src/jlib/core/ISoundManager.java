@@ -151,10 +151,12 @@ public interface ISoundManager {
     /**
      * Midiコントローラ取得
      *
-     * @param senderType センダータイプ
+     * @param senderType
+     *            センダータイプ
      * @return
      */
     abstract IMidiController getMidiController(short senderType);
+
     default IMidiController getMidiController() {
         return getMidiController(IMidiEventListener.SENDER_MIDI_OUT);
     }

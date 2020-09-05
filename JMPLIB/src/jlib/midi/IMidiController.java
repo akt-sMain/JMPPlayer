@@ -12,7 +12,7 @@ public interface IMidiController {
      * @param timeStamp
      * @return
      */
-    abstract boolean sendMidiMessage(byte[] data, long timeStamp);
+    abstract boolean sendMidiMessage(final byte[] data, long timeStamp);
 
     /**
      * Midiメッセージ送信

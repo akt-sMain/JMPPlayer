@@ -22,12 +22,15 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
         public PluginWrapper(IPlugin plg) {
             this.plugin = plg;
         }
+
         public IPlugin getPlugin() {
             return plugin;
         }
+
         public boolean isConnected() {
             return isConnected;
         }
+
         public void setConnected(boolean isConnected) {
             this.isConnected = isConnected;
         }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
  */
 public class TaskOfSequence extends TaskOfBase {
     private ArrayList<ICallbackFunction> callbackQue = new ArrayList<ICallbackFunction>();
+
     public TaskOfSequence() {
         super(100);
     }

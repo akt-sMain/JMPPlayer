@@ -13,6 +13,7 @@ public class MusicXMLTimeModification extends MusicXMLElement {
     public String getActualNotes() {
         return actualNotes;
     }
+
     public int getActualNotesValue() {
         if (actualNotes.isEmpty() == true) {
             return 0;
@@ -27,6 +28,7 @@ public class MusicXMLTimeModification extends MusicXMLElement {
     public String getNormalNotes() {
         return normalNotes;
     }
+
     public int getNormalNotesValue() {
         if (normalNotes.isEmpty() == true) {
             return 0;

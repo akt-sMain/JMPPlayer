@@ -13,6 +13,7 @@ public class MidiToolkitManager {
     private List<IMidiToolkit> lst = null;
 
     private static MidiToolkitManager instance = new MidiToolkitManager();
+
     public static MidiToolkitManager getInstance() {
         return instance;
     }

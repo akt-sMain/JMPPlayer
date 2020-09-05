@@ -31,7 +31,8 @@ public interface IJmpWindow {
     /**
      * 設定変更イベント
      *
-     * @param key 設定キー
+     * @param key
+     *            設定キー
      */
     default void updateConfig(String key) {
     }

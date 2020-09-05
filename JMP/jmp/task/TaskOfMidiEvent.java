@@ -28,6 +28,7 @@ public class TaskOfMidiEvent extends TaskOfBase {
     }
 
     private List<JmpMidiPacket> stack = null;
+
     public TaskOfMidiEvent() {
         super(20);
         stack = Collections.synchronizedList(new LinkedList<JmpMidiPacket>());
@@ -82,7 +83,7 @@ public class TaskOfMidiEvent extends TaskOfBase {
 
     @Override
     protected void notifySleepTimeCalc(long sleepTime) {
-        //System.out.println("" + sleepTime);
+        // System.out.println("" + sleepTime);
     }
 
 }

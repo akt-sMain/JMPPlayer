@@ -77,6 +77,7 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, IJMPCompon
     public boolean checkAutoMark() {
         return JMPCore.getDataManager().isAutoPlay();
     }
+
     public void paintAutoMark(Graphics g, int x, int y, int width, int height) {
         Image img = JMPCore.getResourceManager().getBtnAutoIcon();
         if (img != null) {
@@ -91,6 +92,7 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, IJMPCompon
     public boolean checkLoopMark() {
         return JMPCore.getDataManager().isLoopPlay();
     }
+
     public void paintLoopMark(Graphics g, int x, int y, int width, int height) {
         Image img = JMPCore.getResourceManager().getBtnLoopIcon();
         if (img != null) {
@@ -109,6 +111,7 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, IJMPCompon
         }
         return false;
     }
+
     public void paintPlaylistMark(Graphics g, int x, int y, int width, int height) {
         Image img = JMPCore.getResourceManager().getBtnListIcon();
         if (img != null) {

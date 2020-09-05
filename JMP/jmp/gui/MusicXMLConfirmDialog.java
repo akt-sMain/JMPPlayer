@@ -18,7 +18,7 @@ import jmp.core.LanguageManager;
 import jmp.gui.ui.IJMPComponentUI;
 import jmp.lang.DefineLanguage.LangID;
 
-public class MusicXMLConfirmDialog extends JDialog implements IJmpWindow, IJMPComponentUI{
+public class MusicXMLConfirmDialog extends JDialog implements IJmpWindow, IJMPComponentUI {
 
     private final JPanel contentPanel = new JPanel();
 

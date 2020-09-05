@@ -78,7 +78,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
             for (IJmpWindow win : database.getAccessor()) {
                 if (win != null) {
                     if (win instanceof IJMPComponentUI) {
-                        IJMPComponentUI ui = (IJMPComponentUI)win;
+                        IJMPComponentUI ui = (IJMPComponentUI) win;
                         ui.updateBackColor();
                     }
                 }
@@ -107,6 +107,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         }
         return database.addWindow(window);
     }
+
     public boolean register(String name, IJmpWindow window) {
         if (database == null) {
             return false;

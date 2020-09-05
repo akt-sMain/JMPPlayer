@@ -24,6 +24,7 @@ public class PluginManagerDialog extends JMPFrame {
     private DefaultTableModel model;
     private JTable table;
     private JPanel panel;
+
     /**
      * Create the frame.
      */
@@ -52,7 +53,7 @@ public class PluginManagerDialog extends JMPFrame {
                 }
 
                 PluginManager pm = JMPCore.getPluginManager();
-                for (int i=0; i<selected.length; i++) {
+                for (int i = 0; i < selected.length; i++) {
                     String name = model.getValueAt(selected[i], 0).toString();
                     pm.setPluginConnection(name, true);
                 }
@@ -71,7 +72,7 @@ public class PluginManagerDialog extends JMPFrame {
                 }
 
                 PluginManager pm = JMPCore.getPluginManager();
-                for (int i=0; i<selected.length; i++) {
+                for (int i = 0; i < selected.length; i++) {
                     String name = model.getValueAt(selected[i], 0).toString();
                     pm.setPluginConnection(name, false);
                 }
@@ -90,7 +91,7 @@ public class PluginManagerDialog extends JMPFrame {
                 }
 
                 PluginManager pm = JMPCore.getPluginManager();
-                for (int i=0; i<selected.length; i++) {
+                for (int i = 0; i < selected.length; i++) {
                     String name = model.getValueAt(selected[i], 0).toString();
                     IPlugin plg = pm.getPlugin(name);
                     if (plg != null) {
@@ -112,7 +113,7 @@ public class PluginManagerDialog extends JMPFrame {
                 }
 
                 PluginManager pm = JMPCore.getPluginManager();
-                for (int i=0; i<selected.length; i++) {
+                for (int i = 0; i < selected.length; i++) {
                     String name = model.getValueAt(selected[i], 0).toString();
                     IPlugin plg = pm.getPlugin(name);
                     if (plg != null) {
@@ -136,7 +137,7 @@ public class PluginManagerDialog extends JMPFrame {
         TableColumn col2 = table.getColumnModel().getColumn(1);
         col2.setMaxWidth(80);
         col2.setMinWidth(80);
-        TableColumn col3= table.getColumnModel().getColumn(2);
+        TableColumn col3 = table.getColumnModel().getColumn(2);
         col3.setMaxWidth(80);
         col3.setMinWidth(80);
 
@@ -146,7 +147,7 @@ public class PluginManagerDialog extends JMPFrame {
     public void updateTable(boolean clear) {
         PluginManager pm = JMPCore.getPluginManager();
         if (clear == true) {
-            for (int i=model.getRowCount()-1; i>=0; i--) {
+            for (int i = model.getRowCount() - 1; i >= 0; i--) {
                 model.removeRow(i);
             }
             for (String name : pm.getPluginsNameSet()) {
@@ -155,7 +156,7 @@ public class PluginManagerDialog extends JMPFrame {
                 model.addRow(row);
             }
         }
-        for (int i=model.getRowCount()-1; i>=0; i--) {
+        for (int i = model.getRowCount() - 1; i >= 0; i--) {
             String name = model.getValueAt(i, 0).toString();
             String state = pm.getPlugin(name).isOpen() == true ? "Open" : "Close";
             String connection = pm.isPluginConnection(name) == true ? "Connected" : "Disconnected";
@@ -163,6 +164,7 @@ public class PluginManagerDialog extends JMPFrame {
             model.setValueAt(connection, i, 2);
         }
     }
+
     public void updateTable() {
         updateTable(false);
     }

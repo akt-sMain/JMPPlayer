@@ -31,7 +31,7 @@ public class CommonRegister {
     public CommonRegister(CommonRegisterINI... inis) {
         this();
 
-        for (int i=0; i<inis.length; i++) {
+        for (int i = 0; i < inis.length; i++) {
             add(inis[i]);
         }
     }
@@ -57,6 +57,7 @@ public class CommonRegister {
     public void add(String key, String value) {
         add(key, value, false);
     }
+
     public void add(String key, String value, boolean isWrite) {
         if (containsKey(key) == true) {
             setValue(key, value);
@@ -64,6 +65,7 @@ public class CommonRegister {
         }
         iniList.add(new CommonRegisterINI(key, value, isWrite));
     }
+
     public void add(CommonRegisterINI ini) {
         if (containsKey(ini.key) == true) {
             setValue(ini.key, ini.value);

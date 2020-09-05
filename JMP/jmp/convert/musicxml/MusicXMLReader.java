@@ -52,7 +52,7 @@ public class MusicXMLReader implements IJMPDocumentReader {
             loadResult = true;
         }
 
-        //printResult();
+        // printResult();
     }
 
     public void load(File file) throws SAXException, IOException, ParserConfigurationException {
@@ -456,6 +456,7 @@ public class MusicXMLReader implements IJMPDocumentReader {
     public Sequence convertToMidi() throws InvalidMidiDataException {
         return convertToMidi(DEFAULT_BASE_OCTAVE);
     }
+
     public Sequence convertToMidi(int baseOctave) throws InvalidMidiDataException {
         IMidiToolkit toolkit = JMPCore.getSoundManager().getMidiToolkit();
         final int BaseDuration = 480;

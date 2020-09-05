@@ -110,8 +110,10 @@ public interface ISystemManager {
     /**
      * 共通レジスタに対してパラメータ設定を行う
      *
-     * @param keyNo キー番号
-     * @param value パラメータ
+     * @param keyNo
+     *            キー番号
+     * @param value
+     *            パラメータ
      * @return 設定に成功したか?
      */
     default boolean setCommonRegisterValue(int keyNo, String value) {
@@ -130,7 +132,8 @@ public interface ISystemManager {
     /**
      * 共通レジスタからパラメータを取得する
      *
-     * @param keyNo キー番号
+     * @param keyNo
+     *            キー番号
      * @return パラメータ(取得できなかった場合は、""を返す)
      */
     default String getCommonRegisterValue(int keyNo) {
@@ -140,11 +143,11 @@ public interface ISystemManager {
     /**
      * 共通レジスタのキー名を取得する
      *
-     * @param keyNo キー番号
+     * @param keyNo
+     *            キー番号
      * @return キー名(取得できなかった場合は、""を返す)
      */
     abstract String getCommonRegisterKeyName(int keyNo);
-
 
     /**
      * 共通レジスタのキーセットを取得する

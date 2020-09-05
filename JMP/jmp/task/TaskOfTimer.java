@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class TaskOfTimer extends TaskOfBase {
 
-    //public static final long CYCLIC_TIMER_TASK_TIME = 100;
+    // public static final long CYCLIC_TIMER_TASK_TIME = 100;
 
     private ArrayList<CallbackPackage> callbackPackages = new ArrayList<CallbackPackage>();
 

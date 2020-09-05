@@ -5,8 +5,8 @@ import java.io.File;
 public interface IFileManager {
 
     /**
-     * ファイルロード処理
-     * <br>(ロード後に再生)
+     * ファイルロード処理 <br>
+     * (ロード後に再生)
      *
      * @param f
      *            ファイル

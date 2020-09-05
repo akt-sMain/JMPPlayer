@@ -29,27 +29,10 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
     private ConfigDatabase database = null;
 
-    public static final String CFG_KEY_PLAYLIST = "PLAYLIST";
-    public static final String CFG_KEY_MIDIOUT = "MIDIOUT";
-    public static final String CFG_KEY_MIDIIN = "MIDIIN";
-    public static final String CFG_KEY_AUTOPLAY = "AUTOPLAY";
-    public static final String CFG_KEY_LOOPPLAY = "LOOPPLAY";
-    public static final String CFG_KEY_SHOW_STARTUP_DEVICE_SETUP = "SHOW_STARTUP_DEVICE_SETUP";
-    public static final String CFG_KEY_LANGUAGE = "LANGUAGE";
-    public static final String CFG_KEY_LOADED_FILE = "LOADED_FILE";
-    public static final String CFG_KEY_LYRIC_VIEW = "LYRIC_VIEW";
-    public static final String CFG_KEY_FFMPEG_PATH = "FFMPEG_PATH";
-    public static final String CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE = "FFMPEG_LEAVE_OUTPUT_FILE";
-    public static final String CFG_KEY_USE_FFMPEG_PLAYER = "USE_FFMPEG_PLAYER";
-    public static final String CFG_KEY_FFMPEG_INSTALLED = "FFMPEG_INSTALLED";
-    public static final String CFG_KEY_SEND_MIDI_SYSTEMSETUP = "SEND_MIDI_SYSTEMSETUP";
     // ↓KEY追加後、必ずCFG_KEYSETに追加すること!!
     public static final String[] CFG_KEYSET = { CFG_KEY_PLAYLIST, CFG_KEY_MIDIOUT, CFG_KEY_MIDIIN, CFG_KEY_AUTOPLAY, CFG_KEY_LOOPPLAY,
             CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, CFG_KEY_LANGUAGE, CFG_KEY_LOADED_FILE, CFG_KEY_LYRIC_VIEW, CFG_KEY_FFMPEG_PATH, CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE,
             CFG_KEY_USE_FFMPEG_PLAYER, CFG_KEY_FFMPEG_INSTALLED, CFG_KEY_SEND_MIDI_SYSTEMSETUP };
-
-    // 初期化キー
-    public static final String CFG_KEY_INITIALIZE = "INITIALIZE";
 
     /**
      * コンストラクタ

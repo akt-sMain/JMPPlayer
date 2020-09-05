@@ -226,6 +226,16 @@ public class MidiByte {
         return DefineMeta.identToData(ident);
     }
 
+    /*
+     * SysEx定義
+     */
+    /** GMシステムオンメッセージ */
+    public static final byte[] GM_SYSTEM_ON = new byte[] { (byte) 0xf0, 0x7e, 0x7f, 0x09, 0x01, (byte) 0xf7 };
+    /** XGシステムオンメッセージ */
+    public static final byte[] XG_SYSTEM_ON = new byte[] { (byte) 0xf0, 0x43, 0x10, 0x4c, 0x00, 0x00, 0x7e, 0x00, (byte) 0xf7 };
+    /** GSシステムリセットメッセージ */
+    public static final byte[] GS_RESET = new byte[] { (byte) 0xf0, 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7f, 0x00, 0x41, (byte) 0xf7 };
+
     /**
      * Metaヘッダーバイト
      *

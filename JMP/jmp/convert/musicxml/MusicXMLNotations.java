@@ -31,6 +31,7 @@ public class MusicXMLNotations extends MusicXMLElement {
             this.tied = TiedType.NONE;
         }
     }
+
     public void setTied(TiedType isTied) {
         this.tied = TiedType.NONE;
     }

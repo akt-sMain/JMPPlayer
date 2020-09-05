@@ -401,6 +401,7 @@ public class MidiFileListDialog extends JMPFrame {
         String path = JMPCore.getDataManager().getPlayListPath();
         openPath(path);
     }
+
     private void openPath(String path) {
         JFileChooser filechooser = new JFileChooser();
         // filechooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -509,7 +510,7 @@ public class MidiFileListDialog extends JMPFrame {
             }
 
             // 除外ケース
-            for (int i=list.size()-1; i>=0; i--) {
+            for (int i = list.size() - 1; i >= 0; i--) {
                 File f = list.get(i);
                 if (f.exists() == false || f.canRead() == false || f.isHidden() == true) {
                     list.remove(i);

@@ -179,16 +179,16 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
             switch (Platform.getRunPlatform()) {
                 case WINDOWS:
-                    ((ProcessingFFmpegWrapper)ffmpegWrapper).setFFmpegCommand(getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_WIN));
+                    ((ProcessingFFmpegWrapper) ffmpegWrapper).setFFmpegCommand(getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_WIN));
                     break;
                 case MAC:
-                    ((ProcessingFFmpegWrapper)ffmpegWrapper).setFFmpegCommand(getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_MAC));
+                    ((ProcessingFFmpegWrapper) ffmpegWrapper).setFFmpegCommand(getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_MAC));
                     break;
                 case LINUX:
                 case SUN_OS:
                 case OTHER:
                 default:
-                    ((ProcessingFFmpegWrapper)ffmpegWrapper).setFFmpegCommand(getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_OTHER));
+                    ((ProcessingFFmpegWrapper) ffmpegWrapper).setFFmpegCommand(getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_OTHER));
                     break;
             }
         }
@@ -320,7 +320,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             // デバッグ・スタンドアロン実行は発行しない
             activateOutFlag = false;
         }
-        
+
         // ライセンス発行
         if (activateOutFlag == true) {
             if (Utility.isExsistFile(getActivateFileLocationPath()) == false) {
@@ -377,6 +377,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     }
 
     private boolean makeSystemPathFlag = false;
+
     public void makeSystemPath() {
         if (makeSystemPathFlag == true) {
             // 多重呼び出し禁止
@@ -424,7 +425,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         activateFileLocationPath = Utility.pathCombin(savePath, "activate");
 
         // syscommon
-        syscommonPath  = Utility.pathCombin(savePath, COMMON_SYS_FILENAME);
+        syscommonPath = Utility.pathCombin(savePath, COMMON_SYS_FILENAME);
 
         JMPFlags.Log.cprintln("###");
         JMPFlags.Log.cprintln("## Directory list");
@@ -655,6 +656,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     @Override
     public String getCommonRegisterKeyName(int keyNo) {
         if (NUMBER_OF_COMMON_REGKEY < keyNo || keyNo < 0) {
+            return "";
+        }
+        if (cRegKeys == null) {
             return "";
         }
         return cRegKeys[keyNo];

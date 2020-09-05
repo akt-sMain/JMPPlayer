@@ -66,7 +66,8 @@ public interface IPlugin {
     /**
      * CommonRedister更新通知
      *
-     * @param key キー名
+     * @param key
+     *            キー名
      */
     default void notifyUpdateCommonRegister(String key) {
     }
@@ -74,7 +75,8 @@ public interface IPlugin {
     /**
      * Config更新通知
      *
-     * @param key キー名
+     * @param key
+     *            キー名
      */
     default void notifyUpdateConfig(String key) {
     }

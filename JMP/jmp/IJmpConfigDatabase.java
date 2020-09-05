@@ -2,17 +2,23 @@ package jmp;
 
 import function.Platform;
 import function.Platform.KindOfPlatform;
-import function.Utility;
 import jmp.core.DataManager;
+import jmp.util.JmpUtil;
 
 public interface IJmpConfigDatabase {
 
+    //
+    // abstract
+    //
     abstract void setConfigParam(String key, String value);
+
     abstract String getConfigParam(String key);
 
+    //
+    // getter setter
+    //
     default boolean isAutoPlay() {
-        String sValue = getConfigParam(DataManager.CFG_KEY_AUTOPLAY);
-        return Utility.tryParseBoolean(sValue, false);
+        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_AUTOPLAY));
     }
 
     default void setAutoPlay(boolean isAutoPlay) {
@@ -20,8 +26,7 @@ public interface IJmpConfigDatabase {
     }
 
     default boolean isLoopPlay() {
-        String sValue = getConfigParam(DataManager.CFG_KEY_LOOPPLAY);
-        return Utility.tryParseBoolean(sValue, false);
+        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_LOOPPLAY));
     }
 
     default void setLoopPlay(boolean isLoopPlay) {
@@ -29,8 +34,7 @@ public interface IJmpConfigDatabase {
     }
 
     default boolean isShowStartupDeviceSetup() {
-        String sValue = getConfigParam(DataManager.CFG_KEY_SHOW_STARTUP_DEVICE_SETUP);
-        return Utility.tryParseBoolean(sValue, false);
+        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_SHOW_STARTUP_DEVICE_SETUP));
     }
 
     default void setShowStartupDeviceSetup(boolean isShow) {
@@ -38,8 +42,7 @@ public interface IJmpConfigDatabase {
     }
 
     default int getLanguage() {
-        String sValue = getConfigParam(DataManager.CFG_KEY_LANGUAGE);
-        return Utility.tryParseInt(sValue, 0);
+        return JmpUtil.toInt(getConfigParam(DataManager.CFG_KEY_LANGUAGE));
     }
 
     default void setLanguage(int language) {
@@ -63,8 +66,7 @@ public interface IJmpConfigDatabase {
     }
 
     default boolean isLyricView() {
-        String sValue = getConfigParam(DataManager.CFG_KEY_LYRIC_VIEW);
-        return Utility.tryParseBoolean(sValue, false);
+        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_LYRIC_VIEW));
     }
 
     default void setLyricView(boolean isLyricView) {
@@ -80,8 +82,7 @@ public interface IJmpConfigDatabase {
     }
 
     default boolean isFFmpegLeaveOutputFile() {
-        String sValue = getConfigParam(DataManager.CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE);
-        return Utility.tryParseBoolean(sValue, false);
+        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE));
     }
 
     default void setFFmpegLeaveOutputFile(boolean isLeave) {
@@ -89,8 +90,7 @@ public interface IJmpConfigDatabase {
     }
 
     default boolean isUseFFmpegPlayer() {
-        String sValue = getConfigParam(DataManager.CFG_KEY_USE_FFMPEG_PLAYER);
-        return Utility.tryParseBoolean(sValue, false);
+        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_USE_FFMPEG_PLAYER));
     }
 
     default void setUseFFmpegPlayer(boolean isUse) {
@@ -101,17 +101,15 @@ public interface IJmpConfigDatabase {
         if (Platform.getRunPlatform() != KindOfPlatform.WINDOWS) {
             return true;
         }
-        String sValue = getConfigParam(DataManager.CFG_KEY_FFMPEG_INSTALLED);
-        return Utility.tryParseBoolean(sValue, false);
+        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_FFMPEG_INSTALLED));
     }
 
     default void setFFmpegInstalled(boolean isEnableEnvironmentVariable) {
-        setConfigParam(DataManager.CFG_KEY_FFMPEG_INSTALLED, isEnableEnvironmentVariable? "TRUE" : "FALSE");
+        setConfigParam(DataManager.CFG_KEY_FFMPEG_INSTALLED, isEnableEnvironmentVariable ? "TRUE" : "FALSE");
     }
 
     default boolean isSendMidiSystemSetup() {
-        String sValue = getConfigParam(DataManager.CFG_KEY_SEND_MIDI_SYSTEMSETUP);
-        return Utility.tryParseBoolean(sValue, false);
+        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_SEND_MIDI_SYSTEMSETUP));
     }
 
     default void setSendMidiSystemSetup(boolean isSendMidiSystemSetup) {

@@ -72,8 +72,8 @@ public class LicenseReaderDialog extends JMPDialog {
 
         buttonCopy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //labelClipMes.setVisible(true);
-                //Utility.setClipboard(textAreaLisence.getText());
+                // labelClipMes.setVisible(true);
+                // Utility.setClipboard(textAreaLisence.getText());
                 String contents = JMPCore.getLanguageManager().getReadmeContent();
                 File defaultDirectory = new File(Platform.getCurrentPath());
                 File saveFile = Utility.openSaveFileDialog(LicenseReaderDialog.this, defaultDirectory, "license.txt");
@@ -183,7 +183,7 @@ public class LicenseReaderDialog extends JMPDialog {
         labelAccept.setText(lm.getLanguageStr(LangID.Above_conditions));
         rdbtnReject.setText(lm.getLanguageStr(LangID.Reject));
         rdbtnAccept.setText(lm.getLanguageStr(LangID.Accept));
-        //labelClipMes.setText(lm.getLanguageStr(LangID.Copied_to_clipboard));
+        // labelClipMes.setText(lm.getLanguageStr(LangID.Copied_to_clipboard));
         labelClipMes.setText("");
         buttonCopy.setText(lm.getLanguageStr(LangID.Original_copy));
     }
