@@ -13,6 +13,8 @@ public abstract class AbstractManager implements IManager {
     public static final int INVALID_PRIORITY = -1;
 
     private static List<AbstractManager> managers = null;
+    private static List<AbstractManager> asc = null;
+    private static List<AbstractManager> desc = null;
     protected int priority = 0;
     protected String name = "";
     private boolean initializeFlag = false;
@@ -46,10 +48,12 @@ public abstract class AbstractManager implements IManager {
 
     static boolean callInitFunc() {
         boolean result = true;
+        asc = getCloneManagerList(true);
+        desc = getCloneManagerList(false);
         JMPFlags.Log.cprintln("###");
         JMPFlags.Log.cprintln("## CORE initializing");
         JMPFlags.Log.cprintln("##");
-        for (AbstractManager am : getCloneManagerList(true)) {
+        for (AbstractManager am : asc) {
             if (am.getPriority() <= INVALID_PRIORITY) {
                 // INVALID_PRIORITY は除去
                 continue;
@@ -71,7 +75,7 @@ public abstract class AbstractManager implements IManager {
         JMPFlags.Log.cprintln("###");
         JMPFlags.Log.cprintln("## CORE exiting");
         JMPFlags.Log.cprintln("##");
-        for (AbstractManager am : getCloneManagerList(false)) {
+        for (AbstractManager am : desc) {
             if (am.getPriority() <= INVALID_PRIORITY) {
                 // INVALID_PRIORITY は除去
                 continue;
@@ -92,7 +96,7 @@ public abstract class AbstractManager implements IManager {
             return;
         }
 
-        for (AbstractManager am : managers) {
+        for (AbstractManager am : asc) {
             if (am.isFinishedInitialize() == true) {
                 am.notifyUpdateConfig(key);
             }
@@ -104,7 +108,7 @@ public abstract class AbstractManager implements IManager {
             return;
         }
 
-        for (AbstractManager am : managers) {
+        for (AbstractManager am : asc) {
             if (am.isFinishedInitialize() == true) {
                 am.notifyUpdateCommonRegister(key);
             }

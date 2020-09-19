@@ -15,6 +15,9 @@ public interface IJMPComponentUI {
 
     abstract void updateBackColor();
 
+    default void updateDebugMenu() {
+    };
+
     default Color getJmpBackColor() {
         SystemManager sm = JMPCore.getSystemManager();
         String colorStr = sm.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_PLAYER_BACK_COLOR);

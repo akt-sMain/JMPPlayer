@@ -347,14 +347,13 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         if (cReg == null) {
             return false;
         }
-        if (JMPFlags.DebugMode == false) {
-            // デバッグモード時のみ設定可能
-            return false;
-        }
 
-        if (key.equalsIgnoreCase(getCommonRegisterKeyName(COMMON_REGKEY_NO_DEBUGMODE)) == true) {
-            // Readonryのキー
-            return true;
+        if (key.equalsIgnoreCase(getCommonRegisterKeyName(COMMON_REGKEY_NO_DEBUGMODE)) == false) {
+            // デバッグモードの切り替えのみ許可
+            if (JMPFlags.DebugMode == false) {
+                // デバッグモード時のみ設定可能
+                return false;
+            }
         }
 
         boolean ret = cReg.setValue(key, value);
@@ -614,6 +613,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         super.notifyUpdateCommonRegister(key);
         if (key.equals(getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_USE_UTIL_TOOLKIT)) == true) {
             updateUtilToolkit();
+        }
+        if (key.equals(getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_DEBUGMODE)) == true) {
+            JMPFlags.DebugMode = JmpUtil.toBoolean(getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_DEBUGMODE));
         }
     }
 

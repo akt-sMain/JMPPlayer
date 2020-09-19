@@ -780,6 +780,27 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
     }
 
     @Override
+    public void updateDebugMenu() {
+        /* 開発者用用メニュー表示 */
+        boolean enable;
+        if (JMPFlags.DebugMode == true) {
+            enable = true;
+        }
+        else {
+            enable = false;
+        }
+
+        lblDebugMenu.setVisible(enable);
+        zipGenerateMenuItem.setVisible(enable);
+        removeAllPluginMenuItem.setVisible(enable);
+        mnExecuteBatFile.setVisible(enable);
+        mntmCallMakeJMP.setVisible(enable);
+        mntmReloadJmzFolder.setVisible(enable);
+        mntmMidiExport.setVisible(enable);
+        mntmDebugDummy.setVisible(enable);
+    }
+
+    @Override
     public void initializeLayout() {
         IJmpMainWindow.super.initializeLayout();
 
@@ -815,18 +836,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
 
         if (JMPFlags.NonPluginLoadFlag == true) {
             pluginMenu.setEnabled(false);
-        }
-
-        /* 開発者用用メニュー表示 */
-        if (JMPFlags.DebugMode == false) {
-            lblDebugMenu.setVisible(false);
-            zipGenerateMenuItem.setVisible(false);
-            removeAllPluginMenuItem.setVisible(false);
-            mnExecuteBatFile.setVisible(false);
-            mntmCallMakeJMP.setVisible(false);
-            mntmReloadJmzFolder.setVisible(false);
-            mntmMidiExport.setVisible(false);
-            mntmDebugDummy.setVisible(false);
         }
 
         /* Windows用の処理 */
@@ -881,6 +890,9 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 }
             }
         });
+
+        // 開発者メニュー
+        updateDebugMenu();
     }
 
     public void setInitializeStatusText() {

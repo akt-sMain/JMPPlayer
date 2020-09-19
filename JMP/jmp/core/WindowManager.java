@@ -84,6 +84,16 @@ public class WindowManager extends AbstractManager implements IWindowManager {
                 }
             }
         }
+        else if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_DEBUGMODE)) == true) {
+            for (IJmpWindow win : database.getAccessor()) {
+                if (win != null) {
+                    if (win instanceof IJMPComponentUI) {
+                        IJMPComponentUI ui = (IJMPComponentUI) win;
+                        ui.updateDebugMenu();
+                    }
+                }
+            }
+        }
         super.notifyUpdateCommonRegister(key);
     }
 
