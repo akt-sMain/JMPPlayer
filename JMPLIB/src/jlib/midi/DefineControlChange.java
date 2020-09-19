@@ -27,7 +27,7 @@ public class DefineControlChange {
     public static final int GENERAL_CONTROL2_LSB = 46;
     public static final int GENERAL_CONTROL3_LSB = 47;
     public static final int GENERAL_CONTROL4_LSB = 48;
-    public static final int DAMPER_REDAL = 64;
+    public static final int DAMPER_PEDAL = 64;
     public static final int PORTAMENTO = 65;
     public static final int SOSTENUTO = 66;
     public static final int SOFT_PEDAL = 67;
@@ -127,7 +127,7 @@ public class DefineControlChange {
             "", // 61
             "", // 62
             "", // 63
-            "DAMPER_REDAL", // 64
+            "DAMPER_PEDAL", // 64
             "PORTAMENTO", // 65
             "SOSTENUTO", // 66
             "SOFT_PEDAL", // 67
