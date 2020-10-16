@@ -177,20 +177,22 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
         // OSごとのFFmpeg設定
         if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
+            String ffmpegCommand = "ffmpeg";
             switch (Platform.getRunPlatform()) {
                 case WINDOWS:
-                    ((ProcessingFFmpegWrapper) ffmpegWrapper).setFFmpegCommand(getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_WIN));
+                    ffmpegCommand = getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_WIN);
                     break;
                 case MAC:
-                    ((ProcessingFFmpegWrapper) ffmpegWrapper).setFFmpegCommand(getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_MAC));
+                    ffmpegCommand = getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_MAC);
                     break;
                 case LINUX:
                 case SUN_OS:
                 case OTHER:
                 default:
-                    ((ProcessingFFmpegWrapper) ffmpegWrapper).setFFmpegCommand(getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_OTHER));
+                    ffmpegCommand = getCommonRegisterValue(COMMON_REGKEY_NO_FFMPEG_OTHER);
                     break;
             }
+            ((ProcessingFFmpegWrapper) ffmpegWrapper).setFFmpegCommand(ffmpegCommand);
         }
 
         // ResourceとcRegの同期

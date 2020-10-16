@@ -90,6 +90,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
                 table.getColumn(COLUMN_NAMES[INDEX_OF_COLUMN_TIME]).setPreferredWidth(30);
                 table.getColumn(COLUMN_NAMES[INDEX_OF_COLUMN_BYTES]).setPreferredWidth(30);
                 table.getColumn(COLUMN_NAMES[INDEX_OF_COLUMN_CHANNEL]).setPreferredWidth(5);
+                table.getColumn(COLUMN_NAMES[INDEX_OF_COLUMN_DATA2]).setPreferredWidth(5);
                 scrollPane.setViewportView(table);
             }
         }
@@ -263,7 +264,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
                     break;
             }
             rowData[INDEX_OF_COLUMN_CHANNEL] = String.valueOf(ch + 1);
-            rowData[INDEX_OF_COLUMN_COMMAND] = MidiByte.convertByteToChannelCommandString(status);
+            rowData[INDEX_OF_COLUMN_COMMAND] = String.format("[%s] %d", MidiByte.convertByteToChannelCommandString(status), status);
             rowData[INDEX_OF_COLUMN_DATA1] = sub + String.valueOf(data1);
             rowData[INDEX_OF_COLUMN_DATA2] = String.valueOf(data2);
         }
