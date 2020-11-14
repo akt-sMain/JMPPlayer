@@ -6,7 +6,7 @@ import jlib.plugin.IPlugin;
 public class JMPCore {
 
     /** アプリケーション名 */
-    public static final String APPLICATION_NAME = "JamPlayer";
+    public static final String APPLICATION_NAME = "JMPPlayer";
 
     /** アプリケーションバージョン */
     public static final String APPLICATION_VERSION = "0.01β";

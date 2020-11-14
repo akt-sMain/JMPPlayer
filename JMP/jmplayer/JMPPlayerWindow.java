@@ -75,7 +75,7 @@ import lib.MakeJmpLib;
  * @author abs
  *
  */
-public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow, IJMPComponentUI, IDropFileCallback {
+public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainWindow, IJMPComponentUI, IDropFileCallback {
 
     private class JmpMenuListener implements MenuListener {
 
@@ -180,7 +180,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
      *
      * @throws HeadlessException
      */
-    public JMPPlayer() throws HeadlessException {
+    public JMPPlayerWindow() throws HeadlessException {
         super();
 
         versionInfoDialog = new VersionInfoDialog();
@@ -567,7 +567,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         mntmInitializeConfig = new JMenuItem("InitializeConfig");
         mntmInitializeConfig.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int res = Utility.openInfomationDialog(JMPPlayer.this, "", JMPCore.getLanguageManager().getLanguageStr(LangID.Initialize_setting));
+                int res = Utility.openInfomationDialog(JMPPlayerWindow.this, "", JMPCore.getLanguageManager().getLanguageStr(LangID.Initialize_setting));
                 if (res == Utility.CONFIRM_RESULT_YES) {
                     JMPCore.getSystemManager().initializeAllSetting();
                 }
@@ -624,7 +624,7 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         removeAllPluginMenuItem = new JMenuItem("Remove all plugins");
         removeAllPluginMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int res = Utility.openInfomationDialog(JMPPlayer.this, "", "Are you sure you want to remove all plugins?");
+                int res = Utility.openInfomationDialog(JMPPlayerWindow.this, "", "Are you sure you want to remove all plugins?");
                 if (res != Utility.CONFIRM_RESULT_YES) {
                     return;
                 }

@@ -26,7 +26,7 @@ import jmp.gui.ui.IJMPComponentUI;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.task.ICallbackFunction;
 import jmp.util.JmpUtil;
-import jmplayer.JMPPlayer;
+import jmplayer.JMPPlayerWindow;
 
 public class WindowManager extends AbstractManager implements IWindowManager {
 
@@ -108,7 +108,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         register(WINDOW_NAME_FFMPEG, new FFmpegConvertDialog());
 
         // メインウィンドウ登録
-        registerMainWindow(new JMPPlayer());
+        registerMainWindow(new JMPPlayerWindow());
     }
 
     public boolean register(IJmpWindow window) {

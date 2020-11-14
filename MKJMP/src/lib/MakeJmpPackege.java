@@ -275,7 +275,7 @@ public class MakeJmpPackege extends JFrame {
         btnRead = new JButton(MakeJmpLib.PKG_PROJECT_CFG_EX.toUpperCase() + " Read");
         btnRead.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                File ret = Utility.OpenLoadFileDialog(null, new File(Platform.getCurrentPath()));
+                File ret = Utility.openLoadFileDialog(null, new File(Platform.getCurrentPath()));
                 if (ret != null) {
                     loadFileMkj(ret.getPath());
                 }

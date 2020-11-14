@@ -9,7 +9,7 @@ import javax.swing.plaf.basic.BasicSliderUI;
 
 import function.Utility;
 import jmp.core.JMPCore;
-import jmplayer.JMPPlayer;
+import jmplayer.JMPPlayerWindow;
 
 public class SequencerSliderUI extends BasicSliderUI {
     public static final int THUMB_SIZE = 9;
@@ -27,7 +27,7 @@ public class SequencerSliderUI extends BasicSliderUI {
     public void paintThumb(Graphics g) {
         if (slider.getOrientation() == JSlider.HORIZONTAL) {
             // 色をトグルさせる
-            Color color = (JMPPlayer.TimerColorToggleFlag == false) ? BLINK_COLOR_1 : BLINK_COLOR_2;
+            Color color = (JMPPlayerWindow.TimerColorToggleFlag == false) ? BLINK_COLOR_1 : BLINK_COLOR_2;
             if (JMPCore.getSoundManager().isPlay() == false) {
                 color = BLINK_COLOR_1;
             }

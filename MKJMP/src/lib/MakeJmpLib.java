@@ -134,7 +134,7 @@ public class MakeJmpLib {
 
     private static void exportPackage(String jar, boolean isAddBlankData, String data, String res, String pluginName, String exportDir, String version) {
         String jmsContents = "";
-        jmsContents += "#-- JamPlayer plugin structure file --#";
+        jmsContents += "#-- Jmp plugin structure file --#";
 
         jmsContents += Platform.getNewLine();
         jmsContents += Utility.stringsCombin(JMS_KEY_VERSION + " = ", version);
