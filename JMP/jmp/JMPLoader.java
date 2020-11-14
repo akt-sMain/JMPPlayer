@@ -3,7 +3,6 @@ package jmp;
 import java.io.File;
 
 import function.Platform;
-import function.Utility;
 import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
 import jmp.core.JMPCore;
@@ -11,6 +10,7 @@ import jmp.core.PluginManager;
 import jmp.core.TaskManager;
 import jmp.core.WindowManager;
 import jmp.task.ICallbackFunction;
+import jmp.util.JmpUtil;
 import lib.MakeJmpLib;
 
 /**
@@ -41,6 +41,7 @@ public class JMPLoader {
     public static final String CMD_UNSYNC = "-unsync";
     public static final String CMD_SYSOUT = "-c";
     public static final String CMD_MKJMP = "-mkjmp";
+    public static final String CMD_UN_LOAD_SKIN = "-nskin";
 
     /* フォーマット */
     private static final String PLGLST_FORMAT = "<%d> %s";
@@ -69,6 +70,10 @@ public class JMPLoader {
                 "コンソール出力有効化"//
         );//
         printManualLine(//
+                CMD_UN_LOAD_SKIN, //
+                "スキンを読み込まない"//
+        );//
+        printManualLine(//
                 CMD_MKJMP, //
                 "プラグインパッケージ作成ライブラリを呼び出す。", //
                 "※コマンドの先頭に記述すること"//
@@ -89,8 +94,8 @@ public class JMPLoader {
         int cnt = 0;
         if (jmsDir.isDirectory() == true) {
             for (File f : jmsDir.listFiles()) {
-                if (Utility.checkExtension(f, PluginManager.SETUP_FILE_EX) == true) {
-                    String dsc = String.format(PLGLST_FORMAT, (cnt + 1), Utility.getFileNameNotExtension(f));
+                if (JmpUtil.checkExtension(f, PluginManager.SETUP_FILE_EX) == true) {
+                    String dsc = String.format(PLGLST_FORMAT, (cnt + 1), JmpUtil.getFileNameNotExtension(f));
                     System.out.println(dsc);
                     cnt++;
                 }
@@ -111,7 +116,7 @@ public class JMPLoader {
         IPlugin stdPlugin = null;
         File jms = new File(path);
         if (jms.exists() == true) {
-            if (Utility.checkExtension(jms.getPath(), PluginManager.SETUP_FILE_EX) == true) {
+            if (JmpUtil.checkExtension(jms.getPath(), PluginManager.SETUP_FILE_EX) == true) {
                 stdPlugin = JMPCore.getPluginManager().readingPlugin(jms);
             }
         }
@@ -175,8 +180,11 @@ public class JMPLoader {
                 else if (args[i].equalsIgnoreCase(CMD_SYSOUT) == true) {
                     JMPFlags.CoreConsoleOut = true;
                 }
+                else if (args[i].equalsIgnoreCase(CMD_UN_LOAD_SKIN) == true) {
+                    UseSkinFile = false;
+                }
                 /* ※コマンドの判定を優先するため、このelseifは最後に挿入すること */
-                else if (Utility.isExsistFile(args[i]) == true) {
+                else if (JmpUtil.isExsistFile(args[i]) == true) {
                     File f = new File(args[i]);
                     if (f.isFile() == true) {
 
@@ -242,10 +250,10 @@ public class JMPLoader {
             if (JMPFlags.RequestFileLoadFlag == true) {
                 File f = new File(RequestFile);
                 if (f.canRead() == true) {
-                    taskManager.getTaskOfSequence().queuing(new ICallbackFunction() {
+                    taskManager.queuing(new ICallbackFunction() {
                         @Override
                         public void callback() {
-                            Utility.threadSleep(1000);
+                            JmpUtil.threadSleep(1000);
                             JMPCore.getFileManager().loadFile(f);
                         }
                     });

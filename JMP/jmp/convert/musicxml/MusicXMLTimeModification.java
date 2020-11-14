@@ -1,6 +1,6 @@
 package jmp.convert.musicxml;
 
-import function.Utility;
+import jmp.util.JmpUtil;
 
 public class MusicXMLTimeModification extends MusicXMLElement {
 
@@ -18,7 +18,7 @@ public class MusicXMLTimeModification extends MusicXMLElement {
         if (actualNotes.isEmpty() == true) {
             return 0;
         }
-        return Utility.tryParseInt(actualNotes, 0);
+        return JmpUtil.toInt(actualNotes, 0);
     }
 
     public void setActualNotes(String actualNotes) {
@@ -33,7 +33,7 @@ public class MusicXMLTimeModification extends MusicXMLElement {
         if (normalNotes.isEmpty() == true) {
             return 0;
         }
-        return Utility.tryParseInt(normalNotes, 0);
+        return JmpUtil.toInt(normalNotes, 0);
     }
 
     public void setNormalNotes(String normalNotes) {

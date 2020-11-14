@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.sound.midi.MidiMessage;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -21,7 +22,6 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
-import function.Utility;
 import jlib.midi.IMidiEventListener;
 import jlib.midi.MidiByte;
 import jmp.core.JMPCore;
@@ -29,10 +29,11 @@ import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
+import jmp.util.JmpUtil;
 
 public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener {
 
-    private static final int MAX_STACK = 20000;
+    private static final int MAX_STACK = 3000;
     private static final String COUNTER_STR_FORMAT = " Counter : %d";
     private static final String STACK_STR_FORMAT = "Stack:%d";
     private static final String TIME_STR_FORMAT = "%d[%s] ";
@@ -60,6 +61,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
     private JLabel lblCommand;
     private JLabel lblStack;
     private JButton btnClear;
+    private JLabel lblTempo;
 
     public MidiMessageMonitor() {
         super();
@@ -161,6 +163,13 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
                 JPanel panel = new JPanel();
                 panel.setBackground(getJmpBackColor());
                 buttonPane.add(panel);
+                panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+                {
+                    lblTempo = new JLabel("BPM:120");
+                    lblTempo.setHorizontalAlignment(SwingConstants.LEFT);
+                    lblTempo.setForeground(Color.WHITE);
+                    panel.add(lblTempo);
+                }
             }
             {
                 JPanel panel = new JPanel();
@@ -205,7 +214,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
             else {
                 /* チャンネル指定 */
                 int ch = mes.getStatus() & 0x0f;
-                if ((Utility.tryParseInt(combo, -1) - 1) != ch) {
+                if ((JmpUtil.toInt(combo, -1) - 1) != ch) {
                     return;
                 }
             }
@@ -223,6 +232,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
             incrementCounter();
             updateLabel(0);
             updateStack();
+            updateTempoLabel();
         }
         catch (Exception e2) {
             e2.printStackTrace();
@@ -245,8 +255,10 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
         int data1 = length >= 2 ? (data[1] & 0xff) : 0;
         int data2 = length >= 3 ? (data[2] & 0xff) : 0;
 
-        rowData[INDEX_OF_COLUMN_TIME] = time;
-        rowData[INDEX_OF_COLUMN_BYTES] = byteStr;
+        String strChannel = "--";
+        String strCommand = "--";
+        String strData1 = "--";
+        String strData2 = "--";
         if (MidiByte.isChannelMessage(status) == true) {
             // チャンネルメッセージ
             switch (command) {
@@ -263,32 +275,41 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
                 default:
                     break;
             }
-            rowData[INDEX_OF_COLUMN_CHANNEL] = String.valueOf(ch + 1);
-            rowData[INDEX_OF_COLUMN_COMMAND] = String.format("[%s] %d", MidiByte.convertByteToChannelCommandString(status), status);
-            rowData[INDEX_OF_COLUMN_DATA1] = sub + String.valueOf(data1);
-            rowData[INDEX_OF_COLUMN_DATA2] = String.valueOf(data2);
+
+            strChannel = String.valueOf(ch + 1);
+            strCommand = String.format("[%s] %d", MidiByte.convertByteToChannelCommandString(status), status);
+            strData1 = sub + String.valueOf(data1);
+            strData2 = String.valueOf(data2);
         }
         else if (MidiByte.isMetaMessage(status) == true) {
             // メタメッセージ
-            rowData[INDEX_OF_COLUMN_CHANNEL] = "--";
-            rowData[INDEX_OF_COLUMN_COMMAND] = (length >= 2) ? MidiByte.convertByteToMetaString(data[1] & 0xff) : "--";
-            rowData[INDEX_OF_COLUMN_DATA1] = sub + "--";
-            rowData[INDEX_OF_COLUMN_DATA2] = "--";
+            strChannel = "--";
+            strCommand = (length >= 2) ? String.format("[%s]", MidiByte.convertByteToMetaString(data[1] & 0xff)) : "--";
+            strData1 = sub + "--";
+            strData2 = "--";
         }
         else if (MidiByte.isSystemMessage(status) == true) {
             // システムメッセージ
-            rowData[INDEX_OF_COLUMN_CHANNEL] = "--";
-            rowData[INDEX_OF_COLUMN_COMMAND] = MidiByte.convertByteToChannelCommandString(status);
-            rowData[INDEX_OF_COLUMN_DATA1] = sub + "--";
-            rowData[INDEX_OF_COLUMN_DATA2] = "--";
+            strChannel = "--";
+            strCommand = String.format("[%s]", MidiByte.convertByteToChannelCommandString(status));
+            strData1 = sub + "--";
+            strData2 = "--";
         }
         else {
             // 不明なメッセージ（例外）
-            rowData[INDEX_OF_COLUMN_CHANNEL] = "--";
-            rowData[INDEX_OF_COLUMN_COMMAND] = "--";
-            rowData[INDEX_OF_COLUMN_DATA1] = "--";
-            rowData[INDEX_OF_COLUMN_DATA2] = "--";
+            strChannel = "--";
+            strCommand = "--";
+            strData1 = "--";
+            strData2 = "--";
         }
+
+        // データ
+        rowData[INDEX_OF_COLUMN_TIME] = time;
+        rowData[INDEX_OF_COLUMN_BYTES] = byteStr;
+        rowData[INDEX_OF_COLUMN_CHANNEL] = strChannel;
+        rowData[INDEX_OF_COLUMN_COMMAND] = strCommand;
+        rowData[INDEX_OF_COLUMN_DATA1] = strData1;
+        rowData[INDEX_OF_COLUMN_DATA2] = strData2;
         return rowData;
     }
 
@@ -366,12 +387,21 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
             int count = model.getRowCount();
             lblStack.setText(String.format(STACK_STR_FORMAT, count));
             if (count >= MAX_STACK) {
-                lblStack.setForeground(Color.RED);
+                lblStack.setForeground(Color.PINK);
             }
             else {
                 lblStack.setForeground(Color.WHITE);
             }
             lblStack.repaint();
+        }
+    }
+
+    private void updateTempoLabel() {
+        synchronized (lblTempo) {
+            double tempo = JMPCore.getSoundManager().getSequencer().getTempoInBPM();
+            String value = String.format("BPM:%.2f", tempo);
+            lblTempo.setText(value);
+            lblTempo.repaint();
         }
     }
 

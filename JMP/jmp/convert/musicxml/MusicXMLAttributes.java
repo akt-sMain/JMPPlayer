@@ -1,6 +1,6 @@
 package jmp.convert.musicxml;
 
-import function.Utility;
+import jmp.util.JmpUtil;
 
 public class MusicXMLAttributes extends MusicXMLElement {
 
@@ -30,7 +30,7 @@ public class MusicXMLAttributes extends MusicXMLElement {
         if (str == null || str.isEmpty()) {
             return 0;
         }
-        return Utility.tryParseInt(str, 0);
+        return JmpUtil.toInt(str, 0);
     }
 
     public String getFifths() {

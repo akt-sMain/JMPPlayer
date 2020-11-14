@@ -205,7 +205,7 @@ public class JMPMidiReader {
                     int trackLen = convertToInt(word);
                     isNext = false;
 
-                    _debugPrint("trackLen:" + trackLen);
+                    _debugPrint("trackData:" + trackLen);
                 }
                     break;
 

@@ -2,8 +2,8 @@ package jmp;
 
 import function.Platform;
 import function.Platform.SystemProperty;
-import function.Utility;
 import jmp.core.DataManager;
+import jmp.util.JmpUtil;
 
 public class ConfigDatabaseWrapper implements IJmpConfigDatabase {
 
@@ -41,12 +41,12 @@ public class ConfigDatabaseWrapper implements IJmpConfigDatabase {
 
     private String getDesktopPath(String defaultPath) {
         String desktop = Platform.getProperty(SystemProperty.USER_HOME);
-        if (Utility.isExsistFile(desktop) == false) {
+        if (JmpUtil.isExsistFile(desktop) == false) {
             return defaultPath;
         }
 
-        String newDesktop = Utility.pathCombin(desktop, "Desktop");
-        if (Utility.isExsistFile(newDesktop) == false) {
+        String newDesktop = JmpUtil.pathCombin(desktop, "Desktop");
+        if (JmpUtil.isExsistFile(newDesktop) == false) {
             return desktop;
         }
         return newDesktop;

@@ -1,6 +1,6 @@
 package jmp.convert.musicxml;
 
-import function.Utility;
+import jmp.util.JmpUtil;
 
 public class MusicXMLBackup extends MusicXMLElement {
 
@@ -19,7 +19,7 @@ public class MusicXMLBackup extends MusicXMLElement {
     }
 
     public int getDurationInt() {
-        return Utility.tryParseInt(getDuration(), 0);
+        return JmpUtil.toInt(getDuration(), 0);
     }
 
 }

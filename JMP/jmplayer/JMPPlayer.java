@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Image;
@@ -17,7 +16,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -66,7 +64,6 @@ import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.IJMPComponentUI;
 import jmp.gui.ui.SequencerSliderUI;
 import jmp.lang.DefineLanguage.LangID;
-import jmp.task.CallbackPackage;
 import jmp.task.ICallbackFunction;
 import jmp.util.JmpUtil;
 import lib.MakeJmpConfig;
@@ -856,8 +853,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         chckbxmntmStartupmidisetup.setSelected(dm.isShowStartupDeviceSetup());
 
         // シーケンスバーのトグル用コールバック関数を登録
-        CallbackPackage callbackPkg = new CallbackPackage((long) 500);
-        callbackPkg.addCallbackFunction(new ICallbackFunction() {
+        JMPCore.getTaskManager().addCallbackPackage((long) 500, new ICallbackFunction() {
+
             @Override
             public void callback() {
                 IPlayer player = JMPCore.getSoundManager().getCurrentPlayer();
@@ -869,7 +866,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 }
             }
         });
-        JMPCore.getTaskManager().getTaskOfTimer().addCallbackPackage(callbackPkg);
 
         // ロード後のコールバックを登録
         JMPCore.getFileManager().addLoadResultCallback(new IFileResultCallback() {
@@ -899,22 +895,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         setStatusText(JMPCore.getLanguageManager().getLanguageStr(LangID.D_and_D_the_playback_file_here), Color.ORANGE);
     }
 
-    // private Color getCtrlBorderColor() {
-    // Color ret = Color.DARK_GRAY;
-    // return ret;
-    // }
-    // private Color getCtrlBorderColor(Color color) {
-    // return getCtrlBorderColor(color, 120);
-    // }
-    private Color getCtrlBorderColor(Color color) {
-        Color newColor = Utility.convertHighLightColor(color, 120);
-        return newColor;
-    }
-
-    private int getCtrlBorderBold() {
-        return 1;
-    }
-
     /**
      * カスタムUI設定<br>
      * （コンストラクタでコールするとデザイナーがエラーになるため、mainでコールする。）
@@ -927,7 +907,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         playUI.addMarkPainter(new IButtonMarkPaint() {
             @Override
             public void paintMark(Graphics g, int x, int y, int width, int height) {
-                Graphics2D g2d = (Graphics2D) g.create();
                 if (JMPCore.getSoundManager().getCurrentPlayer().isValid() == true && JMPCore.getSoundManager().getCurrentPlayer().isRunnable() == true) {
                     // 停止ボタン
                     Image img = JMPCore.getResourceManager().getBtnStopIcon();
@@ -938,24 +917,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                         imgY = (imgY < 0) ? 0 : imgY;
                         g.drawImage(img, imgX, imgY, null);
                         return;
-                    }
-
-                    int offsetW = (width / 2) - 4;
-                    x += 2;
-
-                    Color color = Color.RED;
-                    g2d.setColor(color);
-                    g2d.fillRect(x, y, offsetW, height);
-                    g2d.setColor(getCtrlBorderColor(color));
-                    for (int i = 0; i < getCtrlBorderBold(); i++) {
-                        g2d.drawRect(x + i, y + i, offsetW - (i * 2), height - (i * 2));
-                    }
-
-                    g2d.setColor(color);
-                    g2d.fillRect(x + offsetW + 4, y, offsetW, height);
-                    g2d.setColor(getCtrlBorderColor(color));
-                    for (int i = 0; i < getCtrlBorderBold(); i++) {
-                        g2d.drawRect(x + offsetW + 4 + i, y + i, offsetW - (i * 2), height - (i * 2));
                     }
                 }
                 else {
@@ -968,25 +929,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                         imgY = (imgY < 0) ? 0 : imgY;
                         g.drawImage(img, imgX, imgY, null);
                         return;
-                    }
-
-                    Color color = Utility.convertCodeToHtmlColor("#00ee00");
-                    g2d.setColor(color);
-
-                    int xPoints[] = { x, x, x + width };
-                    int yPoints[] = { y, y + height, y + (height / 2) };
-                    g2d.fillPolygon(xPoints, yPoints, 3);
-                    g2d.setColor(getCtrlBorderColor(color));
-                    for (int i = 0; i < getCtrlBorderBold(); i++) {
-                        int[] xp, yp;
-                        xp = Arrays.copyOf(xPoints, xPoints.length);
-                        yp = Arrays.copyOf(yPoints, yPoints.length);
-                        xp[0] += i;
-                        xp[1] += i;
-                        xp[2] -= i;
-                        yp[0] += i;
-                        yp[1] -= i;
-                        g2d.drawPolygon(xp, yp, 3);
                     }
                 }
             }
@@ -1007,28 +949,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     g.drawImage(img, imgX, imgY, null);
                     return;
                 }
-
-                Graphics2D g2d = (Graphics2D) g.create();
-                Color color = Color.BLUE;
-                for (int i = 0; i < 2; i++) {
-                    int offsetW = width / 2;
-                    int xPoints[] = { x + (offsetW * i), x + (offsetW * i), x + (offsetW * i) + width - offsetW };
-                    int yPoints[] = { y, y + height, y + (height / 2) };
-                    g2d.setColor(color);
-                    g2d.fillPolygon(xPoints, yPoints, 3);
-                    g2d.setColor(getCtrlBorderColor(color));
-                    for (int j = 0; j < getCtrlBorderBold(); j++) {
-                        int[] xp, yp;
-                        xp = Arrays.copyOf(xPoints, xPoints.length);
-                        yp = Arrays.copyOf(yPoints, yPoints.length);
-                        xp[0] += j;
-                        xp[1] += j;
-                        xp[2] -= j;
-                        yp[0] += j;
-                        yp[1] -= j;
-                        g2d.drawPolygon(xp, yp, 3);
-                    }
-                }
             }
         });
         nextButton.setUI(nextUI);
@@ -1046,29 +966,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     imgY = (imgY < 0) ? 0 : imgY;
                     g.drawImage(img, imgX, imgY, null);
                     return;
-                }
-
-                x -= 2;
-                Graphics2D g2d = (Graphics2D) g.create();
-                Color color = Color.BLUE;
-                for (int i = 0; i < 2; i++) {
-                    int offsetW = width / 2;
-                    int xPoints[] = { x + (offsetW * i), x + (offsetW * i) + width - offsetW, x + (offsetW * i) + width - offsetW };
-                    int yPoints[] = { y + (height / 2), y, y + height, };
-                    g2d.setColor(color);
-                    g2d.fillPolygon(xPoints, yPoints, 3);
-                    g2d.setColor(getCtrlBorderColor(color));
-                    for (int j = 0; j < getCtrlBorderBold(); j++) {
-                        int[] xp, yp;
-                        xp = Arrays.copyOf(xPoints, xPoints.length);
-                        yp = Arrays.copyOf(yPoints, yPoints.length);
-                        xp[0] += j;
-                        xp[1] -= j;
-                        xp[2] -= j;
-                        yp[1] += j;
-                        yp[2] -= j;
-                        g2d.drawPolygon(xp, yp, 3);
-                    }
                 }
             }
         });
@@ -1088,32 +985,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     g.drawImage(img, imgX, imgY, null);
                     return;
                 }
-
-                Graphics2D g2d = (Graphics2D) g.create();
-                int xPoints[] = { x, x, (int) (x + (width * 0.7)) };
-                int yPoints[] = { y, y + height, y + (height / 2) };
-                Color color = Color.BLUE;
-                g2d.setColor(color);
-                g2d.fillPolygon(xPoints, yPoints, 3);
-                g2d.setColor(getCtrlBorderColor(color));
-                for (int j = 0; j < getCtrlBorderBold(); j++) {
-                    int[] xp, yp;
-                    xp = Arrays.copyOf(xPoints, xPoints.length);
-                    yp = Arrays.copyOf(yPoints, yPoints.length);
-                    xp[0] += j;
-                    xp[1] += j;
-                    xp[2] -= j;
-                    yp[0] += j;
-                    yp[1] -= j;
-                    g2d.drawPolygon(xp, yp, 3);
-                }
-
-                g2d.setColor(color);
-                g2d.fillRect(x + (int) (width * 0.7), y, (int) (width * 0.3), height);
-                g2d.setColor(getCtrlBorderColor(color));
-                for (int j = 0; j < getCtrlBorderBold(); j++) {
-                    g2d.drawRect(x + (int) (width * 0.7) + j, y + j, (int) (width * 0.3) - (j * 2), height - (j * 2));
-                }
             }
         });
         next2Button.setUI(next2UI);
@@ -1131,33 +1002,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                     imgY = (imgY < 0) ? 0 : imgY;
                     g.drawImage(img, imgX, imgY, null);
                     return;
-                }
-
-                Graphics2D g2d = (Graphics2D) g.create();
-
-                Color color = Color.BLUE;
-                g2d.setColor(color);
-                g2d.fillRect(x, y, (int) (width * 0.3), height);
-                g2d.setColor(getCtrlBorderColor(color));
-                for (int i = 0; i < getCtrlBorderBold(); i++) {
-                    g2d.drawRect(x + i, y + i, (int) (width * 0.3) - (i * 2), height - (i * 2));
-                }
-
-                int xPoints[] = { x + (int) (width * 0.3), x + width, x + width };
-                int yPoints[] = { y + (height / 2), y, y + height };
-                g2d.setColor(color);
-                g2d.fillPolygon(xPoints, yPoints, 3);
-                g2d.setColor(getCtrlBorderColor(color));
-                for (int i = 0; i < getCtrlBorderBold(); i++) {
-                    int[] xp, yp;
-                    xp = Arrays.copyOf(xPoints, xPoints.length);
-                    yp = Arrays.copyOf(yPoints, yPoints.length);
-                    xp[0] += i;
-                    xp[1] -= i;
-                    xp[2] -= i;
-                    yp[1] += i;
-                    yp[2] -= i;
-                    g2d.drawPolygon(xp, yp, 3);
                 }
             }
         });
@@ -1330,8 +1174,8 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
         else {
             setStatusText(text, STATUS_COLOR_FAIL);
         }
-        CallbackPackage pkg = new CallbackPackage((long) 3000);
-        pkg.addCallbackFunction(new ICallbackFunction() {
+
+        JMPCore.getTaskManager().addCallbackPackage((long) 3000, new ICallbackFunction() {
 
             @Override
             public void callback() {
@@ -1344,7 +1188,6 @@ public class JMPPlayer extends JFrame implements WindowListener, IJmpMainWindow,
                 return true;
             }
         });
-        JMPCore.getTaskManager().getTaskOfTimer().addCallbackPackage(pkg);
     }
 
     /**

@@ -22,9 +22,11 @@ import jlib.midi.IMidiController;
 import jlib.midi.IMidiEventListener;
 import jlib.midi.IMidiFilter;
 import jlib.midi.IMidiToolkit;
+import jlib.midi.MidiByte;
 import jlib.player.IPlayer;
 import jmp.JMPFlags;
 import jmp.lang.DefineLanguage.LangID;
+import jmp.midi.MidiByteMessage;
 import jmp.midi.MidiController;
 import jmp.midi.toolkit.MidiToolkitManager;
 import jmp.player.FFmpegPlayer;
@@ -57,7 +59,9 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     public static MusicXmlPlayer SMusicXmlPlayer = null;
     public static FFmpegPlayer SFFmpegPlayer = null;
 
-    FloatControl volumeCtrl;
+    // 固有変数
+    private int transpose = 0;
+    private FloatControl volumeCtrl;
 
     private IMidiFilter defaultMidiFilter = null;
     private IMidiToolkit midiToolkit = null;
@@ -114,22 +118,37 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             @Override
             public boolean filter(MidiMessage message, short senderType) {
                 IMidiToolkit toolkit = getMidiToolkit();
-                int transpose = JMPCore.getDataManager().getTranspose();
+                int transpose = getTranspose();
                 if (transpose != 0) {
-                    if (message instanceof ShortMessage) {
-                        ShortMessage sMes = (ShortMessage) message;
-                        if (toolkit.isNoteOn(sMes) == true || toolkit.isNoteOff(sMes) == true) {
-                            int status = sMes.getStatus();
-                            int data1 = sMes.getData1();
-                            int data2 = sMes.getData2();
-                            data1 += transpose;
+                    if (toolkit.isNoteOn(message) == true || toolkit.isNoteOff(message) == true) {
+                        byte[] data = message.getMessage();
+                        int length = message.getLength();
 
+                        int channel = MidiByte.getChannel(data, length);
+                        if (channel == 9) {
+                            // ドラムトラックは対象外
+                            return true;
+                        }
+
+                        int status = message.getStatus();
+                        int data1 = MidiByte.getData1(data, length);
+                        int data2 = MidiByte.getData2(data, length);
+
+                        data1 += transpose;
+
+                        /* TODO instanceofを指定して処理を分岐するのはよろしくない 【改善策はないか...】 */
+                        if (message instanceof ShortMessage) {
                             try {
-                                sMes.setMessage(status, data1, data2);
+                                ((ShortMessage)message).setMessage(status, data1, data2);
                             }
                             catch (InvalidMidiDataException e) {
-                                e.printStackTrace();
                             }
+                        }
+                        else if (message instanceof MidiByteMessage) {
+                            MidiByteMessage bMes = (MidiByteMessage)message;
+                            bMes.changeByte(0, status);
+                            bMes.changeByte(1, data1);
+                            bMes.changeByte(2, data2);
                         }
                     }
                 }
@@ -733,5 +752,13 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     @Override
     public IMidiToolkit getMidiToolkit() {
         return midiToolkit;
+    }
+
+    public int getTranspose() {
+        return transpose;
+    }
+
+    public void setTranspose(int transpose) {
+        this.transpose = transpose;
     }
 }

@@ -1,6 +1,13 @@
 package jmp.util;
 
+import java.awt.Color;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -82,5 +89,71 @@ public class JmpUtil {
 
     public static float toFloat(String str, float def) {
         return Utility.tryParseFloat(str, def);
+    }
+
+    public static List<String> readTextFile(File file) throws IOException {
+        return readTextFile(file.getPath());
+    }
+    public static List<String> readTextFile(String path) throws IOException {
+        List<String> textContents = Utility.getTextFileContents(path);
+        return textContents;
+    }
+
+    public static void writeTextFile(File file, List<String> textContents) throws FileNotFoundException, UnsupportedEncodingException {
+        writeTextFile(file.getPath(), textContents);
+    }
+    public static void writeTextFile(String path, List<String> textContents) throws FileNotFoundException, UnsupportedEncodingException {
+        Utility.outputTextFile(path, textContents);
+    }
+
+    public static boolean isExsistFile(String path) {
+        return Utility.isExsistFile(path);
+    }
+    public static boolean isExsistFile(File file) {
+        return Utility.isExsistFile(file);
+    }
+
+    public static String pathCombin(String... paths) {
+        return Utility.pathCombin(paths);
+    }
+
+    public static boolean checkExtension(File f, String ex) {
+        return Utility.checkExtension(f, ex);
+    }
+    public static boolean checkExtension(String path, String ex) {
+        return Utility.checkExtension(path, ex);
+    }
+
+    public static void threadSleep(long time) {
+        Utility.threadSleep(time);
+    }
+
+    public static String getFileNameNotExtension(String path) {
+        return Utility.getFileNameNotExtension(path);
+    }
+    public static String getFileNameNotExtension(File f) {
+        return Utility.getFileNameNotExtension(f);
+    }
+
+    public static String getFileNameAndExtension(File f) {
+        return Utility.getFileNameAndExtension(f);
+    }
+    public static String getFileNameAndExtension(String path) {
+        return Utility.getFileNameAndExtension(path);
+    }
+
+    public static boolean deleteFileDirectory(File f) {
+        return Utility.deleteFileDirectory(f);
+    }
+
+    public static String getExtension(File f) {
+        return Utility.getExtension(f);
+    }
+    public static String getExtension(String path) {
+        return Utility.getExtension(path);
+    }
+
+    public static Image transformImageToTransparency(BufferedImage image, Color color) {
+        return Utility.transformImageToTransparency(image, color);
     }
 }

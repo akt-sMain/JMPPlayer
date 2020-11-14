@@ -7,12 +7,12 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
-import function.Utility;
 import jlib.core.IDataManager;
 import jmp.ConfigDatabase;
 import jmp.ConfigDatabaseWrapper;
 import jmp.IJmpConfigDatabase;
 import jmp.JMPLoader;
+import jmp.util.JmpUtil;
 
 public class DataManager extends AbstractManager implements IDataManager, IJmpConfigDatabase {
     public static final String CONFIG_FILE = "config.txt";
@@ -23,9 +23,6 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
     // 変換したファイルをログ
     private List<File> convertedFiles = null;
-
-    // 固有変数
-    private int transpose = 0;
 
     private ConfigDatabase database = null;
 
@@ -93,10 +90,10 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
             for (int i = convertedFiles.size() - 1; i >= 0; i--) {
                 File f = convertedFiles.get(i);
                 if (f.exists() == true) {
-                    if (Utility.deleteFileDirectory(f) == true) {
+                    if (JmpUtil.deleteFileDirectory(f) == true) {
                         convertedFiles.remove(i);
                     }
-                    Utility.threadSleep(200);
+                    JmpUtil.threadSleep(200);
                 }
             }
         }
@@ -120,20 +117,20 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
     }
 
     private boolean readingConfigFile() {
-        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), CONFIG_FILE);
+        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSavePath(), CONFIG_FILE);
         return database.reading(path);
     }
 
     private boolean readingHistoryFile() {
         boolean ret = true;
-        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), HISTORY_FILE);
+        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSavePath(), HISTORY_FILE);
         File file = new File(path);
         if (file.exists() == false) {
             return false;
         }
 
         try {
-            List<String> textContents = Utility.getTextFileContents(path);
+            List<String> textContents = JmpUtil.readTextFile(path);
 
             for (String line : textContents) {
                 historyModel.addElement(line);
@@ -147,14 +144,14 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
     private boolean readingConvertedFile() {
         boolean ret = true;
-        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), "cached");
+        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSavePath(), "cached");
         File file = new File(path);
         if (file.exists() == false) {
             return false;
         }
 
         try {
-            List<String> textContents = Utility.getTextFileContents(path);
+            List<String> textContents = JmpUtil.readTextFile(path);
 
             for (String line : textContents) {
                 File f = new File(line);
@@ -167,18 +164,18 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
             ret = false;
         }
 
-        Utility.deleteFileDirectory(file);
+        JmpUtil.deleteFileDirectory(file);
         return ret;
     }
 
     private boolean outputConfigFile() {
-        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), CONFIG_FILE);
+        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSavePath(), CONFIG_FILE);
         return database.output(path);
     }
 
     private boolean outputHistoryFile() {
         boolean ret = true;
-        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), HISTORY_FILE);
+        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSavePath(), HISTORY_FILE);
 
         List<String> list = new LinkedList<String>();
         for (int i = 0; i < historyModel.getSize(); i++) {
@@ -186,7 +183,7 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         }
 
         try {
-            Utility.outputTextFile(path, list);
+            JmpUtil.writeTextFile(path, list);
         }
         catch (Exception e) {
             ret = false;
@@ -196,8 +193,8 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
     private boolean outputConvertedFile() {
         boolean ret = true;
-        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), "cached");
-        if (Utility.isExsistFile(JMPCore.getSystemManager().getSavePath()) == false) {
+        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSavePath(), "cached");
+        if (JmpUtil.isExsistFile(JMPCore.getSystemManager().getSavePath()) == false) {
             return false;
         }
 
@@ -212,7 +209,7 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         }
 
         try {
-            Utility.outputTextFile(path, list);
+            JmpUtil.writeTextFile(path, list);
         }
         catch (Exception e) {
             ret = false;
@@ -257,14 +254,6 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
     public void clearHistory() {
         historyModel.removeAllElements();
-    }
-
-    public int getTranspose() {
-        return transpose;
-    }
-
-    public void setTranspose(int transpose) {
-        this.transpose = transpose;
     }
 
     public void addConvertedFile(File file) {

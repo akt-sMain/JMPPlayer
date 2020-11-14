@@ -1,14 +1,18 @@
 package jmp.task;
 
-import function.Utility;
+import java.util.ArrayList;
+
+import jmp.util.JmpUtil;
 
 public abstract class TaskOfBase implements ITask, Runnable {
 
+    private ArrayList<ICallbackFunction> callbackQue = null;
     private boolean isRunnable = true;
     private Thread thread = null;
     protected long sleepTime = 100;
 
     public TaskOfBase(long sleepTime) {
+        this.callbackQue = new ArrayList<ICallbackFunction>();
         this.sleepTime = sleepTime;
         this.isRunnable = true;
         this.thread = new Thread(this);
@@ -22,6 +26,9 @@ public abstract class TaskOfBase implements ITask, Runnable {
 
             long pastTime = System.currentTimeMillis();
 
+            if (callbackQue != null) {
+                execCallback();
+            }
             loop();
 
             long newTime = System.currentTimeMillis();
@@ -30,10 +37,15 @@ public abstract class TaskOfBase implements ITask, Runnable {
                 pSleepTime = 1;
             }
             notifySleepTimeCalc(pSleepTime);
-            Utility.threadSleep(pSleepTime);
+            JmpUtil.threadSleep(pSleepTime);
         }
 
         end();
+
+        // コールバック関数のクリア
+        if (callbackQue != null) {
+            callbackQue.clear();
+        }
     }
 
     /**
@@ -57,6 +69,29 @@ public abstract class TaskOfBase implements ITask, Runnable {
         }
         catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void queuing(ICallbackFunction callbackFunction) {
+        callbackQue.add(callbackFunction);
+    }
+
+    protected void execCallback() {
+        for (int i = 0; i < callbackQue.size(); i++) {
+            // ExecutorService service = Executors.newCachedThreadPool();
+            // ICallbackFunction cp = callbackQue.get(i);
+            // CallableTask task = new CallableTask(cp);
+            // service.submit(task);
+            // service.shutdown();
+
+            ICallbackFunction cp = callbackQue.get(i);
+            if (cp != null) {
+                cp.callback();
+                cp = null;
+            }
+
+            // コールバック関数の削除
+            callbackQue.remove(i);
         }
     }
 

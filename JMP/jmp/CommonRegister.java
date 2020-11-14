@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import function.Utility;
+import jmp.util.JmpUtil;
 
 public class CommonRegister {
     private static final String KER_SEPARATOR = "<->";
@@ -108,7 +108,7 @@ public class CommonRegister {
         }
 
         try {
-            List<String> textContents = Utility.getTextFileContents(path);
+            List<String> textContents = JmpUtil.readTextFile(file);
 
             for (String line : textContents) {
                 String[] sLine = line.split(KER_SEPARATOR);
@@ -141,7 +141,7 @@ public class CommonRegister {
                     textContents.add(ini.key + KER_SEPARATOR + ini.value);
                 }
             }
-            Utility.outputTextFile(path, textContents);
+            JmpUtil.writeTextFile(file, textContents);
         }
         catch (Exception e) {
         }

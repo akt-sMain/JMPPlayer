@@ -651,7 +651,7 @@ public class PluginManager extends AbstractManager {
 
     public void catchMidiEvent(MidiMessage message, long timeStamp, short senderType) {
         // Midiイベント受信後の処理は別スレッドに委譲する
-        JMPCore.getTaskManager().getTaskOfMidiEvent().add(message, timeStamp, senderType);
+        JMPCore.getTaskManager().addMidiEvent(message, timeStamp, senderType);
     }
 
     public void send(JmpMidiPacket packet) {

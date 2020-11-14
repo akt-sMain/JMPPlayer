@@ -4,13 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import function.Utility;
 import jlib.core.IFileManager;
 import jmp.FileResult;
 import jmp.IFileResultCallback;
 import jmp.JMPFlags;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.task.ICallbackFunction;
+import jmp.util.JmpUtil;
 
 public class FileManager extends AbstractManager implements IFileManager {
 
@@ -51,7 +51,7 @@ public class FileManager extends AbstractManager implements IFileManager {
         LanguageManager lm = JMPCore.getLanguageManager();
         SoundManager sm = JMPCore.getSoundManager();
 
-        String ex = Utility.getExtension(f);
+        String ex = JmpUtil.getExtension(f);
 
         /* 事前の判定 */
         FileResult beginResult = new FileResult();
@@ -93,7 +93,7 @@ public class FileManager extends AbstractManager implements IFileManager {
             setting.loadToPlayFlag = JMPFlags.LoadToPlayFlag;
 
             // Sequenceタスクに委託
-            JMPCore.getTaskManager().getTaskOfSequence().queuing(new ICallbackFunction() {
+            JMPCore.getTaskManager().queuing(new ICallbackFunction() {
                 @Override
                 public void callback() {
 
@@ -170,7 +170,7 @@ public class FileManager extends AbstractManager implements IFileManager {
             dm.setLoadedFile(f.getPath());
 
             // メッセージ発行
-            String successFileName = Utility.getFileNameAndExtension(dm.getLoadedFile());
+            String successFileName = JmpUtil.getFileNameAndExtension(dm.getLoadedFile());
             String successMsg = lm.getLanguageStr(LangID.FILE_LOAD_SUCCESS);
             result.statusMsg = String.format(SUCCESS_MSG_FOAMET_LOAD, successFileName, successMsg);
 

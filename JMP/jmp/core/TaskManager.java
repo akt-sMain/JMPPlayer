@@ -3,6 +3,8 @@ package jmp.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.midi.MidiMessage;
+
 import jlib.core.IManager;
 import jlib.player.IPlayer;
 import jmp.JMPFlags;
@@ -57,20 +59,24 @@ public class TaskManager extends AbstractManager implements IManager {
         return true;
     }
 
-    public TaskOfUpdate getTaskOfUpdate() {
-        return taskOfUpdate;
+    public void queuing(Class<?> c, ICallbackFunction callbackFunction) {
+        // 対応するタスクに対してキューイングを行う
+        if (c == TaskOfUpdate.class) {
+            taskOfUpdate.queuing(callbackFunction);
+        }
+        else if (c == TaskOfTimer.class) {
+            taskOfTimer.queuing(callbackFunction);
+        }
+        else if (c == TaskOfMidiEvent.class) {
+            taskOfMidiEvent.queuing(callbackFunction);
+        }
+        else {
+            taskOfSequence.queuing(callbackFunction);
+        }
     }
 
-    public TaskOfTimer getTaskOfTimer() {
-        return taskOfTimer;
-    }
-
-    public TaskOfSequence getTaskOfSequence() {
-        return taskOfSequence;
-    }
-
-    public TaskOfMidiEvent getTaskOfMidiEvent() {
-        return taskOfMidiEvent;
+    public void queuing(ICallbackFunction callbackFunction) {
+        queuing(TaskOfSequence.class, callbackFunction);
     }
 
     public void taskStart() {
@@ -87,17 +93,23 @@ public class TaskManager extends AbstractManager implements IManager {
     }
 
     public void join() throws InterruptedException {
-        // Threadインスタンスのjoin処理
         for (ITask task : tasks) {
             task.joinTask();
         }
     }
 
-    private void registerCommonCallbackPackage() {
-        CallbackPackage commonCallbackPkg = new CallbackPackage((long) 500);
+    public void addMidiEvent(MidiMessage message, long timeStamp, short senderType) {
+        taskOfMidiEvent.add(message, timeStamp, senderType);
+    }
 
-        /* ループ・繰り返し再生の判定 */
-        commonCallbackPkg.addCallbackFunction(new ICallbackFunction() {
+    public void addCallbackPackage(long cyclicTime, ICallbackFunction func) {
+        CallbackPackage pkg = new CallbackPackage(cyclicTime, taskOfTimer.getSleepTime());
+        pkg.addCallbackFunction(func);
+        taskOfTimer.addCallbackPackage(pkg);
+    }
+
+    private void registerCommonCallbackPackage() {
+        addCallbackPackage(500L, new ICallbackFunction() {
             @Override
             public void callback() {
                 SoundManager sm = JMPCore.getSoundManager();
@@ -120,6 +132,5 @@ public class TaskManager extends AbstractManager implements IManager {
                 }
             }
         });
-        getTaskOfTimer().addCallbackPackage(commonCallbackPkg);
     }
 }

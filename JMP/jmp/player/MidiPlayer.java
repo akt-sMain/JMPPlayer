@@ -603,14 +603,13 @@ public class MidiPlayer extends Player {
         Sequence seq = null;
         seq = MidiSystem.getSequence(file);
 
-        // JMPMidiReader mr = new JMPMidiReader(file);
-        // try {
-        // mr.read();
-        // }
-        // catch (Exception e) {
-        // System.out.println(function.Error.getMsg(e));
-        //
-        // }
+//        JMPMidiReader mr = new JMPMidiReader(file);
+//        try {
+//            mr.read();
+//        }
+//        catch (Exception e) {
+//            System.out.println(function.Error.getMsg(e));
+//        }
 
         return seq;
     }

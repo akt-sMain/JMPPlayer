@@ -1,6 +1,6 @@
 package jmp.convert.musicxml;
 
-import function.Utility;
+import jmp.util.JmpUtil;
 
 public class MusicXMLNote extends MusicXMLElement {
     /* <rest> */
@@ -47,7 +47,7 @@ public class MusicXMLNote extends MusicXMLElement {
     }
 
     public int getOctaveInt() {
-        return Utility.tryParseInt(getOctave(), 0);
+        return JmpUtil.toInt(getOctave(), 0);
     }
 
     public void setOctave(String octave) {
@@ -59,7 +59,7 @@ public class MusicXMLNote extends MusicXMLElement {
     }
 
     public int getDurationInt() {
-        return Utility.tryParseInt(getDuration(), 0);
+        return JmpUtil.toInt(getDuration(), 0);
     }
 
     public void setDuration(String duration) {
@@ -130,7 +130,7 @@ public class MusicXMLNote extends MusicXMLElement {
             }
             return res;
         }
-        return Utility.tryParseInt(alter, 0);
+        return JmpUtil.toInt(alter, 0);
     }
 
     public void setAlter(String alter) {

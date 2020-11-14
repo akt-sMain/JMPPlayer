@@ -36,11 +36,19 @@ public class Skin {
 
     public Skin(SkinGlobalConfig config) {
         globalConfig = config;
+        localConfig = new SkinLocalConfig();
         for (String lstname : LST) {
             rsrcMap.put(lstname, null);
         }
         readLocalConfig();
         load();
+    }
+    public Skin() {
+        globalConfig = null;
+        localConfig = new SkinLocalConfig();
+        for (String lstname : LST) {
+            rsrcMap.put(lstname, null);
+        }
     }
 
     private void load() {
@@ -52,7 +60,6 @@ public class Skin {
     private void readLocalConfig() {
         String skinPath = JMPCore.getResourceManager().getSkinPath();
         String path = Utility.pathCombin(skinPath, globalConfig.getName(), "skinconf.txt");
-        localConfig = new SkinLocalConfig();
         try {
             localConfig.read(new File(path));
         }

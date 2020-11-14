@@ -238,7 +238,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     }
 
     public void showMessageDialog(String message, String title, int option) {
-        JMPCore.getTaskManager().getTaskOfSequence().queuing(new ICallbackFunction() {
+        JMPCore.getTaskManager().queuing(new ICallbackFunction() {
             @Override
             public void callback() {
                 IJmpMainWindow win = getMainWindow();

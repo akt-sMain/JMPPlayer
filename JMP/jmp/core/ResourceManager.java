@@ -14,6 +14,7 @@ import function.Platform;
 import function.Utility;
 import jlib.core.IManager;
 import jmp.JMPLoader;
+import jmp.skin.DefaultImageMaker;
 import jmp.skin.ImageResource;
 import jmp.skin.Resource;
 import jmp.skin.Skin;
@@ -58,12 +59,12 @@ public class ResourceManager extends AbstractManager implements IManager {
             catch (IOException e) {
                 gConfig.initialize();
             }
+            skin = new Skin(gConfig);
         }
         else {
-            gConfig.initialize();
+            skin = new Skin();
         }
 
-        skin = new Skin(gConfig);
         return true;
     }
 
@@ -119,59 +120,115 @@ public class ResourceManager extends AbstractManager implements IManager {
     }
 
     public Image getFileOtherIcon() {
-        return getResourceImage(Skin.RSRC_FILE_ICON_OTEHER);
+        Image ret = getResourceImage(Skin.RSRC_FILE_ICON_OTEHER);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultFileOtherIcon();
+        }
+        return ret;
     }
 
     public Image getFileMidiIcon() {
-        return getResourceImage(Skin.RSRC_FILE_ICON_MIDI);
+        Image ret = getResourceImage(Skin.RSRC_FILE_ICON_MIDI);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultFileMidiIcon();
+        }
+        return ret;
     }
 
     public Image getFileWavIcon() {
-        return getResourceImage(Skin.RSRC_FILE_ICON_WAV);
+        Image ret = getResourceImage(Skin.RSRC_FILE_ICON_WAV);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultFileWavIcon();
+        }
+        return ret;
     }
 
     public Image getFileXmlIcon() {
-        return getResourceImage(Skin.RSRC_FILE_ICON_XML);
+        Image ret = getResourceImage(Skin.RSRC_FILE_ICON_XML);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultFileXmlIcon();
+        }
+        return ret;
     }
 
     public Image getFileFolderIcon() {
-        return getResourceImage(Skin.RSRC_FOLDER_ICON);
+        Image ret = getResourceImage(Skin.RSRC_FOLDER_ICON);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultFileFolderIcon();
+        }
+        return ret;
     }
 
     public Image getBtnPlayIcon() {
-        return getResourceImage(Skin.RSRC_BTN_ICON_PLAY);
+        Image ret = getResourceImage(Skin.RSRC_BTN_ICON_PLAY);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultBtnPlayIcon();
+        }
+        return ret;
     }
 
     public Image getBtnStopIcon() {
-        return getResourceImage(Skin.RSRC_BTN_ICON_STOP);
+        Image ret = getResourceImage(Skin.RSRC_BTN_ICON_STOP);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultBtnStopIcon();
+        }
+        return ret;
     }
 
     public Image getBtnNextIcon() {
-        return getResourceImage(Skin.RSRC_BTN_ICON_NEXT);
+        Image ret = getResourceImage(Skin.RSRC_BTN_ICON_NEXT);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultBtnNextIcon();
+        }
+        return ret;
     }
 
     public Image getBtnNext2Icon() {
-        return getResourceImage(Skin.RSRC_BTN_ICON_NEXT2);
+        Image ret = getResourceImage(Skin.RSRC_BTN_ICON_NEXT2);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultBtnNext2Icon();
+        }
+        return ret;
     }
 
     public Image getBtnPrevIcon() {
-        return getResourceImage(Skin.RSRC_BTN_ICON_PREV);
+        Image ret = getResourceImage(Skin.RSRC_BTN_ICON_PREV);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultBtnPrevIcon();
+        }
+        return ret;
     }
 
     public Image getBtnPrev2Icon() {
-        return getResourceImage(Skin.RSRC_BTN_ICON_PREV2);
+        Image ret = getResourceImage(Skin.RSRC_BTN_ICON_PREV2);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultBtnPrev2Icon();
+        }
+        return ret;
     }
 
     public Image getBtnAutoIcon() {
-        return getResourceImage(Skin.RSRC_BTN_ICON_AUTO);
+        Image ret = getResourceImage(Skin.RSRC_BTN_ICON_AUTO);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultBtnAutoIcon();
+        }
+        return ret;
     }
 
     public Image getBtnLoopIcon() {
-        return getResourceImage(Skin.RSRC_BTN_ICON_LOOP);
+        Image ret = getResourceImage(Skin.RSRC_BTN_ICON_LOOP);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultBtnLoopIcon();
+        }
+        return ret;
     }
 
     public Image getBtnListIcon() {
-        return getResourceImage(Skin.RSRC_BTN_ICON_LIST);
+        Image ret = getResourceImage(Skin.RSRC_BTN_ICON_LIST);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultBtnListIcon();
+        }
+        return ret;
     }
 
     public Color getBtnBackgroundColor() {

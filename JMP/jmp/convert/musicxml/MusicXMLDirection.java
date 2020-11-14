@@ -1,6 +1,6 @@
 package jmp.convert.musicxml;
 
-import function.Utility;
+import jmp.util.JmpUtil;
 
 public class MusicXMLDirection extends MusicXMLElement {
 
@@ -15,7 +15,7 @@ public class MusicXMLDirection extends MusicXMLElement {
     }
 
     public float getTempoDouble() {
-        return Utility.tryParseFloat(getTempo(), 120.0f);
+        return JmpUtil.toFloat(getTempo(), 120.0f);
     }
 
     public void setTempo(String tempo) {

@@ -16,11 +16,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import function.Utility;
 import jlib.midi.IMidiToolkit;
 import jmp.convert.IJMPDocumentReader;
 import jmp.convert.musicxml.MusicXMLElement.TiedType;
 import jmp.core.JMPCore;
+import jmp.util.JmpUtil;
 
 public class MusicXMLReader implements IJMPDocumentReader {
 
@@ -206,7 +206,7 @@ public class MusicXMLReader implements IJMPDocumentReader {
     }
 
     private MusicXMLMeasure readMeasureNodeList(Element element) {
-        int number = Utility.tryParseInt(element.getAttribute("number"), -1);
+        int number = JmpUtil.toInt(element.getAttribute("number"), -1);
         MusicXMLMeasure mxmlMeasure = new MusicXMLMeasure(number);
         NodeList nodeList = element.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -474,12 +474,12 @@ public class MusicXMLReader implements IJMPDocumentReader {
             MusicXMLScorePart scorePart = musicXML.getPartList().getScorePart(part.getId());
             if (scorePart != null) {
                 if (isAutoAssignChannel() == true) {
-                    channel = Utility.tryParseInt(scorePart.getChannel(), 0) - 1;
+                    channel = JmpUtil.toInt(scorePart.getChannel(), 0) - 1;
                     channel = (channel < 0) ? 0 : (channel > 15) ? 15 : channel; // 不定値チェック
                 }
 
                 if (isAutoAssignProgramChange() == true) {
-                    program = Utility.tryParseInt(scorePart.getProgram(), 0);
+                    program = JmpUtil.toInt(scorePart.getProgram(), 0);
                     program = (program < 0) ? 0 : program; // 不定値チェック
                 }
             }

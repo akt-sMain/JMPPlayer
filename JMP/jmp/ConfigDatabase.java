@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import function.Utility;
+import jmp.util.JmpUtil;
 
 public class ConfigDatabase {
 
@@ -55,7 +55,7 @@ public class ConfigDatabase {
                 String value = getConfigParam(key);
                 textContents.add(key + KER_SEPARATOR + value);
             }
-            Utility.outputTextFile(path, textContents);
+            JmpUtil.writeTextFile(path, textContents);
         }
         catch (Exception e) {
             ret = false;
@@ -71,7 +71,7 @@ public class ConfigDatabase {
         }
 
         try {
-            List<String> textContents = Utility.getTextFileContents(path);
+            List<String> textContents = JmpUtil.readTextFile(file);
 
             for (String line : textContents) {
                 String[] sLine = line.split(KER_SEPARATOR);
