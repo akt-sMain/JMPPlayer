@@ -336,22 +336,23 @@ public class MidiDataTransportDialog extends JMPDialog {
         String sBin = textField.getText();
         if (sBin.isEmpty() == false) {
             byte[] data = Utility.tryParseHexBinary(sBin);
+            int length = data.length;
             if (data.length <= 0) {
                 labelInfo.setForeground(Color.RED);
                 labelInfo.setText(lm.getLanguageStr(LangID.Invalid_byte_data));
             }
             else {
-                int ch = data.length >= 1 ? (data[0] & 0x0f) : 0;
-                int status = data.length >= 1 ? Byte.toUnsignedInt(data[0]) : 0;
-                int data1 = data.length >= 2 ? (data[1] & 0xff) : 0;
-                int data2 = data.length >= 3 ? (data[2] & 0xff) : 0;
+                int ch = MidiByte.getChannel(data, length);
+                int status = MidiByte.getStatus(data, length);
+                int data1 = MidiByte.getData1(data, length);
+                int data2 = MidiByte.getData2(data, length);
                 labelInfo.setForeground(Color.WHITE);
                 String str = String.format("ch=%d, stat=%d, data1=%d, data2=%d,", ch + 1, status, data1, data2);
                 labelInfo.setText(str);
 
                 JMPCore.getSoundManager().getMidiController().sendMidiMessage(data, 0);
 
-                if ((status & 0xf0) == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON) {
+                if (MidiByte.getCommand(data, data.length) == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON) {
                     // 対になるNoteOffに変更する
                     String sChannel = comboBoxChannel.getSelectedItem().toString();
                     String sData1 = comboBoxData1.getSelectedItem().toString();

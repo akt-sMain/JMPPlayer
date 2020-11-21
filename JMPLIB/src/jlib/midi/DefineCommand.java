@@ -1,27 +1,27 @@
 package jlib.midi;
 
 public class DefineCommand {
-    public static final int NOTE_OFF = 128;
-    public static final int NOTE_ON = 144;
-    public static final int POLYPHONIC_KEY_PRESSURE = 160;
-    public static final int CONTROL_CHANGE = 176;
-    public static final int PROGRAM_CHANGE = 192;
-    public static final int CHANNEL_PRESSURE = 208;
-    public static final int PITCH_BEND = 224;
-    public static final int SYSEX_BEGIN = 240;
-    public static final int MIDI_TIME_CODE = 241;
-    public static final int SONG_POSITION = 242;
-    public static final int SONG_SELECT = 243;
-    public static final int TUNE_SELECT = 246;
-    public static final int SYSEX_END = 247;
-    public static final int MIDI_CLOCK = 248;
-    public static final int START = 250;
-    public static final int CONTINUE = 251;
-    public static final int STOP = 252;
-    public static final int ACTIVE_SENSING = 254;
-    public static final int RESET = 255;
-    public static final int _END = 0;
-    public static final String[] IDENTS = { //
+    static final int NOTE_OFF = 128;
+    static final int NOTE_ON = 144;
+    static final int POLYPHONIC_KEY_PRESSURE = 160;
+    static final int CONTROL_CHANGE = 176;
+    static final int PROGRAM_CHANGE = 192;
+    static final int CHANNEL_PRESSURE = 208;
+    static final int PITCH_BEND = 224;
+    static final int SYSEX_BEGIN = 240;
+    static final int MIDI_TIME_CODE = 241;
+    static final int SONG_POSITION = 242;
+    static final int SONG_SELECT = 243;
+    static final int TUNE_SELECT = 246;
+    static final int SYSEX_END = 247;
+    static final int MIDI_CLOCK = 248;
+    static final int START = 250;
+    static final int CONTINUE = 251;
+    static final int STOP = 252;
+    static final int ACTIVE_SENSING = 254;
+    static final int RESET = 255;
+    static final int _END = 0;
+    static final String[] IDENTS = { //
             "", // 0
             "", // 1
             "", // 2
@@ -280,13 +280,13 @@ public class DefineCommand {
             "RESET",// 255
     };//
 
-    public static String dataToIdent(int data) {
+    static String dataToIdent(int data) {
         if (0 > data || data >= IDENTS.length)
             return "";
         return IDENTS[data];
     }
 
-    public static int identToData(String ident) {
+    static int identToData(String ident) {
         for (int i = 0; i < IDENTS.length; i++)
             if (IDENTS[i].equalsIgnoreCase(ident) == true)
                 return i;

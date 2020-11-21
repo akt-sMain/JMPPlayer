@@ -185,7 +185,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
                 comboBox = new JComboBox<String>();
                 buttonPane.add(comboBox);
                 comboBox.setModel(new DefaultComboBoxModel<String>(
-                        new String[] { "All", "Meta_SysEx", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", }));
+                        new String[] { "All", "Meta_SysEx", "ch1", "ch2", "ch3", "ch4", "ch5", "ch6", "ch7", "ch8", "ch9", "ch10", "ch11", "ch12", "ch13", "ch14", "ch15", "ch16", }));
             }
         }
     }
@@ -213,8 +213,9 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
             }
             else {
                 /* チャンネル指定 */
+                String sCh = combo.toLowerCase().replaceAll("ch", "");
                 int ch = mes.getStatus() & 0x0f;
-                if ((JmpUtil.toInt(combo, -1) - 1) != ch) {
+                if ((JmpUtil.toInt(sCh, -1) - 1) != ch) {
                     return;
                 }
             }

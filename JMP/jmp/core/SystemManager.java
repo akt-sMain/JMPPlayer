@@ -18,7 +18,6 @@ import jmp.JMPFlags;
 import jmp.JMPLoader;
 import jmp.midi.toolkit.MidiToolkitManager;
 import jmp.util.JmpUtil;
-import jmp.util.toolkit.DefaultUtilityToolkit;
 import jmp.util.toolkit.UtilityToolkitManager;
 import wffmpeg.FFmpegWrapper;
 import wrapper.IProcessingCallback;
@@ -102,7 +101,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     protected boolean initFunc() {
         TempResisterEx = null;
 
-        utilToolkit = new DefaultUtilityToolkit();
+        utilToolkit = UtilityToolkitManager.getInstance().getUtilityToolkit(UtilityToolkitManager.DEFAULT_UTIL_TOOLKIT_NAME);
 
         // FFmpegWrapperインスタンス生成
         ffmpegWrapper = new ProcessingFFmpegWrapper();
@@ -194,6 +193,8 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             }
             ((ProcessingFFmpegWrapper) ffmpegWrapper).setFFmpegCommand(ffmpegCommand);
         }
+
+        updateUtilToolkit();
 
         // ResourceとcRegの同期
         setCommonRegisterValue(COMMON_REGKEY_NO_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(JMPCore.getResourceManager().getAppBackgroundColor()));

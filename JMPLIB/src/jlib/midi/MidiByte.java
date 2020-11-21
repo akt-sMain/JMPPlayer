@@ -101,6 +101,17 @@ public class MidiByte {
     /**
      * ステータスバイトがチャンネルメッセージか
      *
+     * @param data
+     * @param length
+     * @return
+     */
+    public static boolean isChannelMessage(byte[] data, int length) {
+        return isChannelMessage(getStatus(data, length));
+    }
+
+    /**
+     * ステータスバイトがチャンネルメッセージか
+     *
      * @param statusByte
      *            ステータスバイト
      * @return
@@ -113,6 +124,17 @@ public class MidiByte {
     /**
      * ステータスバイトがシステムメッセージか
      *
+     * @param data
+     * @param length
+     * @return
+     */
+    public static boolean isSystemMessage(byte[] data, int length) {
+        return isSystemMessage(getStatus(data, length));
+    }
+
+    /**
+     * ステータスバイトがシステムメッセージか
+     *
      * @param statusByte
      *            ステータスバイト
      * @return
@@ -120,6 +142,17 @@ public class MidiByte {
     public static boolean isSystemMessage(int statusByte) {
         int command = statusByte & 0xf0;
         return command >= 0xf0;
+    }
+
+    /**
+     * メタメッセージか
+     *
+     * @param data
+     * @param length
+     * @return
+     */
+    public static boolean isMetaMessage(byte[] data, int length) {
+        return isMetaMessage(getStatus(data, length));
     }
 
     /**
