@@ -844,6 +844,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         /* スタンドアロンモード用メニュー表示 */
         if (JMPCore.isEnableStandAlonePlugin() == true) {
             pluginMenu.setVisible(false);
+            mnTool.setVisible(false);
         }
 
         setUI();

@@ -658,24 +658,27 @@ public class PluginManager extends AbstractManager {
         observers.catchMidiEvent(packet.message, packet.timeStamp, packet.senderType);
     }
 
-    void loadFile(File file) {
-        for (IPlugin plugin : observers.getPlugins()) {
-            boolean ret = false;
-            if (plugin instanceof ISupportExtensionConstraints) {
-                ISupportExtensionConstraints sec = (ISupportExtensionConstraints) plugin;
-                String[] allowsEx = sec.allowedExtensionsArray();
-                for (String ae : allowsEx) {
-                    if (Utility.checkExtension(file, ae) == true) {
-                        ret = true;
-                        break;
-                    }
+    public boolean isSupportExtension(File file, IPlugin plugin) {
+        boolean ret = false;
+        if (plugin instanceof ISupportExtensionConstraints) {
+            ISupportExtensionConstraints sec = (ISupportExtensionConstraints) plugin;
+            String[] allowsEx = sec.allowedExtensionsArray();
+            for (String ae : allowsEx) {
+                if (Utility.checkExtension(file, ae) == true) {
+                    ret = true;
+                    break;
                 }
             }
-            else {
-                ret = true;
-            }
+        }
+        else {
+            ret = true;
+        }
+        return ret;
+    }
 
-            if (ret == true) {
+    void loadFile(File file) {
+        for (IPlugin plugin : observers.getPlugins()) {
+            if (isSupportExtension(file, plugin) == true) {
                 plugin.loadFile(file);
             }
         }

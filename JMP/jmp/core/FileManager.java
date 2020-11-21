@@ -48,8 +48,10 @@ public class FileManager extends AbstractManager implements IFileManager {
 
     @Override
     public void loadFile(File f) {
+        SystemManager system = JMPCore.getSystemManager();
         LanguageManager lm = JMPCore.getLanguageManager();
         SoundManager sm = JMPCore.getSoundManager();
+        PluginManager pm = JMPCore.getPluginManager();
 
         String ex = JmpUtil.getExtension(f);
 
@@ -76,6 +78,13 @@ public class FileManager extends AbstractManager implements IFileManager {
             // サポート外
             beginResult.status = false;
             beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_2);
+        }
+        else if (system.isEnableStandAlonePlugin() == true) {
+            // サポート外(スタンドアロンモード時)
+            if (pm.isSupportExtension(f, JMPCore.StandAlonePlugin) == false) {
+                beginResult.status = false;
+                beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_2);
+            }
         }
 
         // 事前判定の結果を通知

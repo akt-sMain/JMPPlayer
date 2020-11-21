@@ -15,6 +15,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -48,7 +49,6 @@ public class SelectSynthsizerDialog extends JMPDialog {
     private JLabel lblMidiDevices = new JLabel("MIDI OUT Device");
     private JLabel lblDebugmode;
     JComboBox<String> comboRecvMode;
-    private JLabel lblSettingUp;
     private JLabel lblVendorOfRecv;
     private JLabel lblVersionOfRecv;
     private JLabel lblDescriptionOfRecv;
@@ -65,6 +65,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
     public static final String DEFAULT_ITEM_NAME = "Using Default";
     private JLabel labelDevelop;
+    private JCheckBox chckbxStartupShowDialog;
 
     /**
      * コンストラクタ
@@ -104,12 +105,6 @@ public class SelectSynthsizerDialog extends JMPDialog {
             okButton.setBackground(Color.WHITE);
             okButton.setActionCommand("OK");
             getRootPane().setDefaultButton(okButton);
-
-            lblSettingUp = new JLabel("Setting up...");
-            lblSettingUp.setForeground(Color.PINK);
-            lblSettingUp.setBounds(12, 215, 138, 13);
-            lblSettingUp.setVisible(false);
-            contentPanel.add(lblSettingUp);
 
             tabbedPane = new JTabbedPane(JTabbedPane.TOP);
             tabbedPane.setBackground(Color.DARK_GRAY);
@@ -190,6 +185,17 @@ public class SelectSynthsizerDialog extends JMPDialog {
             labelDevelop.setHorizontalAlignment(SwingConstants.RIGHT);
             labelDevelop.setBounds(339, 10, 104, 13);
             contentPanel.add(labelDevelop);
+
+            chckbxStartupShowDialog = new JCheckBox("起動時に毎回表示するか");
+            chckbxStartupShowDialog.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    JMPCore.getDataManager().setShowStartupDeviceSetup(chckbxStartupShowDialog.isSelected());
+                }
+            });
+            chckbxStartupShowDialog.setBackground(Color.DARK_GRAY);
+            chckbxStartupShowDialog.setForeground(Color.WHITE);
+            chckbxStartupShowDialog.setBounds(12, 211, 310, 21);
+            contentPanel.add(chckbxStartupShowDialog);
             comboRecvMode.addItemListener(new ItemListener() {
                 public void itemStateChanged(ItemEvent e) {
                     try {
@@ -277,6 +283,19 @@ public class SelectSynthsizerDialog extends JMPDialog {
     @Override
     public void setVisible(boolean b) {
         if (b == true) {
+            if (JMPCore.isFinishedInitialize() == true) {
+                if (JMPCore.getSoundManager().isPlay() == true) {
+                    JMPCore.getSoundManager().stop();
+                }
+                if (JMPCore.isEnableStandAlonePlugin() == true || JMPFlags.LibraryMode == true) {
+                    // スタンドアロン・ライブラリは非表示
+                    chckbxStartupShowDialog.setVisible(false);
+                }
+                else {
+                    chckbxStartupShowDialog.setVisible(true);
+                }
+                chckbxStartupShowDialog.setSelected(JMPCore.getDataManager().isShowStartupDeviceSetup());
+            }
             updateLanguage();
         }
         super.setVisible(b);
@@ -284,11 +303,6 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
     @Override
     public void showWindow() {
-        if (JMPCore.isFinishedInitialize() == true) {
-            if (JMPCore.getSoundManager().isPlay() == true) {
-                JMPCore.getSoundManager().stop();
-            }
-        }
         start();
     }
 
@@ -298,6 +312,12 @@ public class SelectSynthsizerDialog extends JMPDialog {
     }
 
     public void start() {
+        if (JMPCore.isFinishedInitialize() == true) {
+            if (JMPCore.getSoundManager().isPlay() == true) {
+                JMPCore.getSoundManager().stop();
+            }
+        }
+
         isOkActionClose = false;
 
         if (JMPFlags.DebugMode == true) {
@@ -465,5 +485,6 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
         LanguageManager lm = JMPCore.getLanguageManager();
         setTitle(lm.getLanguageStr(LangID.MIDI_device_settings));
+        chckbxStartupShowDialog.setText(lm.getLanguageStr(LangID.Whether_to_display_every_time_at_startup));
     }
 }

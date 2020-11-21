@@ -105,12 +105,17 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
         // 言語設定は初期化しないためバックアップする
         int backupLanguage = configWrap.getLanguage();
+        // Midi設定は初期化できないためJMPがもつ設定のみバックアップする
+        String backupMidiIn = configWrap.getConfigParam(CFG_KEY_MIDIIN);
+        String backupMidiOut = configWrap.getConfigParam(CFG_KEY_MIDIOUT);
 
         // 初期化実行
         configWrap.initialize();
 
         // 言語設定を復元
         configWrap.setLanguage(backupLanguage);
+        configWrap.setConfigParam(CFG_KEY_MIDIIN, backupMidiIn);
+        configWrap.setConfigParam(CFG_KEY_MIDIOUT, backupMidiOut);
 
         // 設定変更通知
         AbstractManager.callNotifyUpdateConfig(CFG_KEY_INITIALIZE);

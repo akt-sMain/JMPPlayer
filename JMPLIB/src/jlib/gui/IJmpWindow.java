@@ -16,6 +16,18 @@ public interface IJmpWindow {
      */
     abstract boolean isWindowVisible();
 
+    /**
+     * ウィンドウ表示/非表示切り替え
+     */
+    default void toggleWindowVisible() {
+        if (isWindowVisible() == true) {
+            hideWindow();
+        }
+        else {
+            showWindow();
+        }
+    }
+
     /*
      * 言語更新イベント
      */

@@ -94,7 +94,8 @@ public class DefineLanguage {
         D_and_D_the_playback_file_here, //
         Plugin_manager, //
         Lyrics_display, //
-        Send_system_setup_before_playback,//
+        Send_system_setup_before_playback, //
+        Whether_to_display_every_time_at_startup,//
     }//
 
     static LangMap langMap = new LangMap() {
@@ -190,6 +191,7 @@ public class DefineLanguage {
             put(LangID.Plugin_manager, new LanguageWords("Plugin manager", "プラグイン管理", "插件管理"));
             put(LangID.Lyrics_display, new LanguageWords("Lyrics display", "歌詞表示", "歌词显示"));
             put(LangID.Send_system_setup_before_playback, new LanguageWords("Send system setup before playback", "再生前にシステムセットアップを送信する", "播放前发送系统设置"));
+            put(LangID.Whether_to_display_every_time_at_startup, new LanguageWords("Whether to display every time at startup", "起動時に毎回表示するか", "是否在每次启动时显示"));
         }
     };
 }
