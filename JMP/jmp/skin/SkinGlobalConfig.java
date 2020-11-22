@@ -2,6 +2,7 @@ package jmp.skin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import function.Utility;
@@ -13,6 +14,19 @@ public class SkinGlobalConfig {
     private String name = "default";
 
     public SkinGlobalConfig() {
+    }
+
+    public static void output(String path) {
+        // Skin.txt作成
+        List<String> confFileContent = new LinkedList<String>();
+        confFileContent.add("# Skin folder name to use.");
+        confFileContent.add(SkinGlobalConfig.KEY_USE + "=default");
+        confFileContent.add("");
+        try {
+            Utility.outputTextFile(path, confFileContent);
+        }
+        catch (Exception e) {
+        }
     }
 
     public void read(File file) throws IOException {

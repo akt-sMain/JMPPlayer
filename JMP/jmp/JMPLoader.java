@@ -92,7 +92,7 @@ public class JMPLoader {
         String path = JMPCore.getSystemManager().getJmsDirPath();
         File jmsDir = new File(path);
         int cnt = 0;
-        if (jmsDir.isDirectory() == true) {
+        if (jmsDir.exists() == true && jmsDir.isDirectory() == true) {
             for (File f : jmsDir.listFiles()) {
                 if (JmpUtil.checkExtension(f, PluginManager.SETUP_FILE_EX) == true) {
                     String dsc = String.format(PLGLST_FORMAT, (cnt + 1), JmpUtil.getFileNameNotExtension(f));

@@ -5,12 +5,9 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import function.Platform;
 import function.Utility;
 import jlib.core.IManager;
 import jmp.JMPLoader;
@@ -22,13 +19,10 @@ import jmp.skin.SkinGlobalConfig;
 
 public class ResourceManager extends AbstractManager implements IManager {
 
-    public static final String SKIN_FOLDER_NAME = "skin";
     public static final String GROBAL_SKIN_FILE_NAME = "skin.txt";
 
     private Skin skin = null;
     private Image jmpImageIcon = null;
-
-    private String skinPath = Utility.pathCombin(Platform.getCurrentPath(false), SKIN_FOLDER_NAME);
 
     ResourceManager(int pri) {
         super(pri, "resource");
@@ -45,21 +39,28 @@ public class ResourceManager extends AbstractManager implements IManager {
         SkinGlobalConfig gConfig = new SkinGlobalConfig();
 
         if (JMPLoader.UseSkinFile == true) {
+            boolean readFlag = true;
             try {
-                String confPath = Utility.pathCombin(Platform.getCurrentPath(false), GROBAL_SKIN_FILE_NAME);
+                String confPath = Utility.pathCombin(JMPCore.getSystemManager().getSkinPath(), GROBAL_SKIN_FILE_NAME);
                 outputSkinConfig(confPath);
 
                 gConfig.read(new File(confPath));
 
-                String path = Utility.pathCombin(skinPath, gConfig.getName());
+                String path = Utility.pathCombin(JMPCore.getSystemManager().getSkinPath(), gConfig.getName());
                 if (Utility.isExsistFile(path) == false) {
-                    gConfig.initialize();
+                    readFlag = false;
                 }
             }
             catch (IOException e) {
-                gConfig.initialize();
+                readFlag = false;
             }
-            skin = new Skin(gConfig);
+
+            if (readFlag == true) {
+                skin = new Skin(gConfig);
+            }
+            else {
+                skin = new Skin();
+            }
         }
         else {
             skin = new Skin();
@@ -77,16 +78,7 @@ public class ResourceManager extends AbstractManager implements IManager {
     private void outputSkinConfig(String confPath) {
         File confFile = new File(confPath);
         if (confFile.exists() == false) {
-            // Skin.txt作成
-            List<String> confFileContent = new LinkedList<String>();
-            confFileContent.add("# Skin folder name to use.");
-            confFileContent.add(SkinGlobalConfig.KEY_USE + "=default");
-            confFileContent.add("");
-            try {
-                Utility.outputTextFile(confPath, confFileContent);
-            }
-            catch (Exception e) {
-            }
+            SkinGlobalConfig.output(confPath);
         }
     }
 
@@ -243,9 +235,5 @@ public class ResourceManager extends AbstractManager implements IManager {
             return Color.WHITE;
         }
         return skin.getLocalConfig().getAppBackgroundColor();
-    }
-
-    public String getSkinPath() {
-        return skinPath;
     }
 }

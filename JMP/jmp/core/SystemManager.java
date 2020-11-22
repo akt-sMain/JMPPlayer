@@ -61,6 +61,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     /** sysファイル */
     public static final String COMMON_SYS_FILENAME = "syscommon";
 
+    /** skinフォルダ名 */
+    public static final String SKIN_FOLDER_NAME = "skin";
+
     /** デフォルトMidiToolkit名 */
     public static final String USE_MIDI_TOOLKIT_CLASSNAME = MidiToolkitManager.DEFAULT_MIDI_TOOLKIT_NAME;
 
@@ -93,6 +96,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     private String savePath = "";
     private String activateFileLocationPath = "";
     private String syscommonPath = "";
+    private String skinPath = "";
 
     SystemManager(int pri) {
         super(pri, "system");
@@ -429,6 +433,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         // syscommon
         syscommonPath = Utility.pathCombin(savePath, COMMON_SYS_FILENAME);
 
+        // skin
+        skinPath = Utility.pathCombin(currentPath, SKIN_FOLDER_NAME);
+
         JMPFlags.Log.cprintln("###");
         JMPFlags.Log.cprintln("## Directory list");
         JMPFlags.Log.cprintln("##");
@@ -667,5 +674,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             return "";
         }
         return cRegKeys[keyNo];
+    }
+
+    public String getSkinPath() {
+        return skinPath;
     }
 }

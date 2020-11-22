@@ -58,7 +58,7 @@ public class Skin {
     }
 
     private void readLocalConfig() {
-        String skinPath = JMPCore.getResourceManager().getSkinPath();
+        String skinPath = JMPCore.getSystemManager().getSkinPath();
         String path = Utility.pathCombin(skinPath, globalConfig.getName(), "skinconf.txt");
         try {
             localConfig.read(new File(path));
@@ -69,7 +69,7 @@ public class Skin {
     }
 
     private void createResource(String name) {
-        String skinPath = JMPCore.getResourceManager().getSkinPath();
+        String skinPath = JMPCore.getSystemManager().getSkinPath();
         String path = Utility.pathCombin(skinPath, globalConfig.getName(), name);
         if (Utility.isExsistFile(path) == true) {
             if (Utility.checkExtension(path, "png") == true) {

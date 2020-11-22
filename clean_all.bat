@@ -11,7 +11,6 @@ rd /s /q plugins
 rd /s /q jmz
 rd /s /q save
 rd /s /q output
-del skin.txt
 rem clean.bat
 
 pause

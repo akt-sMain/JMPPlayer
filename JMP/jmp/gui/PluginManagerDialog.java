@@ -95,7 +95,9 @@ public class PluginManagerDialog extends JMPFrame {
                     String name = model.getValueAt(selected[i], 0).toString();
                     IPlugin plg = pm.getPlugin(name);
                     if (plg != null) {
-                        plg.open();
+                        if (plg.isEnable() == true) {
+                            plg.open();
+                        }
                     }
                 }
 
