@@ -402,8 +402,27 @@ public class SelectSynthsizerDialog extends JMPDialog {
                 JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, outDev.getDeviceInfo().getName());
             }
             else {
+                int defIndex = -1;
+                for (int i=0; i<infosOfRecv.length; i++) {
+                    if (infosOfRecv[i].getName().contains("Gervill") == true) {
+                        defIndex = i;
+                        break;
+                    }
+                }
+
                 /* デフォルト使用 */
-                outReciever = MidiSystem.getReceiver();
+                if (defIndex != -1) {
+                    // "Gervill"を優先的に使用
+                    MidiDevice outDev = MidiSystem.getMidiDevice(infosOfRecv[defIndex]);
+                    if (outDev.isOpen() == false) {
+                        outDev.open();
+                    }
+                    outReciever = outDev.getReceiver();
+                }
+                else {
+                    // SoundAPIの自動選択に従う
+                    outReciever = MidiSystem.getReceiver();
+                }
                 JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
             }
             if ((startupFlag == false) || (pastMidiOutName.equals(JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT)) == false)) {
