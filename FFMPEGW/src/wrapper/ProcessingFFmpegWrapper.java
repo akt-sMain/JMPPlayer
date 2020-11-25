@@ -168,8 +168,13 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
     public void exec(List<String> cmd) throws IOException {
 
         if (isFFmpegInstalled() == true) {
+            boolean isExistsCurrent = false;
             File exeFile = new File("ffmpeg.exe");
             if (path.isEmpty() == false && exeFile.exists() == true) {
+                isExistsCurrent = true;
+            }
+
+            if (isExistsCurrent == true) {
                 // カレントに有効なffmpegがあるときはそちらを優先的に使用する
                 cmd.add(0, exeFile.getPath());
             }

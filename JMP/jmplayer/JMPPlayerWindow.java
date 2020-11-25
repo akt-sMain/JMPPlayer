@@ -943,8 +943,8 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             public void paintMark(Graphics g, int x, int y, int width, int height) {
                 Image img = JMPCore.getResourceManager().getBtnNextIcon();
                 if (img != null) {
-                    int imgX = (playButton.getWidth() - img.getWidth(null)) / 2;
-                    int imgY = (playButton.getHeight() - img.getHeight(null)) / 2;
+                    int imgX = (nextButton.getWidth() - img.getWidth(null)) / 2;
+                    int imgY = (nextButton.getHeight() - img.getHeight(null)) / 2;
                     imgX = (imgX < 0) ? 0 : imgX;
                     imgY = (imgY < 0) ? 0 : imgY;
                     g.drawImage(img, imgX, imgY, null);
@@ -961,8 +961,8 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             public void paintMark(Graphics g, int x, int y, int width, int height) {
                 Image img = JMPCore.getResourceManager().getBtnPrevIcon();
                 if (img != null) {
-                    int imgX = (playButton.getWidth() - img.getWidth(null)) / 2;
-                    int imgY = (playButton.getHeight() - img.getHeight(null)) / 2;
+                    int imgX = (prevButton.getWidth() - img.getWidth(null)) / 2;
+                    int imgY = (prevButton.getHeight() - img.getHeight(null)) / 2;
                     imgX = (imgX < 0) ? 0 : imgX;
                     imgY = (imgY < 0) ? 0 : imgY;
                     g.drawImage(img, imgX, imgY, null);
@@ -979,8 +979,8 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             public void paintMark(Graphics g, int x, int y, int width, int height) {
                 Image img = JMPCore.getResourceManager().getBtnNext2Icon();
                 if (img != null) {
-                    int imgX = (playButton.getWidth() - img.getWidth(null)) / 2;
-                    int imgY = (playButton.getHeight() - img.getHeight(null)) / 2;
+                    int imgX = (next2Button.getWidth() - img.getWidth(null)) / 2;
+                    int imgY = (next2Button.getHeight() - img.getHeight(null)) / 2;
                     imgX = (imgX < 0) ? 0 : imgX;
                     imgY = (imgY < 0) ? 0 : imgY;
                     g.drawImage(img, imgX, imgY, null);
@@ -997,8 +997,8 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             public void paintMark(Graphics g, int x, int y, int width, int height) {
                 Image img = JMPCore.getResourceManager().getBtnPrev2Icon();
                 if (img != null) {
-                    int imgX = (playButton.getWidth() - img.getWidth(null)) / 2;
-                    int imgY = (playButton.getHeight() - img.getHeight(null)) / 2;
+                    int imgX = (prev2Button.getWidth() - img.getWidth(null)) / 2;
+                    int imgY = (prev2Button.getHeight() - img.getHeight(null)) / 2;
                     imgX = (imgX < 0) ? 0 : imgX;
                     imgY = (imgY < 0) ? 0 : imgY;
                     g.drawImage(img, imgX, imgY, null);

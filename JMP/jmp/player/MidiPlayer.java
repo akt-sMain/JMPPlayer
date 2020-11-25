@@ -151,32 +151,6 @@ public class MidiPlayer extends Player {
     }
 
     /**
-     * MIDIデバイス一覧を取得
-     *
-     * @return
-     */
-    public ArrayList<MidiDevice> getDevices() {
-        ArrayList<MidiDevice> devices = new ArrayList<MidiDevice>();
-
-        MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
-        for (int i = 0; i < infos.length; i++) {
-            MidiDevice.Info info = infos[i];
-            MidiDevice device = null;
-            try {
-                device = MidiSystem.getMidiDevice(info);
-                if (device.getMaxReceivers() != 0) {
-                    devices.add(device);
-                }
-            }
-            catch (SecurityException e) {
-            }
-            catch (MidiUnavailableException e) {
-            }
-        }
-        return devices;
-    }
-
-    /**
      * レシーバー名を探索する
      *
      * @param recvName

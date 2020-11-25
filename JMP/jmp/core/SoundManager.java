@@ -749,6 +749,20 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         midiToolkit = MidiToolkitManager.getInstance().getMidiToolkit(toolkitName);
     }
 
+    public void sendMidiSystemSetupMessage() {
+        IMidiController controller = getMidiController();
+
+        // GMシステムオン
+        controller.sendMidiMessage(MidiByte.GM_SYSTEM_ON, 0);
+        Utility.threadSleep(50);
+        // XGシステムオン
+        controller.sendMidiMessage(MidiByte.XG_SYSTEM_ON, 0);
+        Utility.threadSleep(50);
+        // GSリセット
+        controller.sendMidiMessage(MidiByte.GS_RESET, 0);
+        Utility.threadSleep(50);
+    }
+
     @Override
     public IMidiToolkit getMidiToolkit() {
         return midiToolkit;

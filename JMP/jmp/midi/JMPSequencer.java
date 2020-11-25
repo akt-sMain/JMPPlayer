@@ -14,8 +14,6 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 
-import function.Utility;
-import jlib.midi.MidiByte;
 import jmp.core.JMPCore;
 
 public class JMPSequencer implements Sequencer {
@@ -104,15 +102,7 @@ public class JMPSequencer implements Sequencer {
         // ロード時にシステムセットアップを送信する
         if (JMPCore.getDataManager().isSendMidiSystemSetup() == true) {
             if (getTickPosition() <= 0) {
-                // GMシステムオン
-                JMPCore.getSoundManager().getMidiController().sendMidiMessage(MidiByte.GM_SYSTEM_ON, 0);
-                Utility.threadSleep(50);
-                // XGシステムオン
-                JMPCore.getSoundManager().getMidiController().sendMidiMessage(MidiByte.XG_SYSTEM_ON, 0);
-                Utility.threadSleep(50);
-                // GSリセット
-                JMPCore.getSoundManager().getMidiController().sendMidiMessage(MidiByte.GS_RESET, 0);
-                Utility.threadSleep(50);
+                JMPCore.getSoundManager().sendMidiSystemSetupMessage();
             }
         }
 
