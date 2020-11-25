@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.math.BigDecimal;
 
 import javax.sound.midi.MidiMessage;
 import javax.swing.BoxLayout;
@@ -184,8 +185,8 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
             {
                 comboBox = new JComboBox<String>();
                 buttonPane.add(comboBox);
-                comboBox.setModel(new DefaultComboBoxModel<String>(
-                        new String[] { "All", "Meta_SysEx", "ch1", "ch2", "ch3", "ch4", "ch5", "ch6", "ch7", "ch8", "ch9", "ch10", "ch11", "ch12", "ch13", "ch14", "ch15", "ch16", }));
+                comboBox.setModel(new DefaultComboBoxModel<String>(new String[] { "All", "Meta_SysEx", "ch1", "ch2", "ch3", "ch4", "ch5", "ch6", "ch7", "ch8",
+                        "ch9", "ch10", "ch11", "ch12", "ch13", "ch14", "ch15", "ch16", }));
             }
         }
     }
@@ -286,6 +287,29 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
             // メタメッセージ
             strChannel = "--";
             strCommand = (length >= 2) ? String.format("[%s]", MidiByte.convertByteToMetaString(data[1] & 0xff)) : "--";
+            if ((data[1] & 0xff) == MidiByte.SET_TEMPO.type) {
+                /* テンポ表示 */
+                if (length < 6) {
+                    // 無効なメッセージ
+                }
+                else {
+                    // テンポ
+                    long tempo = 0;
+                    tempo |= (data[3] & 0xff);
+                    tempo <<= 8;
+                    tempo |= (data[4] & 0xff);
+                    tempo <<= 8;
+                    tempo |= (data[5] & 0xff);
+
+                    // bpm計算
+                    float bpm = 60000000f / (float) tempo;
+
+                    // 四捨五入
+                    BigDecimal bd = new BigDecimal(bpm);
+                    BigDecimal bd2 = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+                    sub = String.format(SUB_STR_FORMAT, String.format("%.2f", bd2.doubleValue()));
+                }
+            }
             strData1 = sub + "--";
             strData2 = "--";
         }
