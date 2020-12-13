@@ -17,6 +17,7 @@ import jmp.core.JMPCore;
 import jmp.core.PluginManager;
 import jmp.gui.ui.JMPFrame;
 import jmp.lang.DefineLanguage.LangID;
+import jmp.plugin.PluginWrapper.PluginState;
 
 public class PluginManagerDialog extends JMPFrame {
     private static final String[] columnNames = new String[] { "Name", "Opened", "Connection" };
@@ -55,7 +56,7 @@ public class PluginManagerDialog extends JMPFrame {
                 PluginManager pm = JMPCore.getPluginManager();
                 for (int i = 0; i < selected.length; i++) {
                     String name = model.getValueAt(selected[i], 0).toString();
-                    pm.setPluginConnection(name, true);
+                    pm.setPluginState(name, PluginState.CONNECTED);
                 }
 
                 updateTable();
@@ -74,7 +75,7 @@ public class PluginManagerDialog extends JMPFrame {
                 PluginManager pm = JMPCore.getPluginManager();
                 for (int i = 0; i < selected.length; i++) {
                     String name = model.getValueAt(selected[i], 0).toString();
-                    pm.setPluginConnection(name, false);
+                    pm.setPluginState(name, PluginState.DISCONNECTED);
                 }
 
                 updateTable();
@@ -160,10 +161,23 @@ public class PluginManagerDialog extends JMPFrame {
         }
         for (int i = model.getRowCount() - 1; i >= 0; i--) {
             String name = model.getValueAt(i, 0).toString();
-            String state = pm.getPlugin(name).isOpen() == true ? "Open" : "Close";
-            String connection = pm.isPluginConnection(name) == true ? "Connected" : "Disconnected";
-            model.setValueAt(state, i, 1);
-            model.setValueAt(connection, i, 2);
+            String visibleState = pm.getPlugin(name).isOpen() == true ? "Open" : "Close";
+            String pluginState = "";
+            switch (pm.getPluginState(name)) {
+                case DISCONNECTED:
+                    pluginState = "Disconnected";
+                    break;
+                case INVALID:
+                    pluginState = "Invalid";
+                    break;
+                case CONNECTED:
+                default:
+                    pluginState = "Connected";
+                    break;
+
+            }
+            model.setValueAt(visibleState, i, 1);
+            model.setValueAt(pluginState, i, 2);
         }
     }
 

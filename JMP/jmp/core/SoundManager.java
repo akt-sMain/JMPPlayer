@@ -139,13 +139,13 @@ public class SoundManager extends AbstractManager implements ISoundManager {
                         /* TODO instanceofを指定して処理を分岐するのはよろしくない 【改善策はないか...】 */
                         if (message instanceof ShortMessage) {
                             try {
-                                ((ShortMessage)message).setMessage(status, data1, data2);
+                                ((ShortMessage) message).setMessage(status, data1, data2);
                             }
                             catch (InvalidMidiDataException e) {
                             }
                         }
                         else if (message instanceof MidiByteMessage) {
-                            MidiByteMessage bMes = (MidiByteMessage)message;
+                            MidiByteMessage bMes = (MidiByteMessage) message;
                             bMes.changeByte(0, status);
                             bMes.changeByte(1, data1);
                             bMes.changeByte(2, data2);
@@ -235,6 +235,16 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             e.printStackTrace();
             result = false;
         }
+
+        JMPFlags.Log.cprintln("###");
+        JMPFlags.Log.cprintln("## Midi device info");
+        JMPFlags.Log.cprintln("##");
+        String midiOutName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
+        String midiInName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
+        JMPFlags.Log.cprintln("OUT : " + (midiOutName.isEmpty() ? "Default" : midiOutName));
+        JMPFlags.Log.cprintln("IN  : " + (midiInName.isEmpty() ? "None" : midiInName));
+        JMPFlags.Log.cprintln("##");
+        JMPFlags.Log.cprintln();
         return result;
     }
 

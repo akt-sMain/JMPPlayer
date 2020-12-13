@@ -64,8 +64,8 @@ public class PlayerAccessor {
                 tmpPlayer = player;
             }
             if (player.isSupportedExtension(extension) == true) {
-                change(player);
-                return true;
+                tmpPlayer = player;
+                break;
             }
         }
 

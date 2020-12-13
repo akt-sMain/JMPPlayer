@@ -81,7 +81,7 @@ public class FileManager extends AbstractManager implements IFileManager {
         }
         else if (system.isEnableStandAlonePlugin() == true) {
             // サポート外(スタンドアロンモード時)
-            if (pm.isSupportExtension(f, JMPCore.StandAlonePlugin) == false) {
+            if (pm.isSupportExtension(f, JMPCore.getStandAlonePlugin()) == false) {
                 beginResult.status = false;
                 beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_2);
             }

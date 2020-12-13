@@ -18,6 +18,7 @@ import jmp.lang.DefineLanguage.LangID;
 import jmp.plugin.JMPPluginLoader;
 import jmp.plugin.JmsProperty;
 import jmp.plugin.PluginObserver;
+import jmp.plugin.PluginWrapper.PluginState;
 import jmp.task.TaskOfMidiEvent.JmpMidiPacket;
 import lib.MakeJmpLib;
 
@@ -96,8 +97,8 @@ public class PluginManager extends AbstractManager {
         // プラグイン読み込み
         if (JMPCore.isEnableStandAlonePlugin() == true) {
             // スタンドアロンプラグインを登録
-            String name = JMPCore.StandAlonePlugin.getClass().getName().trim();
-            if (addPlugin(name, JMPCore.StandAlonePlugin) == false) {
+            String name = JMPCore.getStandAlonePlugin().getClass().getName().trim();
+            if (addPlugin(name, JMPCore.getStandAlonePlugin()) == false) {
                 // return false;
             }
         }
@@ -615,14 +616,14 @@ public class PluginManager extends AbstractManager {
         return observers.getPlugin(name);
     }
 
-    public void setPluginConnection(String name, boolean state) {
+    public void setPluginState(String name, PluginState state) {
         IPlugin p = observers.getPlugin(name);
-        observers.getPluginWrapper(p).setConnected(state);
+        observers.getPluginWrapper(p).setState(state);
     }
 
-    public boolean isPluginConnection(String name) {
+    public PluginState getPluginState(String name) {
         IPlugin p = observers.getPlugin(name);
-        return observers.getPluginWrapper(p).isConnected();
+        return observers.getPluginWrapper(p).getState();
     }
 
     public void initialize() {

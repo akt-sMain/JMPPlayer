@@ -12,29 +12,9 @@ import javax.sound.midi.MidiMessage;
 import jlib.midi.IMidiEventListener;
 import jlib.player.IPlayerListener;
 import jlib.plugin.IPlugin;
+import jmp.plugin.PluginWrapper.PluginState;
 
 public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListener {
-
-    public class PluginWrapper {
-        private IPlugin plugin = null;
-        private boolean isConnected = true;
-
-        public PluginWrapper(IPlugin plg) {
-            this.plugin = plg;
-        }
-
-        public IPlugin getPlugin() {
-            return plugin;
-        }
-
-        public boolean isConnected() {
-            return isConnected;
-        }
-
-        public void setConnected(boolean isConnected) {
-            this.isConnected = isConnected;
-        }
-    }
 
     /** プラグイン格納用コレクション */
     private Map<String, PluginWrapper> aPlugins = null;
@@ -175,7 +155,7 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
     @Override
     public void catchMidiEvent(MidiMessage message, long timeStamp, short senderType) {
         for (PluginWrapper pluginWrap : aPlugins.values()) {
-            if (pluginWrap.isConnected() == false) {
+            if (pluginWrap.getState() != PluginState.CONNECTED) {
                 continue;
             }
 

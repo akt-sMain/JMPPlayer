@@ -440,7 +440,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         JMPFlags.Log.cprintln("## Directory list");
         JMPFlags.Log.cprintln("##");
         JMPFlags.Log.cprintln(pluginsDirPath);
-        JMPFlags.Log.cprintln(pluginsDirPath);
         JMPFlags.Log.cprintln(dataFileLocationPath);
         JMPFlags.Log.cprintln(resFileLocationPath);
         JMPFlags.Log.cprintln(jmsDirPath);

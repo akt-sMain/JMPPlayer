@@ -1,13 +1,13 @@
-# 指定色を透過色に変換させるか
+# Whether to convert the specified color to a transparent color.
 CONVERT_TRANS=FALSE
 
-# 透過させる色
+# Color to transmit.
 TRANSPARENT=#FF7F27
 
-# ボタンの背景色
-#  ※透明色指定する場合は"TRANS"
+# Button background color.
+#  *"TRANS" to specify transparent color.
 BTN_BACKGROUND=#888888
 
-# 画面の背景色
+# Application main color.
 APPLICATION_BACKGROUND=#404040
 

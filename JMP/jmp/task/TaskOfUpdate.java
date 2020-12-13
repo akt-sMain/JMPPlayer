@@ -33,7 +33,7 @@ public class TaskOfUpdate extends TaskOfBase {
 
         // スタンドアロンプラグインが閉じられているか確認
         if (JMPCore.isEnableStandAlonePlugin() == true) {
-            IPlugin plg = JMPCore.StandAlonePlugin;
+            IPlugin plg = JMPCore.getStandAlonePlugin();
             if (plg != null) {
                 if (plg.isOpen() == false) {
                     JMPLoader.exit();

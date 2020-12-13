@@ -322,7 +322,7 @@ public class JMPLoader {
     public static boolean initLibrary(ConfigDatabaseWrapper config, IPlugin plugin) {
 
         // スタンドアロンプラグイン設定
-        JMPCore.StandAlonePlugin = plugin;
+        JMPCore.setStandAlonePlugin(plugin);
 
         // システムパス設定
         JMPCore.getSystemManager().makeSystemPath();
@@ -382,7 +382,7 @@ public class JMPLoader {
             }
             else {
                 // スタンドアロンプラグイン起動
-                JMPCore.StandAlonePlugin.open();
+                JMPCore.getStandAlonePlugin().open();
             }
 
             // タスク開始

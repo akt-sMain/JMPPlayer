@@ -15,7 +15,7 @@ public class JMPCore {
     public static final String LIBRALY_VERSION = JMPLIB.BUILD_VERSION;
 
     /** スタンドアロンモードのプラグイン */
-    public static IPlugin StandAlonePlugin = null;
+    private static IPlugin StandAlonePlugin = null;
 
     /** 初期化・終了実行順位 */
     private static final int MANAGER_PRIORITY_RESOUCE = 0;
@@ -59,6 +59,14 @@ public class JMPCore {
             return true;
         }
         return false;
+    }
+
+    public static void setStandAlonePlugin(IPlugin plg) {
+        StandAlonePlugin = plg;
+    }
+
+    public static IPlugin getStandAlonePlugin() {
+        return StandAlonePlugin;
     }
 
     public static SystemManager getSystemManager() {
