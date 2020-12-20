@@ -163,9 +163,7 @@ public abstract class AbstractManager implements IManager {
     }
 
     protected boolean initFunc() {
-        if (initializeFlag == false) {
-            initializeFlag = true;
-        }
+        initializeFlag = true;
         return true;
     }
 

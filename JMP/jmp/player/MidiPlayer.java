@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,11 +12,13 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
+import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 
@@ -35,6 +38,163 @@ import jmp.midi.MITransmitter;
 import jmp.midi.MOReceiver;
 
 public class MidiPlayer extends Player {
+
+    public class FastMetaMessage extends MetaMessage {
+
+        private int nativeType = 0;
+        private byte[] nativeData = null;
+        private int nativeLength = 0;
+
+        public FastMetaMessage() {
+            super();
+            updateNative();
+        }
+
+        public FastMetaMessage(int type, byte[] data, int length) throws InvalidMidiDataException {
+            super(type, data, length);
+            updateNative();
+        }
+
+        public FastMetaMessage(MetaMessage mes) throws InvalidMidiDataException {
+            super(mes.getType(), mes.getData(), mes.getData().length);
+            updateNative();
+        }
+
+        private void updateNative() {
+            // ネイティブ変数に格納する
+            nativeType = super.getType();
+            nativeData = Arrays.copyOf(super.getData(), super.getLength());
+            nativeLength = super.getLength();
+
+        }
+
+        @Override
+        public void setMessage(int type, byte[] data, int length) throws InvalidMidiDataException {
+            super.setMessage(type, data, length);
+            updateNative();
+        }
+
+        @Override
+        public int getType() {
+            return nativeType;
+        }
+
+        @Override
+        public byte[] getData() {
+            return nativeData;
+        }
+
+        @Override
+        public int getLength() {
+            return nativeLength;
+        }
+
+        @Override
+        public Object clone() {
+            MetaMessage mmes = (MetaMessage)super.clone();
+            FastMetaMessage msg = null;
+            try {
+                msg = new FastMetaMessage(mmes);
+            }
+            catch (InvalidMidiDataException e) {
+                msg = null;
+            }
+            return msg;
+        }
+    }
+
+    public class FastShortMessage extends ShortMessage {
+        private int nativeChannel = 0;
+        private int nativeCommand = 0;
+        private int nativeData1 = 0;
+        private int nativeData2 = 0;
+
+        public FastShortMessage() throws InvalidMidiDataException {
+            super();
+            updateNative();
+        }
+
+        public FastShortMessage(int status) throws InvalidMidiDataException {
+            super(status);
+            updateNative();
+        }
+
+        public FastShortMessage(int status, int data1, int data2) throws InvalidMidiDataException {
+            super(status, data1, data2);
+            updateNative();
+        }
+
+        public FastShortMessage(ShortMessage sMes) throws InvalidMidiDataException {
+            super(sMes.getStatus(), sMes.getData1(), sMes.getData2());
+            updateNative();
+        }
+
+        private void updateNative() {
+            // ネイティブ変数に格納する
+            nativeChannel = super.getChannel();
+            nativeCommand = super.getCommand();
+            nativeData1 = super.getData1();
+            nativeData2 = super.getData2();
+        }
+
+        @Override
+        public void setMessage(int command, int channel, int data1, int data2) throws InvalidMidiDataException {
+            super.setMessage(command, channel, data1, data2);
+            updateNative();
+        }
+
+        @Override
+        public void setMessage(int status) throws InvalidMidiDataException {
+            super.setMessage(status);
+            updateNative();
+        }
+
+        @Override
+        public void setMessage(int status, int data1, int data2) throws InvalidMidiDataException {
+            super.setMessage(status, data1, data2);
+            updateNative();
+        }
+
+        @Override
+        protected void setMessage(byte[] data, int length) throws InvalidMidiDataException {
+            super.setMessage(data, length);
+            updateNative();
+        }
+
+        @Override
+        public int getChannel() {
+            return nativeChannel;
+        }
+
+        @Override
+        public int getCommand() {
+            return nativeCommand;
+        }
+
+        @Override
+        public int getData1() {
+            return nativeData1;
+        }
+
+        @Override
+        public int getData2() {
+            return nativeData2;
+        }
+
+        @Override
+        public Object clone() {
+            ShortMessage smes = (ShortMessage) super.clone();
+            FastShortMessage msg = null;
+            try {
+                msg = new FastShortMessage(smes);
+            }
+            catch (InvalidMidiDataException e) {
+                msg = null;
+            }
+            return msg;
+        }
+    }
+
     public class MidiInfo extends Player.Info {
         public static final String PLAYER_MIDI_INFO_KEY_BPM = "BPM";
 
@@ -577,13 +737,37 @@ public class MidiPlayer extends Player {
         Sequence seq = null;
         seq = MidiSystem.getSequence(file);
 
-//        JMPMidiReader mr = new JMPMidiReader(file);
-//        try {
-//            mr.read();
-//        }
-//        catch (Exception e) {
-//            System.out.println(function.Error.getMsg(e));
-//        }
+        if (JMPFlags.UseHispeedMidiMessage == true) {
+            /* 高速ショートメッセージ使用 */
+            Sequence newSeq = new Sequence(seq.getDivisionType(), seq.getResolution());
+            Track[] tracks = seq.getTracks();
+            for (int i = 0; i < tracks.length; i++) {
+                Track t = newSeq.createTrack();
+                for (int j = 0; j < tracks[i].size(); j++) {
+                    MidiEvent newEvent = null;
+                    MidiEvent orgEvent = tracks[i].get(j);
+                    if (orgEvent.getMessage() instanceof ShortMessage) {
+                        newEvent = new MidiEvent(new FastShortMessage((ShortMessage) orgEvent.getMessage()), orgEvent.getTick());
+                    }
+                    else if (orgEvent.getMessage() instanceof MetaMessage) {
+                        newEvent = new MidiEvent(new FastMetaMessage((MetaMessage) orgEvent.getMessage()), orgEvent.getTick());
+                    }
+                    else {
+                        newEvent = orgEvent;
+                    }
+                    t.add(newEvent);
+                }
+            }
+            seq = newSeq;
+        }
+
+        // JMPMidiReader mr = new JMPMidiReader(file);
+        // try {
+        // mr.read();
+        // }
+        // catch (Exception e) {
+        // System.out.println(function.Error.getMsg(e));
+        // }
 
         return seq;
     }

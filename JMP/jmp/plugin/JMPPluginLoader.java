@@ -8,7 +8,7 @@ import function.Utility;
 import jlib.plugin.IPlugin;
 
 public class JMPPluginLoader {
-    public static IPlugin load(File jarFile, String className) {
+    private static IPlugin load(File jarFile, String className) {
         IPlugin plugin = null;
         try {
             URL[] urls = { jarFile.toURI().toURL() };

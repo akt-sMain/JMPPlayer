@@ -28,10 +28,14 @@ import jmp.JMPFlags;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
+import jmp.core.SystemManager;
 import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.player.MidiPlayer;
+import jmsynth.JMSoftSynthesizer;
+import jmsynth.app.component.WaveViewerFrame;
+import jmsynth.midi.MidiInterface;
 
 public class SelectSynthsizerDialog extends JMPDialog {
 
@@ -64,6 +68,9 @@ public class SelectSynthsizerDialog extends JMPDialog {
     private JLabel lblPortOfTrans;
 
     public static final String DEFAULT_ITEM_NAME = "Using Default";
+    public static final String JMSYNTH_ITEM_NAME = "Built-in soft synthesizer";
+    public static final int NUMBER_OF_CUSTOM_SYNTH = 2;
+
     private JLabel labelDevelop;
     private JCheckBox chckbxStartupShowDialog;
 
@@ -207,7 +214,17 @@ public class SelectSynthsizerDialog extends JMPDialog {
                         String description = "Description : ";
                         String port = "";
 
-                        if (listName.equals(DEFAULT_ITEM_NAME) == false) {
+                        if (listName.equals(DEFAULT_ITEM_NAME) == true) {
+                            vendor += "";
+                            version += "";
+                            description += "Automatically select an available synthesizer.";
+                        }
+                        else if (listName.equals(JMSYNTH_ITEM_NAME) == true) {
+                            vendor += "Akt";
+                            version += "1.00";
+                            description += "Self-made built-in synthesizer (made by Akt)";
+                        }
+                        else {
                             MidiDevice dev = MidiSystem.getMidiDevice(infosOfRecv[devIndex]);
                             vendor += dev.getDeviceInfo().getVendor();
                             version += dev.getDeviceInfo().getVersion();
@@ -331,6 +348,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
         comboRecvMode.removeAllItems();
         infosOfRecv = MidiPlayer.getMidiDeviceInfo(false, true);
         comboRecvMode.addItem(DEFAULT_ITEM_NAME);
+        comboRecvMode.addItem(JMSYNTH_ITEM_NAME);
         for (int i = 0; i < infosOfRecv.length; i++) {
             String line = createItemName(i, infosOfRecv[i].getName());
             comboRecvMode.addItem(line);
@@ -350,10 +368,15 @@ public class SelectSynthsizerDialog extends JMPDialog {
             String saveInfoOfRecv = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
             if (saveInfoOfRecv.isEmpty() == false) {
                 comboRecvMode.setSelectedIndex(0);
-                for (int i = 0; i < infosOfRecv.length; i++) {
-                    if (saveInfoOfRecv.equals(infosOfRecv[i].getName()) == true) {
-                        comboRecvMode.setSelectedIndex(i + 1);
-                        break;
+                if (saveInfoOfRecv.equals(JMSYNTH_ITEM_NAME) == true) {
+                    comboRecvMode.setSelectedIndex(1);
+                }
+                else {
+                    for (int i = 0; i < infosOfRecv.length; i++) {
+                        if (saveInfoOfRecv.equals(infosOfRecv[i].getName()) == true) {
+                            comboRecvMode.setSelectedIndex(i + NUMBER_OF_CUSTOM_SYNTH);
+                            break;
+                        }
                     }
                 }
             }
@@ -385,6 +408,8 @@ public class SelectSynthsizerDialog extends JMPDialog {
     protected void commit() {
         isOkActionClose = true;
 
+        JMPCore.getWindowManager().closeJmSynthFrame();
+
         String pastMidiOutName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
         String pastMidiInName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
 
@@ -402,28 +427,50 @@ public class SelectSynthsizerDialog extends JMPDialog {
                 JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, outDev.getDeviceInfo().getName());
             }
             else {
-                int defIndex = -1;
-                for (int i=0; i<infosOfRecv.length; i++) {
-                    if (infosOfRecv[i].getName().contains("Gervill") == true) {
-                        defIndex = i;
-                        break;
-                    }
-                }
+                /* 独自のシンセを選択 */
+                if (listName.equals(JMSYNTH_ITEM_NAME) == true) {
+                    // 内蔵シンセ
+                    JMSoftSynthesizer synth = new JMSoftSynthesizer();
+                    synth.openDevice();
+                    outReciever = new MidiInterface(synth);
 
-                /* デフォルト使用 */
-                if (defIndex != -1) {
-                    // "Gervill"を優先的に使用
-                    MidiDevice outDev = MidiSystem.getMidiDevice(infosOfRecv[defIndex]);
-                    if (outDev.isOpen() == false) {
-                        outDev.open();
+                    // Window登録
+                    WaveViewerFrame wvf = new WaveViewerFrame(synth);
+                    Color[] ct = new Color[16];
+                    for (int i = 0; i < 16; i++) {
+                        String key = String.format(SystemManager.COMMON_REGKEY_CH_COLOR_FORMAT, i + 1);
+                        ct[i] = JMPCore.getSystemManager().getUtilityToolkit().convertCodeToHtmlColor(JMPCore.getSystemManager().getCommonRegisterValue(key));
                     }
-                    outReciever = outDev.getReceiver();
+                    wvf.setWaveColorTable(ct);
+                    JMPCore.getWindowManager().setJmSynthFrame(wvf);
+
+                    JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, JMSYNTH_ITEM_NAME);
                 }
                 else {
-                    // SoundAPIの自動選択に従う
-                    outReciever = MidiSystem.getReceiver();
+                    // デフォルト
+                    int defIndex = -1;
+                    for (int i = 0; i < infosOfRecv.length; i++) {
+                        if (infosOfRecv[i].getName().contains("Gervill") == true) {
+                            defIndex = i;
+                            break;
+                        }
+                    }
+
+                    /* デフォルト使用 */
+                    if (defIndex != -1) {
+                        // "Gervill"を優先的に使用
+                        MidiDevice outDev = MidiSystem.getMidiDevice(infosOfRecv[defIndex]);
+                        if (outDev.isOpen() == false) {
+                            outDev.open();
+                        }
+                        outReciever = outDev.getReceiver();
+                    }
+                    else {
+                        // SoundAPIの自動選択に従う
+                        outReciever = MidiSystem.getReceiver();
+                    }
+                    JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
                 }
-                JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
             }
             if ((startupFlag == false) || (pastMidiOutName.equals(JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT)) == false)) {
                 commitListener.commitMidiOut(outReciever);

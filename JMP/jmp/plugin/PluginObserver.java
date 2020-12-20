@@ -53,13 +53,16 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
         return true;
     }
 
-    public PluginWrapper getPluginWrapper(IPlugin plugin) {
-        PluginWrapper pw = null;
-        String name = getPluginName(plugin);
-        if (aPlugins.containsKey(name) == true) {
-            pw = aPlugins.get(name);
+    public PluginWrapper getPluginWrapper(String name) {
+        if (aPlugins.containsKey(name) == false) {
+            return null;
         }
-        return pw;
+        return aPlugins.get(name);
+    }
+
+    public PluginWrapper getPluginWrapper(IPlugin plugin) {
+        String name = getPluginName(plugin);
+        return getPluginWrapper(name);
     }
 
     public String getPluginName(IPlugin plugin) {
@@ -77,10 +80,11 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
     }
 
     public IPlugin getPlugin(String name) {
-        if (aPlugins.containsKey(name) == false) {
+        PluginWrapper pw = getPluginWrapper(name);
+        if (pw == null) {
             return null;
         }
-        return aPlugins.get(name).getPlugin();
+        return pw.getPlugin();
     }
 
     public Collection<IPlugin> getPlugins() {

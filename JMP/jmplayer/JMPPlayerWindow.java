@@ -173,6 +173,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
     private JMenuItem mntmPluginManager;
     private JCheckBoxMenuItem chckbxmntmLyricView;
     private JCheckBoxMenuItem chckbxmntmSendSystemSetupBeforePlayback;
+    private JMenuItem mntmJmSynth;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -614,6 +615,17 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         });
         chckbxmntmSendSystemSetupBeforePlayback.setSelected(JMPCore.getDataManager().isSendMidiSystemSetup());
         configMenu.add(chckbxmntmSendSystemSetupBeforePlayback);
+
+        mntmJmSynth = new JMenuItem("JMSynth setup");
+        mntmJmSynth.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (JMPCore.getWindowManager().isValidJmSynthFrame() == false) {
+                    return;
+                }
+                JMPCore.getWindowManager().openJmSynthFrame();
+            }
+        });
+        configMenu.add(mntmJmSynth);
 
         lblDebugMenu = new JLabel("-- Developer menu --");
         lblDebugMenu.setForeground(Color.DARK_GRAY);
@@ -1118,6 +1130,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         autoPlayCheckBox.setSelected(dm.isAutoPlay());
         alwayTopCheckBox.setSelected(isAlwaysOnTop());
         chckbxmntmLyricView.setSelected(dm.isLyricView());
+        mntmJmSynth.setEnabled(JMPCore.getWindowManager().isValidJmSynthFrame());
 
         if (JMPCore.getSoundManager().getSequencer() != null) {
             // Sequencerが実行中の場合は設定不可

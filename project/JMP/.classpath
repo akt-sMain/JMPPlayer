@@ -10,5 +10,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="../../lib/flib.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/FFmpegWrapper"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/JMSynthesizer"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

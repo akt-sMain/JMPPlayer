@@ -18,6 +18,7 @@ import jmp.lang.DefineLanguage.LangID;
 import jmp.plugin.JMPPluginLoader;
 import jmp.plugin.JmsProperty;
 import jmp.plugin.PluginObserver;
+import jmp.plugin.PluginWrapper;
 import jmp.plugin.PluginWrapper.PluginState;
 import jmp.task.TaskOfMidiEvent.JmpMidiPacket;
 import lib.MakeJmpLib;
@@ -617,13 +618,19 @@ public class PluginManager extends AbstractManager {
     }
 
     public void setPluginState(String name, PluginState state) {
-        IPlugin p = observers.getPlugin(name);
-        observers.getPluginWrapper(p).setState(state);
+        PluginWrapper pw = observers.getPluginWrapper(name);
+        if (pw == null) {
+            return;
+        }
+        pw.setState(state);
     }
 
     public PluginState getPluginState(String name) {
-        IPlugin p = observers.getPlugin(name);
-        return observers.getPluginWrapper(p).getState();
+        PluginWrapper pw = observers.getPluginWrapper(name);
+        if (pw == null) {
+            return PluginState.INVALID;
+        }
+        return pw.getState();
     }
 
     public void initialize() {

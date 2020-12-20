@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.sound.midi.MidiMessage;
 
-import jlib.core.IManager;
 import jlib.player.IPlayer;
 import jmp.JMPFlags;
 import jmp.task.CallbackPackage;
@@ -16,7 +15,7 @@ import jmp.task.TaskOfSequence;
 import jmp.task.TaskOfTimer;
 import jmp.task.TaskOfUpdate;
 
-public class TaskManager extends AbstractManager implements IManager {
+public class TaskManager extends AbstractManager {
 
     private TaskOfUpdate taskOfUpdate;
     private TaskOfTimer taskOfTimer;
