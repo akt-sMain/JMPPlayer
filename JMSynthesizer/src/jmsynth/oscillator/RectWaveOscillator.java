@@ -4,6 +4,8 @@ import jmsynth.sound.Tone;
 
 public class RectWaveOscillator implements IOscillator {
 
+    private static final double DUTY_THRESHOLD = 0.04;
+    private static final double DUTY_OFFSET = 0.8;
     private static double LEVEL_OFFSET = COMMON_LEVEL_OFFSET;
 
     public RectWaveOscillator() {
@@ -27,9 +29,21 @@ public class RectWaveOscillator implements IOscillator {
 
             if (f > 0.5) {
                 y = (byte) ((data[i] + (overallLevel)) / 1.1);
+                if (f < 0.5 + DUTY_THRESHOLD) {
+                    y *= DUTY_OFFSET;
+                }
+                else if (f > 1.0 - DUTY_THRESHOLD) {
+                    y *= DUTY_OFFSET;
+                }
             }
             else {
                 y = (byte) ((data[i] + (-overallLevel)) / 1.1);
+                if (f > 0.5 - DUTY_THRESHOLD) {
+                    y *= DUTY_OFFSET;
+                }
+                else if (f < 0.0 + DUTY_THRESHOLD) {
+                    y *= DUTY_OFFSET;
+                }
             }
             /* Lch 分 */
             data[i] = y;
