@@ -295,6 +295,10 @@ public class JMPLoader {
 
         JMPCore.getWindowManager().setVisibleAll(false);
 
+        if (JMPCore.getWindowManager().isValidBuiltinSynthFrame() == true) {
+            JMPCore.getWindowManager().closeBuiltinSynthFrame();
+        }
+
         // 終了前に全てのプラグインを閉じる
         JMPCore.getPluginManager().closeAllPlugins();
 

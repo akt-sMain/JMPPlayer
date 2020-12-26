@@ -616,13 +616,13 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         chckbxmntmSendSystemSetupBeforePlayback.setSelected(JMPCore.getDataManager().isSendMidiSystemSetup());
         configMenu.add(chckbxmntmSendSystemSetupBeforePlayback);
 
-        mntmJmSynth = new JMenuItem("JMSynth setup");
+        mntmJmSynth = new JMenuItem("Built-in synth setup");
         mntmJmSynth.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (JMPCore.getWindowManager().isValidJmSynthFrame() == false) {
+                if (JMPCore.getWindowManager().isValidBuiltinSynthFrame() == false) {
                     return;
                 }
-                JMPCore.getWindowManager().openJmSynthFrame();
+                JMPCore.getWindowManager().openBuiltinSynthFrame();
             }
         });
         configMenu.add(mntmJmSynth);
@@ -1130,7 +1130,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         autoPlayCheckBox.setSelected(dm.isAutoPlay());
         alwayTopCheckBox.setSelected(isAlwaysOnTop());
         chckbxmntmLyricView.setSelected(dm.isLyricView());
-        mntmJmSynth.setEnabled(JMPCore.getWindowManager().isValidJmSynthFrame());
+        mntmJmSynth.setEnabled(JMPCore.getWindowManager().isValidBuiltinSynthFrame());
 
         if (JMPCore.getSoundManager().getSequencer() != null) {
             // Sequencerが実行中の場合は設定不可

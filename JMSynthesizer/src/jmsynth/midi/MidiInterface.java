@@ -12,6 +12,8 @@ public class MidiInterface implements Receiver {
 
     ISynthController controller = null;
 
+    private boolean isAutoSelectOscillator = true;
+
     public MidiInterface(ISynthController controller) {
         this.controller = controller;
     }
@@ -89,7 +91,7 @@ public class MidiInterface implements Receiver {
                             controller.setPan(channel, sm.getData2());
                             break;
                         case 0x0B:// Expression
-                            //controller.setExpression(channel, sm.getData2());
+                            controller.setExpression(channel, sm.getData2());
                             break;
                         case 0x60:// variation
                             controller.setVariation(channel, sm.getData2());
@@ -114,8 +116,10 @@ public class MidiInterface implements Receiver {
                     break;
                 case ShortMessage.PROGRAM_CHANGE: {
                     // オシレータの切り替え
-                    OscillatorSet osc = getProgramChangeOscillator(channel, sm.getData1());
-                    controller.setOscillator(channel, osc);
+                    if (isAutoSelectOscillator() == true) {
+                        OscillatorSet osc = getProgramChangeOscillator(channel, sm.getData1());
+                        controller.setOscillator(channel, osc);
+                    }
                     controller.setVolume(channel, 1.0f);
                 }
                     break;
@@ -216,6 +220,18 @@ public class MidiInterface implements Receiver {
     @Override
     public void close() {
         controller.closeDevice();
+    }
+
+    public boolean isAutoSelectOscillator() {
+        return isAutoSelectOscillator;
+    }
+
+    public void setAutoSelectOscillator(boolean isAutoSelectOscillator) {
+        this.isAutoSelectOscillator = isAutoSelectOscillator;
+    }
+
+    public ISynthController getSynthController() {
+        return controller;
     }
 
 }

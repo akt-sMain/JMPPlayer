@@ -13,6 +13,7 @@ import jlib.core.IWindowManager;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jlib.plugin.IPlugin;
+import jmp.gui.BuiltinSynthSetupDialog;
 import jmp.gui.FFmpegConvertDialog;
 import jmp.gui.HistoryDialog;
 import jmp.gui.LicenseReaderDialog;
@@ -28,7 +29,6 @@ import jmp.lang.DefineLanguage.LangID;
 import jmp.task.ICallbackFunction;
 import jmp.util.JmpUtil;
 import jmplayer.JMPPlayerWindow;
-import jmsynth.app.component.WaveViewerFrame;
 
 public class WindowManager extends AbstractManager implements IWindowManager {
 
@@ -50,7 +50,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     private WindowDatabase database = null;
 
     /* JMsynth用のフレーム(WindowDatabaseに含まない) */
-    private WaveViewerFrame jmSynthFrame = null;
+    private BuiltinSynthSetupDialog builtinSynthFrame = null;
 
     WindowManager(int pri) {
         super(pri, "window");
@@ -72,7 +72,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         if (super.endFunc() == false) {
             return false;
         }
-        closeJmSynthFrame();
+        closeBuiltinSynthFrame();
         setVisibleAll(false);
         return true;
     }
@@ -260,38 +260,38 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         });
     }
 
-    public void setJmSynthFrame(WaveViewerFrame jmSynthFrame) {
-        this.jmSynthFrame = jmSynthFrame;
+    public void setBuiltinSynthFrame(BuiltinSynthSetupDialog frame) {
+        this.builtinSynthFrame = frame;
     }
 
-    public boolean isValidJmSynthFrame() {
+    public boolean isValidBuiltinSynthFrame() {
         if (JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT).equals(SelectSynthsizerDialog.JMSYNTH_ITEM_NAME) == false) {
             return false;
         }
-        if (jmSynthFrame == null) {
+        if (builtinSynthFrame == null) {
             return false;
         }
         return true;
     }
 
-    public boolean isVisibleJmSynthFrame() {
-        if (isValidJmSynthFrame() == false) {
+    public boolean isVisibleBuiltinSynthFrame() {
+        if (isValidBuiltinSynthFrame() == false) {
             return false;
         }
-        return jmSynthFrame.isVisible();
+        return builtinSynthFrame.isVisible();
     }
 
-    public void openJmSynthFrame() {
-        if (isValidJmSynthFrame() == false) {
+    public void openBuiltinSynthFrame() {
+        if (isValidBuiltinSynthFrame() == false) {
             return;
         }
-        jmSynthFrame.setVisible(true);
+        builtinSynthFrame.setVisible(true);
     }
 
-    public void closeJmSynthFrame() {
-        if (isValidJmSynthFrame() == false) {
+    public void closeBuiltinSynthFrame() {
+        if (isValidBuiltinSynthFrame() == false) {
             return;
         }
-        jmSynthFrame.setVisible(false);
+        builtinSynthFrame.setVisible(false);
     }
 }

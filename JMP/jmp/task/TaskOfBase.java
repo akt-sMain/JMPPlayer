@@ -16,6 +16,7 @@ public abstract class TaskOfBase implements ITask, Runnable {
         this.sleepTime = sleepTime;
         this.isRunnable = true;
         this.thread = new Thread(this);
+        this.thread.setPriority(Thread.MAX_PRIORITY);
     }
 
     @Override

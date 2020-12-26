@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import jmsynth.JMSoftSynthesizer;
+import jmsynth.midi.MidiInterface;
 
 public class WaveViewerFrame extends JFrame implements ActionListener{
 
@@ -38,8 +39,13 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
 
     private ChannelSetupDialog setupDialog = null;
 
+    private MidiInterface midiInterface = null;
+    private JMSoftSynthesizer softSynth = null;
+    private JCheckBox chckbxAutoOscChange;
+
     /**
      * Create the frame.
+     * @wbp.parser.constructor
      */
     public WaveViewerFrame(JMSoftSynthesizer synth) {
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -48,6 +54,8 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         contentPane.setLayout(null);
+
+        softSynth = synth;
 
         panel = new MultiWaveViewerPanel(synth);
         panel.setBounds(97, 58, 728, 542);
@@ -143,7 +151,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         btnAllOff.setBounds(12, 58, 77, 21);
         contentPane.add(btnAllOff);
 
-        chckbxTraceshift = new JCheckBox("trace shift");
+        chckbxTraceshift = new JCheckBox("detail");
         chckbxTraceshift.addActionListener(this);
         chckbxTraceshift.setBounds(97, 26, 103, 21);
         contentPane.add(chckbxTraceshift);
@@ -219,7 +227,26 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         btnSetup.setBounds(734, 26, 91, 21);
         contentPane.add(btnSetup);
 
+        chckbxAutoOscChange = new JCheckBox("Auto tone change");
+        chckbxAutoOscChange.setVisible(false);
+        chckbxAutoOscChange.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (midiInterface != null) {
+                    midiInterface.setAutoSelectOscillator(chckbxAutoOscChange.isSelected());
+                }
+            }
+        });
+        chckbxAutoOscChange.setBounds(204, 26, 141, 21);
+        contentPane.add(chckbxAutoOscChange);
+
         setupDialog = new ChannelSetupDialog(synth);
+        updateLabel();
+    }
+
+    public WaveViewerFrame(MidiInterface iface) {
+        this((JMSoftSynthesizer)iface.getSynthController());
+        midiInterface = iface;
+        chckbxAutoOscChange.setVisible(true);
         updateLabel();
     }
 
@@ -241,6 +268,9 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         panel.visibleWave[13] = chckbxWave14.isSelected();
         panel.visibleWave[14] = chckbxWave15.isSelected();
         panel.visibleWave[15] = chckbxWave16.isSelected();
+        if (midiInterface != null) {
+            chckbxAutoOscChange.setSelected(midiInterface.isAutoSelectOscillator());
+        }
     }
 
     @Override

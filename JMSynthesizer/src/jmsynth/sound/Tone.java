@@ -83,7 +83,7 @@ public class Tone {
     }
 
     public void setOverallLevel() {
-        this.overallLevel = (int) ((double)(velocity / 8) * (double)(expression / 127) * (double)enveropeOffset);
+        this.overallLevel = (int) (((double)velocity / (double)8) * ((double)expression / (double)127) * (double)enveropeOffset);
 
     }
 

@@ -34,7 +34,6 @@ import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.player.MidiPlayer;
 import jmsynth.JMSoftSynthesizer;
-import jmsynth.app.component.WaveViewerFrame;
 import jmsynth.midi.MidiInterface;
 
 public class SelectSynthsizerDialog extends JMPDialog {
@@ -408,7 +407,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
     protected void commit() {
         isOkActionClose = true;
 
-        JMPCore.getWindowManager().closeJmSynthFrame();
+        JMPCore.getWindowManager().closeBuiltinSynthFrame();
 
         String pastMidiOutName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
         String pastMidiInName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
@@ -432,17 +431,19 @@ public class SelectSynthsizerDialog extends JMPDialog {
                     // 内蔵シンセ
                     JMSoftSynthesizer synth = new JMSoftSynthesizer();
                     synth.openDevice();
-                    outReciever = new MidiInterface(synth);
+
+                    MidiInterface miface = new MidiInterface(synth);
+                    outReciever = miface;
 
                     // Window登録
-                    WaveViewerFrame wvf = new WaveViewerFrame(synth);
+                    BuiltinSynthSetupDialog wvf = new BuiltinSynthSetupDialog(miface);
                     Color[] ct = new Color[16];
                     for (int i = 0; i < 16; i++) {
                         String key = String.format(SystemManager.COMMON_REGKEY_CH_COLOR_FORMAT, i + 1);
                         ct[i] = JMPCore.getSystemManager().getUtilityToolkit().convertCodeToHtmlColor(JMPCore.getSystemManager().getCommonRegisterValue(key));
                     }
                     wvf.setWaveColorTable(ct);
-                    JMPCore.getWindowManager().setJmSynthFrame(wvf);
+                    JMPCore.getWindowManager().setBuiltinSynthFrame(wvf);
 
                     JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, JMSYNTH_ITEM_NAME);
                 }
