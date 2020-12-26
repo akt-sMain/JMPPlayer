@@ -9,7 +9,7 @@ public class JMPCore {
     public static final String APPLICATION_NAME = "JMPPlayer";
 
     /** アプリケーションバージョン */
-    public static final String APPLICATION_VERSION = "0.01β";
+    public static final String APPLICATION_VERSION = "0.02β";
 
     /** ライブラリバージョン */
     public static final String LIBRALY_VERSION = JMPLIB.BUILD_VERSION;
