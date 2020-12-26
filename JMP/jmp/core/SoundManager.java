@@ -1,8 +1,6 @@
 package jmp.core;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
@@ -10,7 +8,11 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
+import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Port;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
@@ -61,12 +63,17 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     // 固有変数
     private int transpose = 0;
-    private FloatControl volumeCtrl;
 
     private IMidiFilter defaultMidiFilter = null;
     private IMidiToolkit midiToolkit = null;
     private IMidiController midiInController = null;
     private IMidiController midiOutController = null;
+
+    // Line情報
+    private static Line.Info[] LineInfos = new Line.Info[] { Port.Info.SPEAKER, Port.Info.LINE_OUT, Port.Info.HEADPHONE };
+
+    // 音量をネイティブ変数として保持しておく
+    private float nativeVolume = -1.0f;
 
     SoundManager(int pri) {
         super(pri, "sound");
@@ -161,25 +168,12 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         midiInController = new MidiController(IMidiEventListener.SENDER_MIDI_IN); // INコントローラインターフェース
         midiOutController = new MidiController(IMidiEventListener.SENDER_MIDI_OUT); // OUTコントローラインターフェース
 
-        // Port lineIn;
-
-        // try {
-        // Mixer mixer = AudioSystem.getMixer(null);
-        // lineIn = (Port) mixer.getLine(Port.Info.LINE_OUT);
-        // if (lineIn.isOpen() == false) {
-        // lineIn.open();
-        // }
-        // volumeCtrl = (FloatControl)
-        // lineIn.getControl(FloatControl.Type.VOLUME);
-        // }
-        // catch (Exception e) {
-        // e.printStackTrace();
-        // System.out.println("Not open LineIn.");
-        // volumeCtrl = null;
-        // }
+        // 音量を更新する(ネイティブ変数を更新するため起動時に必ず呼ぶ必要がある)
+        syncLineVolume();
 
         super.initFunc();
         return true;
+
     }
 
     @Override
@@ -467,33 +461,6 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         return PlayerAccessor.isSupportedExtension(extension);
     }
 
-    /**
-     * 指定ディレクトリにあるファイルを列挙する
-     *
-     * @param dir
-     *            ディレクトリ
-     * @return ファイルリスト(key:ファイル名, value:Fileオブジェクト)
-     */
-    public Map<String, File> getFileList(File dir) {
-        HashMap<String, File> result = new HashMap<String, File>();
-        if (dir.isDirectory() == false) {
-            return result;
-        }
-
-        for (File file : dir.listFiles()) {
-            if (file == null) {
-                continue;
-            }
-
-            if (file.exists() == false) {
-                // 除外ケース
-                continue;
-            }
-            result.put(file.getName(), file);
-        }
-        return result;
-    }
-
     public JList<String> getPlayList() {
         return playList;
     }
@@ -640,34 +607,6 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         }
     }
 
-    public void setLineVolume(float value) {
-        if (volumeCtrl == null) {
-            return;
-        }
-        volumeCtrl.setValue(value);
-    }
-
-    public float getLineVolume() {
-        if (volumeCtrl == null) {
-            return 0.0f;
-        }
-        return volumeCtrl.getValue();
-    }
-
-    public float getMaxLineVolume() {
-        if (volumeCtrl == null) {
-            return 0.0f;
-        }
-        return volumeCtrl.getMaximum();
-    }
-
-    public float getMinLineVolume() {
-        if (volumeCtrl == null) {
-            return 0.0f;
-        }
-        return volumeCtrl.getMinimum();
-    }
-
     public void resetMidiEvent() {
         for (int i = 0; i < 16; i++) {
             resetProgramChange(i); // プログラムチェンジリセット
@@ -784,5 +723,48 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     public void setTranspose(int transpose) {
         this.transpose = transpose;
+    }
+
+    public void syncLineVolume() {
+        nativeVolume = -1.0f;
+        updateLineVolume();
+    }
+
+    public void updateLineVolume() {
+        int supported = 0;
+        for (int i = 0; i < LineInfos.length; i++) {
+            Line.Info source = LineInfos[i];
+            if (AudioSystem.isLineSupported(source) == true) {
+                try {
+                    Port outline = (Port) AudioSystem.getLine(source);
+                    outline.open();
+                    FloatControl volumeControl = (FloatControl) outline.getControl(FloatControl.Type.VOLUME);
+                    if (nativeVolume >= 0.0f) {
+                        volumeControl.setValue(nativeVolume);
+                    }
+                    nativeVolume = volumeControl.getValue();
+                    supported++;
+                }
+                catch (LineUnavailableException ex) {
+                    System.out.println("source not supported");
+                }
+            }
+        }
+
+        // サポートするLineが存在しない場合は0にする
+        if (supported == 0) {
+            nativeVolume = 0.0f;
+        }
+    }
+
+    @Override
+    public void setLineVolume(float v) {
+        nativeVolume = v;
+        updateLineVolume();
+    }
+
+    @Override
+    public float getLineVolume() {
+        return nativeVolume;
     }
 }

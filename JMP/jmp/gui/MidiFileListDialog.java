@@ -432,14 +432,20 @@ public class MidiFileListDialog extends JMPFrame {
     }
 
     public void updateList(File file) {
+        if (file.canRead() == false) {
+            return;
+        }
         if (file.isDirectory() == false) {
             file = file.getParentFile();
+        }
+        if (file.canRead() == false) {
+            return;
         }
 
         setCurrentPathText(file.getPath());
         JMPCore.getDataManager().setPlayListPath(file.getPath());
 
-        midiFileMap = JMPCore.getSoundManager().getFileList(file);
+        midiFileMap = JMPCore.getFileManager().getFileList(file);
         removeAllRows();
 
         SystemManager system = JMPCore.getSystemManager();

@@ -2,7 +2,9 @@ package jmp.core;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jlib.core.IFileManager;
 import jmp.FileResult;
@@ -34,6 +36,33 @@ public class FileManager extends AbstractManager implements IFileManager {
     protected boolean initFunc() {
         loadCallbacks = new ArrayList<IFileResultCallback>();
         return super.initFunc();
+    }
+
+    /**
+     * 指定ディレクトリにあるファイルを列挙する
+     *
+     * @param dir
+     *            ディレクトリ
+     * @return ファイルリスト(key:ファイル名, value:Fileオブジェクト)
+     */
+    public Map<String, File> getFileList(File dir) {
+        HashMap<String, File> result = new HashMap<String, File>();
+        if (dir.isDirectory() == false) {
+            return result;
+        }
+
+        for (File file : dir.listFiles()) {
+            if (file == null) {
+                continue;
+            }
+
+            if (file.exists() == false) {
+                // 除外ケース
+                continue;
+            }
+            result.put(file.getName(), file);
+        }
+        return result;
     }
 
     public void addLoadResultCallback(IFileResultCallback loadResultCallback) {

@@ -161,4 +161,18 @@ public interface ISoundManager {
         return getMidiController(IMidiEventListener.SENDER_MIDI_OUT);
     }
 
+    /**
+     * ラインボリューム設定
+     *
+     * @param v
+     */
+    abstract void setLineVolume(float v);
+
+    /**
+     * ラインボリューム取得
+     *
+     * @return
+     */
+    abstract float getLineVolume();
+
 }

@@ -174,6 +174,8 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
     private JCheckBoxMenuItem chckbxmntmLyricView;
     private JCheckBoxMenuItem chckbxmntmSendSystemSetupBeforePlayback;
     private JMenuItem mntmJmSynth;
+    private JLabel lblVolumeSlider;
+    private JSlider mntmVolumeSlider;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -786,6 +788,35 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             }
         });
         configMenu.add(mntmDebugDummy);
+
+        lblVolumeSlider = new JLabel("-- Volume --");
+        lblVolumeSlider.setForeground(Color.DARK_GRAY);
+        lblVolumeSlider.setFont(new Font("Dialog", Font.BOLD, 12));
+        lblVolumeSlider.setHorizontalAlignment(SwingConstants.LEADING);
+        playerMenu.add(lblVolumeSlider);
+        mntmVolumeSlider = new JSlider(0, 100);
+        mntmVolumeSlider.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                int value = mntmVolumeSlider.getValue();
+                float vol = (float)value / (float)mntmVolumeSlider.getMaximum();
+                JMPCore.getSoundManager().setLineVolume(vol);
+            }
+        });
+        mntmVolumeSlider.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                int value = mntmVolumeSlider.getValue();
+                float vol = (float)value / (float)mntmVolumeSlider.getMaximum();
+                JMPCore.getSoundManager().setLineVolume(vol);
+            }
+        });
+        playerMenu.add(mntmVolumeSlider);
+
     }
 
     @Override
@@ -864,6 +895,9 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         autoPlayCheckBox.setSelected(dm.isAutoPlay());
         loopPlayCheckBoxMenuItem.setSelected(dm.isLoopPlay());
         chckbxmntmStartupmidisetup.setSelected(dm.isShowStartupDeviceSetup());
+
+        int mntmVolumeSliderValue = (int)(JMPCore.getSoundManager().getLineVolume() * (float)mntmVolumeSlider.getMaximum());
+        mntmVolumeSlider.setValue(mntmVolumeSliderValue);
 
         // シーケンスバーのトグル用コールバック関数を登録
         JMPCore.getTaskManager().addCallbackPackage((long) 500, new ICallbackFunction() {
@@ -1131,6 +1165,11 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         alwayTopCheckBox.setSelected(isAlwaysOnTop());
         chckbxmntmLyricView.setSelected(dm.isLyricView());
         mntmJmSynth.setEnabled(JMPCore.getWindowManager().isValidBuiltinSynthFrame());
+
+        // 音量バー同期
+        JMPCore.getSoundManager().syncLineVolume();
+        int mntmVolumeSliderValue = (int)(JMPCore.getSoundManager().getLineVolume() * (float)mntmVolumeSlider.getMaximum());
+        mntmVolumeSlider.setValue(mntmVolumeSliderValue);
 
         if (JMPCore.getSoundManager().getSequencer() != null) {
             // Sequencerが実行中の場合は設定不可
