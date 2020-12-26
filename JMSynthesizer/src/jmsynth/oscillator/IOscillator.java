@@ -4,7 +4,7 @@ import jmsynth.sound.Tone;
 
 public interface IOscillator {
 
-    public static double COMMON_LEVEL_OFFSET = 0.5;
+    public static double COMMON_LEVEL_OFFSET = 1.0;
 
     public static enum WaveType {
         SINE,

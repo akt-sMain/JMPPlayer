@@ -19,7 +19,6 @@ public class SawWaveOscillator implements IOscillator {
         int step = tone.getToneStep();
 
         overallLeval *= LEVEL_OFFSET;
-        System.out.println("" + length);
         for (int i = 0; i < length; i = i + 2) {
             step++;
             double f = (1.0 * step / amplitude) - (step / amplitude);

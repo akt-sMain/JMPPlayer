@@ -4,7 +4,7 @@ import jmsynth.sound.Tone;
 
 public class NoisWaveOscillator implements IOscillator {
 
-    private static double LEVEL_OFFSET = 1.0;
+    //private static double LEVEL_OFFSET = 1.0;
 
     public NoisWaveOscillator() {
     }
