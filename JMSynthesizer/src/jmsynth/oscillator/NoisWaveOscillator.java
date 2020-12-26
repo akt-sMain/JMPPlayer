@@ -22,7 +22,7 @@ public class NoisWaveOscillator implements IOscillator {
         /* ノート番号の音階に従って音の高さを調整する */
         int amplitude = (int) ((128 - tone.getNote()) * 0.3);
 
-        double overallLevel = (double) (tone.getOverallLevel() * 1.5);// ネイティブに変数ロード
+        double overallLevel = (double) (tone.getOverallLevel() * 2.0);// ネイティブに変数ロード
 
         /* ベロシティー設定 */
         //double velocity = (byte) ((tone.getVelocity() + tone.getExpression()) / 15);
