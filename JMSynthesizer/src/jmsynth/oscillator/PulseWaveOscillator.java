@@ -4,6 +4,8 @@ import jmsynth.sound.Tone;
 
 public class PulseWaveOscillator implements IOscillator {
 
+    private static final double DUTY_THRESHOLD = 0.04;
+    private static final double DUTY_OFFSET = 0.5;
     private static double LEVEL_OFFSET = COMMON_LEVEL_OFFSET;
 
     public PulseWaveOscillator() {
@@ -26,9 +28,21 @@ public class PulseWaveOscillator implements IOscillator {
             double f = (1.0 * toneStep / amplitude) - (toneStep / amplitude);
             if (f > 0.2) {
                 y = (byte) ((data[i] + (overallLevel)) / 1.1);
+                if (f < 0.2 + DUTY_THRESHOLD) {
+                    y *= DUTY_OFFSET;
+                }
+                else if (f > 1.0 - DUTY_THRESHOLD) {
+                    y *= DUTY_OFFSET;
+                }
             }
             else {
                 y = (byte) ((data[i] + (-overallLevel)) / 1.1);
+                if (f > 0.2 - DUTY_THRESHOLD) {
+                    y *= DUTY_OFFSET;
+                }
+                else if (f < 0.0 + DUTY_THRESHOLD) {
+                    y *= DUTY_OFFSET;
+                }
             }
             /* Lch 分 */
             data[i] = y;
