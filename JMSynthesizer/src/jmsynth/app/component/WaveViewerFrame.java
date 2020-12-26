@@ -281,4 +281,12 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
     public void setWaveColorTable(Color[] waveColorTable) {
         panel.setWaveColorTable(waveColorTable);
     }
+
+    @Override
+    public void setVisible(boolean b) {
+        if (b == false) {
+            setupDialog.setVisible(false);
+        }
+        super.setVisible(b);
+    }
 }

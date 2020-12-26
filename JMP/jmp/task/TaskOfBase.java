@@ -8,7 +8,7 @@ public abstract class TaskOfBase implements ITask, Runnable {
 
     private ArrayList<ICallbackFunction> callbackQue = null;
     private boolean isRunnable = true;
-    private Thread thread = null;
+    protected Thread thread = null;
     protected long sleepTime = 100;
 
     public TaskOfBase(long sleepTime) {
@@ -16,7 +16,6 @@ public abstract class TaskOfBase implements ITask, Runnable {
         this.sleepTime = sleepTime;
         this.isRunnable = true;
         this.thread = new Thread(this);
-        this.thread.setPriority(Thread.MAX_PRIORITY);
     }
 
     @Override

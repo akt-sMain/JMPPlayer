@@ -28,6 +28,7 @@ import jmp.JMPFlags;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
+import jmp.core.SoundManager;
 import jmp.core.SystemManager;
 import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
@@ -300,8 +301,8 @@ public class SelectSynthsizerDialog extends JMPDialog {
     public void setVisible(boolean b) {
         if (b == true) {
             if (JMPCore.isFinishedInitialize() == true) {
-                if (JMPCore.getSoundManager().isPlay() == true) {
-                    JMPCore.getSoundManager().stop();
+                if (SoundManager.SMidiPlayer.isRunnable() == true) {
+                    SoundManager.SMidiPlayer.stop();
                 }
                 if (JMPCore.isEnableStandAlonePlugin() == true || JMPFlags.LibraryMode == true) {
                     // スタンドアロン・ライブラリは非表示
@@ -329,8 +330,8 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
     public void start() {
         if (JMPCore.isFinishedInitialize() == true) {
-            if (JMPCore.getSoundManager().isPlay() == true) {
-                JMPCore.getSoundManager().stop();
+            if (SoundManager.SMidiPlayer.isRunnable() == true) {
+                SoundManager.SMidiPlayer.stop();
             }
         }
 
