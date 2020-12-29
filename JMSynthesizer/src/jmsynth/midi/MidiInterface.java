@@ -1,9 +1,11 @@
 package jmsynth.midi;
 
+import java.util.Arrays;
+
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
-import javax.sound.midi.ShortMessage;
 
+import jlib.midi.MidiByte;
 import jmsynth.oscillator.IOscillator.WaveType;
 import jmsynth.oscillator.OscillatorSet;
 import jmsynth.sound.ISynthController;
@@ -20,32 +22,40 @@ public class MidiInterface implements Receiver {
 
     @Override
     public void send(MidiMessage message, long timeStamp) {
-        if (message instanceof ShortMessage) {
+        if (message == null) {
+            return;
+        }
+        byte[] aMessage = message.getMessage();
+        int length = message.getLength();
+        if (MidiByte.isChannelMessage(aMessage, length) == true) {
 
-            ShortMessage sm = (ShortMessage) message;
-            int channel = sm.getChannel();
+            int channel = MidiByte.getChannel(aMessage, length);
             if (controller.checkChannel(channel) == false) {
                 return;
             }
 
-            switch (sm.getCommand()) {
-                case ShortMessage.NOTE_ON: {
-                    controller.noteOn(channel, sm.getData1(), sm.getData2());
+            int command = MidiByte.getCommand(aMessage, length);
+            int data1 = MidiByte.getData1(aMessage, length);
+            int data2 = MidiByte.getData2(aMessage, length);
+
+            switch (command) {
+                case MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON: {
+                    controller.noteOn(channel, data1, data2);
                 }
                     break;
-                case ShortMessage.NOTE_OFF: {
-                    controller.noteOff(channel, sm.getData1());
+                case MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_OFF: {
+                    controller.noteOff(channel, data1);
                 }
                     break;
-                case ShortMessage.PITCH_BEND: {
+                case MidiByte.Status.Channel.ChannelVoice.Fst.PITCH_BEND: {
                     // -8192 ～ +8191
-                    int pitch = (sm.getData2() << 7) + (sm.getData1() & 0x7f) - 8192;
+                    int pitch = (data2 << 7) + (data1 & 0x7f) - 8192;
                     controller.pitchBend(channel, pitch);
                 }
                     break;
-                case ShortMessage.CONTROL_CHANGE:
+                case MidiByte.Status.Channel.ChannelVoice.Fst.CONTROL_CHANGE:
 
-                    switch (sm.getData1()) {
+                    switch (data1) {
                         case 0x00://
                             break;
                         case 0x01:// モジュレーション・デプス
@@ -59,22 +69,22 @@ public class MidiInterface implements Receiver {
                             switch (controller.getNRPN(channel)) {
                                 // ピッチベンド・センシティビティ
                                 case 0x00: {
-                                    controller.pitchBendSenc(channel, sm.getData2());
+                                    controller.pitchBendSenc(channel, data2);
                                 }
                                     break;
                                 case 0x08:// ビブラート・レイト（Vibrato Rate）
                                 {
-                                    controller.setVibratoRate(channel, sm.getData2());
+                                    controller.setVibratoRate(channel, data2);
                                 }
                                     break;
                                 case 0x09:// ビブラート・デプス（Vibrato Depth）
                                 {
-                                    controller.setVibratoDepth(channel, sm.getData2());
+                                    controller.setVibratoDepth(channel, data2);
                                 }
                                     break;
                                 case 0x0A:// ビブラート・ディレイ（Vibrato Delay）
                                 {
-                                    controller.setVibratoDelay(channel, sm.getData2());
+                                    controller.setVibratoDelay(channel, data2);
                                 }
                                     break;
                             }
@@ -83,23 +93,23 @@ public class MidiInterface implements Receiver {
                                   // float vol =
                                   // ((float)sm.getData2()/150);//127
                         {
-                            float vol = ((float) sm.getData2() / 200);// 127
+                            float vol = ((float) data2 / 200);// 127
                             controller.setVolume(channel, vol);
                         }
                             break;
                         case 0x0A:// PAN
-                            controller.setPan(channel, sm.getData2());
+                            controller.setPan(channel, data2);
                             break;
                         case 0x0B:// Expression
-                            controller.setExpression(channel, sm.getData2());
+                            controller.setExpression(channel, data2);
                             break;
                         case 0x60:// variation
-                            controller.setVariation(channel, sm.getData2());
+                            controller.setVariation(channel, data2);
                             break;
                         case 0x61:// Portamento
                             break;
                         case 0x62:// NRPN
-                            controller.setNRPN(channel, sm.getData2());
+                            controller.setNRPN(channel, data2);
                             break;
                         case 0x65:// 101
                             controller.setNRPN(channel, 0x00);
@@ -114,19 +124,37 @@ public class MidiInterface implements Receiver {
                             break;
                     }
                     break;
-                case ShortMessage.PROGRAM_CHANGE: {
+                case MidiByte.Status.Channel.ChannelVoice.Fst.PROGRAM_CHANGE: {
                     // オシレータの切り替え
                     if (isAutoSelectOscillator() == true) {
-                        OscillatorSet osc = getProgramChangeOscillator(channel, sm.getData1());
+                        OscillatorSet osc = getProgramChangeOscillator(channel, data1);
                         controller.setOscillator(channel, osc);
                     }
                     controller.setVolume(channel, 1.0f);
                 }
                     break;
-                case 0x20:// バンク・セレクト LSB
+                default:
+                    System.out.println("unknown " + command);
+                    break;
+            }
+        }
+        else if (MidiByte.isMetaMessage(aMessage, length) == true) {
+        }
+        else if (MidiByte.isSystemMessage(aMessage, length) == true) {
+            int status = MidiByte.getStatus(aMessage, length);
+            switch (status) {
+                case MidiByte.Status.System.SystemCommon.Fst.SYSEX_BEGIN:
+                    if (Arrays.equals(aMessage, MidiByte.GM_SYSTEM_ON) == true) {
+                        controller.systemReset();
+                    }
+                    else if (Arrays.equals(aMessage, MidiByte.GS_RESET) == true) {
+                        controller.systemReset();
+                    }
+                    else if (Arrays.equals(aMessage, MidiByte.XG_SYSTEM_ON) == true) {
+                        controller.systemReset();
+                    }
                     break;
                 default:
-                    System.out.println(" ShortMessage" + sm.getCommand());
                     break;
             }
         }
@@ -141,39 +169,39 @@ public class MidiInterface implements Receiver {
 
         if (0 <= pc && pc < 8) {
             // Piano
-            ret = new OscillatorSet(WaveType.SINE);
+            ret = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
         }
         else if (8 <= pc && pc < 16) {
             // Chromatic Percussion
-            ret = new OscillatorSet(WaveType.TRIANGLE);
+            ret = new OscillatorSet(0.04, 0.15, 0.5, 0.2, WaveType.SINE);
         }
         else if (16 <= pc && pc < 24) {
             // Organ
-            ret = new OscillatorSet(WaveType.SAW);
+            ret = new OscillatorSet(0.05, 0.0, 1.0, 0.05, WaveType.SINE);
         }
         else if (24 <= pc && pc < 32) {
             // Guitar
-            ret = new OscillatorSet(WaveType.SAW);
+            ret = new OscillatorSet(0.05, 0.2, 0.65, 0.3, WaveType.SAW);
         }
         else if (32 <= pc && pc < 40) {
             // Bass
-            ret = new OscillatorSet(WaveType.TRIANGLE);
+            ret = new OscillatorSet(0.0, 0.67, 0.2, 0.2, 1000, 3000, 1000, WaveType.TRIANGLE);
         }
         else if (40 <= pc && pc < 48) {
             // Strings
-            ret = new OscillatorSet(WaveType.SAW);
+            ret = new OscillatorSet(0.04, 0.0, 1.0, 0.1, WaveType.SAW);
         }
         else if (48 <= pc && pc < 56) {
             // Ensemble
-            ret = new OscillatorSet(WaveType.SAW);
+            ret = new OscillatorSet(0.1, 0.0, 1.0, 0.25, WaveType.SAW);
         }
         else if (56 <= pc && pc < 64) {
             // Brass
-            ret = new OscillatorSet(WaveType.SAW);
+            ret = new OscillatorSet(WaveType.PULSE);
         }
         else if (64 <= pc && pc < 72) {
             // Reed
-            ret = new OscillatorSet(WaveType.SAW);
+            ret = new OscillatorSet(WaveType.PULSE);
         }
         else if (72 <= pc && pc < 80) {
             // Pipe
@@ -181,33 +209,76 @@ public class MidiInterface implements Receiver {
         }
         else if (80 <= pc && pc < 88) {
             // Synth Lead
-            ret = new OscillatorSet(WaveType.SQUARE);
+            switch (pc) {
+                case 80:
+                    // Square Wave
+                    ret = new OscillatorSet(WaveType.SQUARE);
+                    break;
+                case 81:
+                    // Saw Wave
+                    ret = new OscillatorSet(WaveType.SAW);
+                    break;
+                case 82:
+                    // Syn Calliope
+                    ret = new OscillatorSet(0.1, 0.0, 1.0, 0.1, WaveType.TRIANGLE);
+                    break;
+                case 83:
+                    // Chiffer Lead
+                    ret = new OscillatorSet(0.25, 0.0, 1.0, 0.25, WaveType.TRIANGLE);
+                    break;
+                case 84:
+                    // Charang
+                    ret = new OscillatorSet(0.1, 0.0, 1.0, 0.0, WaveType.PULSE);
+                    break;
+                case 85:
+                    // Solo Vox
+                    ret = new OscillatorSet(0.1, 0.0, 1.0, 0.0, WaveType.SAW);
+                    break;
+                case 86:
+                    // 7th Saw
+                    ret = new OscillatorSet(0.1, 0.0, 1.0, 0.0, WaveType.SAW);
+                    break;
+                case 87:
+                default:
+                    // Bass & Lead
+                    ret = new OscillatorSet(0.0, 0.0, 1.0, 0.0, WaveType.SAW);
+                    break;
+            }
         }
         else if (88 <= pc && pc < 96) {
             // Synth Pad
             // ret = new OscillatorSet(WaveType.NOISE);
             ret = new OscillatorSet(WaveType.SINE);
+            switch (pc) {
+                case 88:
+                    // Fantasia
+                    ret = new OscillatorSet(0.0, 1.0, 0.25, 0.5, WaveType.SINE);
+                    break;
+                default:
+                    ret = new OscillatorSet(0.15, 0.75, 0.25, 0.5, WaveType.SINE);
+                    break;
+            }
         }
         else if (96 <= pc && pc < 104) {
             // Synth Effects
-            ret = new OscillatorSet(WaveType.NOISE);
+            ret = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
             // ret = new OscillatorSet(WaveType.SINE);
         }
         else if (104 <= pc && pc < 112) {
-            // Synth Effects
-            ret = new OscillatorSet(WaveType.TRIANGLE);
+            // エスニック
+            ret = new OscillatorSet(WaveType.PULSE);
         }
         else if (112 <= pc && pc < 120) {
             // Percussive
-            ret = new OscillatorSet(WaveType.TRIANGLE);
+            ret = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.PULSE);
         }
         else if (120 <= pc && pc < 128) {
             // Sound effects
-            ret = new OscillatorSet(WaveType.NOISE);
+            ret = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
             // ret = new OscillatorSet(WaveType.SINE);
         }
         else {
-            ret = new OscillatorSet(WaveType.NOISE);
+            ret = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
             // ret = new OscillatorSet(WaveType.SINE);
         }
         return ret;

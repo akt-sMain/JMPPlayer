@@ -12,11 +12,10 @@ public class EnvelopeFactory implements Runnable {
         targets = new Vector<Envelope>();
         timerThread = new Thread(this);
         timerThread.setPriority(Thread.MAX_PRIORITY);
-        timerThread.start();
     }
 
     public Envelope newEnveropeInstance() {
-        return newEnveropeInstance(0.0, 0.0, 1.0, 0.0);
+        return newEnveropeInstance(0.0, 0.0, 1.0, 0.1);
     }
     public Envelope newEnveropeInstance(double a, double d, double s, double r) {
         Envelope e = new Envelope();
@@ -26,6 +25,10 @@ public class EnvelopeFactory implements Runnable {
         e.setReleaseTime(r);
         targets.add(e);
         return e;
+    }
+
+    public void timerStart() {
+        timerThread.start();
     }
 
     @Override

@@ -42,10 +42,22 @@ public interface ISynthController {
     abstract void setOscillator(int ch, WaveType oscType);
 
     default void setOscillator(int ch, OscillatorSet oscSet) {
+        Envelope e = getEnvelope(ch);
+        if (e != null) {
+            e.setAttackTime(oscSet.getAttackTime());
+            e.setDecayTime(oscSet.getDecayTime());
+            e.setSustainLevel(oscSet.getSustainLevel());
+            e.setReleaseTime(oscSet.getReleaseTime());
+            e.setMaxAttackMills(oscSet.getMaxAttackMills());
+            e.setMaxDecayMills(oscSet.getMaxDecayMills());
+            e.setMaxReleaseMills(oscSet.getMaxReleaseMills());
+        }
         setOscillator(ch, oscSet.getOscillator());
     }
 
     abstract WaveType getWaveType(int ch);
 
     abstract Envelope getEnvelope(int ch);
+
+    abstract void systemReset();
 }

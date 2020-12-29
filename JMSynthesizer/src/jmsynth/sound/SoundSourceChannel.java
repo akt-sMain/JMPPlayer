@@ -147,6 +147,14 @@ public class SoundSourceChannel extends Thread implements ISynthController {
             try {
                 Tone tone = (Tone) activeTones.get(i);
                 oscillator.makeTone(data, length, tone);
+
+                if (envelope.getReleaseTime() > 0.0) {
+                    // リリース処理
+                    if (tone.isReleaseFlag() == true && tone.getEnveropeOffset() <= 0.0) {
+                        int note = tone.getNote();
+                        noteOff(0, note);
+                    }
+                }
             }
             catch (ArrayIndexOutOfBoundsException aiobe) {
                 // ArrayIndexOutOfBoundsExceptionは起きがち
@@ -339,9 +347,23 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public void noteOn(int ch, int note, int velocity) {
         try {
             if (velocity > 0) {
+                if (tones[note] != null && tones[note].isReleaseFlag() == true) {
+                    // リリースの途中破棄
+                    Tone tone = tones[note];
+                    activeTones.remove(tone);
+                    tonePool.push(tone);
+                    tone.setReleaseFlag(false);
+                    tone.setVelocity(0);
+                    tones[note] = null;
+                    if (!oscillator.isToneSync()) {
+                        tone.setTablePointer(0);
+                    }
+                }
                 if (!tonePool.empty() && tones[note] == null) {
                     Tone t = tonePool.pop();
                     t.setNote(note);
+                    t.setReleaseFlag(false);
+                    t.resetEnveropeOffset();
                     t.setVelocity(velocity);
                     t.setStartMills();
                     activeTones.add(t);
@@ -360,12 +382,19 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public void noteOff(int ch, int note) {
         Tone tone = tones[note];
         if (tone != null) {
-            tone.setVelocity(0);
-            activeTones.remove(tone);
-            tonePool.push(tone);
-            tones[note] = null;
-            if (!oscillator.isToneSync()) {
-                tone.setTablePointer(0);
+            if ((envelope.getReleaseTime() > 0.0) && (tone.isReleaseFlag() == false)) {
+                tone.setReleaseFlag(true);
+                tone.setStartMills();
+            }
+            else {
+                tone.setVelocity(0);
+                tone.setReleaseFlag(false);
+                activeTones.remove(tone);
+                tonePool.push(tone);
+                tones[note] = null;
+                if (!oscillator.isToneSync()) {
+                    tone.setTablePointer(0);
+                }
             }
         }
     }
@@ -541,6 +570,11 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
     public Envelope getEnvelope() {
         return getEnvelope(0);
+    }
+    @Override
+    public void systemReset() {
+        allNoteOff(0);
+        resetAllController(0);
     }
 
 }

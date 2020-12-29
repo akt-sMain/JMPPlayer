@@ -25,6 +25,8 @@ public class Tone {
     private double enveropeOffset = 1.0;
     private long startMills = 0;
 
+    private boolean releaseFlag = false;
+
     public Tone() {
     }
 
@@ -42,7 +44,6 @@ public class Tone {
         // vibratoDelay = 60;
         // vibratoCount = 0;
         // variation = 0;
-        enveropeOffset = 1.0;
         startMills = 0;
         setOverallLevel();
     }
@@ -155,6 +156,10 @@ public class Tone {
         setOverallLevel();
     }
 
+    public void resetEnveropeOffset() {
+        this.enveropeOffset = 1.0;
+    }
+
     public long getStartMills() {
         return startMills;
     }
@@ -165,6 +170,14 @@ public class Tone {
     }
     public void setStartMills() {
         setStartMills(System.currentTimeMillis());
+    }
+
+    public boolean isReleaseFlag() {
+        return releaseFlag;
+    }
+
+    public void setReleaseFlag(boolean releaseFlag) {
+        this.releaseFlag = releaseFlag;
     }
 
 }

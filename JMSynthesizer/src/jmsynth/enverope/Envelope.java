@@ -32,17 +32,33 @@ public class Envelope {
                     double offset = tone.getEnveropeOffset();
                     long startTime = tone.getStartMills();
                     long elapsedTime = current - startTime;
-                    if (elapsedTime < a) {
-                        offset = (double) ((elapsedTime * 1.0) / a);
-                        //System.out.println("a : " + offset);
-                    }
-                    else if ((elapsedTime - a) < d) {
-                        offset = 1.0 - (double) (((elapsedTime - a) * (1.0 - sustainLevel)) / d);
-                        //System.out.println("d : " + offset);
+                    if (tone.isReleaseFlag() == true) {
+                        if (elapsedTime < r) {
+                            offset = sustainLevel * (1.0 - ((double)elapsedTime / (double)r));
+                        }
+                        else {
+                            offset = 0.0;
+                        }
+                        //System.out.println("r : " + offset);
                     }
                     else {
-                        offset = sustainLevel;
-                        //System.out.println("s : " + offset);
+                        if (elapsedTime < a) {
+                            offset = (double) ((elapsedTime * 1.0) / a);
+                            //System.out.println("a : " + offset);
+                        }
+                        else if ((elapsedTime - a) < d) {
+                            offset = 1.0 - (double) (((elapsedTime - a) * (1.0 - sustainLevel)) / d);
+                            //System.out.println("d : " + offset);
+                        }
+                        else {
+                            offset = sustainLevel;
+                            //System.out.println("s : " + offset);
+                        }
+                    }
+                    
+                    if (offset < 0.0) {
+                        //System.out.println("" + elapsedTime);
+                        offset = 0.0;
                     }
                     tone.setEnveropeOffset(offset);
                 }

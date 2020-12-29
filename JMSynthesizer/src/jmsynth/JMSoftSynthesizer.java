@@ -56,6 +56,7 @@ public class JMSoftSynthesizer implements ISynthController {
         for (int i = 0; i < channels.length; i++) {
             channels[i].openDevice();
         }
+        enveropeFactory.timerStart();
     }
 
     @Override
@@ -170,5 +171,12 @@ public class JMSoftSynthesizer implements ISynthController {
     @Override
     public WaveType getWaveType(int ch) {
         return channels[ch].getWaveType(ch);
+    }
+
+    @Override
+    public void systemReset() {
+        for (int i=0; i<16; i++) {
+            channels[i].systemReset();
+        }
     }
 }
