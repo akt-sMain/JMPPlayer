@@ -438,7 +438,6 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     }
 
     public void resetAllController(int ch) {
-        pitch_sc = 2;
         for (int i = 0; i < activeTones.size(); i++) {
             Tone tone = activeTones.get(i);
             if (tone == null) {
@@ -456,7 +455,6 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     }
 
     public void allNoteOff(int ch) {
-        pitch_sc = 2;
         for (int i = 0; i < activeTones.size(); i++) {
             Tone tone = activeTones.get(i);
             if (tone == null) {
@@ -573,6 +571,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     }
     @Override
     public void systemReset() {
+        pitch_sc = 2;
         allNoteOff(0);
         resetAllController(0);
     }
