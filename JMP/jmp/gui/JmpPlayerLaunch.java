@@ -147,12 +147,14 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, IJMPCompon
         int y = startY();
         if ((x < e.getX()) && (e.getX() < x + SIZE) && (y < e.getY()) && (e.getY() < y + SIZE)) {
             dm.setLoopPlay(!dm.isLoopPlay());
+            wm.repaint(WindowManager.WINDOW_NAME_MAIN);
             return;
         }
 
         x += (SIZE + (MERGIN * 2));
         if ((x < e.getX()) && (e.getX() < x + SIZE) && (y < e.getY()) && (e.getY() < y + SIZE)) {
             dm.setAutoPlay(!dm.isAutoPlay());
+            wm.repaint(WindowManager.WINDOW_NAME_MAIN);
             return;
         }
 
@@ -167,6 +169,7 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, IJMPCompon
                     win.showWindow();
                 }
             }
+            wm.repaint(WindowManager.WINDOW_NAME_MAIN);
             return;
         }
     }

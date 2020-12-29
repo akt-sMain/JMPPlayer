@@ -67,9 +67,11 @@ public class TaskOfMidiEvent extends TaskOfBase {
             while (i.hasNext()) {
                 JmpMidiPacket packet = i.next();
 
-                pm.send(packet);
-                if (midiEventMonitor != null) {
-                    midiEventMonitor.catchMidiEvent(packet.message, packet.timeStamp, packet.senderType);
+                if (packet.message != null) {
+                    pm.send(packet);
+                    if (midiEventMonitor != null) {
+                        midiEventMonitor.catchMidiEvent(packet.message, packet.timeStamp, packet.senderType);
+                    }
                 }
 
                 i.remove();

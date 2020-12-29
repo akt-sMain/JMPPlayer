@@ -221,8 +221,8 @@ public class SelectSynthsizerDialog extends JMPDialog {
                         }
                         else if (listName.equals(JMSYNTH_ITEM_NAME) == true) {
                             vendor += "Akt";
-                            version += "1.00";
-                            description += "Self-made built-in synthesizer (made by Akt)";
+                            version += jmsynth.Version.NO;
+                            description += "Self-made built-in 8bit tune synthesizer (made by Akt)";
                         }
                         else {
                             MidiDevice dev = MidiSystem.getMidiDevice(infosOfRecv[devIndex]);

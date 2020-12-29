@@ -5,6 +5,17 @@ import jlib.gui.IJmpWindow;
 
 public interface IWindowManager {
 
+    public static final String WINDOW_NAME_MAIN = "MAIN";
+    public static final String WINDOW_NAME_FILE_LIST = "FILE_LIST";
+    public static final String WINDOW_NAME_HISTORY = "HISTORY";
+    public static final String WINDOW_NAME_MIDI_SETUP = "MIDI_SETUP";
+    public static final String WINDOW_NAME_MIDI_MONITOR = "MIDI_MONITOR";
+    public static final String WINDOW_NAME_MIDI_SENDER = "MIDI_SENDER";
+    public static final String WINDOW_NAME_LANGUAGE = "LANGUAGE";
+    public static final String WINDOW_NAME_LICENSE = "LICENSE";
+    public static final String WINDOW_NAME_FFMPEG = "FFMPEG";
+    public static final String WINDOW_NAME_PLUGIN_MANAGER = "PLUGIN_MANAGER";
+
     /**
      * MainWindow取得
      *

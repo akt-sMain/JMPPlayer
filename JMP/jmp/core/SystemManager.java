@@ -98,6 +98,15 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     private String syscommonPath = "";
     private String skinPath = "";
 
+    public static void consoleOutSystemInfo() {
+        JMPFlags.Log.cprintln("Date : " + Utility.getCurrentTimeStr());
+        JMPFlags.Log.cprintln("Java : " + Platform.getJavaVersion());
+        JMPFlags.Log.cprintln("OS   : " + Platform.getOSName());
+        JMPFlags.Log.cprintln("SLaF : " + UIManager.getSystemLookAndFeelClassName());
+        JMPFlags.Log.cprintln("CLaF : " + UIManager.getCrossPlatformLookAndFeelClassName());
+        JMPFlags.Log.cprintln();
+    }
+
     SystemManager(int pri) {
         super(pri, "system");
     }

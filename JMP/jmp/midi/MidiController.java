@@ -39,12 +39,14 @@ public class MidiController implements IMidiController {
     public boolean sendMidiMessage(byte[] data, long timeStamp) {
 //        MidiMessage sendMsg = null;
         MidiByteMessage byteMessage = new MidiByteMessage(data);
-//        try {
-//            // 可能であればShortMessageに変換する
-//            sendMsg = byteMessage.convertShortMessage();
-//        }
-//        catch (InvalidMidiDataException e) {
-//            sendMsg = byteMessage;
+//        if (MidiByte.isChannelMessage(data, data.length) == true) {
+//            try {
+//                // 可能であればShortMessageに変換する
+//                sendMsg = byteMessage.convertShortMessage();
+//            }
+//            catch (InvalidMidiDataException e) {
+//                sendMsg = byteMessage;
+//            }
 //        }
         return sendMidiMessage(byteMessage, timeStamp);
     }

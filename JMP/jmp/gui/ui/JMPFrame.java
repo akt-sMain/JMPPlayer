@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 
 import jlib.gui.IJmpWindow;
 import jmp.core.JMPCore;
+import jmp.core.WindowManager;
 
 public class JMPFrame extends JFrame implements IJMPComponentUI, IJmpWindow {
 
@@ -42,6 +43,9 @@ public class JMPFrame extends JFrame implements IJMPComponentUI, IJmpWindow {
             }
         }
         super.setVisible(b);
+
+        // メインウィンドウを更新する
+        JMPCore.getWindowManager().repaint(WindowManager.WINDOW_NAME_MAIN);
     }
 
     @Override

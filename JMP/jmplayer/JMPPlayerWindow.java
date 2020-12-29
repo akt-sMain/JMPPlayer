@@ -55,7 +55,6 @@ import jmp.core.SoundManager;
 import jmp.core.SystemManager;
 import jmp.core.WindowManager;
 import jmp.gui.JmpPlayerLaunch;
-import jmp.gui.JmpQuickLaunch;
 import jmp.gui.VersionInfoDialog;
 import jmp.gui.ui.ControlButtonUI;
 import jmp.gui.ui.DropFileCallbackHandler;
@@ -242,7 +241,13 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         panel_3.add(panel_4, BorderLayout.SOUTH);
         panel_4.setLayout(new GridLayout(0, 2, 0, 0));
 
-        panel_6 = new JmpPlayerLaunch();
+        if (JMPCore.getWindowManager() == null) {
+            /* デザイナーがエラーになるためJPanelに差し替える */
+            panel_6 = new JPanel();
+        }
+        else {
+            panel_6 = new JmpPlayerLaunch();
+        }
         panel_4.add(panel_6);
 
         labelPositionTime = new JLabel(String.format(CURRENT_TIME_FORMAT, "00:00", "00:00"));
@@ -1080,13 +1085,6 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         labelPositionTime.setText(String.format(CURRENT_TIME_FORMAT, posStr, lengthStr));
 
         // slider.setToolTipText(String.valueOf(slider.getValue()));
-
-        // 再描画
-        repaint();
-
-        for (JmpQuickLaunch launch : JmpQuickLaunch.Accessor) {
-            launch.repaint();
-        }
     }
 
     /**

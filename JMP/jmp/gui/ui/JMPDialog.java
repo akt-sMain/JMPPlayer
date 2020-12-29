@@ -11,6 +11,7 @@ import javax.swing.JDialog;
 
 import jlib.gui.IJmpWindow;
 import jmp.core.JMPCore;
+import jmp.core.WindowManager;
 
 public class JMPDialog extends JDialog implements IJMPComponentUI, IJmpWindow {
 
@@ -119,6 +120,9 @@ public class JMPDialog extends JDialog implements IJMPComponentUI, IJmpWindow {
             }
         }
         super.setVisible(b);
+
+        // メインウィンドウを更新する
+        JMPCore.getWindowManager().repaint(WindowManager.WINDOW_NAME_MAIN);
     }
 
     @Override

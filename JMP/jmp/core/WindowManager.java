@@ -34,16 +34,6 @@ public class WindowManager extends AbstractManager implements IWindowManager {
 
     public static final Rectangle DEFAULT_PLAYER_WINDOW_SIZE = new Rectangle(20, 20, 480, 210);
 
-    public static final String WINDOW_NAME_MAIN = "MAIN";
-    public static final String WINDOW_NAME_FILE_LIST = "FILE_LIST";
-    public static final String WINDOW_NAME_HISTORY = "HISTORY";
-    public static final String WINDOW_NAME_MIDI_SETUP = "MIDI_SETUP";
-    public static final String WINDOW_NAME_MIDI_MONITOR = "MIDI_MONITOR";
-    public static final String WINDOW_NAME_MIDI_SENDER = "MIDI_SENDER";
-    public static final String WINDOW_NAME_LANGUAGE = "LANGUAGE";
-    public static final String WINDOW_NAME_LICENSE = "LICENSE";
-    public static final String WINDOW_NAME_FFMPEG = "FFMPEG";
-    public static final String WINDOW_NAME_PLUGIN_MANAGER = "PLUGIN_MANAGER";
     public static final String[] WINDOW_NAMELIST = { WINDOW_NAME_MAIN, WINDOW_NAME_FILE_LIST, WINDOW_NAME_HISTORY, WINDOW_NAME_MIDI_SETUP,
             WINDOW_NAME_MIDI_MONITOR, WINDOW_NAME_MIDI_SENDER, WINDOW_NAME_LANGUAGE, WINDOW_NAME_LICENSE, WINDOW_NAME_FFMPEG, WINDOW_NAME_PLUGIN_MANAGER };
 
@@ -293,5 +283,21 @@ public class WindowManager extends AbstractManager implements IWindowManager {
             return;
         }
         builtinSynthFrame.setVisible(false);
+    }
+
+    public void repaint(String name) {
+        IJmpWindow win = getWindow(name);
+        repaint(win);
+    }
+
+    public void repaint(IJmpWindow win) {
+        if (win != null) {
+            if (win instanceof Component) {
+                Component w = (Component)win;
+                if (w != null) {
+                    w.repaint();
+                }
+            }
+        }
     }
 }

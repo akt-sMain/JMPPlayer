@@ -7,6 +7,7 @@ import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
+import jmp.core.SystemManager;
 import jmp.core.TaskManager;
 import jmp.core.WindowManager;
 import jmp.task.ICallbackFunction;
@@ -237,6 +238,8 @@ public class JMPLoader {
 
         // invokeメソッドからの起動はLibraryモードではない
         JMPFlags.LibraryMode = false;
+
+        SystemManager.consoleOutSystemInfo();
 
         // ライブラリ初期化処理
         boolean result = initLibrary(config, standAlonePlugin);
