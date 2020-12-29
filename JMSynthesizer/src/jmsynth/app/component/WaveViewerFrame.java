@@ -221,6 +221,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         btnSetup = new JButton("Setup");
         btnSetup.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                setupDialog.setLocation(WaveViewerFrame.this.getX() + 20, WaveViewerFrame.this.getY() + 20);
                 setupDialog.setVisible(true);
             }
         });

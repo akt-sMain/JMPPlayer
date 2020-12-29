@@ -265,7 +265,7 @@ public class MidiInterface implements Receiver {
             // ret = new OscillatorSet(WaveType.SINE);
         }
         else if (104 <= pc && pc < 112) {
-            // エスニック
+            // ethnic
             ret = new OscillatorSet(WaveType.PULSE);
         }
         else if (112 <= pc && pc < 120) {

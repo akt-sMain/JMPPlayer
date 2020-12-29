@@ -248,7 +248,7 @@ public class MultiWaveViewerPanel extends JPanel {
 
         // データ点描画
         boolean output = false;
-        Color waveColor = Color.CYAN;
+        Color waveColor = Color.ORANGE;
         int xoffset = 0;
         int yCenter = this.getHeight() / 2;
         int vWidth = this.getWidth();
