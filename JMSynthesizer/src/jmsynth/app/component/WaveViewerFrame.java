@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
 
 import jmsynth.JMSoftSynthesizer;
@@ -34,7 +36,6 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
     private JCheckBox chckbxWave15;
     private JCheckBox chckbxWave16;
     private JButton btnAllOff;
-    private JCheckBox chckbxTraceshift;
     private JButton btnSetup;
 
     private ChannelSetupDialog setupDialog = null;
@@ -42,6 +43,10 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
     private MidiInterface midiInterface = null;
     private JMSoftSynthesizer softSynth = null;
     private JCheckBox chckbxAutoOscChange;
+    private final ButtonGroup buttonGroup = new ButtonGroup();
+    private JRadioButton rdbtnModeDetail;
+    private JRadioButton rdbtnModeMerge;
+    private JRadioButton rdbtnModeSpectrum;
 
     /**
      * Create the frame.
@@ -151,11 +156,6 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         btnAllOff.setBounds(12, 58, 77, 21);
         contentPane.add(btnAllOff);
 
-        chckbxTraceshift = new JCheckBox("detail");
-        chckbxTraceshift.addActionListener(this);
-        chckbxTraceshift.setBounds(97, 26, 103, 21);
-        contentPane.add(chckbxTraceshift);
-
         JButton btnAllOn = new JButton("All ON");
         btnAllOn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -216,7 +216,6 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         chckbxWave14.setSelected(bb);
         chckbxWave15.setSelected(bb);
         chckbxWave16.setSelected(bb);
-        chckbxTraceshift.setSelected(bb);
 
         btnSetup = new JButton("Setup");
         btnSetup.addActionListener(new ActionListener() {
@@ -237,8 +236,40 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
                 }
             }
         });
-        chckbxAutoOscChange.setBounds(204, 26, 141, 21);
+        chckbxAutoOscChange.setBounds(585, 26, 141, 21);
         contentPane.add(chckbxAutoOscChange);
+
+        rdbtnModeDetail = new JRadioButton("Detail");
+        rdbtnModeDetail.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateLabel();
+            }
+        });
+        buttonGroup.add(rdbtnModeDetail);
+        rdbtnModeDetail.setSelected(true);
+        rdbtnModeDetail.setBounds(97, 26, 91, 21);
+        contentPane.add(rdbtnModeDetail);
+
+        rdbtnModeMerge = new JRadioButton("Merge");
+        rdbtnModeMerge.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateLabel();
+            }
+        });
+        buttonGroup.add(rdbtnModeMerge);
+        rdbtnModeMerge.setBounds(192, 26, 77, 21);
+        contentPane.add(rdbtnModeMerge);
+
+        rdbtnModeSpectrum = new JRadioButton("Spectrum");
+        rdbtnModeSpectrum.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateLabel();
+            }
+        });
+        rdbtnModeSpectrum.setVisible(false);
+        buttonGroup.add(rdbtnModeSpectrum);
+        rdbtnModeSpectrum.setBounds(273, 26, 113, 21);
+        contentPane.add(rdbtnModeSpectrum);
 
         setupDialog = new ChannelSetupDialog(synth);
         updateLabel();
@@ -252,7 +283,15 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
     }
 
     private void updateLabel() {
-        panel.traceShift = chckbxTraceshift.isSelected();
+        if (rdbtnModeDetail.isSelected() == true) {
+            panel.traceViewMode = MultiWaveViewerPanel.TRACE_VIEW_MODE_DETAIL;
+        }
+        else if (rdbtnModeMerge.isSelected() == true) {
+            panel.traceViewMode = MultiWaveViewerPanel.TRACE_VIEW_MODE_MERGE;
+        }
+        else {
+            panel.traceViewMode = MultiWaveViewerPanel.TRACE_VIEW_MODE_SPECT;
+        }
         panel.visibleWave[0] = chckbxWave1.isSelected();
         panel.visibleWave[1] = chckbxWave2.isSelected();
         panel.visibleWave[2] = chckbxWave3.isSelected();
@@ -276,7 +315,6 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        updateLabel();
     }
 
     public void setWaveColorTable(Color[] waveColorTable) {

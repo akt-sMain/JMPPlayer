@@ -252,13 +252,13 @@ public class ChannelSetupDialog extends JDialog {
             @Override
             public void mousePressed(MouseEvent e) {
                 int ch = getChannel();
-                synth.noteOn(ch, 68, 100);
+                synth.noteOn(ch, 60, 100);
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 int ch = getChannel();
-                synth.noteOff(ch, 68);
+                synth.noteOff(ch, 60);
             }
         });
         btnTest.addActionListener(new ActionListener() {

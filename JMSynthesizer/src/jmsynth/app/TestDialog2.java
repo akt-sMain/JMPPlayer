@@ -121,6 +121,10 @@ public class TestDialog2 extends WaveViewerFrame {
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                if (SoftSequencer.getSequence() == null) {
+                    return;
+                }
+
                 if (SoftSequencer.isRunning() == true) {
                     SoftSequencer.stop();
                 }

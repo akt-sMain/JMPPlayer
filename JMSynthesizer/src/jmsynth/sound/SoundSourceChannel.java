@@ -136,8 +136,6 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         super.start();
     }
 
-    IOscillator osc2 = new SinWaveOscillator();
-
     public synchronized int makeTone(byte[] data, int bufSize) {
         int length = Math.min(bufSize, data.length);
 
