@@ -14,7 +14,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
 import jmsynth.app.component.IWaveRepaintListener;
-import jmsynth.enverope.Envelope;
+import jmsynth.envelope.Envelope;
 import jmsynth.oscillator.IOscillator;
 import jmsynth.oscillator.NoisWaveOscillator;
 import jmsynth.oscillator.OscillatorSet.WaveType;
@@ -157,7 +157,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
                 if (envelope.getReleaseTime() > 0.0) {
                     // リリース処理
-                    if (tone.isReleaseFlag() == true && tone.getEnveropeOffset() <= 0.0) {
+                    if (tone.isReleaseFlag() == true && tone.getEnvelopeOffset() <= 0.0) {
                         int note = tone.getNote();
                         noteOff(0, note);
                     }
@@ -333,7 +333,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                     Tone t = tonePool.pop();
                     t.setNote(note);
                     t.setReleaseFlag(false);
-                    t.resetEnveropeOffset();
+                    t.resetEnvelopeOffset();
                     t.setVelocity(velocity);
                     t.setStartMills();
                     activeTones.add(t);

@@ -24,11 +24,6 @@ public class NoisWaveOscillator implements IOscillator {
 
         double overallLevel = (double) (tone.getOverallLevel() * 2.0);// ネイティブに変数ロード
 
-        /* ベロシティー設定 */
-        //double velocity = (byte) ((tone.getVelocity() + tone.getExpression()) / 15);
-        //velocity *= tone.getEnveropeOffset();
-        //velocity *= LEVEL_OFFSET;
-
         byte y = 0;
         for (int i = 0; i < length; i = i + 2) {
             toneStep++;

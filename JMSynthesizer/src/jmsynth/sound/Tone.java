@@ -22,7 +22,7 @@ public class Tone {
 
     private float vibratoDepth = 0;
 
-    private double enveropeOffset = 1.0;
+    private double envelopeOffset = 1.0;
     private long startMills = 0;
 
     private boolean releaseFlag = false;
@@ -84,7 +84,7 @@ public class Tone {
     }
 
     public void setOverallLevel() {
-        this.overallLevel = (int) (((double)velocity / (double)8) * ((double)expression / (double)127) * (double)enveropeOffset);
+        this.overallLevel = (int) (((double)velocity / (double)8) * ((double)expression / (double)127) * (double)envelopeOffset);
 
     }
 
@@ -147,17 +147,17 @@ public class Tone {
         this.vibratoDepth = vibratoDepth;
     }
 
-    public double getEnveropeOffset() {
-        return this.enveropeOffset;
+    public double getEnvelopeOffset() {
+        return this.envelopeOffset;
     }
 
-    public void setEnveropeOffset(double enveropeOffset) {
-        this.enveropeOffset = enveropeOffset;
+    public void setEnvelopeOffset(double envelopeOffset) {
+        this.envelopeOffset = envelopeOffset;
         setOverallLevel();
     }
 
-    public void resetEnveropeOffset() {
-        this.enveropeOffset = 1.0;
+    public void resetEnvelopeOffset() {
+        this.envelopeOffset = 1.0;
     }
 
     public long getStartMills() {
@@ -166,7 +166,7 @@ public class Tone {
 
     public void setStartMills(long startMills) {
         this.startMills = startMills;
-        setEnveropeOffset(0.0);
+        setEnvelopeOffset(0.0);
     }
     public void setStartMills() {
         setStartMills(System.currentTimeMillis());

@@ -1,4 +1,4 @@
-package jmsynth.enverope;
+package jmsynth.envelope;
 
 import java.util.Vector;
 
@@ -14,10 +14,10 @@ public class EnvelopeFactory implements Runnable {
         timerThread.setPriority(Thread.MAX_PRIORITY);
     }
 
-    public Envelope newEnveropeInstance() {
-        return newEnveropeInstance(0.0, 0.0, 1.0, 0.1);
+    public Envelope newEnvelopeInstance() {
+        return newEnvelopeInstance(0.0, 0.0, 1.0, 0.1);
     }
-    public Envelope newEnveropeInstance(double a, double d, double s, double r) {
+    public Envelope newEnvelopeInstance(double a, double d, double s, double r) {
         Envelope e = new Envelope();
         e.setAttackTime(a);
         e.setDecayTime(d);

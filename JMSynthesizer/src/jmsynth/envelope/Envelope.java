@@ -1,4 +1,4 @@
-package jmsynth.enverope;
+package jmsynth.envelope;
 
 import java.util.Vector;
 
@@ -29,7 +29,7 @@ public class Envelope {
                 try {
                     Tone tone = (Tone) targetTones.get(i);
 
-                    double offset = tone.getEnveropeOffset();
+                    double offset = tone.getEnvelopeOffset();
                     long startTime = tone.getStartMills();
                     long elapsedTime = current - startTime;
                     if (tone.isReleaseFlag() == true) {
@@ -55,12 +55,12 @@ public class Envelope {
                             //System.out.println("s : " + offset);
                         }
                     }
-                    
+
                     if (offset < 0.0) {
                         //System.out.println("" + elapsedTime);
                         offset = 0.0;
                     }
-                    tone.setEnveropeOffset(offset);
+                    tone.setEnvelopeOffset(offset);
                 }
                 catch (ArrayIndexOutOfBoundsException aiobe) {
                     // ArrayIndexOutOfBoundsExceptionは起きがち

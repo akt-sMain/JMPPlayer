@@ -1,6 +1,6 @@
 package jmsynth.sound;
 
-import jmsynth.enverope.Envelope;
+import jmsynth.envelope.Envelope;
 import jmsynth.oscillator.OscillatorSet;
 import jmsynth.oscillator.OscillatorSet.WaveType;
 

@@ -12,7 +12,7 @@ import jmsynth.sound.ISynthController;
 
 public class MidiInterface implements Receiver {
 
-    ISynthController controller = null;
+    private ISynthController controller = null;
 
     private boolean isAutoSelectOscillator = true;
 

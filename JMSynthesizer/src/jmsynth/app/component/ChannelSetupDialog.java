@@ -26,11 +26,13 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import jmsynth.JMSoftSynthesizer;
-import jmsynth.enverope.Envelope;
+import jmsynth.envelope.Envelope;
 import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.oscillator.WaveGenerater;
 
 public class ChannelSetupDialog extends JDialog {
+
+    private static final int TEST_NOTE_NUMBER = 53;
 
     private JMSoftSynthesizer synth = null;
     private final JPanel contentPanel = new JPanel();
@@ -119,13 +121,13 @@ public class ChannelSetupDialog extends JDialog {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setColor(strColor);
             g2d.setFont(new Font(Font.DIALOG, Font.PLAIN, 10));
-            g2d.drawString("a = " + aInt + " ms", fx, fy);
+            g2d.drawString("A: " + aInt + " ms", fx, fy);
             fy += fspan;
-            g2d.drawString("d = " + dInt + " ms", fx, fy);
+            g2d.drawString("D: " + dInt + " ms", fx, fy);
             fy += fspan;
-            g2d.drawString("s = " + s + "", fx, fy);
+            g2d.drawString("S: " + s + "", fx, fy);
             fy += fspan;
-            g2d.drawString("r = " + rInt + " ms", fx, fy);
+            g2d.drawString("R: " + rInt + " ms", fx, fy);
 //            fy += fspan;
 //            g2d.drawString("osc = " + wave, fx, fy);
         }
@@ -365,13 +367,13 @@ public class ChannelSetupDialog extends JDialog {
                         @Override
                         public void mousePressed(MouseEvent e) {
                             int ch = getChannel();
-                            synth.noteOn(ch, 53, 100);
+                            synth.noteOn(ch, TEST_NOTE_NUMBER, 100);
                         }
 
                         @Override
                         public void mouseReleased(MouseEvent e) {
                             int ch = getChannel();
-                            synth.noteOff(ch, 53);
+                            synth.noteOff(ch, TEST_NOTE_NUMBER);
                         }
                     });
                     btnTest.addActionListener(new ActionListener() {
