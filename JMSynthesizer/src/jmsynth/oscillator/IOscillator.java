@@ -9,6 +9,7 @@ public interface IOscillator {
     public static enum WaveType {
         SINE,
         SAW,
+        SAW_REVERSE,
         SQUARE,
         TRIANGLE,
         PULSE,

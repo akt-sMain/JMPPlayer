@@ -2,13 +2,13 @@ package jmsynth.oscillator;
 
 import jmsynth.sound.Tone;
 
-public class RectWaveOscillator implements IOscillator {
+public class SquareWaveOscillator implements IOscillator {
 
-    private static final double DUTY_THRESHOLD = 0.04;
+    private static final double DUTY_THRESHOLD = 0.02;
     private static final double DUTY_OFFSET = 0.5;
     private static double LEVEL_OFFSET = COMMON_LEVEL_OFFSET;
 
-    public RectWaveOscillator() {
+    public SquareWaveOscillator() {
     }
 
     @Override
@@ -27,6 +27,7 @@ public class RectWaveOscillator implements IOscillator {
             toneStep++;
             double f = (1.0 * toneStep / amplitude) - (toneStep / amplitude);
 
+            /* 若干ゆがませる */
             if (f > 0.5) {
                 y = (byte) ((data[i] + (overallLevel)) / 1.1);
                 if (f < 0.5 + DUTY_THRESHOLD) {

@@ -4,7 +4,7 @@ import jmsynth.sound.Tone;
 
 public class PulseWaveOscillator implements IOscillator {
 
-    private static final double DUTY_THRESHOLD = 0.04;
+    private static final double DUTY_THRESHOLD = 0.02;
     private static final double DUTY_OFFSET = 0.5;
     private static double LEVEL_OFFSET = COMMON_LEVEL_OFFSET;
 

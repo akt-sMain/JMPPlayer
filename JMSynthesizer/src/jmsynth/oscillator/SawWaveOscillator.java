@@ -6,7 +6,14 @@ public class SawWaveOscillator implements IOscillator {
 
     private static double LEVEL_OFFSET = COMMON_LEVEL_OFFSET;
 
+    private boolean reverseMode = false;
+
     public SawWaveOscillator() {
+        this.reverseMode = false;
+    }
+
+    public SawWaveOscillator(boolean reverseMode) {
+        this.reverseMode = reverseMode;
     }
 
     @Override
@@ -22,8 +29,11 @@ public class SawWaveOscillator implements IOscillator {
         for (int i = 0; i < length; i = i + 2) {
             step++;
             double f = (1.0 * step / amplitude) - (step / amplitude);
+            if (this.reverseMode == true) {
+                f = 1.0 - f;
+            }
 
-            y = (byte)(((2.0 * (1.0 - f)) * overallLeval) - (overallLeval));
+            y = (byte)(((2.0 * f) * overallLeval) - (overallLeval));
 
             /* Lch 分 */
             data[i] += y;

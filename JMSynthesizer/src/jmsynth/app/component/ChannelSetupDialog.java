@@ -18,8 +18,10 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import jmsynth.JMSoftSynthesizer;
@@ -38,13 +40,24 @@ public class ChannelSetupDialog extends JDialog {
     private JSlider sliderR;
     private JButton btnTest;
 
-    //"SAW", "TRIANGLE", "SQUARE", "PULSE", "SINE", "NOIS"
+    // "SAW", "TRIANGLE", "SQUARE", "PULSE", "SINE", "NOIS"
     private static final String WAVE_STR_SAW = "SAW";
+    private static final String WAVE_STR_REVERSE_SAW = "REVERSE_SAW";
     private static final String WAVE_STR_TRIANGLE = "TRIANGLE";
     private static final String WAVE_STR_SQUARE = "SQUARE";
     private static final String WAVE_STR_PULSE = "PULSE";
     private static final String WAVE_STR_SINE = "SINE";
     private static final String WAVE_STR_NOIS = "NOIS";
+
+    private static final String[] WAVE_STR_ITEMS = new String[] { //
+            WAVE_STR_SAW, //
+            WAVE_STR_REVERSE_SAW, //
+            WAVE_STR_TRIANGLE, //
+            WAVE_STR_SQUARE, //
+            WAVE_STR_PULSE, //
+            WAVE_STR_SINE, //
+            WAVE_STR_NOIS //
+    };//
 
     private class EnvelopeViewPanel extends JPanel {
 
@@ -82,7 +95,7 @@ public class ChannelSetupDialog extends JDialog {
             s = env.getSustainLevel();
             r = env.getReleaseTime();
             paintCurve(g, a, d, s, r, ma, md, mr, Color.GRAY);
-            paintInfo(g, w - 90, 90, 10, (int)((double)ma * a), (int)((double)md * d), s, (int)((double)mr * r), wave, Color.GRAY);
+            paintInfo(g, w - 90, 90, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), wave, Color.GRAY);
 
             wave = comboBoxWaveType.getSelectedItem().toString();
             a = getAttackSli();
@@ -90,8 +103,8 @@ public class ChannelSetupDialog extends JDialog {
             s = getSustainSli();
             r = getReleaseSli();
             paintCurve(g, a, d, s, r, ma, md, mr, Color.GREEN);
-            paintInfo(g, w - 90 + 1, 16, 10, (int)((double)ma * a), (int)((double)md * d), s, (int)((double)mr * r), wave, Color.DARK_GRAY);
-            paintInfo(g, w - 90, 15, 10, (int)((double)ma * a), (int)((double)md * d), s, (int)((double)mr * r), wave, Color.GREEN);
+            paintInfo(g, w - 90 + 1, 16, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), wave, Color.DARK_GRAY);
+            paintInfo(g, w - 90, 15, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), wave, Color.GREEN);
         }
 
         private void paintInfo(Graphics g, int x, int y, int fontSize, int aInt, int dInt, double s, int rInt, String wave, Color strColor) {
@@ -187,8 +200,9 @@ public class ChannelSetupDialog extends JDialog {
                 repaint();
             }
         });
-        comboBoxWaveType.setModel(new DefaultComboBoxModel(new String[] { WAVE_STR_SAW, WAVE_STR_TRIANGLE, WAVE_STR_SQUARE, WAVE_STR_PULSE, WAVE_STR_SINE, WAVE_STR_NOIS }));
-        comboBoxWaveType.setBounds(12, 10, 106, 21);
+        comboBoxWaveType.setModel(
+                new DefaultComboBoxModel(WAVE_STR_ITEMS));
+        comboBoxWaveType.setBounds(12, 10, 136, 21);
         contentPanel.add(comboBoxWaveType);
 
         comboBoxChannel = new JComboBox<String>();
@@ -200,7 +214,7 @@ public class ChannelSetupDialog extends JDialog {
         });
         comboBoxChannel
                 .setModel(new DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16" }));
-        comboBoxChannel.setBounds(130, 10, 106, 21);
+        comboBoxChannel.setBounds(160, 10, 106, 21);
         contentPanel.add(comboBoxChannel);
 
         EnvelopeViewPanel panelEnvelopeView = new EnvelopeViewPanel();
@@ -214,7 +228,7 @@ public class ChannelSetupDialog extends JDialog {
                 repaint();
             }
         });
-        sliderA.setBounds(12, 200, 410, 26);
+        sliderA.setBounds(49, 200, 373, 26);
         contentPanel.add(sliderA);
 
         sliderD = new JSlider();
@@ -224,7 +238,7 @@ public class ChannelSetupDialog extends JDialog {
                 repaint();
             }
         });
-        sliderD.setBounds(12, 236, 410, 26);
+        sliderD.setBounds(49, 236, 373, 26);
         contentPanel.add(sliderD);
 
         sliderS = new JSlider();
@@ -234,7 +248,7 @@ public class ChannelSetupDialog extends JDialog {
                 repaint();
             }
         });
-        sliderS.setBounds(12, 272, 410, 26);
+        sliderS.setBounds(49, 272, 373, 26);
         contentPanel.add(sliderS);
 
         sliderR = new JSlider();
@@ -244,29 +258,32 @@ public class ChannelSetupDialog extends JDialog {
                 repaint();
             }
         });
-        sliderR.setBounds(12, 308, 410, 26);
+        sliderR.setBounds(49, 308, 373, 26);
         contentPanel.add(sliderR);
-
-        btnTest = new JButton("Test");
-        btnTest.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int ch = getChannel();
-                synth.noteOn(ch, 60, 100);
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                int ch = getChannel();
-                synth.noteOff(ch, 60);
-            }
-        });
-        btnTest.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            }
-        });
-        btnTest.setBounds(331, 10, 91, 21);
-        contentPanel.add(btnTest);
+        
+        JLabel lblNewLabel = new JLabel("A");
+        lblNewLabel.setFont(new Font("Dialog", Font.BOLD, 12));
+        lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        lblNewLabel.setBounds(12, 200, 25, 26);
+        contentPanel.add(lblNewLabel);
+        
+        JLabel lblD = new JLabel("D");
+        lblD.setHorizontalAlignment(SwingConstants.CENTER);
+        lblD.setFont(new Font("Dialog", Font.BOLD, 12));
+        lblD.setBounds(12, 236, 25, 26);
+        contentPanel.add(lblD);
+        
+        JLabel lblS = new JLabel("S");
+        lblS.setHorizontalAlignment(SwingConstants.CENTER);
+        lblS.setFont(new Font("Dialog", Font.BOLD, 12));
+        lblS.setBounds(12, 272, 25, 26);
+        contentPanel.add(lblS);
+        
+        JLabel lblR = new JLabel("R");
+        lblR.setHorizontalAlignment(SwingConstants.CENTER);
+        lblR.setFont(new Font("Dialog", Font.BOLD, 12));
+        lblR.setBounds(12, 308, 25, 26);
+        contentPanel.add(lblR);
         {
             JPanel buttonPane = new JPanel();
             buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -279,7 +296,26 @@ public class ChannelSetupDialog extends JDialog {
                     repaint();
                 }
             });
-            buttonPane.add(btnReset);
+
+                    btnTest = new JButton("Test");
+                    buttonPane.add(btnTest);
+                    btnTest.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            int ch = getChannel();
+                            synth.noteOn(ch, 60, 100);
+                        }
+
+                        @Override
+                        public void mouseReleased(MouseEvent e) {
+                            int ch = getChannel();
+                            synth.noteOff(ch, 60);
+                        }
+                    });
+                    btnTest.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                        }
+                    });
             {
                 JButton okButton = new JButton("Sync");
                 okButton.addActionListener(new ActionListener() {
@@ -292,6 +328,7 @@ public class ChannelSetupDialog extends JDialog {
                 buttonPane.add(okButton);
                 getRootPane().setDefaultButton(okButton);
             }
+            buttonPane.add(btnReset);
             {
                 JButton cancelButton = new JButton("Cancel");
                 cancelButton.addActionListener(new ActionListener() {
@@ -339,6 +376,9 @@ public class ChannelSetupDialog extends JDialog {
         if (sWave.equalsIgnoreCase(WAVE_STR_SAW) == true) {
             synth.setOscillator(ch, WaveType.SAW);
         }
+        else if (sWave.equalsIgnoreCase(WAVE_STR_REVERSE_SAW) == true) {
+            synth.setOscillator(ch, WaveType.SAW_REVERSE);
+        }
         else if (sWave.equalsIgnoreCase(WAVE_STR_TRIANGLE) == true) {
             synth.setOscillator(ch, WaveType.TRIANGLE);
         }
@@ -381,7 +421,7 @@ public class ChannelSetupDialog extends JDialog {
     }
 
     private String getWaveStr(WaveType type) {
-        String sWave = "NOIS";
+        String sWave = WAVE_STR_NOIS;
         switch (type) {
             case NOISE:
                 sWave = WAVE_STR_NOIS;
@@ -391,6 +431,9 @@ public class ChannelSetupDialog extends JDialog {
                 break;
             case SAW:
                 sWave = WAVE_STR_SAW;
+                break;
+            case SAW_REVERSE:
+                sWave = WAVE_STR_REVERSE_SAW;
                 break;
             case SINE:
                 sWave = WAVE_STR_SINE;

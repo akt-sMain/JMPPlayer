@@ -26,10 +26,10 @@ public class TriWaveOscillator implements IOscillator {
 
             double f = (1.0 * toneStep / amplitude) - (toneStep / amplitude);
             if (f < 0.5) {
-                y = (byte) ((data[i] + (-overallLevel + (overallLevel * (f / 1) * 4))));
+                y = (byte) ((data[i] + (-overallLevel + (overallLevel * f * 4))));
             }
             else {
-                y = (byte) ((data[i] + (overallLevel * 3 - (overallLevel * (f / 1) * 4))));
+                y = (byte) ((data[i] + (overallLevel * 3 - (overallLevel * f * 4))));
             }
 
             /* Lch 分 */

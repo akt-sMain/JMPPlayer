@@ -2,6 +2,7 @@ package jmsynth.sound;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -18,9 +19,9 @@ import jmsynth.oscillator.IOscillator;
 import jmsynth.oscillator.IOscillator.WaveType;
 import jmsynth.oscillator.NoisWaveOscillator;
 import jmsynth.oscillator.PulseWaveOscillator;
-import jmsynth.oscillator.RectWaveOscillator;
 import jmsynth.oscillator.SawWaveOscillator;
 import jmsynth.oscillator.SinWaveOscillator;
+import jmsynth.oscillator.SquareWaveOscillator;
 import jmsynth.oscillator.TriWaveOscillator;
 
 public class SoundSourceChannel extends Thread implements ISynthController {
@@ -65,7 +66,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
     private WaveType waveType = WaveType.SINE;
 
-    HashMap<WaveType, IOscillator> oscMap = null;
+    private Map<WaveType, IOscillator> oscMap = null;
 
     protected Envelope envelope = null;
 
@@ -76,19 +77,27 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         init(channel, oscType, polyphony, null);
     }
 
-    private void init(int channel, WaveType oscType, int polyphony, Envelope envelope) {
-        oscMap = new HashMap<IOscillator.WaveType, IOscillator>(){
+    /* オシレータリスト生成 */
+    public static Map<IOscillator.WaveType, IOscillator> makeOscillatorMap() {
+        Map<IOscillator.WaveType, IOscillator> map = new HashMap<IOscillator.WaveType, IOscillator>(){
             {
                 put(WaveType.SINE, new SinWaveOscillator());
-                put(WaveType.SAW, new SawWaveOscillator());
-                put(WaveType.SQUARE, new RectWaveOscillator());
+                put(WaveType.SAW, new SawWaveOscillator(false));
+                put(WaveType.SAW_REVERSE, new SawWaveOscillator(true));
+                put(WaveType.SQUARE, new SquareWaveOscillator());
                 put(WaveType.TRIANGLE, new TriWaveOscillator());
                 put(WaveType.PULSE, new PulseWaveOscillator());
                 put(WaveType.NOISE, new NoisWaveOscillator());
             }
         };
+        return map;
+    }
 
+    private void init(int channel, WaveType oscType, int polyphony, Envelope envelope) {
         this.channel = channel;
+
+        this.oscMap = makeOscillatorMap();
+
         setOscillator(oscType);
 
         // ライン情報取得
