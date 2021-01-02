@@ -6,8 +6,8 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 
 import jlib.midi.MidiByte;
-import jmsynth.oscillator.IOscillator.WaveType;
 import jmsynth.oscillator.OscillatorSet;
+import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.sound.ISynthController;
 
 public class MidiInterface implements Receiver {

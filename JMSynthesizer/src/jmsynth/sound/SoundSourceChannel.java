@@ -16,8 +16,8 @@ import javax.sound.sampled.SourceDataLine;
 import jmsynth.app.component.IWaveRepaintListener;
 import jmsynth.enverope.Envelope;
 import jmsynth.oscillator.IOscillator;
-import jmsynth.oscillator.IOscillator.WaveType;
 import jmsynth.oscillator.NoisWaveOscillator;
+import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.oscillator.PulseWaveOscillator;
 import jmsynth.oscillator.SawWaveOscillator;
 import jmsynth.oscillator.SinWaveOscillator;
@@ -78,8 +78,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     }
 
     /* オシレータリスト生成 */
-    public static Map<IOscillator.WaveType, IOscillator> makeOscillatorMap() {
-        Map<IOscillator.WaveType, IOscillator> map = new HashMap<IOscillator.WaveType, IOscillator>(){
+    public static Map<WaveType, IOscillator> makeOscillatorMap() {
+        Map<WaveType, IOscillator> map = new HashMap<WaveType, IOscillator>(){
             {
                 put(WaveType.SINE, new SinWaveOscillator());
                 put(WaveType.SAW, new SawWaveOscillator(false));
@@ -213,43 +213,6 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         }
         line.close();
     }
-
-    // float input[] …入力信号の格納されたバッファ。
-    // flaot output[] …フィルタ処理した値を書き出す出力信号のバッファ。
-    // int size …入力信号・出力信号のバッファのサイズ。
-    // float samplerate … サンプリング周波数。
-    // float freq … カットオフ周波数。
-    // float q … フィルタのQ値。
-//    private void lowpass(byte input[], byte output[], int size, double samplerate, double freq, double q) {
-//        // フィルタ係数を計算する
-//        double omega = 2.0f * 3.14159265f * freq / samplerate;
-//        double alpha = Math.sin(omega) / (2.0f * q);
-//
-//        double a0 = 1.0f + alpha;
-//        double a1 = -2.0f * Math.cos(omega);
-//        double a2 = 1.0f - alpha;
-//        double b0 = (1.0f - Math.cos(omega)) / 2.0f;
-//        double b1 = 1.0f - Math.cos(omega);
-//        double b2 = (1.0f - Math.cos(omega)) / 2.0f;
-//
-//        // フィルタ計算用のバッファ変数。
-//        double in1 = 0.0f;
-//        double in2 = 0.0f;
-//        double out1 = 0.0f;
-//        double out2 = 0.0f;
-//
-//        // フィルタを適用
-//        for (int i = 0; i < size; i+=2) {
-//            // 入力信号にフィルタを適用し、出力信号として書き出す。
-//            output[i] = (byte) (b0 / a0 * input[i] + b1 / a0 * in1 + b2 / a0 * in2 - a1 / a0 * out1 - a2 / a0 * out2);
-//
-//            in2 = in1; // 2つ前の入力信号を更新
-//            in1 = input[i]; // 1つ前の入力信号を更新
-//
-//            out2 = out1; // 2つ前の出力信号を更新
-//            out1 = output[i]; // 1つ前の出力信号を更新
-//        }
-//    }
 
     public void callWaveRepaint(byte[] data) {
         if (waveRepaintListener == null) {

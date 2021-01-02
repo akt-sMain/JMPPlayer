@@ -3,7 +3,7 @@ package jmsynth;
 import jmsynth.app.component.IWaveRepaintListener;
 import jmsynth.enverope.Envelope;
 import jmsynth.enverope.EnvelopeFactory;
-import jmsynth.oscillator.IOscillator.WaveType;
+import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.sound.ISynthController;
 import jmsynth.sound.SoundSourceChannel;
 

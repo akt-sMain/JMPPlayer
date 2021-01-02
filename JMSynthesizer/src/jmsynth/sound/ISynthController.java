@@ -1,8 +1,8 @@
 package jmsynth.sound;
 
 import jmsynth.enverope.Envelope;
-import jmsynth.oscillator.IOscillator.WaveType;
 import jmsynth.oscillator.OscillatorSet;
+import jmsynth.oscillator.OscillatorSet.WaveType;
 
 public interface ISynthController {
     abstract void openDevice();

@@ -3,9 +3,17 @@ package jmsynth.oscillator;
 import java.util.ArrayList;
 import java.util.List;
 
-import jmsynth.oscillator.IOscillator.WaveType;
-
 public class OscillatorSet {
+
+    public static enum WaveType {
+        SINE,
+        SAW,
+        SAW_REVERSE,
+        SQUARE,
+        TRIANGLE,
+        PULSE,
+        NOISE
+    }
 
     // 複数のオシレータ設計を考慮（出力側は未実装）
     private List<WaveType> oscs = null;

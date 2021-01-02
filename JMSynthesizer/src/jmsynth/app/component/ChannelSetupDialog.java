@@ -13,6 +13,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.Arrays;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -26,7 +27,8 @@ import javax.swing.border.EmptyBorder;
 
 import jmsynth.JMSoftSynthesizer;
 import jmsynth.enverope.Envelope;
-import jmsynth.oscillator.IOscillator.WaveType;
+import jmsynth.oscillator.OscillatorSet.WaveType;
+import jmsynth.oscillator.WaveGenerater;
 
 public class ChannelSetupDialog extends JDialog {
 
@@ -50,12 +52,12 @@ public class ChannelSetupDialog extends JDialog {
     private static final String WAVE_STR_NOIS = "NOIS";
 
     private static final String[] WAVE_STR_ITEMS = new String[] { //
+            WAVE_STR_SINE, //
             WAVE_STR_SAW, //
             WAVE_STR_REVERSE_SAW, //
             WAVE_STR_TRIANGLE, //
             WAVE_STR_SQUARE, //
             WAVE_STR_PULSE, //
-            WAVE_STR_SINE, //
             WAVE_STR_NOIS //
     };//
 
@@ -94,6 +96,7 @@ public class ChannelSetupDialog extends JDialog {
             d = env.getDecayTime();
             s = env.getSustainLevel();
             r = env.getReleaseTime();
+            paintWave(g, synth.getWaveType(ch), Color.GRAY);
             paintCurve(g, a, d, s, r, ma, md, mr, Color.GRAY);
             paintInfo(g, w - 90, 90, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), wave, Color.GRAY);
 
@@ -102,6 +105,7 @@ public class ChannelSetupDialog extends JDialog {
             d = getDecaySli();
             s = getSustainSli();
             r = getReleaseSli();
+            paintWave(g, toWaveType(wave), Color.YELLOW);
             paintCurve(g, a, d, s, r, ma, md, mr, Color.GREEN);
             paintInfo(g, w - 90 + 1, 16, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), wave, Color.DARK_GRAY);
             paintInfo(g, w - 90, 15, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), wave, Color.GREEN);
@@ -122,8 +126,66 @@ public class ChannelSetupDialog extends JDialog {
             g2d.drawString("s = " + s + "", fx, fy);
             fy += fspan;
             g2d.drawString("r = " + rInt + " ms", fx, fy);
-            fy += fspan;
-            g2d.drawString("osc = " + wave, fx, fy);
+//            fy += fspan;
+//            g2d.drawString("osc = " + wave, fx, fy);
+        }
+
+        private void paintWave(Graphics g, WaveType type, Color lineColor) {
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setColor(lineColor);
+
+            int w = this.getWidth();
+            int h = this.getHeight();
+            int mergin = 100;
+            int overallLeval = 50;
+            int left = mergin;
+            int right = w - (mergin);
+            int top = 2;
+            int under = h - 4;
+
+            int length = right - left + (mergin * 2);
+            byte[] data = new byte[100];
+            Arrays.fill(data, (byte)0x00);
+            int[] xPoint = new int[length];
+            int[] yPoint = new int[length];
+
+            int cy = (under - top) / 2;
+
+            for (int i=0; i<length; i++) {
+                if ((i < mergin) || (i >= length - mergin)) {
+                    xPoint[i] = i;
+                    yPoint[i] = cy;
+                }
+                else {
+                    xPoint[i] = i;
+
+                    double f = (double)(i - mergin) / (double)(length - (mergin * 2));
+                    switch (type) {
+                        case SAW:
+                            yPoint[i] = WaveGenerater.makeSawWave(f, overallLeval, false) + cy;
+                            break;
+                        case SAW_REVERSE:
+                            yPoint[i] = WaveGenerater.makeSawWave(f, overallLeval, true) + cy;
+                            break;
+                        case SINE:
+                            yPoint[i] = WaveGenerater.makeSinWave(f, overallLeval, false) + cy;
+                            break;
+                        case SQUARE:
+                            yPoint[i] = WaveGenerater.makeSquareWave(f, overallLeval, false) + cy;
+                            break;
+                        case PULSE:
+                            yPoint[i] = WaveGenerater.makePulseWave(f, overallLeval, false) + cy;
+                            break;
+                        case TRIANGLE:
+                            yPoint[i] = WaveGenerater.makeTriangleWave(f, overallLeval, false) + cy;
+                            break;
+                        default:
+                            yPoint[i] = ((under - top) / 2);
+                            break;
+                    }
+                }
+            }
+            g2d.drawPolyline(xPoint, yPoint, length);
         }
 
         private void paintCurve(Graphics g, double at, double dt, double sl, double rt, long ma, long md, long mr, Color lineColor) {
@@ -260,25 +322,25 @@ public class ChannelSetupDialog extends JDialog {
         });
         sliderR.setBounds(49, 308, 373, 26);
         contentPanel.add(sliderR);
-        
+
         JLabel lblNewLabel = new JLabel("A");
         lblNewLabel.setFont(new Font("Dialog", Font.BOLD, 12));
         lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
         lblNewLabel.setBounds(12, 200, 25, 26);
         contentPanel.add(lblNewLabel);
-        
+
         JLabel lblD = new JLabel("D");
         lblD.setHorizontalAlignment(SwingConstants.CENTER);
         lblD.setFont(new Font("Dialog", Font.BOLD, 12));
         lblD.setBounds(12, 236, 25, 26);
         contentPanel.add(lblD);
-        
+
         JLabel lblS = new JLabel("S");
         lblS.setHorizontalAlignment(SwingConstants.CENTER);
         lblS.setFont(new Font("Dialog", Font.BOLD, 12));
         lblS.setBounds(12, 272, 25, 26);
         contentPanel.add(lblS);
-        
+
         JLabel lblR = new JLabel("R");
         lblR.setHorizontalAlignment(SwingConstants.CENTER);
         lblR.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -303,13 +365,13 @@ public class ChannelSetupDialog extends JDialog {
                         @Override
                         public void mousePressed(MouseEvent e) {
                             int ch = getChannel();
-                            synth.noteOn(ch, 60, 100);
+                            synth.noteOn(ch, 53, 100);
                         }
 
                         @Override
                         public void mouseReleased(MouseEvent e) {
                             int ch = getChannel();
-                            synth.noteOff(ch, 60);
+                            synth.noteOff(ch, 53);
                         }
                     });
                     btnTest.addActionListener(new ActionListener() {
@@ -362,6 +424,32 @@ public class ChannelSetupDialog extends JDialog {
         return ch;
     }
 
+    public WaveType toWaveType(String sWave) {
+        WaveType type = WaveType.SINE;
+        if (sWave.equalsIgnoreCase(WAVE_STR_SAW) == true) {
+            type = WaveType.SAW;
+        }
+        else if (sWave.equalsIgnoreCase(WAVE_STR_REVERSE_SAW) == true) {
+            type = WaveType.SAW_REVERSE;
+        }
+        else if (sWave.equalsIgnoreCase(WAVE_STR_TRIANGLE) == true) {
+            type = WaveType.TRIANGLE;
+        }
+        else if (sWave.equalsIgnoreCase(WAVE_STR_SQUARE) == true) {
+            type = WaveType.SQUARE;
+        }
+        else if (sWave.equalsIgnoreCase(WAVE_STR_PULSE) == true) {
+            type = WaveType.PULSE;
+        }
+        else if (sWave.equalsIgnoreCase(WAVE_STR_SINE) == true) {
+            type = WaveType.SINE;
+        }
+        else {
+            type = WaveType.NOISE;
+        }
+        return type;
+    }
+
     public void sync() {
         int ch = getChannel();
         Envelope e = synth.getEnvelope(ch);
@@ -373,27 +461,7 @@ public class ChannelSetupDialog extends JDialog {
          * SAW TRIANGLE SQUARE PULSE SINE NOIS
          */
         String sWave = comboBoxWaveType.getSelectedItem().toString();
-        if (sWave.equalsIgnoreCase(WAVE_STR_SAW) == true) {
-            synth.setOscillator(ch, WaveType.SAW);
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_REVERSE_SAW) == true) {
-            synth.setOscillator(ch, WaveType.SAW_REVERSE);
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_TRIANGLE) == true) {
-            synth.setOscillator(ch, WaveType.TRIANGLE);
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_SQUARE) == true) {
-            synth.setOscillator(ch, WaveType.SQUARE);
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_PULSE) == true) {
-            synth.setOscillator(ch, WaveType.PULSE);
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_SINE) == true) {
-            synth.setOscillator(ch, WaveType.SINE);
-        }
-        else {
-            synth.setOscillator(ch, WaveType.NOISE);
-        }
+        synth.setOscillator(ch, toWaveType(sWave));
 
         e.setAttackTime(getAttackSli());
         e.setDecayTime(getDecaySli());

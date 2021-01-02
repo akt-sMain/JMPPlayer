@@ -6,16 +6,6 @@ public interface IOscillator {
 
     public static double COMMON_LEVEL_OFFSET = 1.0;
 
-    public static enum WaveType {
-        SINE,
-        SAW,
-        SAW_REVERSE,
-        SQUARE,
-        TRIANGLE,
-        PULSE,
-        NOISE
-    }
-
     /**
      * 音色生成メソッド
      * SampleRate：44100
