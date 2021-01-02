@@ -62,6 +62,7 @@ import jmp.gui.ui.IButtonMarkPaint;
 import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.IJMPComponentUI;
 import jmp.gui.ui.SequencerSliderUI;
+import jmp.lang.DefineLanguage;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.task.ICallbackFunction;
 import jmp.util.JmpUtil;
@@ -175,6 +176,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
     private JMenuItem mntmJmSynth;
     private JLabel lblVolumeSlider;
     private JSlider mntmVolumeSlider;
+    private JMenuItem mntmPlayInit;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -389,6 +391,14 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                 JMPCore.getDataManager().setLoopPlay(loopPlayCheckBoxMenuItem.isSelected());
             }
         });
+
+        mntmPlayInit = new JMenuItem("最初から再生");
+        mntmPlayInit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JMPCore.getSoundManager().initPlay();
+            }
+        });
+        playerMenu.add(mntmPlayInit);
         playerMenu.add(loopPlayCheckBoxMenuItem);
 
         autoPlayCheckBox = new JCheckBoxMenuItem("連続再生");
@@ -1359,6 +1369,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         autoPlayCheckBox.setText(lm.getLanguageStr(LangID.Continuous_playback));
         playlistItem.setText(lm.getLanguageStr(LangID.Playlist));
         menuItemHistory.setText(lm.getLanguageStr(LangID.History));
+        mntmPlayInit.setText(lm.getLanguageStr(LangID.Play_from_the_beginning));
 
         pluginMenu.setText(lm.getLanguageStr(LangID.Plugin));
         addPluginMenuItem.setText(lm.getLanguageStr(LangID.Add_plugin));
@@ -1373,7 +1384,12 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         mntmMidiMonitor.setText(lm.getLanguageStr(LangID.MIDI_message_monitor));
         mntmMidimessagesender.setText(lm.getLanguageStr(LangID.MIDI_message_sender));
         lblCommon.setText("-- " + lm.getLanguageStr(LangID.Common_settings) + " --");
-        menuItemLanguage.setText(lm.getLanguageStr(LangID.Language) + "(Language)");
+        if (JMPCore.getDataManager().getLanguage() == DefineLanguage.INDEX_LANG_ENGLISH) {
+            menuItemLanguage.setText(lm.getLanguageStr(LangID.Language));
+        }
+        else {
+            menuItemLanguage.setText(lm.getLanguageStr(LangID.Language) + "(Language)");
+        }
         mntmInitLayout.setText(lm.getLanguageStr(LangID.Layout_initialization));
 
         mnTool.setText(lm.getLanguageStr(LangID.Tool));
