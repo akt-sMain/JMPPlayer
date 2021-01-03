@@ -92,6 +92,12 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         };
         return map;
     }
+    private IOscillator toOscillator(WaveType type) {
+        if (oscMap.containsKey(type) == false) {
+            return oscMap.get(WaveType.SINE);
+        }
+        return oscMap.get(type);
+    }
 
     private void init(int channel, WaveType oscType, int polyphony, Envelope envelope) {
         this.channel = channel;
@@ -430,6 +436,13 @@ public class SoundSourceChannel extends Thread implements ISynthController {
             if (tone == null) {
                 continue;
             }
+            if (tones[tone.getNote()] != null) {
+                // 発声中の音声を止める
+                if ((envelope.getReleaseTime() > 0.0) && (tone.isReleaseFlag() == false)) {
+                    tone.setReleaseFlag(true);
+                }
+                noteOff(ch, tone.getNote());
+            }
             tone.reset();
         }
     }
@@ -503,7 +516,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
     public void setOscillator(WaveType oscType) {
         this.waveType = oscType;
-        setOscillator(oscMap.get(oscType));
+        setOscillator(toOscillator(oscType));
     }
 
     @Override
@@ -544,6 +557,11 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         pitch_sc = 2;
         allNoteOff(0);
         resetAllController(0);
+        setVolume(0, 1.0f);
+        setExpression(0, 127);
+        pitchBend(0, 0);
+        setNRPN(0, 0);
+        setPan(0, 64);
     }
 
 }
