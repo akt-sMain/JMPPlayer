@@ -5,7 +5,6 @@ import java.util.Arrays;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 
-import jlib.midi.MidiByte;
 import jmsynth.oscillator.OscillatorSet;
 import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.sound.ISynthController;
@@ -30,43 +29,43 @@ public class MidiInterface implements Receiver {
         }
         byte[] aMessage = message.getMessage();
         int length = message.getLength();
-        if (MidiByte.isChannelMessage(aMessage, length) == true) {
+        if (MidiUtil.isChannelMessage(aMessage, length) == true) {
 
-            int channel = MidiByte.getChannel(aMessage, length);
+            int channel = MidiUtil.getChannel(aMessage, length);
             if (controller.checkChannel(channel) == false) {
                 return;
             }
 
-            int command = MidiByte.getCommand(aMessage, length);
-            int data1 = MidiByte.getData1(aMessage, length);
-            int data2 = MidiByte.getData2(aMessage, length);
+            int command = MidiUtil.getCommand(aMessage, length);
+            int data1 = MidiUtil.getData1(aMessage, length);
+            int data2 = MidiUtil.getData2(aMessage, length);
 
             switch (command) {
-                case MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON: {
+                case DefineCommand.NOTE_ON: {
                     controller.noteOn(channel, data1, data2);
                 }
                     break;
-                case MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_OFF: {
+                case DefineCommand.NOTE_OFF: {
                     controller.noteOff(channel, data1);
                 }
                     break;
-                case MidiByte.Status.Channel.ChannelVoice.Fst.PITCH_BEND: {
+                case DefineCommand.PITCH_BEND: {
                     // -8192 ～ +8191
                     int pitch = (data2 << 7) + (data1 & 0x7f) - 8192;
                     controller.pitchBend(channel, pitch);
                 }
                     break;
-                case MidiByte.Status.Channel.ChannelVoice.Fst.CONTROL_CHANGE:
+                case DefineCommand.CONTROL_CHANGE:
 
                     switch (data1) {
-                        case 0x00://
+                        case DefineControlChange.BANK_SELECT_MSB://
                             break;
-                        case 0x01:// モジュレーション・デプス
+                        case DefineControlChange.MODULATION:// モジュレーション・デプス
                             break;
 
-                        case 0x05:// Portamento Time
+                        case DefineControlChange.PORTAMENTO_TIME:// Portamento Time
                             break;
-                        case 0x06:// データエントリ（ＲＰＮ／ＮＲＰＮで指定したパラメータの値を設定）
+                        case DefineControlChange.DATA_ENTRY_MSB:// データエントリ（ＲＰＮ／ＮＲＰＮで指定したパラメータの値を設定）
                                   // System.out.println("NRPN "+NRPN +" " +
                                   // sm.getData2() +" ");
                             switch (controller.getNRPN(channel)) {
@@ -92,7 +91,7 @@ public class MidiInterface implements Receiver {
                                     break;
                             }
                             break;
-                        case 0x07:// メインボリューム(チャンネルの音量を設定）
+                        case DefineControlChange.MAIN_VOLUME:// メインボリューム(チャンネルの音量を設定）
                                   // float vol =
                                   // ((float)sm.getData2()/150);//127
                         {
@@ -100,34 +99,35 @@ public class MidiInterface implements Receiver {
                             controller.setVolume(channel, vol);
                         }
                             break;
-                        case 0x0A:// PAN
+                        case DefineControlChange.PAN_POT:// PAN
                             controller.setPan(channel, data2);
                             break;
-                        case 0x0B:// Expression
+                        case DefineControlChange.EXPRESSION:// Expression
                             controller.setExpression(channel, data2);
                             break;
-                        case 0x60:// variation
-                            controller.setVariation(channel, data2);
-                            break;
-                        case 0x61:// Portamento
-                            break;
-                        case 0x62:// NRPN
+//                        case 0x60:// variation
+//                            controller.setVariation(channel, data2);
+//                            break;
+//                        case 0x61:// Portamento
+//                            break;
+                        case DefineControlChange.NRPN_LSB:// NRPN
                             controller.setNRPN(channel, data2);
                             break;
-                        case 0x65:// 101
+                        case DefineControlChange.RPN_MSB:// 101
                             controller.setNRPN(channel, 0x00);
                             break;
-                        case 0x79:// リセット オール コントローラー
+                        case DefineControlChange.RESET_ALL_CONTROLLER:// リセット オール コントローラー
                             controller.resetAllController(channel);
                             break;
-                        case 0x7B:// All Note Off
+                        case DefineControlChange.ALL_SOUND_OFF:// All Sound Off
+                        case DefineControlChange.ALL_NOTE_OFF:// All Note Off
                             controller.allNoteOff(channel);
                             break;
                         default:
                             break;
                     }
                     break;
-                case MidiByte.Status.Channel.ChannelVoice.Fst.PROGRAM_CHANGE: {
+                case DefineCommand.PROGRAM_CHANGE: {
                     // オシレータの切り替え
                     if (isAutoSelectOscillator() == true) {
                         OscillatorSet osc = getProgramChangeOscillator(channel, data1);
@@ -141,19 +141,19 @@ public class MidiInterface implements Receiver {
                     break;
             }
         }
-        else if (MidiByte.isMetaMessage(aMessage, length) == true) {
+        else if (MidiUtil.isMetaMessage(aMessage, length) == true) {
         }
-        else if (MidiByte.isSystemMessage(aMessage, length) == true) {
-            int status = MidiByte.getStatus(aMessage, length);
+        else if (MidiUtil.isSystemMessage(aMessage, length) == true) {
+            int status = MidiUtil.getStatus(aMessage, length);
             switch (status) {
-                case MidiByte.Status.System.SystemCommon.Fst.SYSEX_BEGIN:
-                    if (Arrays.equals(aMessage, MidiByte.GM_SYSTEM_ON) == true) {
+                case DefineCommand.SYSEX_BEGIN:
+                    if (Arrays.equals(aMessage, MidiUtil.GM_SYSTEM_ON) == true) {
                         controller.systemReset();
                     }
-                    else if (Arrays.equals(aMessage, MidiByte.GS_RESET) == true) {
+                    else if (Arrays.equals(aMessage, MidiUtil.GS_RESET) == true) {
                         controller.systemReset();
                     }
-                    else if (Arrays.equals(aMessage, MidiByte.XG_SYSTEM_ON) == true) {
+                    else if (Arrays.equals(aMessage, MidiUtil.XG_SYSTEM_ON) == true) {
                         controller.systemReset();
                     }
                     break;

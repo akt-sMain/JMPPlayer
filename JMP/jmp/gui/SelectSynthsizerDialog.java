@@ -34,7 +34,7 @@ import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.player.MidiPlayer;
-import jmsynth.JMSoftSynthesizer;
+import jmsynth.JMSynthEngine;
 import jmsynth.midi.MidiInterface;
 
 public class SelectSynthsizerDialog extends JMPDialog {
@@ -430,10 +430,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
                 /* 独自のシンセを選択 */
                 if (listName.equals(JMSYNTH_ITEM_NAME) == true) {
                     // 内蔵シンセ
-                    JMSoftSynthesizer synth = new JMSoftSynthesizer();
-                    synth.openDevice();
-
-                    MidiInterface miface = new MidiInterface(synth);
+                    MidiInterface miface = JMSynthEngine.getMidiInterface();
                     outReciever = miface;
 
                     // Window登録
