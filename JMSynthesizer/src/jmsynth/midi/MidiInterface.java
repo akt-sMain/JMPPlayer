@@ -16,8 +16,11 @@ public class MidiInterface implements Receiver {
 
     private boolean isAutoSelectOscillator = true;
 
+    private ProgramChangeTable table = null;
+
     public MidiInterface(ISynthController controller) {
         this.controller = controller;
+        this.table = new DefaultProgramChangeTable();
     }
 
     @Override
@@ -161,127 +164,11 @@ public class MidiInterface implements Receiver {
     }
 
     private OscillatorSet getProgramChangeOscillator(int ch, int pc) {
-        OscillatorSet ret = new OscillatorSet(WaveType.NOISE);
         if (ch == 9) {
             // 10chはノイズ固定
-            return ret;
+            return new OscillatorSet(WaveType.NOISE);
         }
-
-        if (0 <= pc && pc < 8) {
-            // Piano
-            ret = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
-        }
-        else if (8 <= pc && pc < 16) {
-            // Chromatic Percussion
-            ret = new OscillatorSet(0.04, 0.15, 0.5, 0.2, WaveType.SINE);
-        }
-        else if (16 <= pc && pc < 24) {
-            // Organ
-            ret = new OscillatorSet(0.05, 0.0, 1.0, 0.05, WaveType.SINE);
-        }
-        else if (24 <= pc && pc < 32) {
-            // Guitar
-            ret = new OscillatorSet(0.05, 0.2, 0.65, 0.3, WaveType.SAW);
-        }
-        else if (32 <= pc && pc < 40) {
-            // Bass
-            ret = new OscillatorSet(0.0, 0.67, 0.2, 0.2, 1000, 3000, 1000, WaveType.TRIANGLE);
-        }
-        else if (40 <= pc && pc < 48) {
-            // Strings
-            ret = new OscillatorSet(0.04, 0.0, 1.0, 0.1, WaveType.SAW);
-        }
-        else if (48 <= pc && pc < 56) {
-            // Ensemble
-            ret = new OscillatorSet(0.1, 0.0, 1.0, 0.25, WaveType.SAW);
-        }
-        else if (56 <= pc && pc < 64) {
-            // Brass
-            ret = new OscillatorSet(WaveType.PULSE);
-        }
-        else if (64 <= pc && pc < 72) {
-            // Reed
-            ret = new OscillatorSet(WaveType.PULSE);
-        }
-        else if (72 <= pc && pc < 80) {
-            // Pipe
-            ret = new OscillatorSet(WaveType.PULSE);
-        }
-        else if (80 <= pc && pc < 88) {
-            // Synth Lead
-            switch (pc) {
-                case 80:
-                    // Square Wave
-                    ret = new OscillatorSet(WaveType.SQUARE);
-                    break;
-                case 81:
-                    // Saw Wave
-                    ret = new OscillatorSet(WaveType.SAW);
-                    break;
-                case 82:
-                    // Syn Calliope
-                    ret = new OscillatorSet(0.1, 0.0, 1.0, 0.1, WaveType.TRIANGLE);
-                    break;
-                case 83:
-                    // Chiffer Lead
-                    ret = new OscillatorSet(0.25, 0.0, 1.0, 0.25, WaveType.TRIANGLE);
-                    break;
-                case 84:
-                    // Charang
-                    ret = new OscillatorSet(0.1, 0.0, 1.0, 0.0, WaveType.PULSE);
-                    break;
-                case 85:
-                    // Solo Vox
-                    ret = new OscillatorSet(0.1, 0.0, 1.0, 0.0, WaveType.SAW);
-                    break;
-                case 86:
-                    // 7th Saw
-                    ret = new OscillatorSet(0.1, 0.0, 1.0, 0.0, WaveType.SAW);
-                    break;
-                case 87:
-                default:
-                    // Bass & Lead
-                    ret = new OscillatorSet(0.0, 0.0, 1.0, 0.0, WaveType.SAW);
-                    break;
-            }
-        }
-        else if (88 <= pc && pc < 96) {
-            // Synth Pad
-            // ret = new OscillatorSet(WaveType.NOISE);
-            ret = new OscillatorSet(WaveType.SINE);
-            switch (pc) {
-                case 88:
-                    // Fantasia
-                    ret = new OscillatorSet(0.0, 1.0, 0.25, 0.5, WaveType.SINE);
-                    break;
-                default:
-                    ret = new OscillatorSet(0.15, 0.75, 0.25, 0.5, WaveType.SINE);
-                    break;
-            }
-        }
-        else if (96 <= pc && pc < 104) {
-            // Synth Effects
-            ret = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-            // ret = new OscillatorSet(WaveType.SINE);
-        }
-        else if (104 <= pc && pc < 112) {
-            // ethnic
-            ret = new OscillatorSet(WaveType.PULSE);
-        }
-        else if (112 <= pc && pc < 120) {
-            // Percussive
-            ret = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.PULSE);
-        }
-        else if (120 <= pc && pc < 128) {
-            // Sound effects
-            ret = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-            // ret = new OscillatorSet(WaveType.SINE);
-        }
-        else {
-            ret = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-            // ret = new OscillatorSet(WaveType.SINE);
-        }
-        return ret;
+        return table.getOscillatorSet(pc);
     }
 
     public void open() {
@@ -304,5 +191,4 @@ public class MidiInterface implements Receiver {
     public ISynthController getSynthController() {
         return controller;
     }
-
 }
