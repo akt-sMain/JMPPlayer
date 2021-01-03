@@ -1,5 +1,6 @@
 package jmsynth.app.component;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -138,8 +139,8 @@ public class ChannelSetupDialog extends JDialog {
 
             int w = this.getWidth();
             int h = this.getHeight();
-            int mergin = 100;
-            int overallLeval = 50;
+            int mergin = 120;
+            int overallLeval = 55;
             int left = mergin;
             int right = w - (mergin);
             int top = 2;
@@ -187,7 +188,9 @@ public class ChannelSetupDialog extends JDialog {
                     }
                 }
             }
+            g2d.setStroke(new BasicStroke(2.0f));
             g2d.drawPolyline(xPoint, yPoint, length);
+            g2d.setStroke(new BasicStroke());
         }
 
         private void paintCurve(Graphics g, double at, double dt, double sl, double rt, long ma, long md, long mr, Color lineColor) {
@@ -243,7 +246,9 @@ public class ChannelSetupDialog extends JDialog {
             yPoint[index] = under;
             index++;
 
+            //g2d.setStroke(new BasicStroke(2.0f));
             g2d.drawPolyline(xPoint, yPoint, 5);
+            //g2d.setStroke(new BasicStroke());
         }
     }
 
