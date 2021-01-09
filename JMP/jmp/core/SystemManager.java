@@ -300,8 +300,8 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         JMPCore.getPluginManager().closeAllPlugins();
 
         JMPCore.getDataManager().initializeConfigDatabase();
-        // JMPCore.getDataManager().clearHistory();
-        // JMPCore.getSoundManager().clearPlayList();
+        JMPCore.getDataManager().clearHistory();
+        JMPCore.getSoundManager().clearPlayList();
         JMPCore.getWindowManager().initializeLayout();
 
         // 言語更新

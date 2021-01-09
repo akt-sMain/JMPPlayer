@@ -26,6 +26,9 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
     private ConfigDatabase database = null;
 
+    /** 初期化キー */
+    public static final String CFG_KEY_INITIALIZE = "INITIALIZE";
+
     // ↓KEY追加後、必ずCFG_KEYSETに追加すること!!
     public static final String[] CFG_KEYSET = { CFG_KEY_PLAYLIST, CFG_KEY_MIDIOUT, CFG_KEY_MIDIIN, CFG_KEY_AUTOPLAY, CFG_KEY_LOOPPLAY,
             CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, CFG_KEY_LANGUAGE, CFG_KEY_LOADED_FILE, CFG_KEY_LYRIC_VIEW, CFG_KEY_FFMPEG_PATH, CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE,
