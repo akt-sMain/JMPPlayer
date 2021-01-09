@@ -3,6 +3,7 @@ package jmsynth;
 import jmsynth.app.component.IWaveRepaintListener;
 import jmsynth.envelope.Envelope;
 import jmsynth.envelope.EnvelopeFactory;
+import jmsynth.modulate.ModulatorFactory;
 import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.sound.ISynthController;
 import jmsynth.sound.SoundSourceChannel;
@@ -11,6 +12,7 @@ public class JMSoftSynthesizer implements ISynthController {
 
     protected SoundSourceChannel[] channels = null;
     private EnvelopeFactory envelopeFactory = null;
+    private ModulatorFactory modulatorFactory = null;
 
     /**
      *
@@ -31,24 +33,25 @@ public class JMSoftSynthesizer implements ISynthController {
     private void makeChannel(int polyphony) {
 
         envelopeFactory = new EnvelopeFactory();
+        modulatorFactory = new ModulatorFactory();
 
         channels = new SoundSourceChannel[] { // Midiチャンネル分
-                new SoundSourceChannel(0, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 1ch
-                new SoundSourceChannel(1, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 2ch
-                new SoundSourceChannel(2, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 3ch
-                new SoundSourceChannel(3, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 4ch
-                new SoundSourceChannel(4, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 5ch
-                new SoundSourceChannel(5, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 6ch
-                new SoundSourceChannel(6, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 7ch
-                new SoundSourceChannel(7, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 8ch
-                new SoundSourceChannel(8, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 9ch
+                new SoundSourceChannel(0, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 1ch
+                new SoundSourceChannel(1, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 2ch
+                new SoundSourceChannel(2, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 3ch
+                new SoundSourceChannel(3, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 4ch
+                new SoundSourceChannel(4, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 5ch
+                new SoundSourceChannel(5, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 6ch
+                new SoundSourceChannel(6, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 7ch
+                new SoundSourceChannel(7, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 8ch
+                new SoundSourceChannel(8, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 9ch
                 new SoundSourceChannel(9, WaveType.NOISE, polyphony, envelopeFactory.newEnvelopeInstance(0.0, 0.25, 0.0, 0.0)), // 10ch
-                new SoundSourceChannel(10, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 11ch
-                new SoundSourceChannel(11, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 12ch
-                new SoundSourceChannel(12, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 13ch
-                new SoundSourceChannel(13, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 14ch
-                new SoundSourceChannel(14, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 15ch
-                new SoundSourceChannel(15, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance()), // 16ch
+                new SoundSourceChannel(10, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 11ch
+                new SoundSourceChannel(11, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 12ch
+                new SoundSourceChannel(12, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 13ch
+                new SoundSourceChannel(13, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 14ch
+                new SoundSourceChannel(14, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 15ch
+                new SoundSourceChannel(15, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 16ch
         };
     }
 
@@ -57,6 +60,7 @@ public class JMSoftSynthesizer implements ISynthController {
             channels[i].openDevice();
         }
         envelopeFactory.timerStart();
+        modulatorFactory.timerStart();
     }
 
     @Override
@@ -67,6 +71,9 @@ public class JMSoftSynthesizer implements ISynthController {
 
         if (envelopeFactory != null) {
             envelopeFactory.dispose();
+        }
+        if (modulatorFactory != null) {
+            modulatorFactory.dispose();
         }
     }
 
@@ -178,5 +185,10 @@ public class JMSoftSynthesizer implements ISynthController {
         for (int i=0; i<16; i++) {
             channels[i].systemReset();
         }
+    }
+
+    @Override
+    public void setModulationDepth(int ch, int depth) {
+        channels[ch].setModulationDepth(ch, depth);
     }
 }

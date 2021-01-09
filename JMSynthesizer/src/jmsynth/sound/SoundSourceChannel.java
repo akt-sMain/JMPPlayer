@@ -15,6 +15,7 @@ import javax.sound.sampled.SourceDataLine;
 
 import jmsynth.app.component.IWaveRepaintListener;
 import jmsynth.envelope.Envelope;
+import jmsynth.modulate.Modulator;
 import jmsynth.oscillator.IOscillator;
 import jmsynth.oscillator.NoisWaveOscillator;
 import jmsynth.oscillator.OscillatorSet.WaveType;
@@ -69,12 +70,16 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     private Map<WaveType, IOscillator> oscMap = null;
 
     protected Envelope envelope = null;
+    protected Modulator modulator = null;
 
+    public SoundSourceChannel(int channel, WaveType oscType, int polyphony, Envelope envelope, Modulator modulator) {
+        init(channel, oscType, polyphony, envelope, modulator);
+    }
     public SoundSourceChannel(int channel, WaveType oscType, int polyphony, Envelope envelope) {
-        init(channel, oscType, polyphony, envelope);
+        init(channel, oscType, polyphony, envelope, null);
     }
     public SoundSourceChannel(int channel, WaveType oscType, int polyphony) {
-        init(channel, oscType, polyphony, null);
+        init(channel, oscType, polyphony, null, null);
     }
 
     /* オシレータリスト生成 */
@@ -99,7 +104,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         return oscMap.get(type);
     }
 
-    private void init(int channel, WaveType oscType, int polyphony, Envelope envelope) {
+    private void init(int channel, WaveType oscType, int polyphony, Envelope envelope, Modulator modulator) {
         this.channel = channel;
 
         this.oscMap = makeOscillatorMap();
@@ -127,6 +132,11 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         this.envelope = envelope;
         if (this.envelope != null) {
             this.envelope.setTargetTones(activeTones);
+        }
+
+        this.modulator = modulator;
+        if (this.modulator != null) {
+            this.modulator.setTargetTones(activeTones);
         }
 
         /* 音階データ生成 */
@@ -581,6 +591,14 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         pitchBend(0, 0);
         setNRPN(0, 0);
         setPan(0, 64);
+        setModulationDepth(0, 0);
+    }
+
+    @Override
+    public void setModulationDepth(int ch, int depth) {
+        if (modulator != null) {
+            modulator.setDepth(depth);
+        }
     }
 
 }

@@ -27,6 +27,8 @@ public class Tone {
 
     private boolean releaseFlag = false;
 
+    private float modulationValue = 0;
+
     public Tone() {
     }
 
@@ -136,7 +138,7 @@ public class Tone {
 
     public void setPitch(float pitch) {
         this.pitch = pitch;
-        setFrequency(note2freq(note+pitch));
+        setFrequency(note2freq(note+pitch+modulationValue));
     }
 
     public float getVibratoDepth() {
@@ -178,6 +180,11 @@ public class Tone {
 
     public void setReleaseFlag(boolean releaseFlag) {
         this.releaseFlag = releaseFlag;
+    }
+
+    public void setModulationValue(int modulationValue) {
+        this.modulationValue = (float)modulationValue / (float)8191;
+        setPitch(getPitch()); //ピッチの再計算
     }
 
 }

@@ -61,6 +61,7 @@ public class MidiInterface implements Receiver {
                         case DefineControlChange.BANK_SELECT_MSB://
                             break;
                         case DefineControlChange.MODULATION:// モジュレーション・デプス
+                            controller.setModulationDepth(channel, data2);
                             break;
 
                         case DefineControlChange.PORTAMENTO_TIME:// Portamento Time

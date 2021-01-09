@@ -315,6 +315,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        updateLabel();
     }
 
     public void setWaveColorTable(Color[] waveColorTable) {

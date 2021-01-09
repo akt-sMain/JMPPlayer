@@ -359,14 +359,22 @@ public class MultiWaveViewerPanel extends JPanel {
             double yDelta = vvHeight / 64.0;
             int j = 0;
 
+            final int CLIPPING_PX = 68;
             int xPoints[] = new int[length];
             int yPoints[] = new int[length];
             for (int i = 0; i < d.length; i += 2) {
                 if (d[i] != 0) {
                     output = true;
                 }
+
                 xPoints[j] = xoffset + (int) (xDelta * j);
                 yPoints[j] = (int) (yDelta * d[i]) + yCenter;
+                if (yPoints[j] > (yCenter + CLIPPING_PX)) {
+                    yPoints[j] = (yCenter + CLIPPING_PX);
+                }
+                else if (yPoints[j] < (yCenter - CLIPPING_PX)) {
+                    yPoints[j] = (yCenter - CLIPPING_PX);
+                }
                 j++;
             }
             if (visibleWave[ch] == true) {

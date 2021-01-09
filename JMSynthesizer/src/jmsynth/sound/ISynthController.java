@@ -59,5 +59,7 @@ public interface ISynthController {
 
     abstract Envelope getEnvelope(int ch);
 
+    abstract void setModulationDepth(int ch, int depth);
+
     abstract void systemReset();
 }
