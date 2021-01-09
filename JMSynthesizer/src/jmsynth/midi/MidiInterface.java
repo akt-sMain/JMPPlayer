@@ -130,8 +130,10 @@ public class MidiInterface implements Receiver {
                 case DefineCommand.PROGRAM_CHANGE: {
                     // オシレータの切り替え
                     if (isAutoSelectOscillator() == true) {
-                        OscillatorSet osc = getProgramChangeOscillator(channel, data1);
-                        controller.setOscillator(channel, osc);
+                        if (channel != 9) { //10chはドラム
+                            OscillatorSet osc = getProgramChangeOscillator(channel, data1);
+                            controller.setOscillator(channel, osc);
+                        }
                     }
                     controller.setVolume(channel, 1.0f);
                 }

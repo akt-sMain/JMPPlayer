@@ -323,6 +323,25 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public void noteOn(int ch, int note, int velocity) {
         try {
             if (velocity > 0) {
+                if (tones[note] != null) {
+                    // 重複音声
+                    if (tones[note].isReleaseFlag() == true) {
+                        // リリースの途中破棄
+                        Tone tone = tones[note];
+                        activeTones.remove(tone);
+                        tonePool.push(tone);
+                        tone.setReleaseFlag(false);
+                        tone.setVelocity(0);
+                        tones[note] = null;
+                        if (!oscillator.isToneSync()) {
+                            tone.setTablePointer(0);
+                        }
+                    }
+                    else {
+                        // 単純にNoteOffを送る
+                        noteOff(ch, note);
+                    }
+                }
                 if (tones[note] != null && tones[note].isReleaseFlag() == true) {
                     // リリースの途中破棄
                     Tone tone = tones[note];
