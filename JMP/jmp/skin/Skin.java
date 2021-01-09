@@ -14,6 +14,7 @@ public class Skin {
     public static final String RSRC_FILE_ICON_MIDI = "file_icon_MIDI.png";
     public static final String RSRC_FILE_ICON_WAV = "file_icon_WAV.png";
     public static final String RSRC_FILE_ICON_XML = "file_icon_XML.png";
+    public static final String RSRC_FILE_ICON_MUSIC = "file_icon_MUSIC.png";
     public static final String RSRC_FOLDER_ICON = "folder_icon.png";
     public static final String RSRC_BTN_ICON_PLAY = "btn_icon_PLAY.png";
     public static final String RSRC_BTN_ICON_STOP = "btn_icon_STOP.png";
@@ -27,7 +28,7 @@ public class Skin {
     // ↓File名追加後、必ずLSTに追加すること!!
     private static final String[] LST = { RSRC_FILE_ICON_OTEHER, RSRC_FILE_ICON_MIDI, RSRC_FILE_ICON_WAV, RSRC_FILE_ICON_XML, RSRC_FOLDER_ICON,
             RSRC_BTN_ICON_PLAY, RSRC_BTN_ICON_STOP, RSRC_BTN_ICON_NEXT, RSRC_BTN_ICON_NEXT2, RSRC_BTN_ICON_PREV, RSRC_BTN_ICON_PREV2, RSRC_BTN_ICON_AUTO,
-            RSRC_BTN_ICON_LOOP, RSRC_BTN_ICON_LIST };
+            RSRC_BTN_ICON_LOOP, RSRC_BTN_ICON_LIST, RSRC_FILE_ICON_MUSIC };
 
     private Map<String, Resource> rsrcMap = new HashMap<String, Resource>();
 

@@ -63,8 +63,11 @@ public interface ISystemManager {
     public static final int COMMON_REGKEY_NO_FFMPEG_OTHER = 27;
     /** 歌詞文字エンコード */
     public static final int COMMON_REGKEY_NO_LYRIC_CHARCODE = 28;
+    /** Musicファイル拡張子 */
+    public static final int COMMON_REGKEY_NO_EXTENSION_MUSIC = 29;
+
     /** cregキー数 */
-    public static final int NUMBER_OF_COMMON_REGKEY = 29;
+    public static final int NUMBER_OF_COMMON_REGKEY = 30;
 
     /**
      * スタンドアロンモードか

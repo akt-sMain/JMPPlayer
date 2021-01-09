@@ -75,6 +75,14 @@ public class DefaultImageMaker {
         return defFileXmlIcon;
     }
 
+    private static Image defFileMusicIcon = null;
+    public static Image makeDefaultFileMusicIcon() {
+        if (defFileMusicIcon == null) {
+            defFileMusicIcon = makeDefaultFileIcon(new Color(138, 43, 226), -100);
+        }
+        return defFileMusicIcon;
+    }
+
     private static Image defFileFolderIcon = null;
     public static Image makeDefaultFileFolderIcon() {
         if (defFileFolderIcon == null) {

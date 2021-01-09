@@ -143,6 +143,14 @@ public class ResourceManager extends AbstractManager implements IManager {
         return ret;
     }
 
+    public Image getFileMusicIcon() {
+        Image ret = getResourceImage(Skin.RSRC_FILE_ICON_MUSIC);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultFileMusicIcon();
+        }
+        return ret;
+    }
+
     public Image getFileFolderIcon() {
         Image ret = getResourceImage(Skin.RSRC_FOLDER_ICON);
         if (ret == null) {

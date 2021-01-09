@@ -452,6 +452,7 @@ public class MidiFileListDialog extends JMPFrame {
         String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MIDI));
         String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_WAV));
         String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
+        String[] exMUSIC = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSIC));
 
         /* リスト構築 */
         if (midiFileMap != null) {
@@ -506,6 +507,18 @@ public class MidiFileListDialog extends JMPFrame {
                     }
                 }
             }
+            // Music
+            for (Object key : keys) {
+                String sKey = key.toString();
+                File f = midiFileMap.get(sKey);
+                if (f.isFile() == true) {
+                    if (Utility.checkExtensions(sKey, exMUSIC) == true) {
+                        if (midiFileMap.containsKey(sKey) == true) {
+                            list.add(f);
+                        }
+                    }
+                }
+            }
             // Other
             for (Object key : keys) {
                 String sKey = key.toString();
@@ -527,6 +540,7 @@ public class MidiFileListDialog extends JMPFrame {
             ImageIcon midiIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileMidiIcon());
             ImageIcon wavIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileWavIcon());
             ImageIcon xmlIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileXmlIcon());
+            ImageIcon musicIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileMusicIcon());
             ImageIcon otherIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileOtherIcon());
 
             for (File f : list) {
@@ -554,6 +568,10 @@ public class MidiFileListDialog extends JMPFrame {
                     }
                     else if (Utility.checkExtensions(name, exMUSICXML) == true) {
                         Object[] row = createFileListRows(xmlIcon, "XM", name);
+                        model.addRow(row);
+                    }
+                    else if (Utility.checkExtensions(name, exMUSIC) == true) {
+                        Object[] row = createFileListRows(musicIcon, "MU", name);
                         model.addRow(row);
                     }
                     else {
