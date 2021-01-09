@@ -45,16 +45,17 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
     private JCheckBox chckbxAutoOscChange;
     private final ButtonGroup buttonGroup = new ButtonGroup();
     private JRadioButton rdbtnModeDetail;
-    private JRadioButton rdbtnModeMerge;
     private JRadioButton rdbtnModeSpectrum;
+    private JCheckBox chckbxAutoWaveVisible;
 
     /**
      * Create the frame.
      * @wbp.parser.constructor
      */
     public WaveViewerFrame(JMSoftSynthesizer synth) {
+        setResizable(false);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        setBounds(100, 100, 853, 649);
+        setBounds(100, 100, 853, 662);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
@@ -67,67 +68,67 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         contentPane.add(panel);
 
         chckbxWave1 = new JCheckBox("wave1");
-        chckbxWave1.setBounds(16, 85, 73, 21);
+        chckbxWave1.setBounds(12, 99, 73, 21);
         contentPane.add(chckbxWave1);
 
         chckbxWave2 = new JCheckBox("wave2");
-        chckbxWave2.setBounds(16, 117, 73, 21);
+        chckbxWave2.setBounds(12, 131, 73, 21);
         contentPane.add(chckbxWave2);
 
         chckbxWave3 = new JCheckBox("wave3");
-        chckbxWave3.setBounds(16, 149, 73, 21);
+        chckbxWave3.setBounds(12, 163, 73, 21);
         contentPane.add(chckbxWave3);
 
         chckbxWave4 = new JCheckBox("wave4");
-        chckbxWave4.setBounds(16, 181, 73, 21);
+        chckbxWave4.setBounds(12, 195, 73, 21);
         contentPane.add(chckbxWave4);
 
         chckbxWave5 = new JCheckBox("wave5");
-        chckbxWave5.setBounds(16, 213, 73, 21);
+        chckbxWave5.setBounds(12, 227, 73, 21);
         contentPane.add(chckbxWave5);
 
         chckbxWave6 = new JCheckBox("wave6");
-        chckbxWave6.setBounds(16, 245, 73, 21);
+        chckbxWave6.setBounds(12, 259, 73, 21);
         contentPane.add(chckbxWave6);
 
         chckbxWave7 = new JCheckBox("wave7");
-        chckbxWave7.setBounds(16, 277, 73, 21);
+        chckbxWave7.setBounds(12, 291, 73, 21);
         contentPane.add(chckbxWave7);
 
         chckbxWave8 = new JCheckBox("wave8");
-        chckbxWave8.setBounds(16, 309, 73, 21);
+        chckbxWave8.setBounds(12, 323, 73, 21);
         contentPane.add(chckbxWave8);
 
         chckbxWave9 = new JCheckBox("wave9");
-        chckbxWave9.setBounds(16, 341, 73, 21);
+        chckbxWave9.setBounds(12, 355, 73, 21);
         contentPane.add(chckbxWave9);
 
         chckbxWave10 = new JCheckBox("wave10");
-        chckbxWave10.setBounds(16, 373, 73, 21);
+        chckbxWave10.setBounds(12, 387, 73, 21);
         contentPane.add(chckbxWave10);
 
         chckbxWave11 = new JCheckBox("wave11");
-        chckbxWave11.setBounds(16, 405, 73, 21);
+        chckbxWave11.setBounds(12, 419, 73, 21);
         contentPane.add(chckbxWave11);
 
         chckbxWave12 = new JCheckBox("wave12");
-        chckbxWave12.setBounds(16, 437, 73, 21);
+        chckbxWave12.setBounds(12, 451, 73, 21);
         contentPane.add(chckbxWave12);
 
         chckbxWave13 = new JCheckBox("wave13");
-        chckbxWave13.setBounds(16, 469, 73, 21);
+        chckbxWave13.setBounds(12, 483, 73, 21);
         contentPane.add(chckbxWave13);
 
         chckbxWave14 = new JCheckBox("wave14");
-        chckbxWave14.setBounds(16, 501, 73, 21);
+        chckbxWave14.setBounds(12, 515, 73, 21);
         contentPane.add(chckbxWave14);
 
         chckbxWave15 = new JCheckBox("wave15");
-        chckbxWave15.setBounds(16, 533, 73, 21);
+        chckbxWave15.setBounds(12, 547, 73, 21);
         contentPane.add(chckbxWave15);
 
         chckbxWave16 = new JCheckBox("wave16");
-        chckbxWave16.setBounds(16, 565, 73, 21);
+        chckbxWave16.setBounds(12, 579, 73, 21);
         contentPane.add(chckbxWave16);
 
         btnAllOff = new JButton("All Off");
@@ -153,7 +154,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
                 updateLabel();
             }
         });
-        btnAllOff.setBounds(12, 58, 77, 21);
+        btnAllOff.setBounds(8, 42, 77, 21);
         contentPane.add(btnAllOff);
 
         JButton btnAllOn = new JButton("All ON");
@@ -179,7 +180,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
                 updateLabel();
             }
         });
-        btnAllOn.setBounds(12, 26, 77, 21);
+        btnAllOn.setBounds(8, 10, 77, 21);
         contentPane.add(btnAllOn);
 
         chckbxWave1.addActionListener(this);
@@ -198,24 +199,6 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         chckbxWave14.addActionListener(this);
         chckbxWave15.addActionListener(this);
         chckbxWave16.addActionListener(this);
-
-        boolean bb = true;
-        chckbxWave1.setSelected(bb);
-        chckbxWave2.setSelected(bb);
-        chckbxWave3.setSelected(bb);
-        chckbxWave4.setSelected(bb);
-        chckbxWave5.setSelected(bb);
-        chckbxWave6.setSelected(bb);
-        chckbxWave7.setSelected(bb);
-        chckbxWave8.setSelected(bb);
-        chckbxWave9.setSelected(bb);
-        chckbxWave10.setSelected(bb);
-        chckbxWave11.setSelected(bb);
-        chckbxWave12.setSelected(bb);
-        chckbxWave13.setSelected(bb);
-        chckbxWave14.setSelected(bb);
-        chckbxWave15.setSelected(bb);
-        chckbxWave16.setSelected(bb);
 
         btnSetup = new JButton("Setup");
         btnSetup.addActionListener(new ActionListener() {
@@ -247,18 +230,9 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         });
         buttonGroup.add(rdbtnModeDetail);
         rdbtnModeDetail.setSelected(true);
+        rdbtnModeDetail.setVisible(false);
         rdbtnModeDetail.setBounds(97, 26, 91, 21);
         contentPane.add(rdbtnModeDetail);
-
-        rdbtnModeMerge = new JRadioButton("Merge");
-        rdbtnModeMerge.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                updateLabel();
-            }
-        });
-        buttonGroup.add(rdbtnModeMerge);
-        rdbtnModeMerge.setBounds(192, 26, 77, 21);
-        contentPane.add(rdbtnModeMerge);
 
         rdbtnModeSpectrum = new JRadioButton("Spectrum");
         rdbtnModeSpectrum.addActionListener(new ActionListener() {
@@ -268,10 +242,63 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         });
         rdbtnModeSpectrum.setVisible(false);
         buttonGroup.add(rdbtnModeSpectrum);
-        rdbtnModeSpectrum.setBounds(273, 26, 113, 21);
+        rdbtnModeSpectrum.setBounds(192, 26, 113, 21);
         contentPane.add(rdbtnModeSpectrum);
 
+        chckbxAutoWaveVisible = new JCheckBox("Auto");
+        chckbxAutoWaveVisible.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                panel.visibleAuto = chckbxAutoWaveVisible.isSelected();
+                boolean cbEnable = true;
+                if (chckbxAutoWaveVisible.isSelected() == true) {
+                    cbEnable = false;
+                }
+                else {
+                    cbEnable = true;
+                }
+                chckbxWave1.setEnabled(cbEnable);
+                chckbxWave2.setEnabled(cbEnable);
+                chckbxWave3.setEnabled(cbEnable);
+                chckbxWave4.setEnabled(cbEnable);
+                chckbxWave5.setEnabled(cbEnable);
+                chckbxWave6.setEnabled(cbEnable);
+                chckbxWave7.setEnabled(cbEnable);
+                chckbxWave8.setEnabled(cbEnable);
+                chckbxWave9.setEnabled(cbEnable);
+                chckbxWave10.setEnabled(cbEnable);
+                chckbxWave11.setEnabled(cbEnable);
+                chckbxWave12.setEnabled(cbEnable);
+                chckbxWave13.setEnabled(cbEnable);
+                chckbxWave14.setEnabled(cbEnable);
+                chckbxWave15.setEnabled(cbEnable);
+                chckbxWave16.setEnabled(cbEnable);
+                updateMenu();
+            }
+        });
+        chckbxAutoWaveVisible.setBounds(12, 69, 77, 21);
+        contentPane.add(chckbxAutoWaveVisible);
+
         setupDialog = new ChannelSetupDialog(synth);
+
+
+        boolean bb = false;
+        chckbxWave1.setSelected(bb);
+        chckbxWave2.setSelected(bb);
+        chckbxWave3.setSelected(bb);
+        chckbxWave4.setSelected(bb);
+        chckbxWave5.setSelected(bb);
+        chckbxWave6.setSelected(bb);
+        chckbxWave7.setSelected(bb);
+        chckbxWave8.setSelected(bb);
+        chckbxWave9.setSelected(bb);
+        chckbxWave10.setSelected(bb);
+        chckbxWave11.setSelected(bb);
+        chckbxWave12.setSelected(bb);
+        chckbxWave13.setSelected(bb);
+        chckbxWave14.setSelected(bb);
+        chckbxWave15.setSelected(bb);
+        chckbxWave16.setSelected(bb);
+        chckbxAutoWaveVisible.setSelected(true);
         updateLabel();
     }
 
@@ -282,16 +309,57 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         updateLabel();
     }
 
+    private void updateMenu() {
+        chckbxWave1.setSelected(panel.visibleWave[0]);
+        chckbxWave2.setSelected(panel.visibleWave[1]);
+        chckbxWave3.setSelected(panel.visibleWave[2]);
+        chckbxWave4.setSelected(panel.visibleWave[3]);
+        chckbxWave5.setSelected(panel.visibleWave[4]);
+        chckbxWave6.setSelected(panel.visibleWave[5]);
+        chckbxWave7.setSelected(panel.visibleWave[6]);
+        chckbxWave8.setSelected(panel.visibleWave[7]);
+        chckbxWave9.setSelected(panel.visibleWave[8]);
+        chckbxWave10.setSelected(panel.visibleWave[9]);
+        chckbxWave11.setSelected(panel.visibleWave[10]);
+        chckbxWave12.setSelected(panel.visibleWave[11]);
+        chckbxWave13.setSelected(panel.visibleWave[12]);
+        chckbxWave14.setSelected(panel.visibleWave[13]);
+        chckbxWave15.setSelected(panel.visibleWave[14]);
+        chckbxWave16.setSelected(panel.visibleWave[15]);
+    }
     private void updateLabel() {
         if (rdbtnModeDetail.isSelected() == true) {
             panel.traceViewMode = MultiWaveViewerPanel.TRACE_VIEW_MODE_DETAIL;
         }
-        else if (rdbtnModeMerge.isSelected() == true) {
-            panel.traceViewMode = MultiWaveViewerPanel.TRACE_VIEW_MODE_MERGE;
-        }
         else {
             panel.traceViewMode = MultiWaveViewerPanel.TRACE_VIEW_MODE_SPECT;
         }
+
+        panel.visibleAuto = chckbxAutoWaveVisible.isSelected();
+        boolean cbEnable = true;
+        if (chckbxAutoWaveVisible.isSelected() == true) {
+            cbEnable = false;
+        }
+        else {
+            cbEnable = true;
+        }
+        chckbxWave1.setEnabled(cbEnable);
+        chckbxWave2.setEnabled(cbEnable);
+        chckbxWave3.setEnabled(cbEnable);
+        chckbxWave4.setEnabled(cbEnable);
+        chckbxWave5.setEnabled(cbEnable);
+        chckbxWave6.setEnabled(cbEnable);
+        chckbxWave7.setEnabled(cbEnable);
+        chckbxWave8.setEnabled(cbEnable);
+        chckbxWave9.setEnabled(cbEnable);
+        chckbxWave10.setEnabled(cbEnable);
+        chckbxWave11.setEnabled(cbEnable);
+        chckbxWave12.setEnabled(cbEnable);
+        chckbxWave13.setEnabled(cbEnable);
+        chckbxWave14.setEnabled(cbEnable);
+        chckbxWave15.setEnabled(cbEnable);
+        chckbxWave16.setEnabled(cbEnable);
+
         panel.visibleWave[0] = chckbxWave1.isSelected();
         panel.visibleWave[1] = chckbxWave2.isSelected();
         panel.visibleWave[2] = chckbxWave3.isSelected();

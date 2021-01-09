@@ -163,7 +163,7 @@ public class DefaultProgramChangeTable extends ProgramChangeTable {
         pc++;
         this.sets[pc] = new OscillatorSet(0.1, 0.0, 1.0, 0.25, WaveType.SAW);
         pc++;
-        this.sets[pc] = new OscillatorSet(0.1, 0.0, 1.0, 0.25, WaveType.SAW);
+        this.sets[pc] = new OscillatorSet(0.0, 0.4, 0.0, 0.0, WaveType.PULSE);
         pc++;
 
         /*
@@ -255,7 +255,7 @@ public class DefaultProgramChangeTable extends ProgramChangeTable {
         this.sets[pc] = new OscillatorSet(0.1, 0.0, 1.0, 0.0, WaveType.SAW);
         pc++;
         // Bass & Lead
-        this.sets[pc] = new OscillatorSet(0.0, 0.0, 1.0, 0.0, WaveType.SAW);
+        this.sets[pc] = new OscillatorSet(0.0, 0.0, 1.0, 0.0, WaveType.PULSE);
         pc++;
 
         /*

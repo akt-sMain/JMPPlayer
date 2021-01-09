@@ -41,6 +41,7 @@ public class MultiWaveViewerPanel extends JPanel {
     byte[] d14 = null;
     byte[] d15 = null;
     byte[] d16 = null;
+    public boolean visibleAuto = false;
     public boolean[] visibleWave = new boolean[16];
     public int traceViewMode = TRACE_VIEW_MODE_DETAIL;
 
@@ -174,7 +175,9 @@ public class MultiWaveViewerPanel extends JPanel {
     }
 
     private void repaintWavePane() {
-        repaint();
+        if (isVisible() == true) {
+            repaint();
+        }
     }
 
     private void cinit() {
@@ -245,78 +248,8 @@ public class MultiWaveViewerPanel extends JPanel {
             paintWave(g, d15, 14);
             paintWave(g, d16, 15);
         }
-        else if (traceViewMode == TRACE_VIEW_MODE_MERGE) {
-            int yCenter = this.getHeight() / 2;
-            g2d.setColor(CENTER_COLOR);
-            g2d.drawLine(0, yCenter, this.getWidth(), yCenter);
-            mergeWave(g, d1, d2, d3, d4, d5, d6, d7, d8, d9, d10, d11, d12, d13, d14, d15);
-        }
         else {
             paintSpectrum(g2d);
-        }
-    }
-
-    int[] mergeData = null;
-
-    public void mergeWave(Graphics g, byte[]... acceccer) {
-        if (d1 == null) {
-            return;
-        }
-
-        Graphics2D g2d = (Graphics2D) g;
-        mergeData = new int[d1.length];
-        Arrays.fill(mergeData, 0);
-
-        byte[] data;
-
-        int traceCount = 0;
-        for (int i = 0; i < acceccer.length; i++) {
-            data = acceccer[i];
-            if (data == null) {
-                continue;
-            }
-            if (data.length <= 2) {
-                continue;
-            }
-
-            if (visibleWave[i] == true) {
-                for (int k = 0; k < data.length; k++) {
-                    mergeData[k] += data[k];
-                }
-                traceCount++;
-            }
-        }
-
-        if (traceCount == 0) {
-            return;
-        }
-
-        // データ点描画
-        boolean output = false;
-        Color waveColor = Color.ORANGE;
-        int xoffset = 0;
-        int yCenter = this.getHeight() / 2;
-        int vWidth = this.getWidth();
-        int vHeight = this.getHeight();
-        int vvHeight = this.getHeight();
-
-        int[] d = mergeData;
-
-        if (d != null && d.length > 2) {
-            int length = d.length / 2;
-            double xDelta = (double) vWidth / (double) (length);
-            double yDelta = vvHeight / (64.0 /* traceCount */);
-            int j = 0;
-
-            int xPoints[] = new int[length];
-            int yPoints[] = new int[length];
-            for (int i = 0; i < d.length; i += 2) {
-                xPoints[j] = xoffset + (int) (xDelta * j);
-                yPoints[j] = (int) (yDelta * (d[i] / 1.5)) + yCenter;
-                j++;
-            }
-            g2d.setColor(waveColor);
-            g2d.drawPolyline(xPoints, yPoints, length);
         }
     }
 
@@ -329,6 +262,15 @@ public class MultiWaveViewerPanel extends JPanel {
             return;
         }
 
+        if (visibleAuto == true) {
+            for (int i = 0; i < d.length; i += 2) {
+                if (d[i] != 0) {
+                    visibleWave[ch] = true;
+                    break;
+                }
+            }
+        }
+
         // データ点描画
         boolean output = false;
         Color waveColor = waveColorTable[ch];
@@ -337,20 +279,83 @@ public class MultiWaveViewerPanel extends JPanel {
         int vWidth = this.getWidth();
         int vHeight = this.getHeight();
         int vvHeight = this.getHeight();
+
+        int visibleIndex = ch;
+        int col = 4;
+        int row = 4;
+        int cnt = 0;
+        for (int i=0; i<visibleWave.length; i++) {
+            if (i == ch) {
+                visibleIndex = cnt;
+            }
+            else {
+            }
+
+            if (visibleWave[i] == true) {
+                cnt++;
+            }
+        }
+        if (cnt == 0) {
+            return;
+        }
+
+        switch(cnt) {
+            case 1:
+                row = 1;
+                col = 1;
+                break;
+            case 2:
+                row = 2;
+                col = 1;
+                break;
+            case 3:
+            case 4:
+                row = 2;
+                col = 2;
+                break;
+            case 5:
+            case 6:
+                row = 3;
+                col = 2;
+                break;
+            case 7:
+            case 8:
+            case 9:
+                row = 3;
+                col = 3;
+                break;
+            case 10:
+            case 11:
+            case 12:
+                row = 4;
+                col = 3;
+                break;
+            case 13:
+            case 14:
+            case 15:
+            case 16:
+            default:
+                row = 4;
+                col = 4;
+                break;
+        }
+
         if (traceViewMode == TRACE_VIEW_MODE_DETAIL) {
-            vHeight /= 4;
-            vvHeight /= 4;
-            vWidth /= 4;
-            yCenter = (vHeight / 2) + (vHeight * (ch / 4));
-            xoffset = (vWidth) * (ch % 4);
+            vHeight /= row;
+            vvHeight /= row;
+            vWidth /= col;
+            yCenter = (vHeight / 2) + (vHeight * (visibleIndex / col));
+            xoffset = (vWidth) * (visibleIndex % col);
         }
         else {
             waveColor = new Color(waveColorTable[ch].getRed(), waveColorTable[ch].getGreen(), waveColorTable[ch].getBlue(), 160);
         }
 
-        if (traceViewMode == TRACE_VIEW_MODE_DETAIL) {
-            g2d.setColor(CENTER_COLOR);
-            g2d.drawLine(xoffset, yCenter, xoffset + vWidth, yCenter);
+        if (visibleWave[ch] == true) {
+            if (traceViewMode == TRACE_VIEW_MODE_DETAIL) {
+                g2d.setColor(CENTER_COLOR);
+                g2d.drawLine(xoffset, yCenter, xoffset + vWidth, yCenter);
+            }
         }
 
         if (d != null && d.length > 2) {
@@ -359,7 +364,7 @@ public class MultiWaveViewerPanel extends JPanel {
             double yDelta = vvHeight / 64.0;
             int j = 0;
 
-            final int CLIPPING_PX = 68;
+            int CLIPPING_PX = (vHeight / 2);
             int xPoints[] = new int[length];
             int yPoints[] = new int[length];
             for (int i = 0; i < d.length; i += 2) {
@@ -383,15 +388,17 @@ public class MultiWaveViewerPanel extends JPanel {
             }
         }
 
-        if (traceViewMode == TRACE_VIEW_MODE_DETAIL) {
-            g2d.setColor(Color.DARK_GRAY);
-            g2d.drawString("wave" + (ch + 1), xoffset + 5 + 1, (int) (yCenter - (vHeight / 3)) + 1);
-            g2d.setColor(waveColor);
-            g2d.drawString("wave" + (ch + 1), xoffset + 5, (int) (yCenter - (vHeight / 3)));
-            for (int i = 1; i <= 3; i++) {
-                g2d.setColor(Color.WHITE);
-                g2d.drawLine(vWidth * i, 0, vWidth * i, getHeight());
-                g2d.drawLine(0, vHeight * i, getWidth(), vHeight * i);
+        if (visibleWave[ch] == true) {
+            if (traceViewMode == TRACE_VIEW_MODE_DETAIL) {
+                g2d.setColor(Color.DARK_GRAY);
+                g2d.drawString("wave" + (ch + 1), xoffset + 5 + 1, (int) (yCenter - (vHeight / 3)) + 1);
+                g2d.setColor(waveColor);
+                g2d.drawString("wave" + (ch + 1), xoffset + 5, (int) (yCenter - (vHeight / 3)));
+                for (int i = 1; i <= 3; i++) {
+                    g2d.setColor(Color.WHITE);
+                    g2d.drawLine(vWidth * i, 0, vWidth * i, getHeight());
+                    g2d.drawLine(0, vHeight * i, getWidth(), vHeight * i);
+                }
             }
         }
 
