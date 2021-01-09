@@ -140,7 +140,8 @@ public class SelectSynthsizerDialog extends JMPDialog {
             lblVersionOfRecv.setForeground(Color.DARK_GRAY);
 
             lblDescriptionOfRecv = new JLabel("Description : ");
-            lblDescriptionOfRecv.setBounds(12, 108, 410, 13);
+            lblDescriptionOfRecv.setVerticalAlignment(SwingConstants.TOP);
+            lblDescriptionOfRecv.setBounds(22, 115, 400, 43);
             panel.add(lblDescriptionOfRecv);
             lblDescriptionOfRecv.setForeground(Color.DARK_GRAY);
 
@@ -179,7 +180,8 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
             lblDescriptionOfTrans = new JLabel("Description : ");
             lblDescriptionOfTrans.setForeground(Color.DARK_GRAY);
-            lblDescriptionOfTrans.setBounds(12, 108, 410, 13);
+            lblDescriptionOfTrans.setVerticalAlignment(SwingConstants.TOP);
+            lblDescriptionOfTrans.setBounds(22, 115, 400, 43);
             panel_1.add(lblDescriptionOfTrans);
 
             lblPortOfTrans = new JLabel("");
@@ -211,7 +213,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
                         String vendor = "Vendor : ";
                         String version = "Version : ";
-                        String description = "Description : ";
+                        String description = "";
                         String port = "";
 
                         if (listName.equals(DEFAULT_ITEM_NAME) == true) {
@@ -222,7 +224,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
                         else if (listName.equals(JMSYNTH_ITEM_NAME) == true) {
                             vendor += "Akt";
                             version += jmsynth.Version.NO;
-                            description += "Self-made built-in 8bit tune synthesizer (made by Akt)";
+                            description += "Self-made built-in 8bit tune synthesizer.";
                         }
                         else {
                             MidiDevice dev = MidiSystem.getMidiDevice(infosOfRecv[devIndex]);
@@ -250,7 +252,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
                         String vendor = "Vendor : ";
                         String version = "Version : ";
-                        String description = "Description : ";
+                        String description = "";
                         String port = "";
 
                         if (listName.equals("") == false) {
@@ -415,6 +417,10 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
         try {
 
+            final int COMMIT_BUILT_IN = 0;
+            final int COMMIT_MIDI = 1;
+            int commitType = COMMIT_MIDI;
+
             String listName = comboRecvMode.getSelectedItem().toString().trim();
             Receiver outReciever = null;
             int outDevIndex = getOrgDeviceIndex(listName);
@@ -429,19 +435,8 @@ public class SelectSynthsizerDialog extends JMPDialog {
             else {
                 /* 独自のシンセを選択 */
                 if (listName.equals(JMSYNTH_ITEM_NAME) == true) {
-                    // 内蔵シンセ
-                    MidiInterface miface = JMSynthEngine.getMidiInterface();
-                    outReciever = miface;
-
-                    // Window登録
-                    BuiltinSynthSetupDialog wvf = new BuiltinSynthSetupDialog(miface);
-                    Color[] ct = new Color[16];
-                    for (int i = 0; i < 16; i++) {
-                        String key = String.format(SystemManager.COMMON_REGKEY_CH_COLOR_FORMAT, i + 1);
-                        ct[i] = JMPCore.getSystemManager().getUtilityToolkit().convertCodeToHtmlColor(JMPCore.getSystemManager().getCommonRegisterValue(key));
-                    }
-                    wvf.setWaveColorTable(ct);
-                    JMPCore.getWindowManager().setBuiltinSynthFrame(wvf);
+                    // リソース準備は後で行う
+                    commitType = COMMIT_BUILT_IN;
 
                     JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, JMSYNTH_ITEM_NAME);
                 }
@@ -466,11 +461,34 @@ public class SelectSynthsizerDialog extends JMPDialog {
                     }
                     else {
                         // SoundAPIの自動選択に従う
-                        outReciever = MidiSystem.getReceiver();
+                        try {
+                            outReciever = MidiSystem.getReceiver();
+                        }
+                        catch (Exception e3) {
+                            // ない場合は内蔵シンセを採用する
+                            commitType = COMMIT_BUILT_IN;
+                        }
                     }
                     JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
                 }
             }
+
+            // 内蔵シンセのリソース準備
+            if (commitType == COMMIT_BUILT_IN || outReciever == null) {
+                MidiInterface miface = JMSynthEngine.getMidiInterface();
+                outReciever = miface;
+
+                // Window登録
+                BuiltinSynthSetupDialog wvf = new BuiltinSynthSetupDialog(miface);
+                Color[] ct = new Color[16];
+                for (int i = 0; i < 16; i++) {
+                    String key = String.format(SystemManager.COMMON_REGKEY_CH_COLOR_FORMAT, i + 1);
+                    ct[i] = JMPCore.getSystemManager().getUtilityToolkit().convertCodeToHtmlColor(JMPCore.getSystemManager().getCommonRegisterValue(key));
+                }
+                wvf.setWaveColorTable(ct);
+                JMPCore.getWindowManager().setBuiltinSynthFrame(wvf);
+            }
+
             if ((startupFlag == false) || (pastMidiOutName.equals(JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT)) == false)) {
                 commitListener.commitMidiOut(outReciever);
             }
