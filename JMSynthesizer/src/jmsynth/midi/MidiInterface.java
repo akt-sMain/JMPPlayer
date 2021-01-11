@@ -1,12 +1,9 @@
 package jmsynth.midi;
 
-import java.util.Arrays;
-
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 
 import jmsynth.oscillator.OscillatorSet;
-import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.sound.ISynthController;
 
 public class MidiInterface implements Receiver {
@@ -131,10 +128,8 @@ public class MidiInterface implements Receiver {
                 case DefineCommand.PROGRAM_CHANGE: {
                     // オシレータの切り替え
                     if (isAutoSelectOscillator() == true) {
-                        if (channel != 9) { //10chはドラム
-                            OscillatorSet osc = getProgramChangeOscillator(channel, data1);
-                            controller.setOscillator(channel, osc);
-                        }
+                        OscillatorSet osc = getProgramChangeOscillator(channel, data1);
+                        controller.setOscillator(channel, osc);
                     }
                     controller.setVolume(channel, 1.0f);
                 }
@@ -150,13 +145,13 @@ public class MidiInterface implements Receiver {
             int status = MidiUtil.getStatus(aMessage, length);
             switch (status) {
                 case DefineCommand.SYSEX_BEGIN:
-                    if (Arrays.equals(aMessage, MidiUtil.GM_SYSTEM_ON) == true) {
+                    if (MidiUtil.isGmSystemOn(aMessage) == true) {
                         controller.systemReset();
                     }
-                    else if (Arrays.equals(aMessage, MidiUtil.GS_RESET) == true) {
+                    else if (MidiUtil.isGsReset(aMessage) == true) {
                         controller.systemReset();
                     }
-                    else if (Arrays.equals(aMessage, MidiUtil.XG_SYSTEM_ON) == true) {
+                    else if (MidiUtil.isXgSystemOn(aMessage) == true) {
                         controller.systemReset();
                     }
                     break;
@@ -169,7 +164,7 @@ public class MidiInterface implements Receiver {
     private OscillatorSet getProgramChangeOscillator(int ch, int pc) {
         if (ch == 9) {
             // 10chはノイズ固定
-            return new OscillatorSet(WaveType.NOISE);
+            return table.getDrumOscillatorSet(pc);
         }
         return table.getOscillatorSet(pc);
     }

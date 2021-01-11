@@ -57,8 +57,10 @@ public class NoisWaveOscillator implements IOscillator {
         //int amplitude = (int) (50 - tone.getNote());
 
         /* ノート番号の音階に従って音の高さを調整する */
-        int amplitude = drumSet[tone.getNote()].amp;
         //int amplitude = (int) (tone.getNote() * 0.1);
+
+        /* ドラム音源に近い音をシミュレートする */
+        int amplitude = drumSet[tone.getNote()].amp;
 
         double overallLevel = (double) (tone.getOverallLevel() * 2.0);// ネイティブに変数ロード
 
@@ -66,7 +68,7 @@ public class NoisWaveOscillator implements IOscillator {
         for (int i = 0; i < length; i = i + 2) {
             toneStep++;
 
-            /* toneStepが_amplitudeを超えたら音量を変更する */
+            /* toneStepがamplitudeを超えたら音量を変更する */
             if (toneStep > amplitude) {
                 /* 音量データ生成 */
                 f = (-overallLevel / 2 + (Math.random() * overallLevel));

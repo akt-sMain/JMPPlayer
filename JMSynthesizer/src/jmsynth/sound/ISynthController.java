@@ -1,6 +1,7 @@
 package jmsynth.sound;
 
 import jmsynth.envelope.Envelope;
+import jmsynth.modulate.Modulator;
 import jmsynth.oscillator.OscillatorSet;
 import jmsynth.oscillator.OscillatorSet.WaveType;
 
@@ -60,6 +61,8 @@ public interface ISynthController {
     abstract Envelope getEnvelope(int ch);
 
     abstract void setModulationDepth(int ch, int depth);
+
+    abstract Modulator getModulator(int ch);
 
     abstract void systemReset();
 }

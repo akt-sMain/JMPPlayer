@@ -4,7 +4,7 @@ import jmsynth.sound.Tone;
 
 public abstract class AbstractWaveGenOscillator implements IOscillator {
 
-    private static double LEVEL_OFFSET = COMMON_LEVEL_OFFSET;
+    private final static double LEVEL_OFFSET = COMMON_LEVEL_OFFSET;
     public AbstractWaveGenOscillator() {
     }
 
@@ -25,7 +25,7 @@ public abstract class AbstractWaveGenOscillator implements IOscillator {
         for (int i = 0; i < length; i = i + 2) {
             toneStep++;
             double f = (1.0 * toneStep / amplitude) - (toneStep / amplitude);
-            y = makeWave(f, overallLevel);
+            y = (byte) (makeWave(f, overallLevel) & 0xff);
 
             /* Lch 分 */
             data[i] += y;
@@ -38,7 +38,7 @@ public abstract class AbstractWaveGenOscillator implements IOscillator {
 
     @Override
     public boolean isToneSync() {
-        return true;
+        return false;
     }
 
     @Override

@@ -5,6 +5,8 @@ import java.util.List;
 
 public class OscillatorSet {
 
+    public static final OscillatorSet DRUM_OSCILLATOR_SET = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
+
     public static enum WaveType {
         SINE,
         SAW,

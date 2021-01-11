@@ -1,5 +1,7 @@
 package jmsynth.midi;
 
+import java.util.Arrays;
+
 public class MidiUtil {
     /** GMシステムオンメッセージ */
     public static final byte[] GM_SYSTEM_ON = new byte[] { (byte) 0xf0, 0x7e, 0x7f, 0x09, 0x01, (byte) 0xf7 };
@@ -10,6 +12,16 @@ public class MidiUtil {
 
     /** Metaヘッダーバイト */
     public static final int META = 0xff;
+
+    public static boolean isGmSystemOn(byte[] data) {
+        return Arrays.equals(data, MidiUtil.GM_SYSTEM_ON);
+    }
+    public static boolean isXgSystemOn(byte[] data) {
+        return Arrays.equals(data, MidiUtil.XG_SYSTEM_ON);
+    }
+    public static boolean isGsReset(byte[] data) {
+        return Arrays.equals(data, MidiUtil.GS_RESET);
+    }
 
     /**
      * ステータスバイト取得

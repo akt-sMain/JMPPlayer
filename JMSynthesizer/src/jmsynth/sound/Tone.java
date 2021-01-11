@@ -27,7 +27,7 @@ public class Tone {
 
     private boolean releaseFlag = false;
 
-    private float modulationValue = 0;
+    private float modulationValue = 0.0f;
 
     public Tone() {
     }
@@ -71,7 +71,7 @@ public class Tone {
     }
 
     private double note2freq(double note) {
-        return (double) Math.floor(defaultPitch * Math.pow(2, ((double) note - 69) / 12));
+        return (double) Math.floor(defaultPitch * Math.pow(2.0, ((double) note - 69.0) / 12.0));
     }
 
     public void setNote(int note) {
@@ -86,7 +86,7 @@ public class Tone {
     }
 
     public void setOverallLevel() {
-        this.overallLevel = (int) (((double)velocity / (double)8) * ((double)expression / (double)127) * (double)envelopeOffset);
+        this.overallLevel = (int) (((double)velocity / 8.0) * ((double)expression / 127.0) * (double)envelopeOffset);
 
     }
 
@@ -138,7 +138,7 @@ public class Tone {
 
     public void setPitch(float pitch) {
         this.pitch = pitch;
-        setFrequency(note2freq(note+pitch+modulationValue));
+        setFrequency(note2freq((double)((float)note + pitch + modulationValue)));
     }
 
     public float getVibratoDepth() {
@@ -182,8 +182,8 @@ public class Tone {
         this.releaseFlag = releaseFlag;
     }
 
-    public void setModulationValue(int modulationValue) {
-        this.modulationValue = (float)modulationValue / (float)8191;
+    public void setModulationValue(float modulationValue) {
+        this.modulationValue = modulationValue;
         setPitch(getPitch()); //ピッチの再計算
     }
 

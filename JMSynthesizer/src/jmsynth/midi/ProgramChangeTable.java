@@ -28,4 +28,8 @@ public class ProgramChangeTable {
         }
         return sets[pc];
     }
+
+    public OscillatorSet getDrumOscillatorSet(int pc) {
+        return OscillatorSet.DRUM_OSCILLATOR_SET;
+    }
 }

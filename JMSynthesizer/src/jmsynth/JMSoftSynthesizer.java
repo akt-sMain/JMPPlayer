@@ -3,6 +3,7 @@ package jmsynth;
 import jmsynth.app.component.IWaveRepaintListener;
 import jmsynth.envelope.Envelope;
 import jmsynth.envelope.EnvelopeFactory;
+import jmsynth.modulate.Modulator;
 import jmsynth.modulate.ModulatorFactory;
 import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.sound.ISynthController;
@@ -55,6 +56,7 @@ public class JMSoftSynthesizer implements ISynthController {
         };
     }
 
+    @Override
     public void openDevice() {
         for (int i = 0; i < channels.length; i++) {
             channels[i].openDevice();
@@ -190,5 +192,10 @@ public class JMSoftSynthesizer implements ISynthController {
     @Override
     public void setModulationDepth(int ch, int depth) {
         channels[ch].setModulationDepth(ch, depth);
+    }
+
+    @Override
+    public Modulator getModulator(int ch) {
+        return channels[ch].getModulator(ch);
     }
 }

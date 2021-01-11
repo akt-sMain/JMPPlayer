@@ -28,12 +28,13 @@ import javax.swing.border.EmptyBorder;
 
 import jmsynth.JMSoftSynthesizer;
 import jmsynth.envelope.Envelope;
+import jmsynth.modulate.Modulator;
 import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.oscillator.WaveGenerater;
 
 public class ChannelSetupDialog extends JDialog {
 
-    private static final int TEST_NOTE_NUMBER = 53;
+    private static final int TEST_NOTE_NUMBER = 60;
 
     private JMSoftSynthesizer synth = null;
     private final JPanel contentPanel = new JPanel();
@@ -63,6 +64,7 @@ public class ChannelSetupDialog extends JDialog {
             WAVE_STR_PULSE, //
             WAVE_STR_NOIS //
     };//
+    private JSlider sliderMod;
 
     private class EnvelopeViewPanel extends JPanel {
 
@@ -129,6 +131,8 @@ public class ChannelSetupDialog extends JDialog {
             g2d.drawString("S: " + s + "", fx, fy);
             fy += fspan;
             g2d.drawString("R: " + rInt + " ms", fx, fy);
+            fy += fspan;
+            g2d.drawString("MOD: " + getModSli() + " ", fx, fy);
 //            fy += fspan;
 //            g2d.drawString("osc = " + wave, fx, fy);
         }
@@ -257,7 +261,7 @@ public class ChannelSetupDialog extends JDialog {
      */
     public ChannelSetupDialog(JMSoftSynthesizer synth) {
         this.synth = synth;
-        setBounds(100, 100, 450, 429);
+        setBounds(100, 100, 450, 449);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -353,6 +357,22 @@ public class ChannelSetupDialog extends JDialog {
         lblR.setFont(new Font("Dialog", Font.BOLD, 12));
         lblR.setBounds(12, 308, 25, 26);
         contentPanel.add(lblR);
+
+        sliderMod = new JSlider();
+        sliderMod.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                repaint();
+            }
+        });
+        sliderMod.setBounds(49, 344, 373, 26);
+        contentPanel.add(sliderMod);
+
+        JLabel lblMod = new JLabel("MOD");
+        lblMod.setHorizontalAlignment(SwingConstants.CENTER);
+        lblMod.setFont(new Font("Dialog", Font.BOLD, 12));
+        lblMod.setBounds(3, 344, 44, 26);
+        contentPanel.add(lblMod);
         {
             JPanel buttonPane = new JPanel();
             buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -409,6 +429,10 @@ public class ChannelSetupDialog extends JDialog {
                 buttonPane.add(cancelButton);
             }
         }
+
+        /* ※MODはノイズが起きるため現状非表示 */
+        sliderMod.setVisible(true);
+        lblMod.setVisible(true);
     }
 
     @Override
@@ -460,9 +484,7 @@ public class ChannelSetupDialog extends JDialog {
     public void sync() {
         int ch = getChannel();
         Envelope e = synth.getEnvelope(ch);
-        if (e == null) {
-            return;
-        }
+        Modulator mod = synth.getModulator(ch);
 
         /*
          * SAW TRIANGLE SQUARE PULSE SINE NOIS
@@ -470,18 +492,21 @@ public class ChannelSetupDialog extends JDialog {
         String sWave = comboBoxWaveType.getSelectedItem().toString();
         synth.setOscillator(ch, toWaveType(sWave));
 
-        e.setAttackTime(getAttackSli());
-        e.setDecayTime(getDecaySli());
-        e.setSustainLevel(getSustainSli());
-        e.setReleaseTime(getReleaseSli());
+        if (e != null) {
+            e.setAttackTime(getAttackSli());
+            e.setDecayTime(getDecaySli());
+            e.setSustainLevel(getSustainSli());
+            e.setReleaseTime(getReleaseSli());
+        }
+        if (mod != null) {
+            mod.setDepth(getModSli());
+        }
     }
 
     public void reset() {
         int ch = getChannel();
         Envelope e = synth.getEnvelope(ch);
-        if (e == null) {
-            return;
-        }
+        Modulator mod = synth.getModulator(ch);
 
         /*
          * SAW TRIANGLE SQUARE PULSE SINE NOIS
@@ -489,10 +514,16 @@ public class ChannelSetupDialog extends JDialog {
         String sWave = getWaveStr(synth.getWaveType(ch));
         comboBoxWaveType.setSelectedItem(sWave);
 
-        setAttackSli();
-        setDecaySli();
-        setSustainSli();
-        setReleaseSli();
+        if (e != null) {
+            setAttackSli();
+            setDecaySli();
+            setSustainSli();
+            setReleaseSli();
+            setModSli();
+        }
+        if (mod != null) {
+            setModSli();
+        }
     }
 
     private String getWaveStr(WaveType type) {
@@ -523,6 +554,20 @@ public class ChannelSetupDialog extends JDialog {
                 break;
         }
         return sWave;
+    }
+
+    private void setSliderInt(JSlider sl, int val) {
+        int max = sl.getMaximum();
+        if (max < val) {
+            val = max;
+        }
+        sl.setValue(val);
+        return;
+    }
+
+    private int getSliderInt(JSlider sl) {
+        int val = sl.getValue();
+        return val;
     }
 
     private void setSliderDouble(JSlider sl, double val) {
@@ -595,5 +640,19 @@ public class ChannelSetupDialog extends JDialog {
 
     public double getReleaseSli() {
         return getSliderDouble(sliderR);
+    }
+
+    public void setModSli() {
+        int ch = getChannel();
+        Modulator m = synth.getModulator(ch);
+        if (m == null) {
+            return;
+        }
+        setSliderInt(sliderMod, m.getDepth());
+        return;
+    }
+
+    public int getModSli() {
+        return getSliderInt(sliderMod);
     }
 }

@@ -195,6 +195,31 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         return (int) (milliseconds / 1000 * BUF_SIZE);
     }
 
+//    int[] samples = new int[BUF_SIZE]; // 波形データ
+//    static final int AVERAGE_SAMPLE_COUNT = 10;
+//
+//    public int samplesOfAverage(byte[] data, int length) {
+//        int newLength = length;
+//        for (int i = 0; i < samples.length; i++) {
+//            int avgSample = 0;
+//            int sampleCount = 0;
+//            for (int a = 0; a < AVERAGE_SAMPLE_COUNT; a++) {
+//                if ((i + a) >= data.length) {
+//                    break;
+//                }
+//                avgSample += data[i + a];
+//                sampleCount++;
+//            }
+//            avgSample /= sampleCount;
+//            samples[i] = avgSample;
+//        }
+//
+//        for (int i = 0; i < newLength; i++) {
+//            data[i] = (byte) (samples[i] & 0xff);
+//        }
+//        return newLength;
+//    }
+
     /**
      * バッファ再生処理
      */
@@ -202,7 +227,6 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     private int repWait = 0;
 
     public void run() {
-        //long current = System.currentTimeMillis();
         isRunnable = true;
         line.start();
         byte[] waveData = new byte[BUF_SIZE]; // 波形データ
@@ -211,10 +235,9 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         int sampleRate = BUF_SIZE;
         while (isRunnable) {
             try {
-                //current = System.currentTimeMillis();
                 int length = makeTone(waveData, sampleRate); // 再生するたびに作り直す
+                //samplesOfAverage(waveData, length);
 
-                // System.out.println(length);
                 if (repWait % REPAINT_CYCLE == 0) {
                     callWaveRepaint(waveData);
                     repWait = 0;
@@ -350,18 +373,6 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                     else {
                         // 単純にNoteOffを送る
                         noteOff(ch, note);
-                    }
-                }
-                if (tones[note] != null && tones[note].isReleaseFlag() == true) {
-                    // リリースの途中破棄
-                    Tone tone = tones[note];
-                    activeTones.remove(tone);
-                    tonePool.push(tone);
-                    tone.setReleaseFlag(false);
-                    tone.setVelocity(0);
-                    tones[note] = null;
-                    if (!oscillator.isToneSync()) {
-                        tone.setTablePointer(0);
                     }
                 }
                 if (!tonePool.empty() && tones[note] == null) {
@@ -599,6 +610,11 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         if (modulator != null) {
             modulator.setDepth(depth);
         }
+    }
+
+    @Override
+    public Modulator getModulator(int ch) {
+        return modulator;
     }
 
 }
