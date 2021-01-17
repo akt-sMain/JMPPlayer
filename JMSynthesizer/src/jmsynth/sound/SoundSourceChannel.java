@@ -55,13 +55,13 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     private float pitch_sc = 2;
 
     /** アクティブな音声を管理 */
-    public Vector<Tone> activeTones = null;
+    protected Vector<Tone> activeTones = null;
 
     /** 発声中の音色を管理するためのテーブル */
-    public Tone[] tones = null;
+    protected Tone[] tones = null;
 
     /** 利用可能な音色をプールするためのクラス */
-    public Stack<Tone> tonePool = null;
+    protected Stack<Tone> tonePool = null;
 
     private IWaveRepaintListener waveRepaintListener = null;
 
@@ -175,7 +175,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                     // リリース処理
                     if (tone.isReleaseFlag() == true && tone.getEnvelopeOffset() <= 0.0) {
                         int note = tone.getNote();
-                        noteOff(0, note);
+                        noteOffImpl(note);
                     }
                 }
             }
@@ -372,7 +372,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                     }
                     else {
                         // 単純にNoteOffを送る
-                        noteOff(ch, note);
+                        noteOffImpl(note);
                     }
                 }
                 if (!tonePool.empty() && tones[note] == null) {
@@ -387,7 +387,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                 }
             }
             else {
-                noteOff(ch, note);
+                noteOffImpl(note);
             }
         }
         catch (Exception e) {
@@ -396,6 +396,10 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     }
 
     public void noteOff(int ch, int note) {
+        noteOffImpl(note);
+    }
+
+    protected void noteOffImpl(int note) {
         Tone tone = tones[note];
         if (tone != null) {
             if ((envelope.getReleaseTime() > 0.0) && (tone.isReleaseFlag() == false)) {
@@ -481,7 +485,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                 if ((envelope.getReleaseTime() > 0.0) && (tone.isReleaseFlag() == false)) {
                     tone.setReleaseFlag(true);
                 }
-                noteOff(ch, tone.getNote());
+                noteOffImpl(tone.getNote());
             }
             tone.reset();
         }

@@ -18,16 +18,31 @@ public class Envelope {
 
     Envelope() {}
 
+    public long getAttackMills() {
+        return (long) ((double)maxAttackMills * attackTime);
+    }
+
+    public long getDecayMills() {
+        return (long) ((double)maxDecayMills * decayTime);
+    }
+
+    public long getReleaseMills() {
+        return (long) ((double)maxReleaseMills * releaseTime);
+    }
+
     public void process() {
         if (targetTones != null) {
             long current = System.currentTimeMillis();
 
-            long a = (long) (maxAttackMills * attackTime);
-            long d = (long) (maxDecayMills * decayTime);
-            long r = (long) (maxReleaseMills * releaseTime);
+            long a = getAttackMills();
+            long d = getDecayMills();
+            long r = getReleaseMills();
             for (int i = 0; i < targetTones.size(); i++) {
                 try {
                     Tone tone = (Tone) targetTones.get(i);
+                    if (tone == null) {
+                        continue;
+                    }
 
                     double offset = tone.getEnvelopeOffset();
                     long startTime = tone.getStartMills();
