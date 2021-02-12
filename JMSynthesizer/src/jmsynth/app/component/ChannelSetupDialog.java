@@ -51,7 +51,8 @@ public class ChannelSetupDialog extends JDialog {
     private static final String WAVE_STR_REVERSE_SAW = "REVERSE_SAW";
     private static final String WAVE_STR_TRIANGLE = "TRIANGLE";
     private static final String WAVE_STR_SQUARE = "SQUARE";
-    private static final String WAVE_STR_PULSE = "PULSE";
+    private static final String WAVE_STR_PULSE_25 = "PULSE_25";
+    private static final String WAVE_STR_PULSE_12_5 = "PULSE_12_5";
     private static final String WAVE_STR_SINE = "SINE";
     private static final String WAVE_STR_NOIS = "NOIS";
 
@@ -61,7 +62,8 @@ public class ChannelSetupDialog extends JDialog {
             WAVE_STR_REVERSE_SAW, //
             WAVE_STR_TRIANGLE, //
             WAVE_STR_SQUARE, //
-            WAVE_STR_PULSE, //
+            WAVE_STR_PULSE_25, //
+            WAVE_STR_PULSE_12_5, //
             WAVE_STR_NOIS //
     };//
     private JSlider sliderMod;
@@ -180,8 +182,11 @@ public class ChannelSetupDialog extends JDialog {
                         case SQUARE:
                             yPoint[i] = WaveGenerater.makeSquareWave(f, overallLeval, false) + cy;
                             break;
-                        case PULSE:
-                            yPoint[i] = WaveGenerater.makePulseWave(f, overallLeval, false) + cy;
+                        case PULSE_25:
+                            yPoint[i] = WaveGenerater.makePulseWave(f, overallLeval, 0.25, false) + cy;
+                            break;
+                        case PULSE_12_5:
+                            yPoint[i] = WaveGenerater.makePulseWave(f, overallLeval, 0.125, false) + cy;
                             break;
                         case TRIANGLE:
                             yPoint[i] = WaveGenerater.makeTriangleWave(f, overallLeval, false) + cy;
@@ -469,8 +474,11 @@ public class ChannelSetupDialog extends JDialog {
         else if (sWave.equalsIgnoreCase(WAVE_STR_SQUARE) == true) {
             type = WaveType.SQUARE;
         }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_PULSE) == true) {
-            type = WaveType.PULSE;
+        else if (sWave.equalsIgnoreCase(WAVE_STR_PULSE_25) == true) {
+            type = WaveType.PULSE_25;
+        }
+        else if (sWave.equalsIgnoreCase(WAVE_STR_PULSE_12_5) == true) {
+            type = WaveType.PULSE_12_5;
         }
         else if (sWave.equalsIgnoreCase(WAVE_STR_SINE) == true) {
             type = WaveType.SINE;
@@ -532,8 +540,11 @@ public class ChannelSetupDialog extends JDialog {
             case NOISE:
                 sWave = WAVE_STR_NOIS;
                 break;
-            case PULSE:
-                sWave = WAVE_STR_PULSE;
+            case PULSE_25:
+                sWave = WAVE_STR_PULSE_25;
+                break;
+            case PULSE_12_5:
+                sWave = WAVE_STR_PULSE_12_5;
                 break;
             case SAW:
                 sWave = WAVE_STR_SAW;

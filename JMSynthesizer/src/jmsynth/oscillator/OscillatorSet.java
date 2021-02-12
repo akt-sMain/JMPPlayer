@@ -13,7 +13,8 @@ public class OscillatorSet {
         SAW_REVERSE,
         SQUARE,
         TRIANGLE,
-        PULSE,
+        PULSE_25,
+        PULSE_12_5,
         NOISE
     }
 

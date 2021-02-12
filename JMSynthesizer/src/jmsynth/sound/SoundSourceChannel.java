@@ -91,7 +91,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                 put(WaveType.SAW_REVERSE, new SawWaveOscillator(true));
                 put(WaveType.SQUARE, new SquareWaveOscillator());
                 put(WaveType.TRIANGLE, new TriWaveOscillator());
-                put(WaveType.PULSE, new PulseWaveOscillator());
+                put(WaveType.PULSE_25, new PulseWaveOscillator(0.25));
+                put(WaveType.PULSE_12_5, new PulseWaveOscillator(0.125));
                 put(WaveType.NOISE, new NoisWaveOscillator());
             }
         };

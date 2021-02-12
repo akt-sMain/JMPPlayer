@@ -47,6 +47,24 @@ public class Modulator {
         return (int)((Math.sin(2.0 * Math.PI * ff) * overallLeval));
     }
 
+    public static int makeTriangleWave(double f, int overallLevel, boolean reverse) {
+        double ff = (reverse == true) ? (1.0 - f) : f;
+
+        int y = 0;
+        int slope = (int)((ff / 0.25) + 1) % 2; // 0=上り, 1=下り
+        double quarter = ff % 0.25;
+        double sign = (ff < 0.5) ? -1.0 : 1.0;
+        if (slope == 0) {
+            // 上り
+            y = (int) (((overallLevel - (overallLevel * (quarter / 0.25)))) * sign);
+        }
+        else {
+            // 下り
+            y = (int) ((overallLevel * (quarter / 0.25)) * sign);
+        }
+        return y;
+    }
+
     public void setTargetTones(Vector<Tone> targetTones) {
         this.targetTones = targetTones;
     }

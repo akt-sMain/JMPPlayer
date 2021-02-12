@@ -28,18 +28,6 @@ public class WaveGenerater {
         return makePulseWave(f, overallLevel, 0.5, reverse);
     }
 
-    /**
-     * パルス波生成
-     *
-     * @param f
-     * @param overallLevel
-     * @param reverse
-     * @return
-     */
-    public static byte makePulseWave(double f, int overallLevel, boolean reverse) {
-        return makePulseWave(f, overallLevel, 0.2, reverse);
-    }
-
     private static final double DUTY_THRESHOLD = 0.02;
     private static final double DUTY_OFFSET = 0.5;
 

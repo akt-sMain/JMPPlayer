@@ -1,11 +1,13 @@
 package jmsynth.oscillator;
 
 public class PulseWaveOscillator extends AbstractWaveGenOscillator {
-    public PulseWaveOscillator() {
+    private double duty = 0.5;
+    public PulseWaveOscillator(double duty) {
+        this.duty = duty;
     }
 
     @Override
     byte makeWave(double f, int overallLevel) {
-        return WaveGenerater.makePulseWave(f, overallLevel, false);
+        return WaveGenerater.makePulseWave(f, overallLevel, this.duty, false);
     }
 }
