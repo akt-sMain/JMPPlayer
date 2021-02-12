@@ -65,9 +65,11 @@ public interface ISystemManager {
     public static final int COMMON_REGKEY_NO_LYRIC_CHARCODE = 28;
     /** Musicファイル拡張子 */
     public static final int COMMON_REGKEY_NO_EXTENSION_MUSIC = 29;
+    /** MMLファイル拡張子 */
+    public static final int COMMON_REGKEY_NO_EXTENSION_MML = 30;
 
     /** cregキー数 */
-    public static final int NUMBER_OF_COMMON_REGKEY = 30;
+    public static final int NUMBER_OF_COMMON_REGKEY = 31;
 
     /**
      * スタンドアロンモードか

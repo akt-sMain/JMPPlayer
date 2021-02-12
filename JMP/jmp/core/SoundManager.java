@@ -33,6 +33,7 @@ import jmp.midi.MidiController;
 import jmp.midi.toolkit.MidiToolkitManager;
 import jmp.player.FFmpegPlayer;
 import jmp.player.MidiPlayer;
+import jmp.player.MusicMacroPlayer;
 import jmp.player.MusicXmlPlayer;
 import jmp.player.Player;
 import jmp.player.PlayerAccessor;
@@ -59,6 +60,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     public static MidiPlayer SMidiPlayer = null;
     public static WavPlayer SWavPlayer = null;
     public static MusicXmlPlayer SMusicXmlPlayer = null;
+    public static MusicMacroPlayer SMusicMacloPlayer = null;
     public static FFmpegPlayer SFFmpegPlayer = null;
 
     // 固有変数
@@ -96,6 +98,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MIDI));
         String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_WAV));
         String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
+        String[] exMML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MML));
 
         // midi
         SMidiPlayer = new MidiPlayer();
@@ -111,6 +114,11 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         SMusicXmlPlayer = new MusicXmlPlayer();
         SMusicXmlPlayer.setSupportExtentions(exMUSICXML);
         PlayerAccessor.register(SMusicXmlPlayer);
+
+        // mml
+        SMusicMacloPlayer = new MusicMacroPlayer();
+        SMusicMacloPlayer.setSupportExtentions(exMML);
+        PlayerAccessor.register(SMusicMacloPlayer);
 
         // ffmpeg
         SFFmpegPlayer = new FFmpegPlayer();

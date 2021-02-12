@@ -458,6 +458,7 @@ public class MidiFileListDialog extends JMPFrame {
         String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_WAV));
         String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
         String[] exMUSIC = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSIC));
+        String[] exMML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MML));
 
         /* リスト構築 */
         if (midiFileMap != null) {
@@ -506,6 +507,18 @@ public class MidiFileListDialog extends JMPFrame {
                 File f = midiFileMap.get(sKey);
                 if (f.isFile() == true) {
                     if (Utility.checkExtensions(sKey, exMUSICXML) == true) {
+                        if (midiFileMap.containsKey(sKey) == true) {
+                            list.add(f);
+                        }
+                    }
+                }
+            }
+            // MML
+            for (Object key : keys) {
+                String sKey = key.toString();
+                File f = midiFileMap.get(sKey);
+                if (f.isFile() == true) {
+                    if (Utility.checkExtensions(sKey, exMML) == true) {
                         if (midiFileMap.containsKey(sKey) == true) {
                             list.add(f);
                         }
@@ -575,6 +588,10 @@ public class MidiFileListDialog extends JMPFrame {
                     }
                     else if (Utility.checkExtensions(name, exMUSICXML) == true) {
                         Object[] row = createFileListRows(xmlIcon, "XM", name);
+                        model.addRow(row);
+                    }
+                    else if (Utility.checkExtensions(name, exMML) == true) {
+                        Object[] row = createFileListRows(xmlIcon, "MM", name);
                         model.addRow(row);
                     }
                     else if ((Utility.checkExtensions(name, exMUSIC) == true) && (validFFmpegPlayer == true)) {

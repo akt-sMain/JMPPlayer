@@ -126,6 +126,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         cRegKeys[COMMON_REGKEY_NO_EXTENSION_WAV] = "extension_wav";
         cRegKeys[COMMON_REGKEY_NO_EXTENSION_MUSICXML] = "extension_musicxml";
         cRegKeys[COMMON_REGKEY_NO_EXTENSION_MUSIC] = "extension_music";
+        cRegKeys[COMMON_REGKEY_NO_EXTENSION_MML] = "extension_mml";
         cRegKeys[COMMON_REGKEY_NO_USE_MIDI_TOOLKIT] = "use_midi_toolkit";
         cRegKeys[COMMON_REGKEY_NO_USE_UTIL_TOOLKIT] = "use_util_toolkit";
         cRegKeys[COMMON_REGKEY_NO_PLAYER_BACK_COLOR] = "player_back_color";
@@ -159,6 +160,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         cReg.add(cRegKeys[COMMON_REGKEY_NO_EXTENSION_WAV], JmpUtil.genExtensions2Str("wav"));
         cReg.add(cRegKeys[COMMON_REGKEY_NO_EXTENSION_MUSICXML], JmpUtil.genExtensions2Str("xml", "musicxml", "mxl"));
         cReg.add(cRegKeys[COMMON_REGKEY_NO_EXTENSION_MUSIC], JmpUtil.genExtensions2Str("mp3", "mp4", "aac", "m4a"));
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_EXTENSION_MML], JmpUtil.genExtensions2Str("mml"));
         cReg.add(cRegKeys[COMMON_REGKEY_NO_USE_MIDI_TOOLKIT], USE_MIDI_TOOLKIT_CLASSNAME);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_USE_UTIL_TOOLKIT], USE_UTIL_TOOLKIT_CLASSNAME);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_PLAYER_BACK_COLOR], Utility.convertHtmlColorToCode(DEFAULT_PLAYER_BACK_COLOR));

@@ -11,9 +11,6 @@ import jmp.core.WindowManager;
 
 public class JMPFrame extends JFrame implements IJMPComponentUI, IJmpWindow {
 
-    // Window配置の初期化実施
-    protected boolean initializeDefaultPositionFrag = false;
-
     public JMPFrame() {
         super();
 
@@ -31,14 +28,17 @@ public class JMPFrame extends JFrame implements IJMPComponentUI, IJmpWindow {
         }
     }
 
+    protected boolean isAutomationDefaultPosition() {
+        return true;
+    }
+
     @Override
     public void setVisible(boolean b) {
         if (super.isVisible() == false && b == true) {
-            if (initializeDefaultPositionFrag == false) {
+            if (isAutomationDefaultPosition() == true) {
                 Point p = getDefaultWindowLocation();
                 if (p != null) {
                     this.setLocation(p);
-                    initializeDefaultPositionFrag = true;
                 }
             }
         }

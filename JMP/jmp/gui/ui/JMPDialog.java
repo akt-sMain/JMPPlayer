@@ -15,9 +15,6 @@ import jmp.core.WindowManager;
 
 public class JMPDialog extends JDialog implements IJMPComponentUI, IJmpWindow {
 
-    // Window配置の初期化実施
-    protected boolean initializeDefaultPositionFrag = false;
-
     public JMPDialog() {
         _init();
     }
@@ -108,14 +105,17 @@ public class JMPDialog extends JDialog implements IJMPComponentUI, IJmpWindow {
         getContentPane().setBackground(getJmpBackColor());
     }
 
+    protected boolean isAutomationDefaultPosition() {
+        return true;
+    }
+
     @Override
     public void setVisible(boolean b) {
         if (super.isVisible() == false && b == true) {
-            if (initializeDefaultPositionFrag == false) {
+            if (isAutomationDefaultPosition() == true) {
                 Point p = getDefaultWindowLocation();
                 if (p != null) {
                     this.setLocation(p);
-                    initializeDefaultPositionFrag = true;
                 }
             }
         }
