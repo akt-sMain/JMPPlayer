@@ -157,7 +157,7 @@ public class MusicMacroReader implements IJMPDocumentReader {
                     if (cr == '#') {
                         break;
                     }
-                    
+
                     while (cr != ' ') {
                         objects.add(new MmlChannelObject(c, r, toChannel(cr)));
                         c++;
@@ -183,7 +183,7 @@ public class MusicMacroReader implements IJMPDocumentReader {
                             if (cr == '}') {
                                 isTuplet = false;
                             }
-                            
+
                             token += new String(new char[] { cr });
                         }
 
@@ -227,7 +227,6 @@ public class MusicMacroReader implements IJMPDocumentReader {
 
                                 String lToken = "";
                                 for (int i = start; i < token.length(); i++) {
-                                    char ccccc = token.charAt(i);
                                     if (token.charAt(i) == 0x2e) {// Dot
                                         isDotted = true;
                                     }

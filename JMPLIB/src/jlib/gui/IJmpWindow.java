@@ -17,6 +17,11 @@ public interface IJmpWindow {
     abstract boolean isWindowVisible();
 
     /**
+     * デフォルト位置に戻す
+     */
+    abstract void setDefaultWindowLocation();
+
+    /**
      * ウィンドウ表示/非表示切り替え
      */
     default void toggleWindowVisible() {

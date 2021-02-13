@@ -11,7 +11,8 @@ import jmp.core.SystemManager;
 import jmp.core.WindowManager;
 
 public interface IJMPComponentUI {
-    public static final int DEFAULT_WINDOW_OFFSET = 50;
+    public static final int DEFAULT_WINDOW_OFFSET_X = 70;
+    public static final int DEFAULT_WINDOW_OFFSET_Y = 50;
 
     abstract void updateBackColor();
 
@@ -44,8 +45,8 @@ public interface IJMPComponentUI {
                         offsetY = 0;
                     }
                     else {
-                        offsetX = DEFAULT_WINDOW_OFFSET;
-                        offsetY = DEFAULT_WINDOW_OFFSET;
+                        offsetX = DEFAULT_WINDOW_OFFSET_X;
+                        offsetY = DEFAULT_WINDOW_OFFSET_Y;
                     }
                     p = root.getLocation();
                     p.setLocation(p.getX() + offsetX, p.getY() + offsetY);

@@ -216,12 +216,12 @@ public class SelectSynthsizerDialog extends JMPDialog {
                         String description = "";
                         String port = "";
 
-                        if (listName.equals(DEFAULT_ITEM_NAME) == true) {
+                        if (comboRecvMode.getSelectedIndex() == 0) {
                             vendor += "";
                             version += "";
                             description += "Automatically select an available synthesizer.";
                         }
-                        else if (listName.equals(JMSYNTH_ITEM_NAME) == true) {
+                        else if (comboRecvMode.getSelectedIndex() == 1) {
                             vendor += "Akt";
                             version += jmsynth.Version.NO;
                             description += "Self-made built-in 8bit tune synthesizer.";
@@ -346,11 +346,15 @@ public class SelectSynthsizerDialog extends JMPDialog {
             labelDevelop.setText("");
         }
 
+        LanguageManager lm = JMPCore.getLanguageManager();
+        String itemListNameDefault = "● " + lm.getLanguageStr(LangID.Automatic_selection);
+        String itemListNameJMSynth = "● " + lm.getLanguageStr(LangID.Builtin_synthesizer);
+
         // レシーバー
         comboRecvMode.removeAllItems();
         infosOfRecv = MidiPlayer.getMidiDeviceInfo(false, true);
-        comboRecvMode.addItem(DEFAULT_ITEM_NAME);
-        comboRecvMode.addItem(JMSYNTH_ITEM_NAME);
+        comboRecvMode.addItem(itemListNameDefault);
+        comboRecvMode.addItem(itemListNameJMSynth);
         for (int i = 0; i < infosOfRecv.length; i++) {
             String line = createItemName(i, infosOfRecv[i].getName());
             comboRecvMode.addItem(line);
@@ -421,6 +425,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
             final int COMMIT_MIDI = 1;
             int commitType = COMMIT_MIDI;
 
+            int selectedIndex = comboRecvMode.getSelectedIndex();
             String listName = comboRecvMode.getSelectedItem().toString().trim();
             Receiver outReciever = null;
             int outDevIndex = getOrgDeviceIndex(listName);
@@ -434,7 +439,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
             }
             else {
                 /* 独自のシンセを選択 */
-                if (listName.equals(JMSYNTH_ITEM_NAME) == true) {
+                if (selectedIndex == 1) {
                     // リソース準備は後で行う
                     commitType = COMMIT_BUILT_IN;
 

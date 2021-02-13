@@ -515,7 +515,9 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         player.stop();
 
         if (backupVisible == true) {
+            JMPFlags.WindowAutomationPosFlag = false;
             midiMinitor.showWindow();
+            JMPFlags.WindowAutomationPosFlag = true;
         }
 
         JMPCore.getWindowManager().getMainWindow().setLyric("");
@@ -538,7 +540,9 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         player.setPosition(pos);
 
         if (backupVisible == true) {
+            JMPFlags.WindowAutomationPosFlag = false;
             midiMinitor.showWindow();
+            JMPFlags.WindowAutomationPosFlag = true;
         }
     }
 

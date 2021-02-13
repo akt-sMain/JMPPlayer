@@ -96,6 +96,10 @@ public class DefineLanguage {
         Send_system_setup_before_playback,//
         Whether_to_display_every_time_at_startup,//
         Play_from_the_beginning,//
+        Send_system_setup,//
+        Automatic_selection,//
+        Builtin_synthesizer,//
+        Builtin_synthesizer_settings,//
     }//
     static LangMap langMap = new LangMap() {
         {
@@ -188,6 +192,10 @@ public class DefineLanguage {
             put(LangID.Send_system_setup_before_playback, new LanguageWords("Send system setup before playback","再生前にシステムセットアップを送信する","播放前发送系统设置"));
             put(LangID.Whether_to_display_every_time_at_startup, new LanguageWords("Whether to display every time at startup","起動時に毎回表示するか","是否在每次启动时显示"));
             put(LangID.Play_from_the_beginning, new LanguageWords("Play from the beginning","最初から再生","从头开始"));
+            put(LangID.Send_system_setup, new LanguageWords("Send system setup","システムセットアップ送信","发送系统设置"));
+            put(LangID.Automatic_selection, new LanguageWords("Automatic selection","自動選択","自动选择"));
+            put(LangID.Builtin_synthesizer, new LanguageWords("Built-in synthesizer","内蔵シンセサイザー","Built-in synthesizer"));
+            put(LangID.Builtin_synthesizer_settings, new LanguageWords("Built-in synthesizer settings","内蔵シンセサイザー設定","Built-in synthesizer settings"));
         }
     };
 }

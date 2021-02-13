@@ -447,9 +447,4 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
         setTitle(lm.getLanguageStr(LangID.MIDI_message_monitor));
         btnClear.setText(lm.getLanguageStr(LangID.Clear));
     }
-    
-    @Override
-    protected boolean isAutomationDefaultPosition() {
-        return false;
-    }
 }

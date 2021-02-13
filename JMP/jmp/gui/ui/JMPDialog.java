@@ -10,6 +10,7 @@ import java.awt.Window;
 import javax.swing.JDialog;
 
 import jlib.gui.IJmpWindow;
+import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.WindowManager;
 
@@ -106,17 +107,22 @@ public class JMPDialog extends JDialog implements IJMPComponentUI, IJmpWindow {
     }
 
     protected boolean isAutomationDefaultPosition() {
-        return true;
+        return JMPFlags.WindowAutomationPosFlag;
+    }
+
+    @Override
+    public void setDefaultWindowLocation() {
+        Point p = getDefaultWindowLocation();
+        if (p != null) {
+            this.setLocation(p);
+        }
     }
 
     @Override
     public void setVisible(boolean b) {
         if (super.isVisible() == false && b == true) {
             if (isAutomationDefaultPosition() == true) {
-                Point p = getDefaultWindowLocation();
-                if (p != null) {
-                    this.setLocation(p);
-                }
+                setDefaultWindowLocation();
             }
         }
         super.setVisible(b);

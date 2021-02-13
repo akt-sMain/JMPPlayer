@@ -154,4 +154,8 @@ public class MusicXMLConfirmDialog extends JDialog implements IJmpWindow, IJMPCo
     public boolean isWindowVisible() {
         return false;
     }
+
+    @Override
+    public void setDefaultWindowLocation() {
+    }
 }

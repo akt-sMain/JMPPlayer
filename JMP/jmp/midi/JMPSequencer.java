@@ -18,75 +18,75 @@ import jmp.core.JMPCore;
 
 public class JMPSequencer implements Sequencer {
 
-    private Sequencer abstractSequenser = null;
+    private Sequencer abstractSequencer = null;
 
     public JMPSequencer(Sequencer abstractSequenser) {
-        this.abstractSequenser = abstractSequenser;
+        this.abstractSequencer = abstractSequenser;
     }
 
     @Override
     public Info getDeviceInfo() {
-        return abstractSequenser.getDeviceInfo();
+        return abstractSequencer.getDeviceInfo();
     }
 
     @Override
     public void open() throws MidiUnavailableException {
-        abstractSequenser.open();
+        abstractSequencer.open();
     }
 
     @Override
     public void close() {
-        abstractSequenser.close();
+        abstractSequencer.close();
     }
 
     @Override
     public boolean isOpen() {
-        return abstractSequenser.isOpen();
+        return abstractSequencer.isOpen();
     }
 
     @Override
     public int getMaxReceivers() {
-        return abstractSequenser.getMaxReceivers();
+        return abstractSequencer.getMaxReceivers();
     }
 
     @Override
     public int getMaxTransmitters() {
-        return abstractSequenser.getMaxTransmitters();
+        return abstractSequencer.getMaxTransmitters();
     }
 
     @Override
     public Receiver getReceiver() throws MidiUnavailableException {
-        return abstractSequenser.getReceiver();
+        return abstractSequencer.getReceiver();
     }
 
     @Override
     public List<Receiver> getReceivers() {
-        return abstractSequenser.getReceivers();
+        return abstractSequencer.getReceivers();
     }
 
     @Override
     public Transmitter getTransmitter() throws MidiUnavailableException {
-        return abstractSequenser.getTransmitter();
+        return abstractSequencer.getTransmitter();
     }
 
     @Override
     public List<Transmitter> getTransmitters() {
-        return abstractSequenser.getTransmitters();
+        return abstractSequencer.getTransmitters();
     }
 
     @Override
     public void setSequence(Sequence sequence) throws InvalidMidiDataException {
-        abstractSequenser.setSequence(sequence);
+        abstractSequencer.setSequence(sequence);
     }
 
     @Override
     public void setSequence(InputStream stream) throws IOException, InvalidMidiDataException {
-        abstractSequenser.setSequence(stream);
+        abstractSequencer.setSequence(stream);
     }
 
     @Override
     public Sequence getSequence() {
-        return abstractSequenser.getSequence();
+        return abstractSequencer.getSequence();
     }
 
     @Override
@@ -106,210 +106,210 @@ public class JMPSequencer implements Sequencer {
             }
         }
 
-        abstractSequenser.start();
+        abstractSequencer.start();
 
         JMPCore.getPluginManager().startSequencer();
     }
 
     @Override
     public void stop() {
-        abstractSequenser.stop();
+        abstractSequencer.stop();
 
         JMPCore.getPluginManager().stopSequencer();
     }
 
     @Override
     public boolean isRunning() {
-        return abstractSequenser.isRunning();
+        return abstractSequencer.isRunning();
     }
 
     @Override
     public void startRecording() {
-        abstractSequenser.startRecording();
+        abstractSequencer.startRecording();
     }
 
     @Override
     public void stopRecording() {
-        abstractSequenser.stopRecording();
+        abstractSequencer.stopRecording();
     }
 
     @Override
     public boolean isRecording() {
-        return abstractSequenser.isRecording();
+        return abstractSequencer.isRecording();
     }
 
     @Override
     public void recordEnable(Track track, int channel) {
-        abstractSequenser.recordEnable(track, channel);
+        abstractSequencer.recordEnable(track, channel);
     }
 
     @Override
     public void recordDisable(Track track) {
-        abstractSequenser.recordDisable(track);
+        abstractSequencer.recordDisable(track);
     }
 
     @Override
     public float getTempoInBPM() {
-        return abstractSequenser.getTempoInBPM();
+        return abstractSequencer.getTempoInBPM();
     }
 
     @Override
     public void setTempoInBPM(float bpm) {
-        abstractSequenser.setTempoInBPM(bpm);
+        abstractSequencer.setTempoInBPM(bpm);
     }
 
     @Override
     public float getTempoInMPQ() {
-        return abstractSequenser.getTempoInMPQ();
+        return abstractSequencer.getTempoInMPQ();
     }
 
     @Override
     public void setTempoInMPQ(float mpq) {
-        abstractSequenser.setTempoInMPQ(mpq);
+        abstractSequencer.setTempoInMPQ(mpq);
     }
 
     @Override
     public void setTempoFactor(float factor) {
-        abstractSequenser.setTempoFactor(factor);
+        abstractSequencer.setTempoFactor(factor);
     }
 
     @Override
     public float getTempoFactor() {
-        return abstractSequenser.getTempoFactor();
+        return abstractSequencer.getTempoFactor();
     }
 
     @Override
     public long getTickLength() {
-        return abstractSequenser.getTickLength();
+        return abstractSequencer.getTickLength();
     }
 
     @Override
     public long getTickPosition() {
-        return abstractSequenser.getTickPosition();
+        return abstractSequencer.getTickPosition();
     }
 
     @Override
     public void setTickPosition(long tick) {
-        long before = abstractSequenser.getTickPosition();
+        long before = abstractSequencer.getTickPosition();
 
-        abstractSequenser.setTickPosition(tick);
+        abstractSequencer.setTickPosition(tick);
 
-        JMPCore.getPluginManager().updateTickPosition(before, abstractSequenser.getTickPosition());
+        JMPCore.getPluginManager().updateTickPosition(before, abstractSequencer.getTickPosition());
     }
 
     @Override
     public long getMicrosecondLength() {
-        return abstractSequenser.getMicrosecondLength();
+        return abstractSequencer.getMicrosecondLength();
     }
 
     @Override
     public long getMicrosecondPosition() {
-        return abstractSequenser.getMicrosecondPosition();
+        return abstractSequencer.getMicrosecondPosition();
     }
 
     @Override
     public void setMicrosecondPosition(long microseconds) {
-        abstractSequenser.setMicrosecondPosition(microseconds);
+        abstractSequencer.setMicrosecondPosition(microseconds);
     }
 
     @Override
     public void setMasterSyncMode(SyncMode sync) {
-        abstractSequenser.setMasterSyncMode(sync);
+        abstractSequencer.setMasterSyncMode(sync);
     }
 
     @Override
     public SyncMode getMasterSyncMode() {
-        return abstractSequenser.getMasterSyncMode();
+        return abstractSequencer.getMasterSyncMode();
     }
 
     @Override
     public SyncMode[] getMasterSyncModes() {
-        return abstractSequenser.getMasterSyncModes();
+        return abstractSequencer.getMasterSyncModes();
     }
 
     @Override
     public void setSlaveSyncMode(SyncMode sync) {
-        abstractSequenser.setSlaveSyncMode(sync);
+        abstractSequencer.setSlaveSyncMode(sync);
     }
 
     @Override
     public SyncMode getSlaveSyncMode() {
-        return abstractSequenser.getSlaveSyncMode();
+        return abstractSequencer.getSlaveSyncMode();
     }
 
     @Override
     public SyncMode[] getSlaveSyncModes() {
-        return abstractSequenser.getSlaveSyncModes();
+        return abstractSequencer.getSlaveSyncModes();
     }
 
     @Override
     public void setTrackMute(int track, boolean mute) {
-        abstractSequenser.setTrackMute(track, mute);
+        abstractSequencer.setTrackMute(track, mute);
     }
 
     @Override
     public boolean getTrackMute(int track) {
-        return abstractSequenser.getTrackMute(track);
+        return abstractSequencer.getTrackMute(track);
     }
 
     @Override
     public void setTrackSolo(int track, boolean solo) {
-        abstractSequenser.setTrackSolo(track, solo);
+        abstractSequencer.setTrackSolo(track, solo);
     }
 
     @Override
     public boolean getTrackSolo(int track) {
-        return abstractSequenser.getTrackSolo(track);
+        return abstractSequencer.getTrackSolo(track);
     }
 
     @Override
     public boolean addMetaEventListener(MetaEventListener listener) {
-        return abstractSequenser.addMetaEventListener(listener);
+        return abstractSequencer.addMetaEventListener(listener);
     }
 
     @Override
     public void removeMetaEventListener(MetaEventListener listener) {
-        abstractSequenser.removeMetaEventListener(listener);
+        abstractSequencer.removeMetaEventListener(listener);
     }
 
     @Override
     public int[] addControllerEventListener(ControllerEventListener listener, int[] controllers) {
-        return abstractSequenser.addControllerEventListener(listener, controllers);
+        return abstractSequencer.addControllerEventListener(listener, controllers);
     }
 
     @Override
     public int[] removeControllerEventListener(ControllerEventListener listener, int[] controllers) {
-        return abstractSequenser.removeControllerEventListener(listener, controllers);
+        return abstractSequencer.removeControllerEventListener(listener, controllers);
     }
 
     @Override
     public void setLoopStartPoint(long tick) {
-        abstractSequenser.setLoopStartPoint(tick);
+        abstractSequencer.setLoopStartPoint(tick);
     }
 
     @Override
     public long getLoopStartPoint() {
-        return abstractSequenser.getLoopStartPoint();
+        return abstractSequencer.getLoopStartPoint();
     }
 
     @Override
     public void setLoopEndPoint(long tick) {
-        abstractSequenser.setLoopEndPoint(tick);
+        abstractSequencer.setLoopEndPoint(tick);
     }
 
     @Override
     public long getLoopEndPoint() {
-        return abstractSequenser.getLoopEndPoint();
+        return abstractSequencer.getLoopEndPoint();
     }
 
     @Override
     public void setLoopCount(int count) {
-        abstractSequenser.setLoopCount(count);
+        abstractSequencer.setLoopCount(count);
     }
 
     @Override
     public int getLoopCount() {
-        return abstractSequenser.getLoopCount();
+        return abstractSequencer.getLoopCount();
     }
 
 }

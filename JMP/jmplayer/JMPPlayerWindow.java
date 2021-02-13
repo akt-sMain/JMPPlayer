@@ -415,19 +415,13 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         menuItemHistory = new JMenuItem("履歴");
         menuItemHistory.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_HISTORY).showWindow();
+                showChildWindow(WindowManager.WINDOW_NAME_HISTORY);
             }
         });
         playerMenu.add(menuItemHistory);
         playlistItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                IJmpWindow win = JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_FILE_LIST);
-                if (win.isWindowVisible() == true) {
-                    win.hideWindow();
-                }
-                else {
-                    win.showWindow();
-                }
+                showChildWindow(WindowManager.WINDOW_NAME_FILE_LIST);
             }
         });
 
@@ -442,7 +436,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         mnTool.add(mntmFFmpegConverter);
         mntmFFmpegConverter.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_FFMPEG).showWindow();
+                showChildWindow(WindowManager.WINDOW_NAME_FFMPEG);
             }
         });
 
@@ -453,24 +447,12 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         mnTool.add(mntmMidimessagesender);
         mntmMidimessagesender.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                IJmpWindow win = JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_SENDER);
-                if (win.isWindowVisible() == true) {
-                    win.hideWindow();
-                }
-                else {
-                    win.showWindow();
-                }
+                showChildWindow(WindowManager.WINDOW_NAME_MIDI_SENDER);
             }
         });
         mntmMidiMonitor.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                IJmpWindow win = JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
-                if (win.isWindowVisible() == true) {
-                    win.hideWindow();
-                }
-                else {
-                    win.showWindow();
-                }
+                showChildWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
             }
         });
         menuBar.add(pluginMenu);
@@ -537,7 +519,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         mntmPluginManager = new JMenuItem("プラグイン管理");
         mntmPluginManager.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_PLUGIN_MANAGER).showWindow();
+                showChildWindow(WindowManager.WINDOW_NAME_PLUGIN_MANAGER);
             }
         });
         pluginMenu.add(mntmPluginManager);
@@ -577,7 +559,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         menuItemLanguage = new JMenuItem("言語設定");
         menuItemLanguage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LANGUAGE).showWindow();
+                showChildWindow(WindowManager.WINDOW_NAME_LANGUAGE);
             }
         });
         configMenu.add(menuItemLanguage);
@@ -608,14 +590,6 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         });
         configMenu.add(chckbxmntmStartupmidisetup);
 
-        mntmPcreset = new JMenuItem("PCリセット");
-        mntmPcreset.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JMPCore.getSoundManager().resetMidiEvent();
-            }
-        });
-        configMenu.add(mntmPcreset);
-
         chckbxmntmLyricView = new JCheckBoxMenuItem("Lyric");
         chckbxmntmLyricView.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -630,6 +604,14 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                 JMPCore.getDataManager().setSendMidiSystemSetup(chckbxmntmSendSystemSetupBeforePlayback.isSelected());
             }
         });
+
+        mntmPcreset = new JMenuItem("システムセットアップ送信");
+        mntmPcreset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JMPCore.getSoundManager().sendMidiSystemSetupMessage();
+            }
+        });
+        configMenu.add(mntmPcreset);
         chckbxmntmSendSystemSetupBeforePlayback.setSelected(JMPCore.getDataManager().isSendMidiSystemSetup());
         configMenu.add(chckbxmntmSendSystemSetupBeforePlayback);
 
@@ -818,7 +800,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             @Override
             public void mouseReleased(MouseEvent e) {
                 int value = mntmVolumeSlider.getValue();
-                float vol = (float)value / (float)mntmVolumeSlider.getMaximum();
+                float vol = (float) value / (float) mntmVolumeSlider.getMaximum();
                 JMPCore.getSoundManager().setLineVolume(vol);
             }
         });
@@ -826,12 +808,19 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             @Override
             public void mouseDragged(MouseEvent e) {
                 int value = mntmVolumeSlider.getValue();
-                float vol = (float)value / (float)mntmVolumeSlider.getMaximum();
+                float vol = (float) value / (float) mntmVolumeSlider.getMaximum();
                 JMPCore.getSoundManager().setLineVolume(vol);
             }
         });
         playerMenu.add(mntmVolumeSlider);
 
+    }
+
+    protected void showChildWindow(String windowID) {
+        IJmpWindow win = JMPCore.getWindowManager().getWindow(windowID);
+        win.hideWindow();
+
+        win.showWindow();
     }
 
     @Override
@@ -911,7 +900,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         loopPlayCheckBoxMenuItem.setSelected(dm.isLoopPlay());
         chckbxmntmStartupmidisetup.setSelected(dm.isShowStartupDeviceSetup());
 
-        int mntmVolumeSliderValue = (int)(JMPCore.getSoundManager().getLineVolume() * (float)mntmVolumeSlider.getMaximum());
+        int mntmVolumeSliderValue = (int) (JMPCore.getSoundManager().getLineVolume() * (float) mntmVolumeSlider.getMaximum());
         mntmVolumeSlider.setValue(mntmVolumeSliderValue);
 
         // シーケンスバーのトグル用コールバック関数を登録
@@ -1176,7 +1165,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
 
         // 音量バー同期
         JMPCore.getSoundManager().syncLineVolume();
-        int mntmVolumeSliderValue = (int)(JMPCore.getSoundManager().getLineVolume() * (float)mntmVolumeSlider.getMaximum());
+        int mntmVolumeSliderValue = (int) (JMPCore.getSoundManager().getLineVolume() * (float) mntmVolumeSlider.getMaximum());
         mntmVolumeSlider.setValue(mntmVolumeSliderValue);
 
         if (JMPCore.getSoundManager().getSequencer() != null) {
@@ -1380,7 +1369,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         lblMidi.setText("-- " + lm.getLanguageStr(LangID.MIDI_settings) + " --");
         mntmMidiDeviceSetup.setText(lm.getLanguageStr(LangID.MIDI_device_settings));
         chckbxmntmStartupmidisetup.setText(lm.getLanguageStr(LangID.Open_MIDI_device_settings_on_startup));
-        mntmPcreset.setText(lm.getLanguageStr(LangID.PC_reset));
+        mntmPcreset.setText(lm.getLanguageStr(LangID.Send_system_setup));
         mntmMidiMonitor.setText(lm.getLanguageStr(LangID.MIDI_message_monitor));
         mntmMidimessagesender.setText(lm.getLanguageStr(LangID.MIDI_message_sender));
         lblCommon.setText("-- " + lm.getLanguageStr(LangID.Common_settings) + " --");
@@ -1399,6 +1388,8 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
 
         chckbxmntmLyricView.setText(lm.getLanguageStr(LangID.Lyrics_display));
         chckbxmntmSendSystemSetupBeforePlayback.setText(lm.getLanguageStr(LangID.Send_system_setup_before_playback));
+
+        mntmJmSynth.setText(lm.getLanguageStr(LangID.Builtin_synthesizer_settings));
 
         if (JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_LOADED_FILE).isEmpty() == true) {
             setInitializeStatusText();
@@ -1468,5 +1459,10 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             lyric = text;
             setStatusTextForLyric();
         }
+    }
+
+    @Override
+    public void setDefaultWindowLocation() {
+        this.setBounds(WindowManager.DEFAULT_PLAYER_WINDOW_SIZE);
     }
 }

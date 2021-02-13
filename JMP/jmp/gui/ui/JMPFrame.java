@@ -6,6 +6,7 @@ import java.awt.Point;
 import javax.swing.JFrame;
 
 import jlib.gui.IJmpWindow;
+import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.WindowManager;
 
@@ -29,17 +30,22 @@ public class JMPFrame extends JFrame implements IJMPComponentUI, IJmpWindow {
     }
 
     protected boolean isAutomationDefaultPosition() {
-        return true;
+        return JMPFlags.WindowAutomationPosFlag;
+    }
+
+    @Override
+    public void setDefaultWindowLocation() {
+        Point p = getDefaultWindowLocation();
+        if (p != null) {
+            this.setLocation(p);
+        }
     }
 
     @Override
     public void setVisible(boolean b) {
         if (super.isVisible() == false && b == true) {
             if (isAutomationDefaultPosition() == true) {
-                Point p = getDefaultWindowLocation();
-                if (p != null) {
-                    this.setLocation(p);
-                }
+                setDefaultWindowLocation();
             }
         }
         super.setVisible(b);

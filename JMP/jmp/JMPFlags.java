@@ -70,4 +70,8 @@ public class JMPFlags {
 
     /** 高速MIDIメッセージ使用 */
     public static boolean UseHispeedMidiMessage = false;
+
+    /** Window自動配置調整 */
+    public static boolean WindowAutomationPosFlag = true;
+
 }

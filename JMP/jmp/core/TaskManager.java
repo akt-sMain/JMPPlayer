@@ -10,6 +10,7 @@ import jmp.JMPFlags;
 import jmp.task.CallbackPackage;
 import jmp.task.ICallbackFunction;
 import jmp.task.ITask;
+import jmp.task.TaskOfBase;
 import jmp.task.TaskOfMidiEvent;
 import jmp.task.TaskOfSequence;
 import jmp.task.TaskOfTimer;
@@ -21,7 +22,7 @@ public class TaskManager extends AbstractManager {
     private TaskOfTimer taskOfTimer;
     private TaskOfSequence taskOfSequence;
     private TaskOfMidiEvent taskOfMidiEvent;
-    private static List<ITask> tasks = new ArrayList<ITask>();
+    private static List<TaskOfBase> tasks = new ArrayList<TaskOfBase>();
 
     TaskManager(int pri) {
         super(pri, "task");
@@ -60,17 +61,11 @@ public class TaskManager extends AbstractManager {
 
     public void queuing(Class<?> c, ICallbackFunction callbackFunction) {
         // 対応するタスクに対してキューイングを行う
-        if (c == TaskOfUpdate.class) {
-            taskOfUpdate.queuing(callbackFunction);
-        }
-        else if (c == TaskOfTimer.class) {
-            taskOfTimer.queuing(callbackFunction);
-        }
-        else if (c == TaskOfMidiEvent.class) {
-            taskOfMidiEvent.queuing(callbackFunction);
-        }
-        else {
-            taskOfSequence.queuing(callbackFunction);
+        for (TaskOfBase task : tasks) {
+            if (task.getClass() == c) {
+                task.queuing(callbackFunction);
+                break;
+            }
         }
     }
 

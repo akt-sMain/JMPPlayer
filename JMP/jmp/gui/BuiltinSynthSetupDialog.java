@@ -28,4 +28,9 @@ public class BuiltinSynthSetupDialog extends WaveViewerFrame implements IJmpWind
         return isVisible();
     }
 
+    @Override
+    public void setDefaultWindowLocation() {
+
+    }
+
 }
