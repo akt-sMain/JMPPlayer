@@ -4,9 +4,6 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-
 import jlib.core.IDataManager;
 import jmp.ConfigDatabase;
 import jmp.ConfigDatabaseWrapper;
@@ -18,12 +15,15 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
     public static final String CONFIG_FILE = "config.txt";
     public static final String HISTORY_FILE = "history.txt";
 
-    private DefaultListModel<String> historyModel = null;
-    private JList<String> history = null;
+    public static final int MAX_HISTORY_SIZE = 50;
+
+    // 履歴データ
+    private List<String> historyData = null;
 
     // 変換したファイルをログ
     private List<File> convertedFiles = null;
 
+    // 設定データベース
     private ConfigDatabase database = null;
 
     /** 初期化キー */
@@ -43,8 +43,7 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
     protected boolean initFunc() {
         super.initFunc();
-        historyModel = new DefaultListModel<String>();
-        history = new JList<String>(historyModel);
+        historyData = new LinkedList<String>();
         if (database == null) {
             ConfigDatabaseWrapper wrap = new ConfigDatabaseWrapper();
             database = wrap.getConfigDatabase();
@@ -140,8 +139,9 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         try {
             List<String> textContents = JmpUtil.readTextFile(path);
 
+            historyData.clear();
             for (String line : textContents) {
-                historyModel.addElement(line);
+                historyData.add(line);
             }
         }
         catch (Exception e) {
@@ -185,13 +185,8 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         boolean ret = true;
         String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSavePath(), HISTORY_FILE);
 
-        List<String> list = new LinkedList<String>();
-        for (int i = 0; i < historyModel.getSize(); i++) {
-            list.add(historyModel.get(i));
-        }
-
         try {
-            JmpUtil.writeTextFile(path, list);
+            JmpUtil.writeTextFile(path, historyData);
         }
         catch (Exception e) {
             ret = false;
@@ -245,23 +240,21 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         return database.getKeySet();
     }
 
-    public static final int MAX_HISTORY_SIZE = 50;
-
     public void addHistory(String path) {
-        historyModel.add(0, path);
+        historyData.add(0, path);
 
-        int size = history.getModel().getSize();
+        int size = historyData.size();
         if (size > MAX_HISTORY_SIZE) {
-            historyModel.remove(size - 1);
+            historyData.remove(size - 1);
         }
     }
 
-    public JList<String> getHistory() {
-        return history;
+    public List<String> getHistory() {
+        return historyData;
     }
 
     public void clearHistory() {
-        historyModel.removeAllElements();
+        historyData.clear();
     }
 
     public void addConvertedFile(File file) {

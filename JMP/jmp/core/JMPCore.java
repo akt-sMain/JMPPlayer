@@ -23,10 +23,10 @@ public class JMPCore {
     private static final int MANAGER_PRIORITY_SYSTEM = 20;
     private static final int MANAGER_PRIORITY_TASK = 30;
     private static final int MANAGER_PRIORITY_DATA = 40;
-    private static final int MANAGER_PRIORITY_WINDOW = 50;
-    private static final int MANAGER_PRIORITY_SOUND = 60;
-    private static final int MANAGER_PRIORITY_PLUGIN = 70;
-    private static final int MANAGER_PRIORITY_FILE = 80;
+    private static final int MANAGER_PRIORITY_FILE = 50;
+    private static final int MANAGER_PRIORITY_WINDOW = 60;
+    private static final int MANAGER_PRIORITY_SOUND = 70;
+    private static final int MANAGER_PRIORITY_PLUGIN = 80;
 
     private static SystemManager systemManager = new SystemManager(MANAGER_PRIORITY_SYSTEM);
     private static DataManager dataManager = new DataManager(MANAGER_PRIORITY_DATA);

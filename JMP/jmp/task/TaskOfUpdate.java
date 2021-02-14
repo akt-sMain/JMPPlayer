@@ -4,6 +4,7 @@ import java.awt.Window;
 
 import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
+import jmp.JMPFlags;
 import jmp.JMPLoader;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
@@ -55,6 +56,12 @@ public class TaskOfUpdate extends TaskOfBase {
                 // 停止時の初回のみ再描画する
                 isRepaint = true;
             }
+        }
+
+        // 強制再描画
+        if (JMPFlags.ForcedCyclicRepaintFlag == true) {
+            isRepaint = true;
+            JMPFlags.ForcedCyclicRepaintFlag = false;
         }
 
         if (isRepaint == true) {

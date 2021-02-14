@@ -6,22 +6,26 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
+import jmp.FileResult;
+import jmp.IFileResultCallback;
 import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 
-public class HistoryDialog extends JMPDialog {
+public class HistoryDialog extends JMPDialog implements IFileResultCallback{
 
     private final JPanel contentPanel = new JPanel();
-    private JList<String> list;
+    private DefaultListModel<String> historyModel = null;
+    private JList<String> history = null;
     private JButton buttonClear;
     private JButton playButton;
     private JButton cancelButton;
@@ -49,8 +53,10 @@ public class HistoryDialog extends JMPDialog {
             JScrollPane scrollPane = new JScrollPane();
             contentPanel.add(scrollPane, BorderLayout.CENTER);
             {
-                list = JMPCore.getDataManager().getHistory();
-                scrollPane.setViewportView(list);
+                historyModel = new DefaultListModel<String>();
+                history = new JList<String>(historyModel);
+                scrollPane.setViewportView(history);
+                updateHistoryData();
             }
         }
         {
@@ -62,7 +68,7 @@ public class HistoryDialog extends JMPDialog {
                 playButton = new JButton("再生");
                 playButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        String item = list.getSelectedValue();
+                        String item = history.getSelectedValue();
                         if (item != null) {
                             // ロード→再生フラグを立てる
                             JMPFlags.LoadToPlayFlag = true;
@@ -79,6 +85,7 @@ public class HistoryDialog extends JMPDialog {
                     buttonClear.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             JMPCore.getDataManager().clearHistory();
+                            updateHistoryData();
                         }
                     });
                     buttonPane.add(buttonClear);
@@ -98,6 +105,17 @@ public class HistoryDialog extends JMPDialog {
                 buttonPane.add(cancelButton);
             }
         }
+
+        // ロード後のコールバックを登録
+        JMPCore.getFileManager().addLoadResultCallback(this);
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        if (b == true) {
+            updateHistoryData();
+        }
+        super.setVisible(b);
     }
 
     @Override
@@ -111,4 +129,23 @@ public class HistoryDialog extends JMPDialog {
         cancelButton.setText(lm.getLanguageStr(LangID.Close));
     }
 
+    public void updateHistoryData() {
+        historyModel.removeAllElements();
+
+        for (String line : JMPCore.getDataManager().getHistory()) {
+            historyModel.addElement(line);
+        }
+    }
+
+    @Override
+    public void begin(FileResult result) {
+    }
+
+    @Override
+    public void end(FileResult result) {
+        if (result.status == true) {
+            // ロード後更新する
+            updateHistoryData();
+        }
+    }
 }

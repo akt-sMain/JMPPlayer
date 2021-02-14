@@ -680,6 +680,13 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             String[] exs = JmpUtil.genStr2Extensions(val);
             SMusicXmlPlayer.setSupportExtentions(exs);
         }
+        else if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_EXTENSION_MML)) == true) {
+            String val = system.getCommonRegisterValue(key);
+            String[] exs = JmpUtil.genStr2Extensions(val);
+            SMusicMacloPlayer.setSupportExtentions(exs);
+        }
+        else if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSIC)) == true) {
+        }
         super.notifyUpdateCommonRegister(key);
     }
 

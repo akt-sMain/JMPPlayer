@@ -13,6 +13,7 @@ import jlib.core.IWindowManager;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jlib.plugin.IPlugin;
+import jmp.JMPFlags;
 import jmp.gui.BuiltinSynthSetupDialog;
 import jmp.gui.FFmpegConvertDialog;
 import jmp.gui.HistoryDialog;
@@ -197,6 +198,9 @@ public class WindowManager extends AbstractManager implements IWindowManager {
             // 言語更新
             updateLanguage();
         }
+
+        // 再描画を実行させる
+        JMPFlags.ForcedCyclicRepaintFlag = true;
     }
 
     public void showErrorMessageDialogSync(String message) {
