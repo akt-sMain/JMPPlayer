@@ -130,10 +130,15 @@ public class HistoryDialog extends JMPDialog implements IFileResultCallback{
     }
 
     public void updateHistoryData() {
+        int backupSelectedIndex = history.getSelectedIndex();
         historyModel.removeAllElements();
 
         for (String line : JMPCore.getDataManager().getHistory()) {
             historyModel.addElement(line);
+        }
+
+        if (backupSelectedIndex != -1 && JMPCore.getDataManager().getHistorySize() > 0) {
+            history.setSelectedIndex(backupSelectedIndex);
         }
     }
 
@@ -146,6 +151,10 @@ public class HistoryDialog extends JMPDialog implements IFileResultCallback{
         if (result.status == true) {
             // ロード後更新する
             updateHistoryData();
+
+            if (JMPCore.getDataManager().getHistorySize() > 0) {
+                history.setSelectedIndex(0);
+            }
         }
     }
 }

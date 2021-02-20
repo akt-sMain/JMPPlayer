@@ -253,6 +253,10 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         return historyData;
     }
 
+    public int getHistorySize() {
+        return historyData.size();
+    }
+
     public void clearHistory() {
         historyData.clear();
     }

@@ -65,6 +65,12 @@ public class FileManager extends AbstractManager implements IFileManager {
         return result;
     }
 
+    private void initializeFlag() {
+        // フラグ初期化
+        JMPFlags.NoneHIstoryLoadFlag = false; // 履歴保存
+        JMPFlags.LoadToPlayFlag = false; // ロード後再生
+    }
+
     public void addLoadResultCallback(IFileResultCallback loadResultCallback) {
         loadCallbacks.add(loadResultCallback);
     }
@@ -136,8 +142,7 @@ public class FileManager extends AbstractManager implements IFileManager {
                     setting.loadToPlayFlag = JMPFlags.LoadToPlayFlag;
 
                     // フラグ初期化
-                    JMPFlags.NoneHIstoryLoadFlag = false; // 履歴保存
-                    JMPFlags.LoadToPlayFlag = false; // ロード後再生
+                    initializeFlag();
 
                     /* Coreのロード処理 */
                     FileResult endResult = loadFileImpl(f, setting);
@@ -148,6 +153,10 @@ public class FileManager extends AbstractManager implements IFileManager {
                     }
                 }
             });
+        }
+        else {
+            // フラグ初期化
+            initializeFlag();
         }
     }
 
