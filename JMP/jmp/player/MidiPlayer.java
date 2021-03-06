@@ -25,6 +25,7 @@ import javax.sound.midi.Transmitter;
 import jlib.midi.IMidiEventListener;
 import jlib.midi.IMidiFilter;
 import jlib.midi.MidiByte;
+import jlib.player.Player;
 import jmp.JMPFlags;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;

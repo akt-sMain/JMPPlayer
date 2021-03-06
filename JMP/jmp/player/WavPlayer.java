@@ -15,6 +15,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import function.Platform;
+import jlib.player.Player;
 
 public class WavPlayer extends Player {
     private Clip clip = null;

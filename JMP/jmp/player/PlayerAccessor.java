@@ -3,6 +3,8 @@ package jmp.player;
 import java.util.ArrayList;
 import java.util.List;
 
+import jlib.player.Player;
+
 public class PlayerAccessor {
 
     private List<Player> registerPlayer = new ArrayList<Player>();

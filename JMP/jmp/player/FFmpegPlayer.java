@@ -3,6 +3,7 @@ package jmp.player;
 import java.io.File;
 
 import function.Utility;
+import jlib.player.Player;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.SoundManager;
@@ -140,7 +141,7 @@ public class FFmpegPlayer extends Player {
     }
 
     @Override
-    protected void setInfo(Info info) {
+    public void setInfo(Info info) {
         wavPlayer.setInfo(info);
     }
 

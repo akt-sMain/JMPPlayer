@@ -4,6 +4,7 @@ import java.io.File;
 
 import javax.sound.midi.Sequence;
 
+import jlib.player.Player;
 import jmp.convert.mml.MusicMacroReader;
 import jmp.core.SoundManager;
 
@@ -146,7 +147,7 @@ public class MusicMacroPlayer extends Player {
     }
 
     @Override
-    protected void setInfo(Info info) {
+    public void setInfo(Info info) {
         midiPlayer.setInfo(info);
     }
 

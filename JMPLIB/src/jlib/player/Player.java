@@ -1,4 +1,4 @@
-package jmp.player;
+package jlib.player;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,11 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import function.Platform;
-import jlib.player.IPlayer;
-import jmp.util.JmpUtil;
+import jlib.core.JMPCoreAccessor;
 
 public abstract class Player implements IPlayer {
+
+    /**
+     * プレイヤー情報クラス
+     *
+     * @author akkut
+     *
+     */
     public class Info {
         public static final String PLAYER_ABS_INFO_KEY_FILENAME = "File Name";
 
@@ -45,7 +50,7 @@ public abstract class Player implements IPlayer {
             String msg = "";
             for (String key : columns) {
                 msg += String.format("%s : %s", key, data.get(key));
-                msg += Platform.getNewLine();
+                msg += JMPCoreAccessor.getSystemManager().getUtilityToolkit().getNewLine();
             }
             return msg;
         }
@@ -57,88 +62,23 @@ public abstract class Player implements IPlayer {
     private Info info = null;
     private String[] supportExtentions = null;
 
+    /**
+     * プレイヤーを開く
+     *
+     * @return
+     */
     public boolean open() {
         return true;
     }
 
+    /**
+     * プレイヤーを閉じる
+     *
+     * @return
+     */
     public boolean close() {
         return true;
     }
-
-    /**
-     * 再生
-     */
-    public abstract void play();
-
-    /**
-     * 停止
-     */
-    public abstract void stop();
-
-    /**
-     * 再生中/停止中の状態
-     *
-     * @return ステータス
-     */
-    public abstract boolean isRunnable();
-
-    /**
-     * 再生データのポジション設定
-     *
-     * @param pos
-     *            ポジション
-     */
-    public abstract void setPosition(long pos);
-
-    /**
-     * 再生データのポジション取得
-     *
-     * @return ポジション
-     */
-    public abstract long getPosition();
-
-    /**
-     * 再生データのサイズ取得
-     *
-     * @return サイズ
-     */
-    public abstract long getLength();
-
-    /**
-     * 有効/無効
-     *
-     * @return
-     */
-    public abstract boolean isValid();
-
-    /**
-     * ポジションの秒数
-     *
-     * @return
-     */
-    public abstract int getPositionSecond();
-
-    /**
-     * サイズの秒数
-     *
-     * @return
-     */
-    public abstract int getLengthSecond();
-
-    /**
-     * ボリューム設定
-     *
-     * @param volume
-     *            ボリューム
-     */
-    public abstract void setVolume(float volume);
-
-    /**
-     * ボリューム取得
-     *
-     * @return ボリューム
-     */
-    public abstract float getVolume();
 
     /**
      * ファイルロード
@@ -159,6 +99,11 @@ public abstract class Player implements IPlayer {
      */
     public abstract boolean saveFile(File file) throws Exception;
 
+    /**
+     * 全拡張子を許可するか問い合わせる
+     *
+     * @return
+     */
     public boolean isAllSupported() {
         if (supportExtentions != null) {
             for (String s : supportExtentions) {
@@ -204,14 +149,24 @@ public abstract class Player implements IPlayer {
      *            サポートする拡張子
      */
     public void setSupportExtentionsString(String supportExtentionsStr) {
-        setSupportExtentions(JmpUtil.genStr2Extensions(supportExtentionsStr));
+        setSupportExtentions(JMPCoreAccessor.getSystemManager().getUtilityToolkit().str2Extensions(supportExtentionsStr));
     }
 
+    /**
+     * プレイヤー情報取得
+     *
+     * @return
+     */
     public Info getInfo() {
         return info;
     }
 
-    protected void setInfo(Info info) {
+    /**
+     * プレイヤー情報設定
+     *
+     * @param info
+     */
+    public void setInfo(Info info) {
         this.info = info;
     }
 }

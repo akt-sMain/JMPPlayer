@@ -7,6 +7,13 @@ import javax.swing.filechooser.FileFilter;
 public interface IUtilityToolkit {
 
     /**
+     * 改行文字を取得
+     *
+     * @return
+     */
+    abstract String getNewLine();
+
+    /**
      * HTMLカラーコードをAWTカラーインスタンスに変換する
      *
      * @param code

@@ -6,6 +6,7 @@ import javax.sound.midi.Sequence;
 
 import function.Platform;
 import function.Utility;
+import jlib.player.Player;
 import jmp.convert.musicxml.MusicXMLReader;
 import jmp.core.SoundManager;
 import jmp.gui.MusicXMLConfirmDialog;
@@ -145,7 +146,7 @@ public class MusicXmlPlayer extends Player {
     }
 
     @Override
-    protected void setInfo(Info info) {
+    public void setInfo(Info info) {
         midiPlayer.setInfo(info);
     }
 

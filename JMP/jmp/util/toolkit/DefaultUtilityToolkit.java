@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import javax.swing.filechooser.FileFilter;
 
+import function.Platform;
 import function.Utility;
 import jlib.util.IUtilityToolkit;
 import jmp.util.JmpUtil;
@@ -11,6 +12,11 @@ import jmp.util.JmpUtil;
 public class DefaultUtilityToolkit implements IUtilityToolkit {
 
     public DefaultUtilityToolkit() {
+    }
+
+    @Override
+    public String getNewLine() {
+        return Platform.getNewLine();
     }
 
     @Override
