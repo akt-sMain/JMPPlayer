@@ -289,6 +289,13 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         builtinSynthFrame.setVisible(false);
     }
 
+    public void repaintBuiltinSynthFrame() {
+        if (isValidBuiltinSynthFrame() == false) {
+            return;
+        }
+        builtinSynthFrame.repaintWavePane();
+    }
+
     public void repaint(String name) {
         IJmpWindow win = getWindow(name);
         repaint(win);

@@ -144,6 +144,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
                     btnClear.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             clearMidiMessage();
+                            updateStack();
                         }
                     });
                     panel.add(btnClear);

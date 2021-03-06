@@ -16,7 +16,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -76,6 +75,11 @@ import lib.MakeJmpLib;
  *
  */
 public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainWindow, IJMPComponentUI, IDropFileCallback {
+
+    // !!デバッグ用イベント
+    private void executeDebugFunc(int n) {
+        System.out.println("DEBUG " + n);
+    }
 
     private class JmpMenuListener implements MenuListener {
 
@@ -772,16 +776,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         mntmDebugDummy = new JMenuItem("Dummy");
         mntmDebugDummy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                try {
-                    List<Long> data = SoundManager.SWavPlayer.sampling(100);
-                    for (long value : data) {
-                        System.out.println(value);
-                    }
-                }
-                catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-
+                executeDebugFunc(0);
             }
         });
         configMenu.add(mntmDebugDummy);

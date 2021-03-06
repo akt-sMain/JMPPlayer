@@ -23,5 +23,4 @@ public class TaskOfSequence extends TaskOfBase {
     @Override
     void end() {
     }
-
 }

@@ -1,7 +1,7 @@
 package jmp.core;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.sound.midi.MidiMessage;
 
@@ -16,13 +16,19 @@ import jmp.task.TaskOfSequence;
 import jmp.task.TaskOfTimer;
 import jmp.task.TaskOfUpdate;
 
+
 public class TaskManager extends AbstractManager {
 
-    private TaskOfUpdate taskOfUpdate;
-    private TaskOfTimer taskOfTimer;
-    private TaskOfSequence taskOfSequence;
-    private TaskOfMidiEvent taskOfMidiEvent;
-    private static List<TaskOfBase> tasks = new ArrayList<TaskOfBase>();
+    /** タスクID */
+    public static enum TaskID {
+        UPDATE,
+        TIMER,
+        SEQUENCE,
+        MIDI,
+    }
+
+    /** タスクデータベース */
+    private Map<TaskID, TaskOfBase> taskMap = null;
 
     TaskManager(int pri) {
         super(pri, "task");
@@ -32,21 +38,19 @@ public class TaskManager extends AbstractManager {
     protected boolean initFunc() {
         super.initFunc();
 
+        taskMap = new HashMap<TaskID, TaskOfBase>();
+
         // 更新タスク登録
-        taskOfUpdate = new TaskOfUpdate();
-        tasks.add(taskOfUpdate);
+        taskMap.put(TaskID.UPDATE, new TaskOfUpdate());
 
         // タイマータスク登録
-        taskOfTimer = new TaskOfTimer();
-        tasks.add(taskOfTimer);
+        taskMap.put(TaskID.TIMER, new TaskOfTimer());
 
         // シーケンスタスク登録
-        taskOfSequence = new TaskOfSequence();
-        tasks.add(taskOfSequence);
+        taskMap.put(TaskID.SEQUENCE, new TaskOfSequence());
 
         // MIDIイベントタスク登録
-        taskOfMidiEvent = new TaskOfMidiEvent();
-        tasks.add(taskOfMidiEvent);
+        taskMap.put(TaskID.MIDI, new TaskOfMidiEvent());
 
         // アプリケーション共通コールバック関数の登録
         registerCommonCallbackPackage();
@@ -59,47 +63,48 @@ public class TaskManager extends AbstractManager {
         return true;
     }
 
-    public void queuing(Class<?> c, ICallbackFunction callbackFunction) {
+    public void waitTask(TaskID id, long mills) {
+        taskMap.get(id).waitTask(mills);
+    }
+
+    public void queuing(TaskID id, ICallbackFunction callbackFunction) {
         // 対応するタスクに対してキューイングを行う
-        for (TaskOfBase task : tasks) {
-            if (task.getClass() == c) {
-                task.queuing(callbackFunction);
-                break;
-            }
-        }
+        taskMap.get(id).queuing(callbackFunction);
     }
 
     public void queuing(ICallbackFunction callbackFunction) {
-        queuing(TaskOfSequence.class, callbackFunction);
+        queuing(TaskID.SEQUENCE, callbackFunction);
     }
 
     public void taskStart() {
         /* Threadインスタンスのstart処理 */
-        for (ITask task : tasks) {
+        for (ITask task : taskMap.values()) {
             task.startTask();
         }
     }
 
     public void taskExit() {
-        for (ITask task : tasks) {
+        for (ITask task : taskMap.values()) {
             task.exitTask();
         }
     }
 
     public void join() throws InterruptedException {
-        for (ITask task : tasks) {
+        for (ITask task : taskMap.values()) {
             task.joinTask();
         }
     }
 
     public void addMidiEvent(MidiMessage message, long timeStamp, short senderType) {
-        taskOfMidiEvent.add(message, timeStamp, senderType);
+        TaskOfMidiEvent task = (TaskOfMidiEvent)taskMap.get(TaskID.MIDI);
+        task.add(message, timeStamp, senderType);
     }
 
     public void addCallbackPackage(long cyclicTime, ICallbackFunction func) {
-        CallbackPackage pkg = new CallbackPackage(cyclicTime, taskOfTimer.getSleepTime());
+        TaskOfTimer task = (TaskOfTimer)taskMap.get(TaskID.TIMER);
+        CallbackPackage pkg = new CallbackPackage(cyclicTime, task.getSleepTime());
         pkg.addCallbackFunction(func);
-        taskOfTimer.addCallbackPackage(pkg);
+        task.addCallbackPackage(pkg);
     }
 
     private void registerCommonCallbackPackage() {

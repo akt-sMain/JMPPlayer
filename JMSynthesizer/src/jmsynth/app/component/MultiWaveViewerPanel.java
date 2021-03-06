@@ -1,5 +1,6 @@
 package jmsynth.app.component;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -168,13 +169,12 @@ public class MultiWaveViewerPanel extends JPanel {
             @Override
             public void repaintWave(byte[] waveData) {
                 d16 = waveData;
-                repaintWavePane();
             }
         });
         cinit();
     }
 
-    private void repaintWavePane() {
+    public void repaintWavePane() {
         if (isVisible() == true) {
             repaint();
         }
@@ -384,7 +384,9 @@ public class MultiWaveViewerPanel extends JPanel {
             }
             if (visibleWave[ch] == true) {
                 g2d.setColor(waveColor);
+                g2d.setStroke(new BasicStroke(2.0f));
                 g2d.drawPolyline(xPoints, yPoints, length);
+                g2d.setStroke(new BasicStroke());
             }
         }
 
@@ -394,11 +396,13 @@ public class MultiWaveViewerPanel extends JPanel {
                 g2d.drawString("wave" + (ch + 1), xoffset + 5 + 1, (int) (yCenter - (vHeight / 3)) + 1);
                 g2d.setColor(waveColor);
                 g2d.drawString("wave" + (ch + 1), xoffset + 5, (int) (yCenter - (vHeight / 3)));
+                g2d.setStroke(new BasicStroke(1.5f));
                 for (int i = 1; i <= 3; i++) {
                     g2d.setColor(Color.WHITE);
                     g2d.drawLine(vWidth * i, 0, vWidth * i, getHeight());
                     g2d.drawLine(0, vHeight * i, getWidth(), vHeight * i);
                 }
+                g2d.setStroke(new BasicStroke());
             }
         }
 

@@ -397,4 +397,10 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         }
         super.setVisible(b);
     }
+
+    public void repaintWavePane() {
+        if (isVisible() == true) {
+            panel.repaintWavePane();
+        }
+    }
 }

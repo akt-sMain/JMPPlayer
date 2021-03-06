@@ -26,10 +26,9 @@ import jmsynth.oscillator.SquareWaveOscillator;
 import jmsynth.oscillator.TriWaveOscillator;
 
 public class SoundSourceChannel extends Thread implements ISynthController {
-    // static int SAMPLE_RATE = 11025; // サンプルレート
-    // static int SAMPLE_RATE = 22050; // サンプルレート
-    // static int SAMPLE_RATE = 44100; // サンプルレート
-    public static final float SAMPLE_RATE = 44100.0f;
+    public static final float SAMPLE_RATE = 44100.0f; // サンプルレート
+    //public static final float SAMPLE_RATE = 22050.0f; // サンプルレート
+    //public static final float SAMPLE_RATE = 11025.0f; // サンプルレート
 
     public static final boolean SAMPLE_16BITS = true;
     public static final int SAMPLE_SIZE = SAMPLE_16BITS ? 16 : 8;

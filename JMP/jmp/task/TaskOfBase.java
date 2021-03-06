@@ -10,11 +10,13 @@ public abstract class TaskOfBase implements ITask, Runnable {
     private boolean isRunnable = true;
     protected Thread thread = null;
     protected long sleepTime = 100;
+    protected long waitTime = 0;
 
     public TaskOfBase(long sleepTime) {
         this.callbackQue = new ArrayList<ICallbackFunction>();
         this.sleepTime = sleepTime;
         this.isRunnable = true;
+        this.waitTime = 0;
         this.thread = new Thread(this);
     }
 
@@ -37,6 +39,12 @@ public abstract class TaskOfBase implements ITask, Runnable {
                 pSleepTime = 1;
             }
             notifySleepTimeCalc(pSleepTime);
+
+            if (this.waitTime > 0) {
+                // 待ち時間を加算
+                pSleepTime += this.waitTime;
+                this.waitTime = 0;
+            }
             JmpUtil.threadSleep(pSleepTime);
         }
 
@@ -70,6 +78,11 @@ public abstract class TaskOfBase implements ITask, Runnable {
         catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void waitTask(long sleepTime) {
+        this.waitTime = sleepTime;
     }
 
     public void queuing(ICallbackFunction callbackFunction) {

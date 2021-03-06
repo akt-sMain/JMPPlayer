@@ -18,13 +18,15 @@ import jmp.gui.JmpQuickLaunch;
  *
  */
 public class TaskOfUpdate extends TaskOfBase {
+    private static final int CYCLIC_UPDATE_MSEC = 100;
     private static final int CYCLIC_REPAINT_MSEC = 5000;
     private static final int CYCLIC_REPAINT_MSEC_PLAY = 1000;
+    private int cyclicUpdateCount = 0;
     private int cyclicRepaintCount = 0;
     private boolean pastRunnableState = false;
 
     public TaskOfUpdate() {
-        super(100);
+        super(50);
     }
 
     @Override
@@ -37,11 +39,10 @@ public class TaskOfUpdate extends TaskOfBase {
         PluginManager pm = JMPCore.getPluginManager();
         IJmpMainWindow win = wm.getMainWindow();
 
-        win.update();
-        pm.update();
-
-        // 再描画
+        boolean isUpdate = false;
         boolean isRepaint = false;
+
+        // 再描画カウント
         if (JMPCore.getSoundManager().isPlay() == true) {
             if ((CYCLIC_REPAINT_MSEC_PLAY / getSleepTime()) <= cyclicRepaintCount) {
                 isRepaint = true;
@@ -57,13 +58,27 @@ public class TaskOfUpdate extends TaskOfBase {
                 isRepaint = true;
             }
         }
+        // 更新カウント
+        if ((CYCLIC_UPDATE_MSEC / getSleepTime()) <= cyclicUpdateCount) {
+            isUpdate = true;
+        }
 
         // 強制再描画
         if (JMPFlags.ForcedCyclicRepaintFlag == true) {
+            isUpdate = true;
             isRepaint = true;
             JMPFlags.ForcedCyclicRepaintFlag = false;
         }
 
+        // 自作シンセ再描画
+        wm.repaintBuiltinSynthFrame();
+
+        // 更新
+        if (isUpdate == true) {
+            win.update();
+            pm.update();
+            cyclicUpdateCount = 0;
+        }
         if (isRepaint == true) {
             // 再描画
             if (win instanceof Window) {
@@ -75,6 +90,7 @@ public class TaskOfUpdate extends TaskOfBase {
             cyclicRepaintCount = 0;
         }
         cyclicRepaintCount++;
+        cyclicUpdateCount++;
 
         pastRunnableState = JMPCore.getSoundManager().isPlay();
 

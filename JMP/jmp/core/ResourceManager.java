@@ -20,6 +20,7 @@ import jmp.skin.SkinGlobalConfig;
 public class ResourceManager extends AbstractManager implements IManager {
 
     public static final String GROBAL_SKIN_FILE_NAME = "skin.txt";
+    public static final String ICON_FILE_NAME = "iconPNG.png";
 
     private Skin skin = null;
     private Image jmpImageIcon = null;
@@ -96,7 +97,7 @@ public class ResourceManager extends AbstractManager implements IManager {
     }
 
     private Image createJmpIcon() {
-        URL url = this.getClass().getClassLoader().getResource("iconPNG.png");
+        URL url = this.getClass().getClassLoader().getResource(ICON_FILE_NAME);
         Image img = null;
         try {
             img = ImageIO.read(url);
