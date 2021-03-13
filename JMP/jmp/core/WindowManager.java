@@ -255,6 +255,9 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     }
 
     public void setBuiltinSynthFrame(BuiltinSynthSetupDialog frame) {
+        if (this.builtinSynthFrame != null && this.builtinSynthFrame != frame) {
+            this.builtinSynthFrame.dispose();
+        }
         this.builtinSynthFrame = frame;
     }
 

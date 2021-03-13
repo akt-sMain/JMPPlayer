@@ -134,27 +134,30 @@ public class JMPLoader {
     }
 
     /**
-     * JMPPlayer起動設定
+     * コマンド引数の解析
      *
      * @param args
-     * @param config
      * @return
      */
-    public static boolean invoke(String[] args, ConfigDatabaseWrapper config) {
+    private static InvokeArgs parseArgs(String[] args) {
+        InvokeArgs res = new InvokeArgs();
         String jmsName = "";
-        IPlugin stdPlugin = null;
+        res.stdPlugin = null;
+        res.doReturn = false;
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase(CMD_MKJMP) == true) {
                 args[0] = MakeJmpLib.CMD_CONSOLE;
                 MakeJmpLib.call(args);
-                return true;
+                res.doReturn = true;
+                return res;
             }
 
             for (int i = 0; i < args.length; i++) {
                 if (args[i].equalsIgnoreCase(CMD_MANUAL) == true) {
                     setupConsoleApplication();
                     printManual();
-                    return true;
+                    res.doReturn = true;
+                    return res;
                 }
                 else if (args[i].equalsIgnoreCase(CMD_STDPLG) == true) {
                     i++;
@@ -170,7 +173,8 @@ public class JMPLoader {
                 else if (args[i].equalsIgnoreCase(CMD_PLGLST) == true) {
                     setupConsoleApplication();
                     printPlglst();
-                    return true;
+                    res.doReturn = true;
+                    return res;
                 }
                 else if (args[i].equalsIgnoreCase(CMD_DEBUG) == true) {
                     JMPFlags.DebugMode = true;
@@ -211,9 +215,24 @@ public class JMPLoader {
             JMPCore.getSystemManager().makeSystemPath();
 
             // プラグインを探索
-            stdPlugin = getStdPlugin(jmsName);
+            res.stdPlugin = getStdPlugin(jmsName);
         }
-        return invoke(config, stdPlugin);
+        return res;
+    }
+
+    /**
+     * JMPPlayer起動設定
+     *
+     * @param args
+     * @param config
+     * @return
+     */
+    public static boolean invoke(String[] args, ConfigDatabaseWrapper config) {
+        InvokeArgs rArgs = parseArgs(args);
+        if (rArgs.doReturn == true) {
+            return true;
+        }
+        return invokeImpl(config, rArgs.stdPlugin);
     }
 
     /**
@@ -223,7 +242,11 @@ public class JMPLoader {
      * @return
      */
     public static boolean invoke(String[] args) {
-        return invoke(args, null);
+        InvokeArgs rArgs = parseArgs(args);
+        if (rArgs.doReturn == true) {
+            return true;
+        }
+        return invokeImpl(null, rArgs.stdPlugin);
     }
 
     /**
@@ -235,6 +258,16 @@ public class JMPLoader {
      * @return
      */
     public static boolean invoke(ConfigDatabaseWrapper config, IPlugin standAlonePlugin) {
+        return invokeImpl(config, standAlonePlugin);
+    }
+
+    /**
+     * 起動処理本体
+     * @param config
+     * @param standAlonePlugin
+     * @return
+     */
+    private static boolean invokeImpl(ConfigDatabaseWrapper config, IPlugin standAlonePlugin) {
 
         // invokeメソッドからの起動はLibraryモードではない
         JMPFlags.LibraryMode = false;

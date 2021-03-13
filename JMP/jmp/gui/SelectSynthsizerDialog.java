@@ -35,6 +35,7 @@ import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.player.MidiPlayer;
 import jmsynth.JMSynthEngine;
+import jmsynth.midi.JMSynthMidiDevice;
 import jmsynth.midi.MidiInterface;
 
 public class SelectSynthsizerDialog extends JMPDialog {
@@ -216,21 +217,24 @@ public class SelectSynthsizerDialog extends JMPDialog {
                         String description = "";
                         String port = "";
 
+                        MidiDevice.Info info = null;
+
                         if (comboRecvMode.getSelectedIndex() == 0) {
                             vendor += "";
                             version += "";
                             description += "Automatically select an available synthesizer.";
                         }
                         else if (comboRecvMode.getSelectedIndex() == 1) {
-                            vendor += "Akt";
-                            version += jmsynth.Version.NO;
-                            description += "Self-made built-in 8bit tune synthesizer.";
+                            info = JMSynthMidiDevice.INFO;
                         }
                         else {
-                            MidiDevice dev = MidiSystem.getMidiDevice(infosOfRecv[devIndex]);
-                            vendor += dev.getDeviceInfo().getVendor();
-                            version += dev.getDeviceInfo().getVersion();
-                            description += dev.getDeviceInfo().getDescription();
+                            info = infosOfRecv[devIndex];
+                        }
+
+                        if (info != null) {
+                            vendor += info.getVendor();
+                            version += info.getVersion();
+                            description += info.getDescription();
                         }
 
                         lblVendorOfRecv.setText(vendor);
@@ -255,11 +259,16 @@ public class SelectSynthsizerDialog extends JMPDialog {
                         String description = "";
                         String port = "";
 
+                        MidiDevice.Info info = null;
+
                         if (listName.equals("") == false) {
-                            MidiDevice dev = MidiSystem.getMidiDevice(infosOfTrans[devIndex]);
-                            vendor += dev.getDeviceInfo().getVendor();
-                            version += dev.getDeviceInfo().getVersion();
-                            description += dev.getDeviceInfo().getDescription();
+                            info = infosOfTrans[devIndex];
+                        }
+
+                        if (info != null) {
+                            vendor += info.getVendor();
+                            version += info.getVersion();
+                            description += info.getDescription();
                         }
 
                         lblVendorOfTrans.setText(vendor);
