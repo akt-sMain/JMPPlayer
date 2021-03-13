@@ -126,12 +126,7 @@ public class MidiInterface implements Receiver {
                     }
                     break;
                 case DefineCommand.PROGRAM_CHANGE: {
-                    // オシレータの切り替え
-                    if (isAutoSelectOscillator() == true) {
-                        OscillatorSet osc = getProgramChangeOscillator(channel, data1);
-                        controller.setOscillator(channel, osc);
-                    }
-                    controller.setVolume(channel, 1.0f);
+                    executeProgramChange(channel, data1);
                 }
                     break;
                 default:
@@ -146,19 +141,38 @@ public class MidiInterface implements Receiver {
             switch (status) {
                 case DefineCommand.SYSEX_BEGIN:
                     if (MidiUtil.isGmSystemOn(aMessage) == true) {
-                        controller.systemReset();
+                        executeSystemReset();
                     }
                     else if (MidiUtil.isGsReset(aMessage) == true) {
-                        controller.systemReset();
+                        executeSystemReset();
                     }
                     else if (MidiUtil.isXgSystemOn(aMessage) == true) {
-                        controller.systemReset();
+                        executeSystemReset();
                     }
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    private void executeProgramChange(int channel, int pc) {
+        executeProgramChange(channel, pc, false);
+    }
+    private void executeProgramChange(int channel, int pc, boolean doForcedChange) {
+        if (isAutoSelectOscillator() == true || doForcedChange == true) {
+            OscillatorSet osc = getProgramChangeOscillator(channel, pc);
+            controller.setOscillator(channel, osc);
+        }
+        controller.setVolume(channel, 1.0f);
+    }
+
+    private void executeSystemReset() {
+        // PCリセット
+        for (int i=0; i<16; i++) {
+            executeProgramChange(i, 0);
+        }
+        controller.systemReset();
     }
 
     private OscillatorSet getProgramChangeOscillator(int ch, int pc) {

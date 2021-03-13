@@ -403,4 +403,8 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
             panel.repaintWavePane();
         }
     }
+
+    public void setAutoRepaintTask(boolean autoRepaint) {
+        panel.autoRepaintTask = autoRepaint;
+    }
 }

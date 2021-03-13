@@ -42,6 +42,7 @@ public class MultiWaveViewerPanel extends JPanel {
     byte[] d14 = null;
     byte[] d15 = null;
     byte[] d16 = null;
+    public boolean autoRepaintTask = false;
     public boolean visibleAuto = false;
     public boolean[] visibleWave = new boolean[16];
     public int traceViewMode = TRACE_VIEW_MODE_DETAIL;
@@ -169,6 +170,11 @@ public class MultiWaveViewerPanel extends JPanel {
             @Override
             public void repaintWave(byte[] waveData) {
                 d16 = waveData;
+
+                // 16chをトリガーにして再描画する
+                if (autoRepaintTask == true) {
+                    repaintWavePane();
+                }
             }
         });
         cinit();
@@ -384,7 +390,7 @@ public class MultiWaveViewerPanel extends JPanel {
             }
             if (visibleWave[ch] == true) {
                 g2d.setColor(waveColor);
-                g2d.setStroke(new BasicStroke(2.0f));
+                g2d.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.CAP_ROUND));
                 g2d.drawPolyline(xPoints, yPoints, length);
                 g2d.setStroke(new BasicStroke());
             }

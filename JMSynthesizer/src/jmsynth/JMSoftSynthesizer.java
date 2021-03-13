@@ -12,6 +12,11 @@ import jmsynth.sound.SoundSourceChannel;
 
 public class JMSoftSynthesizer implements ISynthController {
 
+    public static final String INFO_NAME = "JMSynthesizer";
+    public static final String INFO_VENDOR = "Akt";
+    public static final String INFO_DESCRIPTION = "Self-made built-in 8bit tune synthesizer.";
+    public static final String INFO_VERSION = jmsynth.Version.NO;
+
     protected SoundSourceChannel[] channels = null;
     private EnvelopeFactory envelopeFactory = null;
     private ModulatorFactory modulatorFactory = null;
