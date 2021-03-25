@@ -19,8 +19,8 @@ public class NoisWaveOscillator implements IOscillator {
         for (int i=0; i<drumSet.length; i++) {
             drumSet[i] = new DrumSim(200);
         }
-        drumSet[35] = new DrumSim(70); // Acou Bass Drum
-        drumSet[36] = new DrumSim(70); // Bass Drum1
+        drumSet[35] = new DrumSim(60); // Acou Bass Drum
+        drumSet[36] = new DrumSim(60); // Bass Drum1
         drumSet[37] = new DrumSim(20); // Side Stick
         drumSet[38] = new DrumSim(10); // Acou Snare
         drumSet[39] = new DrumSim(1); // Hand Clap

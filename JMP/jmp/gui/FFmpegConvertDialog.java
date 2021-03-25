@@ -142,8 +142,10 @@ public class FFmpegConvertDialog extends JMPDialog {
                 else {
                     dir = new File(Platform.getCurrentPath());
                 }
-                if (dir.isDirectory() == false) {
-                    dir = dir.getParentFile();
+                if (dir != null) {
+                    if (dir.isDirectory() == false) {
+                        dir = dir.getParentFile();
+                    }
                 }
 
                 filechooser.setCurrentDirectory(dir);
