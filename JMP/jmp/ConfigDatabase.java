@@ -1,6 +1,7 @@
 package jmp;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,6 +26,43 @@ public class ConfigDatabase {
         for (String key : keyset) {
             database.put(key, "");
         }
+    }
+
+    public static ConfigDatabase create(String path) {
+        ArrayList<String> keys = new ArrayList<String>();
+        ArrayList<String> values = new ArrayList<String>();
+        File file = new File(path);
+        if (file.exists() == false) {
+            return null;
+        }
+
+        try {
+            List<String> textContents = JmpUtil.readTextFile(file);
+
+            for (String line : textContents) {
+                String[] sLine = line.split(KER_SEPARATOR);
+                if (sLine.length >= 1) {
+                    String key = sLine[0].trim();
+                    String value = (sLine.length >= 2) ? sLine[1] : "";
+                    keys.add(key);
+                    values.add(value);
+                }
+            }
+        }
+        catch (Exception e) {
+            return null;
+        }
+
+        String[] aKeys = new String[keys.size()];
+        for (int i=0; i<aKeys.length; i++) {
+            aKeys[i] = keys.get(i);
+        }
+
+        ConfigDatabase db = new ConfigDatabase(aKeys);
+        for (int i=0; i<aKeys.length; i++) {
+            db.setConfigParam(aKeys[i], values.get(i));
+        }
+        return db;
     }
 
     public String[] getKeySet() {

@@ -16,6 +16,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -863,15 +865,8 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
 
         setInitializeStatusText();
 
-        // プラグイン追加
-        for (String name : JMPCore.getPluginManager().getPluginsNameSet()) {
-            IPlugin plugin = JMPCore.getPluginManager().getPlugin(name);
-            if (plugin == null) {
-                continue;
-            }
-
-            addPluginMenu(name, plugin);
-        }
+        // プラグインメニュー更新
+        JMPCore.getWindowManager().updatePluginMenuItems();
 
         if (JMPFlags.NonPluginLoadFlag == true) {
             pluginMenu.setEnabled(false);
@@ -1099,15 +1094,11 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         }
     }
 
-    /**
-     * プラグイン追加
-     *
-     * @param plugin
-     *            プラグイン
-     */
-    public void addPluginMenu(String name, IPlugin plugin) {
-        JMPCore.getWindowManager().addPluginMenuItem(name, plugin);
+    private List<JMenuItem> pluginItemsCache = new ArrayList<JMenuItem>();
+
+    public void updatePluginMenu() {
         pluginMenu.removeAll();
+        pluginItemsCache.clear();
 
         pluginMenu.add(addPluginMenuItem);
         pluginMenu.add(removePluginMenuItem);
@@ -1116,12 +1107,12 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         pluginMenu.addSeparator();
         for (JMenuItem item : JMPCore.getWindowManager().getPluginMenuItems()) {
             pluginMenu.add(item);
+            pluginItemsCache.add(item);
         }
     }
 
     private void updatePluginEnable() {
-        for (int i = 0; i < pluginMenu.getItemCount(); i++) {
-            JMenuItem item = pluginMenu.getItem(i);
+        for (JMenuItem item : pluginItemsCache) {
             if (item != null) {
                 String name = item.getText();
                 IPlugin plg = JMPCore.getPluginManager().getPlugin(name);
@@ -1136,8 +1127,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                     item.setEnabled(false);
                 }
 
-                // 何もロードされていない場合は、常に有効状態にする
-                if (JMPCore.getDataManager().getLoadedFile().isEmpty() == true) {
+                if (JMPCore.isEnableStandAlonePlugin() == true) {
                     item.setEnabled(true);
                 }
             }
@@ -1145,6 +1135,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         boolean isPlay = JMPCore.getSoundManager().isPlay();
         addPluginMenuItem.setEnabled(!isPlay);
         removePluginMenuItem.setEnabled(!isPlay);
+        mntmPluginManager.setEnabled(!isPlay);
         allClosePluginMenuItem.setEnabled(!isPlay);
     }
 
@@ -1156,6 +1147,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         autoPlayCheckBox.setSelected(dm.isAutoPlay());
         alwayTopCheckBox.setSelected(isAlwaysOnTop());
         chckbxmntmLyricView.setSelected(dm.isLyricView());
+        chckbxmntmSendSystemSetupBeforePlayback.setSelected(dm.isSendMidiSystemSetup());
         mntmJmSynth.setEnabled(JMPCore.getWindowManager().isValidBuiltinSynthFrame());
 
         // 音量バー同期

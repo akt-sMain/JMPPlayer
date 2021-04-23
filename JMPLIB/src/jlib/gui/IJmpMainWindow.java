@@ -1,7 +1,5 @@
 package jlib.gui;
 
-import jlib.plugin.IPlugin;
-
 public interface IJmpMainWindow extends IJmpWindow {
 
     /**
@@ -18,16 +16,6 @@ public interface IJmpMainWindow extends IJmpWindow {
      *            ステータス
      */
     abstract void setStatusText(String text, boolean status);
-
-    /**
-     * プラグインメニュー追加
-     *
-     * @param name
-     *            プラグイン名
-     * @param plugin
-     *            プラグイン
-     */
-    abstract void addPluginMenu(String name, IPlugin plugin);
 
     /**
      * 更新処理

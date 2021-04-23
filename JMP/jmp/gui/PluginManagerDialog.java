@@ -17,6 +17,7 @@ import jmp.core.JMPCore;
 import jmp.core.PluginManager;
 import jmp.gui.ui.JMPFrame;
 import jmp.lang.DefineLanguage.LangID;
+import jmp.plugin.PluginWrapper;
 import jmp.plugin.PluginWrapper.PluginState;
 
 public class PluginManagerDialog extends JMPFrame {
@@ -32,7 +33,7 @@ public class PluginManagerDialog extends JMPFrame {
     public PluginManagerDialog() {
         super();
         setTitle("Plugin manager");
-        setBounds(100, 100, 485, 375);
+        setBounds(100, 100, 616, 375);
         setJmpIcon();
 
         JScrollPane scrollPane = new JScrollPane();
@@ -48,18 +49,7 @@ public class PluginManagerDialog extends JMPFrame {
         JButton btnConnect = new JButton("Connect");
         btnConnect.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int[] selected = table.getSelectedRows();
-                if (selected == null || selected.length <= 0) {
-                    return;
-                }
-
-                PluginManager pm = JMPCore.getPluginManager();
-                for (int i = 0; i < selected.length; i++) {
-                    String name = model.getValueAt(selected[i], 0).toString();
-                    pm.setPluginState(name, PluginState.CONNECTED);
-                }
-
-                updateTable();
+                changeState(PluginState.CONNECTED);
             }
         });
         panel.add(btnConnect);
@@ -67,18 +57,7 @@ public class PluginManagerDialog extends JMPFrame {
         JButton btnDisconnect = new JButton("Disconnect");
         btnDisconnect.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int[] selected = table.getSelectedRows();
-                if (selected == null || selected.length <= 0) {
-                    return;
-                }
-
-                PluginManager pm = JMPCore.getPluginManager();
-                for (int i = 0; i < selected.length; i++) {
-                    String name = model.getValueAt(selected[i], 0).toString();
-                    pm.setPluginState(name, PluginState.DISCONNECTED);
-                }
-
-                updateTable();
+                changeState(PluginState.DISCONNECTED);
             }
         });
         panel.add(btnDisconnect);
@@ -105,6 +84,48 @@ public class PluginManagerDialog extends JMPFrame {
                 updateTable();
             }
         });
+
+        JButton btnInvalid = new JButton("Invalid");
+        btnInvalid.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int[] selected = table.getSelectedRows();
+                if (selected == null || selected.length <= 0) {
+                    return;
+                }
+
+                PluginManager pm = JMPCore.getPluginManager();
+                for (int i = 0; i < selected.length; i++) {
+                    String name = model.getValueAt(selected[i], 0).toString();
+                    if (pm.getPluginState(name) != PluginState.INVALID) {
+                        pm.toInvalidPlugin(name);
+                    }
+                }
+
+                updateTable();
+            }
+        });
+
+                JButton btnValid = new JButton("Valid");
+                btnValid.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        int[] selected = table.getSelectedRows();
+                        if (selected == null || selected.length <= 0) {
+                            return;
+                        }
+
+                        PluginManager pm = JMPCore.getPluginManager();
+                        for (int i = 0; i < selected.length; i++) {
+                            String name = model.getValueAt(selected[i], 0).toString();
+                            if (pm.getPluginState(name) == PluginState.INVALID) {
+                                pm.toValidPlugin(name);
+                            }
+                        }
+
+                        updateTable();
+                    }
+                });
+                panel.add(btnValid);
+        panel.add(btnInvalid);
         panel.add(btnEnable);
 
         JButton btnDisable = new JButton("Close");
@@ -162,27 +183,35 @@ public class PluginManagerDialog extends JMPFrame {
         for (int i = model.getRowCount() - 1; i >= 0; i--) {
             String name = model.getValueAt(i, 0).toString();
             String visibleState = pm.getPlugin(name).isOpen() == true ? "Open" : "Close";
-            String pluginState = "";
-            switch (pm.getPluginState(name)) {
-                case DISCONNECTED:
-                    pluginState = "Disconnected";
-                    break;
-                case INVALID:
-                    pluginState = "Invalid";
-                    break;
-                case CONNECTED:
-                default:
-                    pluginState = "Connected";
-                    break;
-
+            String pluginState = PluginWrapper.toString(pm.getPluginState(name));
+            if (pm.getPluginState(name) == PluginState.INVALID) {
+                visibleState = "----";
             }
+
             model.setValueAt(visibleState, i, 1);
-            model.setValueAt(pluginState, i, 2);
+            model.setValueAt(pluginState.toLowerCase(), i, 2);
         }
     }
 
     public void updateTable() {
         updateTable(false);
+    }
+
+    public void changeState(PluginState state) {
+        int[] selected = table.getSelectedRows();
+        if (selected == null || selected.length <= 0) {
+            return;
+        }
+
+        PluginManager pm = JMPCore.getPluginManager();
+        for (int i = 0; i < selected.length; i++) {
+            String name = model.getValueAt(selected[i], 0).toString();
+            if (pm.getPluginState(name) != PluginState.INVALID) {
+                pm.setPluginState(name, state);
+            }
+        }
+
+        updateTable();
     }
 
     @Override

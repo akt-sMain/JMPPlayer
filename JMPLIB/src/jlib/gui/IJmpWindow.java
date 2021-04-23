@@ -12,7 +12,19 @@ public interface IJmpWindow {
     abstract void hideWindow();
 
     /**
-     * ウィンドウ表示/非表示化
+     * ウィンドウ表示/非表示
+     */
+    default void setWindowVisible(boolean visible) {
+        if (visible == true) {
+            showWindow();
+        }
+        else {
+            hideWindow();
+        }
+    }
+
+    /**
+     * ウィンドウ表示/非表示取得
      */
     abstract boolean isWindowVisible();
 

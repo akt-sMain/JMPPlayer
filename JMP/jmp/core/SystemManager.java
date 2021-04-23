@@ -223,45 +223,61 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             File pluginsDir = new File(getPluginsDirPath());
             if (pluginsDir.exists() == false) {
                 // プラグインフォルダ作成
-                pluginsDir.mkdirs();
+                if(!pluginsDir.mkdir()) {
+                    return false;
+                }
             }
         }
         File dataDir = new File(getDataFileLocationPath());
         if (dataDir.exists() == false) {
             // データフォルダ作成
-            dataDir.mkdirs();
+            if (!dataDir.mkdir()) {
+                return false;
+            }
         }
         File resDir = new File(getResFileLocationPath());
         if (resDir.exists() == false) {
             // resフォルダ作成
-            resDir.mkdirs();
+            if (!resDir.mkdir()) {
+
+            }
         }
         if (JMPLoader.UseHistoryFile == true || JMPLoader.UseConfigFile == true) {
             File saveDir = new File(getSavePath());
             if (saveDir.exists() == false) {
                 // saveフォルダ作成
-                saveDir.mkdirs();
+                if (!saveDir.mkdir()) {
+                    return false;
+                }
             }
         }
         if (JMPLoader.UsePluginDirectory == true) {
             File jarDir = new File(getJarDirPath());
             if (jarDir.exists() == false) {
                 // Jarフォルダ作成
-                jarDir.mkdirs();
+                if (!jarDir.mkdir()) {
+                    return false;
+                }
             }
             File jmsDir = new File(getJmsDirPath());
             if (jmsDir.exists() == false) {
                 // jmsフォルダ作成
-                jmsDir.mkdirs();
+                if (!jmsDir.mkdir()) {
+                    return false;
+                }
             }
             File outDir = new File(getOutputPath());
             if (outDir.exists() == false) {
                 // outputフォルダ作成
-                outDir.mkdirs();
+                if (!outDir.mkdir()) {
+                    return false;
+                }
             }
             File zipDir = new File(getZipDirPath());
             if (zipDir.exists() == false) {
-                zipDir.mkdirs();
+                if (!zipDir.mkdir()) {
+                    return false;
+                }
             }
         }
 

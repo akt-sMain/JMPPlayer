@@ -19,12 +19,13 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
     /** プラグイン格納用コレクション */
     private Map<String, PluginWrapper> aPlugins = null;
 
-    private List<IPlugin> accessor = null;
+    private List<PluginWrapper> accessor = null;
 
     public PluginObserver() {
         aPlugins = new HashMap<String, PluginWrapper>();
-        accessor = new ArrayList<IPlugin>();
+        accessor = new ArrayList<PluginWrapper>();
         aPlugins.clear();
+        accessor.clear();
     }
 
     public boolean addPlugin(String name, IPlugin plugin) {
@@ -48,7 +49,7 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
 
         accessor.clear();
         for (PluginWrapper pw : aPlugins.values()) {
-            accessor.add(pw.getPlugin());
+            accessor.add(pw);
         }
         return true;
     }
@@ -63,6 +64,10 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
     public PluginWrapper getPluginWrapper(IPlugin plugin) {
         String name = getPluginName(plugin);
         return getPluginWrapper(name);
+    }
+
+    public int getNumberOfPlugin() {
+        return aPlugins.size();
     }
 
     public String getPluginName(IPlugin plugin) {
@@ -87,50 +92,51 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
         return pw.getPlugin();
     }
 
-    public Collection<IPlugin> getPlugins() {
+    public Collection<PluginWrapper> getPlugins() {
         return accessor;
     }
 
     @Override
     public void initialize() {
-        for (IPlugin plugin : getPlugins()) {
-            plugin.initialize();
+        for (PluginWrapper pluginWrap : getPlugins()) {
+            pluginWrap.getPlugin().initialize();
         }
     }
 
     @Override
     public void exit() {
-        for (IPlugin plugin : getPlugins()) {
-            plugin.exit();
+        for (PluginWrapper pluginWrap : getPlugins()) {
+            pluginWrap.getPlugin().exit();
         }
     }
 
     @Override
     public void open() {
-        for (IPlugin plugin : getPlugins()) {
-            plugin.open();
+        for (PluginWrapper pluginWrap : getPlugins()) {
+            pluginWrap.getPlugin().open();
         }
     }
 
     @Override
     public void close() {
-        for (IPlugin plugin : getPlugins()) {
-            plugin.close();
+        for (PluginWrapper pluginWrap : getPlugins()) {
+            pluginWrap.getPlugin().close();
         }
     }
 
     @Override
     public void update() {
-        for (IPlugin plugin : getPlugins()) {
-            plugin.update();
+        for (PluginWrapper pluginWrap : getPlugins()) {
+            pluginWrap.getPlugin().update();
         }
     }
 
     @Override
     public void startSequencer() {
-        for (IPlugin plugin : getPlugins()) {
-            if (plugin instanceof IPlayerListener) {
-                IPlayerListener pi = (IPlayerListener) plugin;
+        for (PluginWrapper pluginWrap : getPlugins()) {
+            IPlugin p = pluginWrap.getPlugin();
+            if (p instanceof IPlayerListener) {
+                IPlayerListener pi = (IPlayerListener) p;
                 pi.startSequencer();
             }
         }
@@ -138,9 +144,10 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
 
     @Override
     public void stopSequencer() {
-        for (IPlugin plugin : getPlugins()) {
-            if (plugin instanceof IPlayerListener) {
-                IPlayerListener pi = (IPlayerListener) plugin;
+        for (PluginWrapper pluginWrap : getPlugins()) {
+            IPlugin p = pluginWrap.getPlugin();
+            if (p instanceof IPlayerListener) {
+                IPlayerListener pi = (IPlayerListener) p;
                 pi.stopSequencer();
             }
         }
@@ -148,9 +155,10 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
 
     @Override
     public void updateTickPosition(long before, long after) {
-        for (IPlugin plugin : getPlugins()) {
-            if (plugin instanceof IPlayerListener) {
-                IPlayerListener pi = (IPlayerListener) plugin;
+        for (PluginWrapper pluginWrap : getPlugins()) {
+            IPlugin p = pluginWrap.getPlugin();
+            if (p instanceof IPlayerListener) {
+                IPlayerListener pi = (IPlayerListener) p;
                 pi.updateTickPosition(before, after);
             }
         }
@@ -158,7 +166,7 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
 
     @Override
     public void catchMidiEvent(MidiMessage message, long timeStamp, short senderType) {
-        for (PluginWrapper pluginWrap : aPlugins.values()) {
+        for (PluginWrapper pluginWrap : getPlugins()) {
             if (pluginWrap.getState() != PluginState.CONNECTED) {
                 continue;
             }
@@ -172,15 +180,15 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
 
     @Override
     public void notifyUpdateCommonRegister(String key) {
-        for (IPlugin plugin : getPlugins()) {
-            plugin.notifyUpdateCommonRegister(key);
+        for (PluginWrapper pluginWrap : getPlugins()) {
+            pluginWrap.getPlugin().notifyUpdateCommonRegister(key);
         }
     }
 
     @Override
     public void notifyUpdateConfig(String key) {
-        for (IPlugin plugin : getPlugins()) {
-            plugin.notifyUpdateConfig(key);
+        for (PluginWrapper pluginWrap : getPlugins()) {
+            pluginWrap.getPlugin().notifyUpdateConfig(key);
         }
     }
 

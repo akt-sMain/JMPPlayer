@@ -489,6 +489,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             return;
         }
 
+        JMPCore.getWindowManager().processingBeforePlay();
+
         if (player.getPosition() >= player.getLength()) {
             // 最初から再生
             initPosition();

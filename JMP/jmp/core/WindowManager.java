@@ -108,6 +108,24 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         registerMainWindow(new JMPPlayerWindow());
     }
 
+    public void processingBeforePlay() {
+        // 再生前に行う処理
+        IJmpWindow win;
+
+        win = getWindow(WINDOW_NAME_LICENSE);
+        if (win.isWindowVisible() == true) {
+            win.hideWindow();
+        }
+        win = getWindow(WINDOW_NAME_PLUGIN_MANAGER);
+        if (win.isWindowVisible() == true) {
+            win.hideWindow();
+        }
+        win = getWindow(WINDOW_NAME_LANGUAGE);
+        if (win.isWindowVisible() == true) {
+            win.hideWindow();
+        }
+    }
+
     public boolean register(IJmpWindow window) {
         if (database == null) {
             return false;
@@ -157,8 +175,16 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         }
     }
 
-    public void addPluginMenuItem(String name, IPlugin plugin) {
-        database.addPluginMenuItem(name, plugin);
+    public void updatePluginMenuItems() {
+        PluginManager pm = JMPCore.getPluginManager();
+
+        database.clearPluginMenuItem();
+        for (String name : pm.getPluginsNameSet()) {
+            IPlugin p = pm.getPlugin(name);
+            database.addPluginMenuItem(name, p);
+        }
+
+        ((JMPPlayerWindow)getMainWindow()).updatePluginMenu();
     }
 
     public List<JMenuItem> getPluginMenuItems() {
@@ -185,6 +211,15 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         for (IJmpWindow win : database.getAccessor()) {
             if (win != null) {
                 win.initializeLayout();
+            }
+        }
+
+        // プラグインもすべて閉じる
+        PluginManager pm = JMPCore.getPluginManager();
+        for (String pname : pm.getPluginsNameSet()) {
+            IPlugin plg = pm.getPlugin(pname);
+            if (plg != null) {
+                plg.close();
             }
         }
     }

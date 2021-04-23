@@ -13,6 +13,7 @@ import function.Platform;
 import function.Utility;
 import jlib.plugin.IPlugin;
 import jlib.plugin.ISupportExtensionConstraints;
+import jmp.ConfigDatabase;
 import jmp.JMPFlags;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.plugin.JMPPluginLoader;
@@ -21,6 +22,7 @@ import jmp.plugin.PluginObserver;
 import jmp.plugin.PluginWrapper;
 import jmp.plugin.PluginWrapper.PluginState;
 import jmp.task.TaskOfMidiEvent.JmpMidiPacket;
+import jmp.util.JmpUtil;
 import lib.MakeJmpLib;
 
 /**
@@ -33,6 +35,29 @@ public class PluginManager extends AbstractManager {
     // ---------------------------------------------
     // 定数
     // ---------------------------------------------
+    private final static IPlugin NULL_PLG = new IPlugin() {
+
+        @Override
+        public void open() {
+        }
+
+        @Override
+        public void initialize() {
+        }
+
+        @Override
+        public void exit() {
+        }
+
+        @Override
+        public void close() {
+        }
+
+        @Override
+        public boolean isEnable() {
+            return false;
+        }
+    };
 
     // ---------------------------------------------
     // セットアップ用の定義
@@ -62,12 +87,16 @@ public class PluginManager extends AbstractManager {
     /** スキップタグ */
     public static final String SETUP_SKIP_TAG = "_";
 
+    public static final String PLUGIN_STATE_FILE_NAME = "plgstate.txt";
+
     // ---------------------------------------------
     // 変数
     // ---------------------------------------------
 
     /** プラグインオブザーバ */
     private PluginObserver observers = null;
+
+    private ConfigDatabase plginStateMem = null;
 
     // ---------------------------------------------
     // メソッド群
@@ -79,15 +108,38 @@ public class PluginManager extends AbstractManager {
 
     protected boolean initFunc() {
         super.initFunc();
+
+        // プラグイン状態の復帰
+        plginStateMem = ConfigDatabase.create(Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), PLUGIN_STATE_FILE_NAME));
+
         return true;
     }
 
     protected boolean endFunc() {
         super.endFunc();
 
+        // プラグインの状態を保存する
+        savePluginState();
+
         // プラグイン終了処理
         exit();
         return true;
+    }
+
+    private void savePluginState() {
+        // プラグイン状態の保存
+        int j = 0;
+        String[] plgKeys = new String[observers.getNumberOfPlugin()];
+        for (String pName : observers.getPluginsNameSet()) {
+            plgKeys[j] = pName;
+            j++;
+        }
+        plginStateMem = new ConfigDatabase(plgKeys);
+        for (String plgKey : plgKeys) {
+            String state = PluginWrapper.toString(observers.getPluginWrapper(plgKey).getState());
+            plginStateMem.setConfigParam(plgKey, state);
+        }
+        plginStateMem.output(Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), PLUGIN_STATE_FILE_NAME));
     }
 
     public void startupPluginInstance() {
@@ -463,10 +515,8 @@ public class PluginManager extends AbstractManager {
                     // プラグインを抽出
                     String name = importPlugin(pluginFile);
                     if (name != null) {
-                        // プラグインをメニューに追加
                         IPlugin plugin = getPlugin(name);
                         plugin.initialize();
-                        JMPCore.getWindowManager().getMainWindow().addPluginMenu(name, plugin);
                     }
                 }
             }
@@ -486,6 +536,10 @@ public class PluginManager extends AbstractManager {
             ret = false;
         }
         finally {
+            // プラグインをメニューを更新
+            if (JMPCore.getWindowManager().isFinishedInitialize() == true) {
+                JMPCore.getWindowManager().updatePluginMenuItems();
+            }
             reader = null;
         }
         return ret;
@@ -528,7 +582,99 @@ public class PluginManager extends AbstractManager {
             JmsProperty jms = JmsProperty.getJmsProparty(f);
 
             // プラグインをインポート
-            importPlugin(jms.getJar());
+            boolean isValid = true;
+            if (plginStateMem != null) {
+                if (plginStateMem.getConfigParam(JmpUtil.getFileNameNotExtension(jms.getJar())).equalsIgnoreCase("INVALID") == true) {
+                    isValid = false;
+                }
+            }
+            if (isValid == true) {
+                importPlugin(jms.getJar());
+            }
+            else {
+                String name = JmpUtil.getFileNameNotExtension(jms.getJar());
+                addPlugin(name, NULL_PLG, true);
+            }
+        }
+
+        // PluginStateを設定する
+        if (plginStateMem != null) {
+            for (String pName : observers.getPluginsNameSet()) {
+                PluginState pstate = PluginWrapper.toPluginState(plginStateMem.getConfigParam(pName));
+                observers.getPluginWrapper(pName).setState(pstate);
+            }
+        }
+    }
+
+    public void toValidPlugin(String name) {
+        PluginWrapper pw = observers.getPluginWrapper(name);
+        if (pw.getState() != PluginState.INVALID) {
+            return;
+        }
+
+        /* プラグインディレクトリの存在を確認 */
+        File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
+        if (dir.exists() == false) {
+            return;
+        }
+
+        IPlugin newPlugin = null;
+        JmsProperty newJms = null;
+        for (File f : dir.listFiles()) {
+
+            if (Utility.checkExtension(f.getPath(), SETUP_FILE_EX) == false) {
+                continue;
+            }
+            String fileName = Utility.getFileNameNotExtension(f.getPath());
+            if (fileName.startsWith(SETUP_SKIP_TAG) == true) {
+                // "_"で始まるファイルはスキップ
+                continue;
+            }
+
+            JmsProperty jms = JmsProperty.getJmsProparty(f);
+            if (jms == null) {
+                continue;
+            }
+
+            String pName = JmpUtil.getFileNameNotExtension(jms.getJar());
+            if (pName.equals(name) == true) {
+                newJms = jms;
+                break;
+            }
+        }
+
+        if (newJms == null) {
+            return;
+        }
+        newPlugin = JMPPluginLoader.load(newJms.getJar());
+        if (newPlugin == null) {
+            return;
+        }
+
+        pw.setPlugin(newPlugin);
+        pw.getPlugin().initialize();
+        pw.setState(PluginState.CONNECTED);
+
+        if (JMPCore.getWindowManager().isFinishedInitialize() == true) {
+            // リストを更新しなおす
+            JMPCore.getWindowManager().updatePluginMenuItems();
+        }
+    }
+
+    public void toInvalidPlugin(String name) {
+        PluginWrapper pw = observers.getPluginWrapper(name);
+        if (pw.getState() == PluginState.INVALID) {
+            return;
+        }
+
+        pw.getPlugin().close();
+        pw.getPlugin().exit();
+        pw.setPlugin(NULL_PLG);
+        pw.setState(PluginState.INVALID);
+
+        if (JMPCore.getWindowManager().isFinishedInitialize() == true) {
+            // リストを更新しなおす
+            JMPCore.getWindowManager().updatePluginMenuItems();
         }
     }
 
@@ -685,9 +831,9 @@ public class PluginManager extends AbstractManager {
     }
 
     void loadFile(File file) {
-        for (IPlugin plugin : observers.getPlugins()) {
-            if (isSupportExtension(file, plugin) == true) {
-                plugin.loadFile(file);
+        for (PluginWrapper pm : observers.getPlugins()) {
+            if (isSupportExtension(file, pm.getPlugin()) == true) {
+                pm.getPlugin().loadFile(file);
             }
         }
     }
@@ -702,7 +848,8 @@ public class PluginManager extends AbstractManager {
             return;
         }
 
-        for (IPlugin plugin : observers.getPlugins()) {
+        for (PluginWrapper pm : observers.getPlugins()) {
+            IPlugin plugin = pm.getPlugin();
             if (plugin instanceof ISupportExtensionConstraints) {
                 ISupportExtensionConstraints sec = (ISupportExtensionConstraints) plugin;
                 String[] allowsEx = sec.allowedExtensionsArray();
