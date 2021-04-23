@@ -29,12 +29,13 @@ public class Modulator {
             }
             double f = (double)t / (double)MODULATION_RATE_TIME;
             int base = MODULATION_MAX_VALUE / 2;
-            int value = (int)((double)makeSinWave(f, base, false));
+            int value = (int)((double)makeTriangleWave(f, base, false));
             float fVal = (float)value * (float)depthOffset;
             for (int i = 0; i < targetTones.size(); i++) {
                 try {
                     Tone tone = (Tone) targetTones.get(i);
-                    tone.setModulationValue(fVal / (float)MODULATION_MAX_VALUE);
+                    float mv = fVal / (float)MODULATION_MAX_VALUE;
+                    tone.setModulationValue(mv);
                 }
                 catch (Exception e) {
                 }
@@ -56,11 +57,11 @@ public class Modulator {
         double sign = (ff < 0.5) ? -1.0 : 1.0;
         if (slope == 0) {
             // 上り
-            y = (int) (((overallLevel - (overallLevel * (quarter / 0.25)))) * sign);
+            y = (int) ((((double)overallLevel - ((double)overallLevel * (quarter / 0.25)))) * sign);
         }
         else {
             // 下り
-            y = (int) ((overallLevel * (quarter / 0.25)) * sign);
+            y = (int) (((double)overallLevel * (quarter / 0.25)) * sign);
         }
         return y;
     }
