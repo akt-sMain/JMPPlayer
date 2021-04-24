@@ -14,6 +14,7 @@ import javax.sound.midi.MidiMessage;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -47,7 +48,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
     private static final int INDEX_OF_COLUMN_DATA1 = 4;
     private static final int INDEX_OF_COLUMN_DATA2 = 5;
 
-    private static final String[] COLUMN_NAMES = new String[] { "Time", "Byte", "Channel", "Command", "Data1", "Data2" };
+    private static final String[] COLUMN_NAMES = new String[] { "Time", "Message", "Channel", "Command", "Data1", "Data2" };
 
     private JLabel lblCounter;
     private DefaultTableModel model = null;
@@ -63,6 +64,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
     private JLabel lblStack;
     private JButton btnClear;
     private JLabel lblTempo;
+    private JCheckBox chckbxDsipCommand;
 
     public MidiMessageMonitor() {
         super();
@@ -183,6 +185,13 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
                 JPanel panel = new JPanel();
                 panel.setBackground(getJmpBackColor());
                 buttonPane.add(panel);
+                {
+                    chckbxDsipCommand = new JCheckBox("Command display");
+                    chckbxDsipCommand.setSelected(true);
+                    chckbxDsipCommand.setBackground(getJmpBackColor());
+                    chckbxDsipCommand.setForeground(Color.WHITE);
+                    panel.add(chckbxDsipCommand);
+                }
             }
             {
                 comboBox = new JComboBox<String>();
@@ -265,69 +274,84 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
             int data1 = length >= 2 ? (data[1] & 0xff) : 0;
             int data2 = length >= 3 ? (data[2] & 0xff) : 0;
 
-            if (MidiByte.isChannelMessage(status) == true) {
-                // チャンネルメッセージ
-                switch (command) {
-                    case MidiByte.Status.Channel.ChannelVoice.Fst.CONTROL_CHANGE:
-                        sub = String.format(SUB_STR_FORMAT, MidiByte.convertByteToControlChangeString(data1));
-                        break;
-                    case MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON:
-                    case MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_OFF:
-                        sub = String.format(SUB_STR_FORMAT, MidiByte.convertByteToNoteString(data1));
-                        break;
-                    case MidiByte.Status.Channel.ChannelVoice.Fst.PITCH_BEND:
-                        sub = String.format(SUB_STR_FORMAT, "" + (MidiByte.mergeLsbMsbValue(data1, data2) - 8192));
-                        break;
-                    default:
-                        break;
-                }
-
-                strChannel = String.valueOf(ch + 1);
-                strCommand = String.format("[%s] %d", MidiByte.convertByteToChannelCommandString(status), status);
-                strData1 = sub + String.valueOf(data1);
-                strData2 = String.valueOf(data2);
-            }
-            else if (MidiByte.isMetaMessage(status) == true) {
-                // メタメッセージ
-                strChannel = "--";
-                strCommand = (length >= 2) ? String.format("[%s]", MidiByte.convertByteToMetaString(data[1] & 0xff)) : "--";
-                if ((data[1] & 0xff) == MidiByte.SET_TEMPO.type) {
-                    /* テンポ表示 */
-                    if (length < 6) {
-                        // 無効なメッセージ
+            if (chckbxDsipCommand.isSelected() == true) {
+                if (MidiByte.isChannelMessage(status) == true) {
+                    // チャンネルメッセージ
+                    switch (command) {
+                        case MidiByte.Status.Channel.ChannelVoice.Fst.CONTROL_CHANGE:
+                            sub = String.format(SUB_STR_FORMAT, MidiByte.convertByteToControlChangeString(data1));
+                            break;
+                        case MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON:
+                        case MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_OFF:
+                            sub = String.format(SUB_STR_FORMAT, MidiByte.convertByteToNoteString(data1));
+                            break;
+                        case MidiByte.Status.Channel.ChannelVoice.Fst.PITCH_BEND:
+                            sub = String.format(SUB_STR_FORMAT, "" + (MidiByte.mergeLsbMsbValue(data1, data2) - 8192));
+                            break;
+                        default:
+                            break;
                     }
-                    else {
-                        // テンポ
-                        long tempo = 0;
-                        tempo |= (data[3] & 0xff) << 16;
-                        tempo |= (data[4] & 0xff) << 8;
-                        tempo |= (data[5] & 0xff);
 
-                        // bpm計算
-                        float bpm = 60000000f / (float) tempo;
-
-                        // 四捨五入
-                        BigDecimal bd = new BigDecimal(bpm);
-                        BigDecimal bd2 = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
-                        sub = String.format(SUB_STR_FORMAT, String.format("%.2f", bd2.doubleValue()));
-                    }
+                    strChannel = String.valueOf(ch + 1);
+                    strCommand = String.format("[%s] %d", MidiByte.convertByteToChannelCommandString(status), status);
+                    strData1 = sub + String.valueOf(data1);
+                    strData2 = String.valueOf(data2);
                 }
-                strData1 = sub + "--";
-                strData2 = "--";
-            }
-            else if (MidiByte.isSystemMessage(status) == true) {
-                // システムメッセージ
-                strChannel = "--";
-                strCommand = String.format("[%s]", MidiByte.convertByteToChannelCommandString(status));
-                strData1 = sub + "--";
-                strData2 = "--";
+                else if (MidiByte.isMetaMessage(status) == true) {
+                    // メタメッセージ
+                    strChannel = "--";
+                    strCommand = (length >= 2) ? String.format("[%s]", MidiByte.convertByteToMetaString(data[1] & 0xff)) : "--";
+                    if ((data[1] & 0xff) == MidiByte.SET_TEMPO.type) {
+                        /* テンポ表示 */
+                        if (length < 6) {
+                            // 無効なメッセージ
+                        }
+                        else {
+                            // テンポ
+                            long tempo = 0;
+                            tempo |= (data[3] & 0xff) << 16;
+                            tempo |= (data[4] & 0xff) << 8;
+                            tempo |= (data[5] & 0xff);
+
+                            // bpm計算
+                            float bpm = 60000000f / (float) tempo;
+
+                            // 四捨五入
+                            BigDecimal bd = new BigDecimal(bpm);
+                            BigDecimal bd2 = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+                            sub = String.format(SUB_STR_FORMAT, String.format("%.2f", bd2.doubleValue()));
+                        }
+                    }
+                    strData1 = sub + "--";
+                    strData2 = "--";
+                }
+                else if (MidiByte.isSystemMessage(status) == true) {
+                    // システムメッセージ
+                    strChannel = "--";
+                    strCommand = String.format("[%s]", MidiByte.convertByteToChannelCommandString(status));
+                    strData1 = sub + "--";
+                    strData2 = "--";
+                }
+                else {
+                    // 不明なメッセージ（例外）
+                    strChannel = "--";
+                    strCommand = "--";
+                    strData1 = "--";
+                    strData2 = "--";
+                }
             }
             else {
-                // 不明なメッセージ（例外）
-                strChannel = "--";
-                strCommand = "--";
-                strData1 = "--";
-                strData2 = "--";
+                strCommand = String.valueOf(status);
+                if (MidiByte.isChannelMessage(status) == true) {
+                    strChannel = String.valueOf(ch + 1);
+                    strData1 = String.valueOf(data1);
+                    strData2 = String.valueOf(data2);
+                }
+                else {
+                    strChannel = "--";
+                    strData1 = "--";
+                    strData2 = "--";
+                }
             }
         }
         catch (Exception e) {
