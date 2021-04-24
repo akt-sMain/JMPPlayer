@@ -131,5 +131,16 @@ public class TaskManager extends AbstractManager {
                 }
             }
         });
+        // シーケンスバーのトグル用コールバック関数を登録
+        addCallbackPackage((long) 500, new ICallbackFunction() {
+
+            @Override
+            public void callback() {
+                if (JMPCore.getSoundManager().isPlay() == true) {
+                    // 再生バーのトグル
+                    JMPFlags.PlayingTimerToggleFlag = !(JMPFlags.PlayingTimerToggleFlag);
+                }
+            }
+        });
     }
 }

@@ -497,7 +497,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         }
         player.play();
 
-        JMPCore.getWindowManager().getMainWindow().setLyric("");
+        JMPCore.getWindowManager().processingAfterPlay();
     }
 
     @Override
@@ -514,15 +514,17 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             midiMinitor.hideWindow();
         }
 
+        JMPCore.getWindowManager().processingBeforeStop();
+
         player.stop();
+
+        JMPCore.getWindowManager().processingAfterStop();
 
         if (backupVisible == true) {
             JMPFlags.WindowAutomationPosFlag = false;
             midiMinitor.showWindow();
             JMPFlags.WindowAutomationPosFlag = true;
         }
-
-        JMPCore.getWindowManager().getMainWindow().setLyric("");
     }
 
     @Override

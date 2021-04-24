@@ -65,4 +65,28 @@ public interface IJmpWindow {
      */
     default void updateConfig(String key) {
     }
+
+    /**
+     * 再生前イベント
+     */
+    default void processingBeforePlay() {
+    }
+
+    /**
+     * 再生後イベント
+     */
+    default void processingAfterPlay() {
+    }
+
+    /**
+     * 停止前イベント
+     */
+    default void processingBeforeStop() {
+    }
+
+    /**
+     * 停止後イベント
+     */
+    default void processingAfterStop() {
+    }
 }

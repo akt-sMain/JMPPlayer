@@ -405,7 +405,7 @@ public class JMPLoader {
             // プラグイン準備
             JMPCore.getPluginManager().startupPluginInstance();
 
-            // メインウィンドウ登録
+            // メインウィンドウ初期化
             IJmpMainWindow win = JMPCore.getWindowManager().getMainWindow();
             win.initializeSetting();
             win.hideWindow();

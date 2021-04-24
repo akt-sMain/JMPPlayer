@@ -14,6 +14,37 @@ public class DefaultImageMaker {
 
     public static final int DEFAULT_PLAYER_ICON_SIZE = 30;
 
+    private static Image defDummyIcon = null;
+    public static Image makeDummyIcon() {
+        if (defDummyIcon == null) {
+            BufferedImage buf = new BufferedImage(20, 20, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = (Graphics2D) buf.getGraphics();
+            int x = 0;
+            int y = 0;
+            int width = buf.getWidth(null);
+            int height = buf.getHeight(null);
+
+            int fx = 4;
+            int fy = 2;
+            int fw = 15;
+            int fh = 15;
+
+            Color transColor = Color.ORANGE;
+            g2d.setColor(transColor);
+            g2d.fillRect(x, y, width, height);
+
+            Color color = Color.BLACK;
+            g2d.setColor(Color.DARK_GRAY);
+            g2d.fillRect(fx, fy, fw, fh);
+
+            g2d.setColor(color);
+            g2d.fillRect(fx + 2, fy + 2, fw - 4, fh - 4);
+
+            defDummyIcon = JmpUtil.transformImageToTransparency(buf, transColor);
+        }
+        return defDummyIcon;
+    }
+
     private static Image makeDefaultFileIcon(Color fileColor, int bdHighlight) {
         Image ret = null;
         BufferedImage buf = new BufferedImage(20, 20, BufferedImage.TYPE_INT_RGB);
@@ -44,6 +75,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defFileOtherIcon = null;
+
     public static Image makeDefaultFileOtherIcon() {
         if (defFileOtherIcon == null) {
             defFileOtherIcon = makeDefaultFileIcon(Color.BLACK, 120);
@@ -52,6 +84,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defFileMidiIcon = null;
+
     public static Image makeDefaultFileMidiIcon() {
         if (defFileMidiIcon == null) {
             defFileMidiIcon = makeDefaultFileIcon(Color.PINK, -100);
@@ -60,6 +93,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defFileWavIcon = null;
+
     public static Image makeDefaultFileWavIcon() {
         if (defFileWavIcon == null) {
             defFileWavIcon = makeDefaultFileIcon(Color.CYAN, -100);
@@ -68,6 +102,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defFileXmlIcon = null;
+
     public static Image makeDefaultFileXmlIcon() {
         if (defFileXmlIcon == null) {
             defFileXmlIcon = makeDefaultFileIcon(Color.LIGHT_GRAY, -100);
@@ -76,6 +111,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defFileMusicIcon = null;
+
     public static Image makeDefaultFileMusicIcon() {
         if (defFileMusicIcon == null) {
             defFileMusicIcon = makeDefaultFileIcon(new Color(138, 43, 226), 50);
@@ -84,6 +120,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defFileFolderIcon = null;
+
     public static Image makeDefaultFileFolderIcon() {
         if (defFileFolderIcon == null) {
             BufferedImage buf = new BufferedImage(20, 20, BufferedImage.TYPE_INT_RGB);
@@ -115,6 +152,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defBtnPlayIcon = null;
+
     public static Image makeDefaultBtnPlayIcon() {
         if (defBtnPlayIcon == null) {
             BufferedImage buf = new BufferedImage(DEFAULT_PLAYER_ICON_SIZE, DEFAULT_PLAYER_ICON_SIZE, BufferedImage.TYPE_INT_RGB);
@@ -152,6 +190,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defBtnStopIcon = null;
+
     public static Image makeDefaultBtnStopIcon() {
         if (defBtnStopIcon == null) {
             BufferedImage buf = new BufferedImage(DEFAULT_PLAYER_ICON_SIZE, DEFAULT_PLAYER_ICON_SIZE, BufferedImage.TYPE_INT_RGB);
@@ -189,6 +228,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defBtnNextIcon = null;
+
     public static Image makeDefaultBtnNextIcon() {
         if (defBtnNextIcon == null) {
             BufferedImage buf = new BufferedImage(DEFAULT_PLAYER_ICON_SIZE, DEFAULT_PLAYER_ICON_SIZE, BufferedImage.TYPE_INT_RGB);
@@ -228,6 +268,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defBtnNext2Icon = null;
+
     public static Image makeDefaultBtnNext2Icon() {
         if (defBtnNext2Icon == null) {
             BufferedImage buf = new BufferedImage(DEFAULT_PLAYER_ICON_SIZE, DEFAULT_PLAYER_ICON_SIZE, BufferedImage.TYPE_INT_RGB);
@@ -271,6 +312,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defBtnPrevIcon = null;
+
     public static Image makeDefaultBtnPrevIcon() {
         if (defBtnPrevIcon == null) {
             BufferedImage buf = new BufferedImage(DEFAULT_PLAYER_ICON_SIZE, DEFAULT_PLAYER_ICON_SIZE, BufferedImage.TYPE_INT_RGB);
@@ -311,6 +353,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defBtnPrev2Icon = null;
+
     public static Image makeDefaultBtnPrev2Icon() {
         if (defBtnPrev2Icon == null) {
             BufferedImage buf = new BufferedImage(DEFAULT_PLAYER_ICON_SIZE, DEFAULT_PLAYER_ICON_SIZE, BufferedImage.TYPE_INT_RGB);
@@ -355,6 +398,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defBtnAutoIcon = null;
+
     public static Image makeDefaultBtnAutoIcon() {
         if (defBtnAutoIcon == null) {
             BufferedImage buf = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
@@ -388,6 +432,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defBtnLoopIcon = null;
+
     public static Image makeDefaultBtnLoopIcon() {
         if (defBtnLoopIcon == null) {
             BufferedImage buf = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
@@ -418,6 +463,7 @@ public class DefaultImageMaker {
     }
 
     private static Image defBtnListIcon = null;
+
     public static Image makeDefaultBtnListIcon() {
         if (defBtnListIcon == null) {
             BufferedImage buf = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);

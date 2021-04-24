@@ -116,13 +116,50 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         if (win.isWindowVisible() == true) {
             win.hideWindow();
         }
-        win = getWindow(WINDOW_NAME_PLUGIN_MANAGER);
-        if (win.isWindowVisible() == true) {
-            win.hideWindow();
-        }
         win = getWindow(WINDOW_NAME_LANGUAGE);
         if (win.isWindowVisible() == true) {
             win.hideWindow();
+        }
+
+        for (IJmpWindow w : database.getAccessor()) {
+            if (w != null) {
+                w.processingBeforePlay();
+            }
+        }
+    }
+
+    public void processingAfterPlay() {
+        // 再生後に行う処理
+
+        // 歌詞表示初期化
+        getMainWindow().setLyric("");
+
+        for (IJmpWindow w : database.getAccessor()) {
+            if (w != null) {
+                w.processingAfterPlay();
+            }
+        }
+    }
+
+    public void processingBeforeStop() {
+        // 停止前に行う処理
+        for (IJmpWindow w : database.getAccessor()) {
+            if (w != null) {
+                w.processingBeforeStop();
+            }
+        }
+    }
+
+    public void processingAfterStop() {
+        // 停止後に行う処理
+
+        // 歌詞表示初期化
+        getMainWindow().setLyric("");
+
+        for (IJmpWindow w : database.getAccessor()) {
+            if (w != null) {
+                w.processingAfterStop();
+            }
         }
     }
 

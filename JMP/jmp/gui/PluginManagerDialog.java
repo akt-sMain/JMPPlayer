@@ -15,17 +15,20 @@ import function.Utility;
 import jlib.plugin.IPlugin;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
+import jmp.core.SoundManager;
 import jmp.gui.ui.JMPFrame;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.plugin.PluginWrapper;
 import jmp.plugin.PluginWrapper.PluginState;
 
 public class PluginManagerDialog extends JMPFrame {
-    private static final String[] columnNames = new String[] { "Name", "Opened", "Connection" };
+    private static final String[] columnNames = new String[] { "Name", "Opened", "State" };
 
     private DefaultTableModel model;
     private JTable table;
     private JPanel panel;
+    private JButton btnValid;
+    private JButton btnInvalid;
 
     /**
      * Create the frame.
@@ -85,7 +88,7 @@ public class PluginManagerDialog extends JMPFrame {
             }
         });
 
-        JButton btnInvalid = new JButton("Invalid");
+        btnInvalid = new JButton("Invalid");
         btnInvalid.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int[] selected = table.getSelectedRows();
@@ -105,7 +108,7 @@ public class PluginManagerDialog extends JMPFrame {
             }
         });
 
-                JButton btnValid = new JButton("Valid");
+                btnValid = new JButton("Valid");
                 btnValid.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         int[] selected = table.getSelectedRows();
@@ -217,6 +220,7 @@ public class PluginManagerDialog extends JMPFrame {
     @Override
     public void showWindow() {
         updateTable(true);
+        updateEnableControll();
         super.showWindow();
     }
 
@@ -232,6 +236,26 @@ public class PluginManagerDialog extends JMPFrame {
     public void updateLanguage() {
         super.updateLanguage();
         setTitle(JMPCore.getLanguageManager().getLanguageStr(LangID.Plugin_manager));
+    }
+
+    private void updateEnableControll() {
+        SoundManager sm = JMPCore.getSoundManager();
+        btnValid.setEnabled(!sm.isPlay());
+        btnInvalid.setEnabled(!sm.isPlay());
+    }
+
+    @Override
+    public void processingAfterPlay() {
+        super.processingAfterPlay();
+
+        updateEnableControll();
+    }
+
+    @Override
+    public void processingAfterStop() {
+        super.processingAfterStop();
+
+        updateEnableControll();
     }
 
 }

@@ -42,7 +42,6 @@ import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
-import jlib.player.IPlayer;
 import jlib.plugin.IPlugin;
 import jmp.FileResult;
 import jmp.IFileResultCallback;
@@ -102,8 +101,6 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
 
     // ! アプリケーション名
     public static final String APP_TITLE = JMPCore.APPLICATION_NAME;
-    // ! タイマーによるカラートグル制御
-    public static boolean TimerColorToggleFlag = false;
     // ! ステータスカラー(File)
     public static final Color STATUS_COLOR_FILE = Color.CYAN;
     // ! ステータスカラー(Pass)
@@ -893,21 +890,6 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         int mntmVolumeSliderValue = (int) (JMPCore.getSoundManager().getLineVolume() * (float) mntmVolumeSlider.getMaximum());
         mntmVolumeSlider.setValue(mntmVolumeSliderValue);
 
-        // シーケンスバーのトグル用コールバック関数を登録
-        JMPCore.getTaskManager().addCallbackPackage((long) 500, new ICallbackFunction() {
-
-            @Override
-            public void callback() {
-                IPlayer player = JMPCore.getSoundManager().getCurrentPlayer();
-                if (player != null) {
-                    if (player.isRunnable() == true) {
-                        // 再生バーのトグル
-                        TimerColorToggleFlag = !(TimerColorToggleFlag);
-                    }
-                }
-            }
-        });
-
         // ロード後のコールバックを登録
         JMPCore.getFileManager().addLoadResultCallback(new IFileResultCallback() {
 
@@ -1135,8 +1117,6 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         boolean isPlay = JMPCore.getSoundManager().isPlay();
         addPluginMenuItem.setEnabled(!isPlay);
         removePluginMenuItem.setEnabled(!isPlay);
-        mntmPluginManager.setEnabled(!isPlay);
-        allClosePluginMenuItem.setEnabled(!isPlay);
     }
 
     private void updateMenuState() {
@@ -1149,6 +1129,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         chckbxmntmLyricView.setSelected(dm.isLyricView());
         chckbxmntmSendSystemSetupBeforePlayback.setSelected(dm.isSendMidiSystemSetup());
         mntmJmSynth.setEnabled(JMPCore.getWindowManager().isValidBuiltinSynthFrame());
+        mntmInitializeConfig.setEnabled(!JMPCore.getSoundManager().isPlay());
 
         // 音量バー同期
         JMPCore.getSoundManager().syncLineVolume();
