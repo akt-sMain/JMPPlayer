@@ -6,6 +6,7 @@ public class DefineLanguage {
     public static final int INDEX_LANG_CHINESE = 2;
     public static final int NUMBER_OF_INDEX_LANG = 3;
     static final LangID[] titles = new LangID[] { LangID.English,LangID.Japanese,LangID.Chinese,};
+    static final String[] langCodes = new String[] { "en","ja","zh",};
     public static enum LangID {//
         Language,//
         Japanese,//

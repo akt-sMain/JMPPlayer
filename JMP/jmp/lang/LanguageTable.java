@@ -51,7 +51,7 @@ public class LanguageTable {
 
     /**
      * readme本文を取得
-     * 
+     *
      * @param langIndex
      * @return
      */
@@ -66,5 +66,18 @@ public class LanguageTable {
                 break;
         }
         return ret;
+    }
+
+    /**
+     * 言語コード取得
+     *
+     * @param langIndex
+     * @return
+     */
+    public static String getLangCode(int langIndex) {
+        if (0 > langIndex || langIndex >= DefineLanguage.NUMBER_OF_INDEX_LANG) {
+            langIndex = 0;
+        }
+        return DefineLanguage.langCodes[langIndex];
     }
 }

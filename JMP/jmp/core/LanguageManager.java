@@ -73,4 +73,14 @@ public class LanguageManager extends AbstractManager {
         int langIndex = JMPCore.getDataManager().getLanguage();
         return LanguageTable.getReadmeContent(langIndex);
     }
+
+    /**
+     * 言語コード取得
+     *
+     * @param langIndex
+     * @return
+     */
+    public String getLanguageCode(int langIndex) {
+        return LanguageTable.getLangCode(langIndex);
+    }
 }

@@ -167,4 +167,18 @@ public interface ISystemManager {
      * @return ツールキット
      */
     abstract IUtilityToolkit getUtilityToolkit();
+
+    /**
+     * 現在設定中の言語コードを取得する。
+     *
+     * @return 言語コード
+     */
+    abstract String getCurrentLanguageCode();
+
+    /**
+     * 対応する言語コードを取得する。
+     *
+     * @return 言語コード(配列に格納)
+     */
+    abstract String[] getSupportedLanguageCode();
 }

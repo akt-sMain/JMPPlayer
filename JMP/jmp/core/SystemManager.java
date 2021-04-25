@@ -16,6 +16,7 @@ import jlib.util.IUtilityToolkit;
 import jmp.CommonRegister;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
+import jmp.lang.DefineLanguage;
 import jmp.midi.toolkit.MidiToolkitManager;
 import jmp.util.JmpUtil;
 import jmp.util.toolkit.UtilityToolkitManager;
@@ -706,5 +707,22 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     public String getSkinPath() {
         return skinPath;
+    }
+
+    @Override
+    public String getCurrentLanguageCode() {
+        LanguageManager lm = JMPCore.getLanguageManager();
+        DataManager dm = JMPCore.getDataManager();
+        return lm.getLanguageCode(dm.getLanguage());
+    }
+
+    @Override
+    public String[] getSupportedLanguageCode() {
+        LanguageManager lm = JMPCore.getLanguageManager();
+        String[] array = new String[DefineLanguage.NUMBER_OF_INDEX_LANG];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = new String(lm.getLanguageCode(i));
+        }
+        return array;
     }
 }
