@@ -23,22 +23,9 @@ public class DefaultImageMaker {
             int y = 0;
             int width = buf.getWidth(null);
             int height = buf.getHeight(null);
-
-            int fx = 4;
-            int fy = 2;
-            int fw = 15;
-            int fh = 15;
-
             Color transColor = Color.ORANGE;
             g2d.setColor(transColor);
             g2d.fillRect(x, y, width, height);
-
-            Color color = Color.BLACK;
-            g2d.setColor(Color.DARK_GRAY);
-            g2d.fillRect(fx, fy, fw, fh);
-
-            g2d.setColor(color);
-            g2d.fillRect(fx + 2, fy + 2, fw - 4, fh - 4);
 
             defDummyIcon = JmpUtil.transformImageToTransparency(buf, transColor);
         }

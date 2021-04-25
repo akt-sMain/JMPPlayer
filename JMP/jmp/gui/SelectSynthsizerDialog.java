@@ -29,14 +29,11 @@ import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
-import jmp.core.SystemManager;
 import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.player.MidiPlayer;
-import jmsynth.JMSynthEngine;
 import jmsynth.midi.JMSynthMidiDevice;
-import jmsynth.midi.MidiInterface;
 
 public class SelectSynthsizerDialog extends JMPDialog {
 
@@ -430,10 +427,6 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
         try {
 
-            final int COMMIT_BUILT_IN = 0;
-            final int COMMIT_MIDI = 1;
-            int commitType = COMMIT_MIDI;
-
             int selectedIndex = comboRecvMode.getSelectedIndex();
             String listName = comboRecvMode.getSelectedItem().toString().trim();
             Receiver outReciever = null;
@@ -449,58 +442,15 @@ public class SelectSynthsizerDialog extends JMPDialog {
             else {
                 /* 独自のシンセを選択 */
                 if (selectedIndex == 1) {
-                    // リソース準備は後で行う
-                    commitType = COMMIT_BUILT_IN;
-
+                    // 内蔵シンセのリソース準備
+                    outReciever = JMPCore.getSoundManager().createBuiltinSynth();
                     JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, JMSYNTH_ITEM_NAME);
                 }
                 else {
-                    // デフォルト
-                    int defIndex = -1;
-                    for (int i = 0; i < infosOfRecv.length; i++) {
-                        if (infosOfRecv[i].getName().contains("Gervill") == true) {
-                            defIndex = i;
-                            break;
-                        }
-                    }
-
-                    /* デフォルト使用 */
-                    if (defIndex != -1) {
-                        // "Gervill"を優先的に使用
-                        MidiDevice outDev = MidiSystem.getMidiDevice(infosOfRecv[defIndex]);
-                        if (outDev.isOpen() == false) {
-                            outDev.open();
-                        }
-                        outReciever = outDev.getReceiver();
-                    }
-                    else {
-                        // SoundAPIの自動選択に従う
-                        try {
-                            outReciever = MidiSystem.getReceiver();
-                        }
-                        catch (Exception e3) {
-                            // ない場合は内蔵シンセを採用する
-                            commitType = COMMIT_BUILT_IN;
-                        }
-                    }
+                    // 自動選択
+                    outReciever = JMPCore.getSoundManager().createAutoSelectSynth();
                     JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
                 }
-            }
-
-            // 内蔵シンセのリソース準備
-            if (commitType == COMMIT_BUILT_IN || outReciever == null) {
-                MidiInterface miface = JMSynthEngine.getMidiInterface();
-                outReciever = miface;
-
-                // Window登録
-                BuiltinSynthSetupDialog wvf = new BuiltinSynthSetupDialog(miface);
-                Color[] ct = new Color[16];
-                for (int i = 0; i < 16; i++) {
-                    String key = String.format(SystemManager.COMMON_REGKEY_CH_COLOR_FORMAT, i + 1);
-                    ct[i] = JMPCore.getSystemManager().getUtilityToolkit().convertCodeToHtmlColor(JMPCore.getSystemManager().getCommonRegisterValue(key));
-                }
-                wvf.setWaveColorTable(ct);
-                JMPCore.getWindowManager().setBuiltinSynthFrame(wvf);
             }
 
             if ((startupFlag == false) || (pastMidiOutName.equals(JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT)) == false)) {

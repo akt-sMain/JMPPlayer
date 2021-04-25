@@ -59,9 +59,6 @@ public class JMPFlags {
     /** プラグインをロードしない */
     public static boolean NonPluginLoadFlag = false;
 
-    /** 起動時にファイルロードするか */
-    public static boolean RequestFileLoadFlag = false;
-
     /** 非同期Midiパケットを使用するか */
     public static boolean UseUnsynchronizedMidiPacket = false;
 

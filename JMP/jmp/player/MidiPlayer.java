@@ -435,8 +435,6 @@ public class MidiPlayer extends Player {
         return result;
     }
 
-    private static MOReceiver s_MOReceiver = null;
-
     public void updateMidiOut(String name) {
         Receiver inReciever = null;
         MidiDevice.Info recInfo = null;
@@ -456,7 +454,12 @@ public class MidiPlayer extends Player {
                 inReciever = inDev.getReceiver();
             }
             else {
-                inReciever = MidiSystem.getReceiver();
+                if (name.equals(SelectSynthsizerDialog.JMSYNTH_ITEM_NAME) == true) {
+                    inReciever = JMPCore.getSoundManager().createBuiltinSynth();
+                }
+                else {
+                    inReciever = JMPCore.getSoundManager().createAutoSelectSynth();
+                }
             }
             updateMidiOut(inReciever);
         }
@@ -468,6 +471,7 @@ public class MidiPlayer extends Player {
         }
     }
 
+    private static MOReceiver s_MOReceiver = null;
     public void updateMidiOut(Receiver rec) throws MidiUnavailableException {
         if (s_MOReceiver != null) {
             s_MOReceiver.close();

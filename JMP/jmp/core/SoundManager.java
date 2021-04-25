@@ -1,9 +1,18 @@
 package jmp.core;
 
+import java.awt.Color;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
@@ -28,6 +37,7 @@ import jlib.midi.MidiByte;
 import jlib.player.IPlayer;
 import jlib.player.Player;
 import jmp.JMPFlags;
+import jmp.gui.BuiltinSynthSetupDialog;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.midi.MidiByteMessage;
 import jmp.midi.MidiController;
@@ -39,6 +49,8 @@ import jmp.player.MusicXmlPlayer;
 import jmp.player.PlayerAccessor;
 import jmp.player.WavPlayer;
 import jmp.util.JmpUtil;
+import jmsynth.JMSynthEngine;
+import jmsynth.midi.MidiInterface;
 
 /**
  * サウンド管理クラス
@@ -47,6 +59,8 @@ import jmp.util.JmpUtil;
  *
  */
 public class SoundManager extends AbstractManager implements ISoundManager {
+
+    public static final String PLAYLIST_FILE_EXTENTION = "plst";
 
     public static final String PLAYER_TIME_FORMAT = "%02d:%02d";
 
@@ -179,6 +193,16 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         // 音量を更新する(ネイティブ変数を更新するため起動時に必ず呼ぶ必要がある)
         syncLineVolume();
 
+        /* プレイリストの復元 */
+        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), "backup" + PLAYLIST_FILE_EXTENTION);
+        if (Utility.isExsistFile(path) == true) {
+            try {
+                loadPlayList(path);
+            }
+            catch (Exception e) {
+            }
+        }
+
         super.initFunc();
         return true;
 
@@ -189,6 +213,15 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         if (super.endFunc() == false) {
             return false;
         }
+
+        /* プレイリストの保存 */
+        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), "backup" + PLAYLIST_FILE_EXTENTION);
+        try {
+            savePlayList(path);
+        }
+        catch (Exception e) {
+        }
+
         stop();
         PlayerAccessor.stopAllPlayer();
         PlayerAccessor.close();
@@ -435,6 +468,21 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             // 再生できなかった場合、Tickを開始位置にする
             initPosition();
         }
+    }
+
+    public void loadPlayList(String path) throws IOException {
+        List<String> lst = JmpUtil.readTextFile(path);
+        playListModel.clear();
+        for (int i = 0; i < lst.size(); i++) {
+            playListModel.addElement(lst.get(i));
+        }
+    }
+    public void savePlayList(String path) throws FileNotFoundException, UnsupportedEncodingException {
+        List<String> lst = new LinkedList<String>();
+        for (int i = 0; i < playListModel.size(); i++) {
+            lst.add(playListModel.get(i));
+        }
+        JmpUtil.writeTextFile(path, lst);
     }
 
     void loadFile(File file) throws Exception {
@@ -789,5 +837,71 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     @Override
     public float getLineVolume() {
         return nativeVolume;
+    }
+
+    /* Midi音源を自動取得する */
+    public Receiver createAutoSelectSynth() {
+
+        MidiDevice.Info[] infosOfRecv = MidiPlayer.getMidiDeviceInfo(false, true);
+
+        // デフォルト
+        int defIndex = -1;
+        for (int i = 0; i < infosOfRecv.length; i++) {
+            if (infosOfRecv[i].getName().contains("Gervill") == true) {
+                defIndex = i;
+                break;
+            }
+        }
+
+        /* デフォルト使用 */
+        Receiver reciever = null;
+        if (defIndex != -1) {
+            // "Gervill"を優先的に使用
+            try {
+                MidiDevice outDev;
+                outDev = MidiSystem.getMidiDevice(infosOfRecv[defIndex]);
+                if (outDev.isOpen() == false) {
+                    outDev.open();
+                }
+                reciever = outDev.getReceiver();
+            }
+            catch (MidiUnavailableException e) {
+                reciever = null;
+            }
+        }
+        else {
+            // SoundAPIの自動選択に従う
+            try {
+                reciever = MidiSystem.getReceiver();
+            }
+            catch (Exception e3) {
+                reciever = null;
+            }
+        }
+
+        // ない場合は内蔵シンセを採用する
+        if (reciever == null) {
+            reciever = createBuiltinSynth();
+        }
+        return reciever;
+    }
+
+    /* 内蔵シンセサイザー音源を取得する */
+    public Receiver createBuiltinSynth() {
+        MidiInterface miface = JMSynthEngine.getMidiInterface();
+        Receiver reciever = miface;
+
+        // Window登録
+        BuiltinSynthSetupDialog wvf = new BuiltinSynthSetupDialog(miface);
+        Color[] ct = new Color[16];
+        for (int i = 0; i < 16; i++) {
+            String key = String.format(SystemManager.COMMON_REGKEY_CH_COLOR_FORMAT, i + 1);
+            ct[i] = JMPCore.getSystemManager().getUtilityToolkit().convertCodeToHtmlColor(JMPCore.getSystemManager().getCommonRegisterValue(key));
+        }
+        wvf.setWaveColorTable(ct);
+
+        JMPCore.getWindowManager().closeBuiltinSynthFrame();
+        JMPCore.getWindowManager().setBuiltinSynthFrame(wvf);
+        return reciever;
     }
 }

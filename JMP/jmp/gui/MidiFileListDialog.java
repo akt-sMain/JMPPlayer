@@ -90,7 +90,16 @@ public class MidiFileListDialog extends JMPFrame {
 
             @Override
             public void catchDropFile(File file) {
-                updateList(file);
+                if (Utility.checkExtension(file, SoundManager.PLAYLIST_FILE_EXTENTION) == true) {
+                    try {
+                        JMPCore.getSoundManager().loadPlayList(file.getPath());
+                    }
+                    catch (IOException e) {
+                    }
+                }
+                else {
+                    updateList(file);
+                }
             }
         }));
 

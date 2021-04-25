@@ -28,9 +28,6 @@ public class JMPLoader {
     public static boolean UseHistoryFile = true;
     public static boolean UseSkinFile = true;
 
-    /** 起動時にロードするファイルパスを保持する */
-    private static String RequestFile = null;
-
     private static boolean exitFlag = false;
 
     /* コマンド文字列 */
@@ -144,6 +141,7 @@ public class JMPLoader {
         String jmsName = "";
         res.stdPlugin = null;
         res.doReturn = false;
+        res.loadFile = null;
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase(CMD_MKJMP) == true) {
                 args[0] = MakeJmpLib.CMD_CONSOLE;
@@ -193,10 +191,9 @@ public class JMPLoader {
                     File f = new File(args[i]);
                     if (f.isFile() == true) {
 
-                        RequestFile = args[i];
+                        res.loadFile = new File(args[i]);
 
                         // ロード設定
-                        JMPFlags.RequestFileLoadFlag = true;
                         JMPFlags.StartupAutoConectSynth = true;
                         JMPFlags.LoadToPlayFlag = true;
                     }
@@ -232,7 +229,7 @@ public class JMPLoader {
         if (rArgs.doReturn == true) {
             return true;
         }
-        return invokeImpl(config, rArgs.stdPlugin);
+        return invokeImpl(config, rArgs.stdPlugin, rArgs.loadFile);
     }
 
     /**
@@ -246,7 +243,7 @@ public class JMPLoader {
         if (rArgs.doReturn == true) {
             return true;
         }
-        return invokeImpl(null, rArgs.stdPlugin);
+        return invokeImpl(null, rArgs.stdPlugin, rArgs.loadFile);
     }
 
     /**
@@ -258,7 +255,7 @@ public class JMPLoader {
      * @return
      */
     public static boolean invoke(ConfigDatabaseWrapper config, IPlugin standAlonePlugin) {
-        return invokeImpl(config, standAlonePlugin);
+        return invokeImpl(config, standAlonePlugin, null);
     }
 
     /**
@@ -267,7 +264,7 @@ public class JMPLoader {
      * @param standAlonePlugin
      * @return
      */
-    private static boolean invokeImpl(ConfigDatabaseWrapper config, IPlugin standAlonePlugin) {
+    private static boolean invokeImpl(ConfigDatabaseWrapper config, IPlugin standAlonePlugin, File loadFile) {
 
         // invokeメソッドからの起動はLibraryモードではない
         JMPFlags.LibraryMode = false;
@@ -283,14 +280,13 @@ public class JMPLoader {
             TaskManager taskManager = JMPCore.getTaskManager();
 
             // コマンド引数で指定されたファイルを開く
-            if (JMPFlags.RequestFileLoadFlag == true) {
-                File f = new File(RequestFile);
-                if (f.canRead() == true) {
+            if (loadFile != null) {
+                if (loadFile.canRead() == true) {
                     taskManager.queuing(new ICallbackFunction() {
                         @Override
                         public void callback() {
                             JmpUtil.threadSleep(1000);
-                            JMPCore.getFileManager().loadFile(f);
+                            JMPCore.getFileManager().loadFile(loadFile);
                         }
                     });
                 }
