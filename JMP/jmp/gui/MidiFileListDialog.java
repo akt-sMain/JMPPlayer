@@ -80,14 +80,17 @@ public class MidiFileListDialog extends JMPFrame {
         FOLDER,
         MIDI,
         WAV,
+        XML,
         MUSIC,
-        OTHER
+        OTHER,
+        ALL,
     }
     static Map<FileFilterType, Boolean> filterDatabase = new HashMap<FileFilterType, Boolean>() {
         {
             put(FileFilterType.FOLDER, true);
             put(FileFilterType.MIDI, true);
             put(FileFilterType.WAV, true);
+            put(FileFilterType.XML, true);
             put(FileFilterType.MUSIC, true);
             put(FileFilterType.OTHER, true);
         }
@@ -104,31 +107,42 @@ public class MidiFileListDialog extends JMPFrame {
         @Override
         public void paint(Graphics g) {
             //super.paint(g);
-            g.setColor(filterDatabase.get(type) == true ? Color.CYAN : getJmpBackColor());
+            if (type == FileFilterType.ALL) {
+                g.setColor(Color.BLUE);
+                g.fillRect(0, 0, FileFilterPanel.this.getWidth(), FileFilterPanel.this.getHeight());
+                g.setColor(Color.GREEN);
+                g.fillRect(5, 5, FileFilterPanel.this.getWidth() - 10, FileFilterPanel.this.getHeight() - 10);
+                g.drawRect(0, 0, FileFilterPanel.this.getWidth() - 1, FileFilterPanel.this.getHeight() - 1);
+                return;
+            }
+            g.setColor(filterDatabase.get(type) == true ? Color.GREEN : getJmpBackColor());
             g.fillRect(0, 0, FileFilterPanel.this.getWidth(), FileFilterPanel.this.getHeight());
 
-            ImageIcon folderIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileFolderIcon());
-            ImageIcon midiIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileMidiIcon());
-            ImageIcon wavIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileWavIcon());
-            //ImageIcon xmlIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileXmlIcon());
-            ImageIcon musicIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileMusicIcon());
-            ImageIcon otherIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileOtherIcon());
+            Image folderIcon = JMPCore.getResourceManager().getFileFolderIcon();
+            Image midiIcon = JMPCore.getResourceManager().getFileMidiIcon();
+            Image wavIcon = JMPCore.getResourceManager().getFileWavIcon();
+            Image xmlIcon = JMPCore.getResourceManager().getFileXmlIcon();
+            Image musicIcon = JMPCore.getResourceManager().getFileMusicIcon();
+            Image otherIcon = JMPCore.getResourceManager().getFileOtherIcon();
             switch (type) {
                 case FOLDER:
-                    g.drawImage(folderIcon.getImage(), 0, 0, null);
+                    g.drawImage(folderIcon, 0, 0, null);
                     break;
                 case MIDI:
-                    g.drawImage(midiIcon.getImage(), 0, 0, null);
+                    g.drawImage(midiIcon, 0, 0, null);
                     break;
                 case MUSIC:
-                    g.drawImage(musicIcon.getImage(), 0, 0, null);
+                    g.drawImage(musicIcon, 0, 0, null);
                     break;
                 case WAV:
-                    g.drawImage(wavIcon.getImage(), 0, 0, null);
+                    g.drawImage(wavIcon, 0, 0, null);
+                    break;
+                case XML:
+                    g.drawImage(xmlIcon, 0, 0, null);
                     break;
                 case OTHER:
                 default:
-                    g.drawImage(otherIcon.getImage(), 0, 0, null);
+                    g.drawImage(otherIcon, 0, 0, null);
                     break;
 
             }
@@ -141,9 +155,24 @@ public class MidiFileListDialog extends JMPFrame {
         }
         @Override
         public void mouseReleased(MouseEvent e) {
-            filterDatabase.put(type, !filterDatabase.get(type));
+            if (type == FileFilterType.ALL) {
+                for (FileFilterType t : filterDatabase.keySet()) {
+                    filterDatabase.put(t, true);
+                }
+            }
+            else {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    filterDatabase.put(type, !filterDatabase.get(type));
+                }
+                else if (e.getButton() == MouseEvent.BUTTON3) {
+                    for (FileFilterType t : filterDatabase.keySet()) {
+                        filterDatabase.put(t, false);
+                    }
+                    filterDatabase.put(type, true);
+                }
+            }
             updateList();
-            repaint();
+            MidiFileListDialog.this.repaint();
         }
         @Override
         public void mouseEntered(MouseEvent e) {
@@ -377,9 +406,17 @@ public class MidiFileListDialog extends JMPFrame {
         fileFilterPanel_MUSIC.setBounds(_ffx, 32, 20, 20);
         contentPanel.add(fileFilterPanel_MUSIC);
         _ffx += _ffMargin;
+        JPanel fileFilterPanel_XML = new FileFilterPanel(FileFilterType.XML);
+        fileFilterPanel_XML.setBounds(_ffx, 32, 20, 20);
+        contentPanel.add(fileFilterPanel_XML);
+        _ffx += _ffMargin;
         JPanel fileFilterPanel_OTHER = new FileFilterPanel(FileFilterType.OTHER);
         fileFilterPanel_OTHER.setBounds(_ffx, 32, 20, 20);
         contentPanel.add(fileFilterPanel_OTHER);
+        _ffx += _ffMargin;
+        JPanel fileFilterPanel_ALL = new FileFilterPanel(FileFilterType.ALL);
+        fileFilterPanel_ALL.setBounds(_ffx, 32, 20, 20);
+        contentPanel.add(fileFilterPanel_ALL);
         _ffx += _ffMargin;
 
         btnExproler.addActionListener(new ActionListener() {
@@ -711,13 +748,13 @@ public class MidiFileListDialog extends JMPFrame {
                         }
                     }
                     else if (Utility.checkExtensions(name, exMUSICXML) == true) {
-                        if (filterDatabase.get(FileFilterType.OTHER) == true) {
+                        if (filterDatabase.get(FileFilterType.XML) == true) {
                             Object[] row = createFileListRows(xmlIcon, "XM", name);
                             model.addRow(row);
                         }
                     }
                     else if (Utility.checkExtensions(name, exMML) == true) {
-                        if (filterDatabase.get(FileFilterType.OTHER) == true) {
+                        if (filterDatabase.get(FileFilterType.XML) == true) {
                             Object[] row = createFileListRows(xmlIcon, "MM", name);
                             model.addRow(row);
                         }
