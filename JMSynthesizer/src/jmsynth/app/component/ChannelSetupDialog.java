@@ -18,6 +18,7 @@ import java.util.Arrays;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -67,6 +68,7 @@ public class ChannelSetupDialog extends JDialog {
             WAVE_STR_NOIS //
     };//
     private JSlider sliderMod;
+    private JCheckBox chckbxRealTime;
 
     private class EnvelopeViewPanel extends JPanel {
 
@@ -275,6 +277,7 @@ public class ChannelSetupDialog extends JDialog {
         comboBoxWaveType = new JComboBox<String>();
         comboBoxWaveType.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
+                updateValue();
                 repaint();
             }
         });
@@ -303,6 +306,7 @@ public class ChannelSetupDialog extends JDialog {
         sliderA.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
+                updateValue();
                 repaint();
             }
         });
@@ -313,6 +317,7 @@ public class ChannelSetupDialog extends JDialog {
         sliderD.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
+                updateValue();
                 repaint();
             }
         });
@@ -323,6 +328,7 @@ public class ChannelSetupDialog extends JDialog {
         sliderS.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
+                updateValue();
                 repaint();
             }
         });
@@ -333,6 +339,7 @@ public class ChannelSetupDialog extends JDialog {
         sliderR.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
+                updateValue();
                 repaint();
             }
         });
@@ -367,6 +374,7 @@ public class ChannelSetupDialog extends JDialog {
         sliderMod.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
+                updateValue();
                 repaint();
             }
         });
@@ -390,6 +398,9 @@ public class ChannelSetupDialog extends JDialog {
                     repaint();
                 }
             });
+
+                    chckbxRealTime = new JCheckBox("Real time");
+                    buttonPane.add(chckbxRealTime);
 
                     btnTest = new JButton("Test");
                     buttonPane.add(btnTest);
@@ -665,5 +676,11 @@ public class ChannelSetupDialog extends JDialog {
 
     public int getModSli() {
         return getSliderInt(sliderMod);
+    }
+
+    private void updateValue() {
+        if (chckbxRealTime.isSelected() == true) {
+            sync();
+        }
     }
 }

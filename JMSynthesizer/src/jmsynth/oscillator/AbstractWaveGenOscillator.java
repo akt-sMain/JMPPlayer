@@ -24,7 +24,7 @@ public abstract class AbstractWaveGenOscillator implements IOscillator {
         overallLevel *= LEVEL_OFFSET;
         for (int i = 0; i < length; i = i + 2) {
             toneStep++;
-            double f = (1.0 * toneStep / amplitude) - (toneStep / amplitude);
+            double f = (1.0 * (double)toneStep / (double)amplitude) - (double)(toneStep / amplitude);
             y = (byte) (makeWave(f, overallLevel) & 0xff);
 
             /* Lch 分 */
