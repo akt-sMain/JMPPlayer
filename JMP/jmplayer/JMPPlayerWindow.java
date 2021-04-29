@@ -550,7 +550,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         mntmMidiDeviceSetup = new JMenuItem("MIDIデバイス設定");
         mntmMidiDeviceSetup.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                SoundManager.SMidiPlayer.getSelectSynthsizerDialog().start();
+                showChildWindow(WindowManager.WINDOW_NAME_MIDI_SETUP);
             }
         });
 

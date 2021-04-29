@@ -10,10 +10,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.Transmitter;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -29,20 +25,16 @@ import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
-import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.player.MidiPlayer;
 import jmsynth.midi.JMSynthMidiDevice;
 
 public class SelectSynthsizerDialog extends JMPDialog {
-
-    private boolean startupFlag = false;
     private boolean isOkActionClose = false;
 
     public static final int MAX_ROW_COUNT = 15;
 
-    private SelectSynthsizerDialogListener commitListener = null;
     private MidiDevice.Info[] infosOfRecv = null;
     private MidiDevice.Info[] infosOfTrans = null;
     private static final String NameNoSepareter = "-";
@@ -92,8 +84,6 @@ public class SelectSynthsizerDialog extends JMPDialog {
         if (jmpIcon != null) {
             setIconImage(jmpIcon);
         }
-
-        JMPCore.getWindowManager().register(WindowManager.WINDOW_NAME_MIDI_SETUP, this);
 
         contentPanel.setBackground(getJmpBackColor());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -422,74 +412,39 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
         JMPCore.getWindowManager().closeBuiltinSynthFrame();
 
-        String pastMidiOutName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
-        String pastMidiInName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
-
-        try {
-
-            int selectedIndex = comboRecvMode.getSelectedIndex();
-            String listName = comboRecvMode.getSelectedItem().toString().trim();
-            Receiver outReciever = null;
-            int outDevIndex = getOrgDeviceIndex(listName);
-            if (outDevIndex != -1) {
-                MidiDevice outDev = MidiSystem.getMidiDevice(infosOfRecv[outDevIndex]);
-                if (outDev.isOpen() == false) {
-                    outDev.open();
-                }
-                outReciever = outDev.getReceiver();
-                JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, outDev.getDeviceInfo().getName());
-            }
-            else {
-                /* 独自のシンセを選択 */
-                if (selectedIndex == 1) {
-                    // 内蔵シンセのリソース準備
-                    outReciever = JMPCore.getSoundManager().createBuiltinSynth();
-                    JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, JMSYNTH_ITEM_NAME);
-                }
-                else {
-                    // 自動選択
-                    outReciever = JMPCore.getSoundManager().createAutoSelectSynth();
-                    JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
-                }
-            }
-
-            if ((startupFlag == false) || (pastMidiOutName.equals(JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT)) == false)) {
-                commitListener.commitMidiOut(outReciever);
-            }
-
-            listName = comboTransMode.getSelectedItem().toString().trim();
-            // String devName = getOrgDeviceName(listName);
-            Transmitter inTransmitter = null;
-            int inDevIndex = getOrgDeviceIndex(listName);
-            if (listName.equals("") == false && inDevIndex != -1) {
-                MidiDevice inDev = MidiSystem.getMidiDevice(infosOfTrans[inDevIndex]);
-                if (inDev.isOpen() == false) {
-                    inDev.open();
-                }
-                inTransmitter = inDev.getTransmitter();
-                JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIIN, inDev.getDeviceInfo().getName());
-
-                if ((startupFlag == false) || (pastMidiInName.equals(JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN)) == false)) {
-                    commitListener.commitMidiIn(inTransmitter);
-                }
-            }
-            else {
-                JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIIN, "");
-            }
-
+        /* MIDI_OUT */
+        String midiOutName = "";
+        switch (comboRecvMode.getSelectedIndex()) {
+            case 0:
+                // 自動選択
+                midiOutName = "";
+                break;
+            case 1:
+                // 内蔵シンセ
+                midiOutName = JMSYNTH_ITEM_NAME;
+                break;
+            default:
+                midiOutName = getOrgDeviceName(comboRecvMode.getSelectedItem().toString().trim());
+                break;
         }
-        catch (MidiUnavailableException e1) {
-            // ErrorFunc.logger(e1, true);
+
+        /* MIDI_IN */
+        String midiInName = "";
+        switch (comboTransMode.getSelectedIndex()) {
+            case 0:
+                // 未選択
+                midiInName = "";
+                break;
+            default:
+                midiInName = getOrgDeviceName(comboTransMode.getSelectedItem().toString().trim());
+                break;
         }
-        catch (Exception e2) {
-            System.out.println("Not Open Midi OUT Device.");
-        }
-        finally {
-            if (startupFlag == false) {
-                startupFlag = true;
-            }
-            close();
-        }
+
+        // 設定値変更を行うことでSoundManagerに通知され、デバイスへの接続が実施される
+        JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, midiOutName);
+        JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIIN, midiInName);
+
+        close();
     }
 
     /**
@@ -512,18 +467,11 @@ public class SelectSynthsizerDialog extends JMPDialog {
     }
 
     protected String getOrgDeviceName(String name) {
-        String devName = name;
-        String[] sName = devName.split(NameNoSepareter);
-        devName = sName[sName.length - 1].trim();
-        return devName;
+        return name.substring(3);
     }
 
     public boolean isOkActionClose() {
         return isOkActionClose;
-    }
-
-    public void setCommitListener(SelectSynthsizerDialogListener commitListener) {
-        this.commitListener = commitListener;
     }
 
     @Override

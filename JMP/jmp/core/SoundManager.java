@@ -61,6 +61,7 @@ import jmsynth.midi.MidiInterface;
 public class SoundManager extends AbstractManager implements ISoundManager {
 
     public static final String PLAYLIST_FILE_EXTENTION = "plst";
+    public static final String BACKUP_PLAYLIST_FILE_NAME = "backup." + PLAYLIST_FILE_EXTENTION;
 
     public static final String PLAYER_TIME_FORMAT = "%02d:%02d";
 
@@ -194,7 +195,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         syncLineVolume();
 
         /* プレイリストの復元 */
-        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), "backup" + PLAYLIST_FILE_EXTENTION);
+        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), BACKUP_PLAYLIST_FILE_NAME);
         if (Utility.isExsistFile(path) == true) {
             try {
                 loadPlayList(path);
@@ -215,7 +216,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         }
 
         /* プレイリストの保存 */
-        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), "backup" + PLAYLIST_FILE_EXTENTION);
+        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), BACKUP_PLAYLIST_FILE_NAME);
         try {
             savePlayList(path);
         }
@@ -477,6 +478,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             playListModel.addElement(lst.get(i));
         }
     }
+
     public void savePlayList(String path) throws FileNotFoundException, UnsupportedEncodingException {
         List<String> lst = new LinkedList<String>();
         for (int i = 0; i < playListModel.size(); i++) {
@@ -746,20 +748,16 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     protected void notifyUpdateConfig(String key) {
         super.notifyUpdateConfig(key);
 
-        // if (key.equals(DataManager.CFG_KEY_MIDIIN) == true) {
-        // if (isFinishedAllInitialize() == true) {
-        // String inName =
-        // JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
-        // SMidiPlayer.updateMidiIn(inName);
-        // }
-        // }
-        // else if (key.equals(DataManager.CFG_KEY_MIDIOUT) == true) {
-        // if (isFinishedAllInitialize() == true) {
-        // String outName =
-        // JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
-        // SMidiPlayer.updateMidiOut(outName);
-        // }
-        // }
+        if (key.equals(DataManager.CFG_KEY_MIDIIN) == true) {
+            if (isFinishedAllInitialize() == true) {
+                reloadMidiDevice(false, true);
+            }
+        }
+        else if (key.equals(DataManager.CFG_KEY_MIDIOUT) == true) {
+            if (isFinishedAllInitialize() == true) {
+                reloadMidiDevice(true, false);
+            }
+        }
     }
 
     public void updateMidiToolkit() {
@@ -903,5 +901,17 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         JMPCore.getWindowManager().closeBuiltinSynthFrame();
         JMPCore.getWindowManager().setBuiltinSynthFrame(wvf);
         return reciever;
+    }
+
+    public void reloadMidiDevice(boolean out, boolean in) {
+        // DataManagerのデバイスを再設定する
+        if (out == true) {
+            String outName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
+            SMidiPlayer.updateMidiOut(outName);
+        }
+        if (in == true) {
+            String inName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
+            SMidiPlayer.updateMidiIn(inName);
+        }
     }
 }

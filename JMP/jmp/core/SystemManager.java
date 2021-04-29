@@ -224,7 +224,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             File pluginsDir = new File(getPluginsDirPath());
             if (pluginsDir.exists() == false) {
                 // プラグインフォルダ作成
-                if(!pluginsDir.mkdir()) {
+                if (!pluginsDir.mkdir()) {
                     return false;
                 }
             }
@@ -396,7 +396,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         boolean ret = cReg.setValue(key, value);
         if (ret == true) {
             // 全てのマネージャーに通知
-            AbstractManager.callNotifyUpdateCommonRegister(key);
+            JMPCore.callNotifyUpdateCommonRegister(key);
         }
         return ret;
     }

@@ -13,8 +13,8 @@ public abstract class AbstractManager implements IManager {
     public static final int INVALID_PRIORITY = -1;
 
     private static List<AbstractManager> managers = null;
-    private static List<AbstractManager> asc = null;
-    private static List<AbstractManager> desc = null;
+    static List<AbstractManager> asc = null;
+    static List<AbstractManager> desc = null;
     protected int priority = 0;
     protected String name = "";
     private boolean initializeFlag = false;
@@ -89,30 +89,6 @@ public abstract class AbstractManager implements IManager {
         }
         JMPFlags.Log.cprintln("## finished");
         return result;
-    }
-
-    static void callNotifyUpdateConfig(String key) {
-        if (isFinishedAllInitialize() == false) {
-            return;
-        }
-
-        for (AbstractManager am : asc) {
-            if (am.isFinishedInitialize() == true) {
-                am.notifyUpdateConfig(key);
-            }
-        }
-    }
-
-    static void callNotifyUpdateCommonRegister(String key) {
-        if (isFinishedAllInitialize() == false) {
-            return;
-        }
-
-        for (AbstractManager am : asc) {
-            if (am.isFinishedInitialize() == true) {
-                am.notifyUpdateCommonRegister(key);
-            }
-        }
     }
 
     private static List<AbstractManager> getCloneManagerList(boolean order) {

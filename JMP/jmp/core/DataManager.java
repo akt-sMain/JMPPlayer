@@ -123,7 +123,7 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         configWrap.setConfigParam(CFG_KEY_MIDIOUT, backupMidiOut);
 
         // 設定変更通知
-        AbstractManager.callNotifyUpdateConfig(CFG_KEY_INITIALIZE);
+        JMPCore.callNotifyUpdateConfig(CFG_KEY_INITIALIZE);
     }
 
     private boolean readingConfigFile() {
@@ -230,7 +230,7 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         }
 
         // 設定変更通知
-        AbstractManager.callNotifyUpdateConfig(key);
+        JMPCore.callNotifyUpdateConfig(key);
     }
 
     @Override

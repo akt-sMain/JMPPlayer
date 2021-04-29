@@ -398,6 +398,19 @@ public class JMPLoader {
         /* 起動準備 */
         if (result == true) {
 
+            /* MIDI設定の初期処理 */
+            if (JMPFlags.StartupAutoConectSynth == false) {
+                // Midiデバイス選択ダイアログの表示
+                JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_SETUP).showWindow();
+
+//                SelectSoundFontDIalog dialog = new SelectSoundFontDIalog();
+//                dialog.start();
+            }
+            else {
+                // Midiデバイスの読み込み
+                JMPCore.getSoundManager().reloadMidiDevice(true, true);
+            }
+
             // プラグイン準備
             JMPCore.getPluginManager().startupPluginInstance();
 

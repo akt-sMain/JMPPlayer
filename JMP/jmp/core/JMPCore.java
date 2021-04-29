@@ -2,6 +2,8 @@ package jmp.core;
 
 import jlib.JMPLIB;
 import jlib.plugin.IPlugin;
+import jmp.core.TaskManager.TaskID;
+import jmp.task.ICallbackFunction;
 
 public class JMPCore {
 
@@ -63,6 +65,41 @@ public class JMPCore {
 
     public static void setStandAlonePlugin(IPlugin plg) {
         StandAlonePlugin = plg;
+    }
+
+    /** 通知メソッド作成 */
+    private static void createNotifyFunc(ICallbackFunction func) {
+        if (AbstractManager.isFinishedAllInitialize() == false) {
+            return;
+        }
+        getTaskManager().queuing(TaskID.SEQUENCE, func);
+    }
+
+    public static void callNotifyUpdateConfig(String key) {
+        createNotifyFunc(new ICallbackFunction() {
+            @Override
+            public void callback() {
+                for (AbstractManager am : AbstractManager.asc) {
+                    if (am.isFinishedInitialize() == true) {
+                        am.notifyUpdateConfig(key);
+                    }
+                }
+            }
+        });
+    }
+
+    public static void callNotifyUpdateCommonRegister(String key) {
+        createNotifyFunc(new ICallbackFunction() {
+            @Override
+            public void callback() {
+                for (AbstractManager am : AbstractManager.asc) {
+                    if (am.isFinishedInitialize() == true) {
+                        am.notifyUpdateCommonRegister(key);
+                    }
+                }
+            }
+
+        });
     }
 
     public static IPlugin getStandAlonePlugin() {

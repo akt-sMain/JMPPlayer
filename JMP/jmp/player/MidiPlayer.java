@@ -32,7 +32,6 @@ import jmp.core.JMPCore;
 import jmp.core.SystemManager;
 import jmp.core.WindowManager;
 import jmp.gui.SelectSynthsizerDialog;
-import jmp.gui.SelectSynthsizerDialogListener;
 import jmp.midi.JMPSequencer;
 import jmp.midi.MIReceiver;
 import jmp.midi.MITransmitter;
@@ -215,11 +214,6 @@ public class MidiPlayer extends Player {
 
     // MIDI Synth
     private JMPSequencer sequencer;
-    private SelectSynthsizerDialog selectSynthsizerDialog = null;
-
-    public SelectSynthsizerDialog getSelectSynthsizerDialog() {
-        return selectSynthsizerDialog;
-    };
 
     private Receiver currentReceiver = null;
 
@@ -399,39 +393,6 @@ public class MidiPlayer extends Player {
             result = false;
             return result;
         }
-
-        // シンセサイザー選択ダイアログ表示
-        selectSynthsizerDialog = new SelectSynthsizerDialog(true, true);
-        selectSynthsizerDialog.setCommitListener(new SelectSynthsizerDialogListener() {
-
-            @Override
-            public void commitMidiOut(Receiver rec) throws MidiUnavailableException {
-                updateMidiOut(rec);
-            }
-
-            @Override
-            public void commitMidiIn(Transmitter trans) throws MidiUnavailableException {
-                updateMidiIn(trans);
-            }
-        });
-
-        if (JMPFlags.StartupAutoConectSynth == false) {
-            selectSynthsizerDialog.start();
-            if (selectSynthsizerDialog.isOkActionClose() == false) {
-                return false;
-            }
-
-            // SelectSoundFontDIalog dialog = new SelectSoundFontDIalog();
-            // dialog.start();
-        }
-        else {
-            String outName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
-            updateMidiOut(outName);
-
-            String inName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
-            updateMidiIn(inName);
-        }
-
         return result;
     }
 

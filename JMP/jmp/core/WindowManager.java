@@ -53,7 +53,18 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     protected boolean initFunc() {
 
         // Windowインスタンス作成
-        makeWindowInstance();
+        register(WINDOW_NAME_LICENSE, new LicenseReaderDialog());
+        register(WINDOW_NAME_MIDI_MONITOR, new MidiMessageMonitor());
+        register(WINDOW_NAME_MIDI_SENDER, new MidiDataTransportDialog());
+        register(WINDOW_NAME_LANGUAGE, new SelectLanguageDialog());
+        register(WINDOW_NAME_HISTORY, new HistoryDialog());
+        register(WINDOW_NAME_FILE_LIST, new MidiFileListDialog());
+        register(WINDOW_NAME_PLUGIN_MANAGER, new PluginManagerDialog());
+        register(WINDOW_NAME_FFMPEG, new FFmpegConvertDialog());
+        register(WINDOW_NAME_MIDI_SETUP, new SelectSynthsizerDialog(true, true));
+
+        // メインウィンドウ登録
+        registerMainWindow(new JMPPlayerWindow());
 
         return super.initFunc();
     }
@@ -92,20 +103,6 @@ public class WindowManager extends AbstractManager implements IWindowManager {
             }
         }
         super.notifyUpdateCommonRegister(key);
-    }
-
-    private void makeWindowInstance() {
-        register(WINDOW_NAME_LICENSE, new LicenseReaderDialog());
-        register(WINDOW_NAME_MIDI_MONITOR, new MidiMessageMonitor());
-        register(WINDOW_NAME_MIDI_SENDER, new MidiDataTransportDialog());
-        register(WINDOW_NAME_LANGUAGE, new SelectLanguageDialog());
-        register(WINDOW_NAME_HISTORY, new HistoryDialog());
-        register(WINDOW_NAME_FILE_LIST, new MidiFileListDialog());
-        register(WINDOW_NAME_PLUGIN_MANAGER, new PluginManagerDialog());
-        register(WINDOW_NAME_FFMPEG, new FFmpegConvertDialog());
-
-        // メインウィンドウ登録
-        registerMainWindow(new JMPPlayerWindow());
     }
 
     public void processingBeforePlay() {
