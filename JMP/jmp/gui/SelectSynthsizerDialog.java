@@ -454,8 +454,8 @@ public class SelectSynthsizerDialog extends JMPDialog {
         this.setVisible(false);
     }
 
-    private String createItemName(int no, String name) {
-        String ret = String.format("%s%s %s", no, NameNoSepareter, name);
+    private String createItemName(int index, String name) {
+        String ret = String.format("%s%s %s", index + 1, NameNoSepareter, name);
         return ret;
     }
 
@@ -463,7 +463,11 @@ public class SelectSynthsizerDialog extends JMPDialog {
         String devIndex = name;
         String[] sName = devIndex.split(NameNoSepareter);
         devIndex = sName[0].trim();
-        return Utility.tryParseInt(devIndex, -1);
+        int index = Utility.tryParseInt(devIndex, -1);
+        if (index != -1) {
+            index--;
+        }
+        return index;
     }
 
     protected String getOrgDeviceName(String name) {
