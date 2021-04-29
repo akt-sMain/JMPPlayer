@@ -41,10 +41,10 @@ public class DefaultImageMaker {
         int width = buf.getWidth(null);
         int height = buf.getHeight(null);
 
-        int fx = 4;
+        int fx = 3;
         int fy = 2;
         int fw = 14;
-        int fh = 17;
+        int fh = 16;
 
         Color transColor = Color.ORANGE;
         g2d.setColor(transColor);
