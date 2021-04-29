@@ -3,18 +3,21 @@ package jmp.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +75,83 @@ public class MidiFileListDialog extends JMPFrame {
 
     private static final int WINDOW_WIDTH = 870;
     private static final int WINDOW_HEIGHT = 510;
+
+    enum FileFilterType {
+        FOLDER,
+        MIDI,
+        WAV,
+        MUSIC,
+        OTHER
+    }
+    static Map<FileFilterType, Boolean> filterDatabase = new HashMap<FileFilterType, Boolean>() {
+        {
+            put(FileFilterType.FOLDER, true);
+            put(FileFilterType.MIDI, true);
+            put(FileFilterType.WAV, true);
+            put(FileFilterType.MUSIC, true);
+            put(FileFilterType.OTHER, true);
+        }
+    };
+
+    public class FileFilterPanel extends JPanel implements MouseListener{
+        public FileFilterType type = FileFilterType.OTHER;
+        public FileFilterPanel(FileFilterType type) {
+            super();
+            this.type = type;
+            addMouseListener(this);
+        }
+
+        @Override
+        public void paint(Graphics g) {
+            //super.paint(g);
+            g.setColor(filterDatabase.get(type) == true ? Color.CYAN : getJmpBackColor());
+            g.fillRect(0, 0, FileFilterPanel.this.getWidth(), FileFilterPanel.this.getHeight());
+
+            ImageIcon folderIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileFolderIcon());
+            ImageIcon midiIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileMidiIcon());
+            ImageIcon wavIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileWavIcon());
+            //ImageIcon xmlIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileXmlIcon());
+            ImageIcon musicIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileMusicIcon());
+            ImageIcon otherIcon = JmpUtil.convertImageIcon(JMPCore.getResourceManager().getFileOtherIcon());
+            switch (type) {
+                case FOLDER:
+                    g.drawImage(folderIcon.getImage(), 0, 0, null);
+                    break;
+                case MIDI:
+                    g.drawImage(midiIcon.getImage(), 0, 0, null);
+                    break;
+                case MUSIC:
+                    g.drawImage(musicIcon.getImage(), 0, 0, null);
+                    break;
+                case WAV:
+                    g.drawImage(wavIcon.getImage(), 0, 0, null);
+                    break;
+                case OTHER:
+                default:
+                    g.drawImage(otherIcon.getImage(), 0, 0, null);
+                    break;
+
+            }
+        }
+        @Override
+        public void mouseClicked(MouseEvent e) {
+        }
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            filterDatabase.put(type, !filterDatabase.get(type));
+            updateList();
+            repaint();
+        }
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+        @Override
+        public void mouseExited(MouseEvent e) {
+        }
+    }
 
     /**
      * Create the dialog.
@@ -138,7 +218,7 @@ public class MidiFileListDialog extends JMPFrame {
         contentPanel.setLayout(null);
         {
             scrollPane = new JScrollPane();
-            scrollPane.setBounds(5, 39, 391, 390);
+            scrollPane.setBounds(5, 55, 391, 374);
             contentPanel.add(scrollPane);
             {
                 scrollPane.setViewportView(midiFileList);
@@ -278,6 +358,30 @@ public class MidiFileListDialog extends JMPFrame {
         JPanel panel = new JmpQuickLaunch();
         panel.setBounds(742, 8, 100, 20);
         contentPanel.add(panel);
+
+        int _ffx = 5;
+        int _ffMargin = 22;
+        JPanel fileFilterPanel_FOLDER = new FileFilterPanel(FileFilterType.FOLDER);
+        fileFilterPanel_FOLDER.setBounds(_ffx, 32, 20, 20);
+        contentPanel.add(fileFilterPanel_FOLDER);
+        _ffx += _ffMargin;
+        JPanel fileFilterPanel_MIDI = new FileFilterPanel(FileFilterType.MIDI);
+        fileFilterPanel_MIDI.setBounds(_ffx, 32, 20, 20);
+        contentPanel.add(fileFilterPanel_MIDI);
+        _ffx += _ffMargin;
+        JPanel fileFilterPanel_WAV = new FileFilterPanel(FileFilterType.WAV);
+        fileFilterPanel_WAV.setBounds(_ffx, 32, 20, 20);
+        contentPanel.add(fileFilterPanel_WAV);
+        _ffx += _ffMargin;
+        JPanel fileFilterPanel_MUSIC = new FileFilterPanel(FileFilterType.MUSIC);
+        fileFilterPanel_MUSIC.setBounds(_ffx, 32, 20, 20);
+        contentPanel.add(fileFilterPanel_MUSIC);
+        _ffx += _ffMargin;
+        JPanel fileFilterPanel_OTHER = new FileFilterPanel(FileFilterType.OTHER);
+        fileFilterPanel_OTHER.setBounds(_ffx, 32, 20, 20);
+        contentPanel.add(fileFilterPanel_OTHER);
+        _ffx += _ffMargin;
+
         btnExproler.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String path = JMPCore.getDataManager().getPlayListPath();
@@ -435,6 +539,11 @@ public class MidiFileListDialog extends JMPFrame {
         }
     }
 
+    public void updateList() {
+        File f = new File(JMPCore.getDataManager().getPlayListPath());
+        updateList(f);
+    }
+
     public void updateList(String path) {
         File f = new File(path);
         updateList(f);
@@ -583,33 +692,47 @@ public class MidiFileListDialog extends JMPFrame {
                 }
 
                 if (f.isDirectory() == true) {
-                    Object[] row = createFileListRows(folderIcon, "DI", name);
-                    model.addRow(row);
+                    if (filterDatabase.get(FileFilterType.FOLDER) == true) {
+                        Object[] row = createFileListRows(folderIcon, "DI", name);
+                        model.addRow(row);
+                    }
                 }
                 else {
                     if (Utility.checkExtensions(name, exMIDI) == true) {
-                        Object[] row = createFileListRows(midiIcon, "MI", name);
-                        model.addRow(row);
+                        if (filterDatabase.get(FileFilterType.MIDI) == true) {
+                            Object[] row = createFileListRows(midiIcon, "MI", name);
+                            model.addRow(row);
+                        }
                     }
                     else if (Utility.checkExtensions(name, exWAV) == true) {
-                        Object[] row = createFileListRows(wavIcon, "WA", name);
-                        model.addRow(row);
+                        if (filterDatabase.get(FileFilterType.WAV) == true) {
+                            Object[] row = createFileListRows(wavIcon, "WA", name);
+                            model.addRow(row);
+                        }
                     }
                     else if (Utility.checkExtensions(name, exMUSICXML) == true) {
-                        Object[] row = createFileListRows(xmlIcon, "XM", name);
-                        model.addRow(row);
+                        if (filterDatabase.get(FileFilterType.OTHER) == true) {
+                            Object[] row = createFileListRows(xmlIcon, "XM", name);
+                            model.addRow(row);
+                        }
                     }
                     else if (Utility.checkExtensions(name, exMML) == true) {
-                        Object[] row = createFileListRows(xmlIcon, "MM", name);
-                        model.addRow(row);
+                        if (filterDatabase.get(FileFilterType.OTHER) == true) {
+                            Object[] row = createFileListRows(xmlIcon, "MM", name);
+                            model.addRow(row);
+                        }
                     }
                     else if ((Utility.checkExtensions(name, exMUSIC) == true) && (validFFmpegPlayer == true)) {
-                        Object[] row = createFileListRows(musicIcon, "MU", name);
-                        model.addRow(row);
+                        if (filterDatabase.get(FileFilterType.MUSIC) == true) {
+                            Object[] row = createFileListRows(musicIcon, "MU", name);
+                            model.addRow(row);
+                        }
                     }
                     else {
-                        Object[] row = createFileListRows(otherIcon, "#", name);
-                        model.addRow(row);
+                        if (filterDatabase.get(FileFilterType.OTHER) == true) {
+                            Object[] row = createFileListRows(otherIcon, "#", name);
+                            model.addRow(row);
+                        }
                     }
                 }
             }
