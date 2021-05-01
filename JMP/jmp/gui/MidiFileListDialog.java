@@ -354,7 +354,7 @@ public class MidiFileListDialog extends JMPFrame {
         lblPath.setBackground(Color.BLACK);
         lblPath.setForeground(Color.WHITE);
         lblPath.setFont(new Font("Yu Gothic UI Semibold", Font.BOLD, 14));
-        lblPath.setBounds(5, 8, 422, 21);
+        lblPath.setBounds(5, 8, 382, 21);
         lblPath.setOpaque(true);
         LineBorder border = new LineBorder(Color.LIGHT_GRAY, 1, false);
         lblPath.setBorder(border);
@@ -375,7 +375,7 @@ public class MidiFileListDialog extends JMPFrame {
                 }
             }
         });
-        btnBack.setBounds(427, 8, 39, 21);
+        btnBack.setBounds(387, 8, 39, 21);
         contentPanel.add(btnBack);
 
         labelContinuePlayback = new JLabel("連続再生リスト");
@@ -417,6 +417,15 @@ public class MidiFileListDialog extends JMPFrame {
         JPanel fileFilterPanel_ALL = new FileFilterPanel(FileFilterType.ALL);
         fileFilterPanel_ALL.setBounds(_ffx, 32, 20, 20);
         contentPanel.add(fileFilterPanel_ALL);
+
+        JButton btnOpenFolder = new JButton("...");
+        btnOpenFolder.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                openPath();
+            }
+        });
+        btnOpenFolder.setBounds(426, 8, 39, 21);
+        contentPanel.add(btnOpenFolder);
         _ffx += _ffMargin;
 
         btnExproler.addActionListener(new ActionListener() {
@@ -488,9 +497,9 @@ public class MidiFileListDialog extends JMPFrame {
             btnDirectLoad.setLocation(305, btnDirectLoad.getY());
         }
         else {
-            this.setSize(540, this.getHeight());
-            scrollPane.setSize(510, scrollPane.getHeight());
-            btnDirectLoad.setLocation(406, btnDirectLoad.getY());
+            this.setSize(480, this.getHeight());
+            scrollPane.setSize(460, scrollPane.getHeight());
+            btnDirectLoad.setLocation(374, btnDirectLoad.getY());
         }
     }
 

@@ -99,6 +99,9 @@ public class JmpUtil {
         return textContents;
     }
 
+    public static void writeTextFile(String path, String textContents) throws FileNotFoundException, UnsupportedEncodingException {
+        Utility.outputTextFile(path, textContents);
+    }
     public static void writeTextFile(File file, List<String> textContents) throws FileNotFoundException, UnsupportedEncodingException {
         writeTextFile(file.getPath(), textContents);
     }

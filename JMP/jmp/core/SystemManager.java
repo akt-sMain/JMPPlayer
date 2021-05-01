@@ -1,22 +1,26 @@
 package jmp.core;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import function.Platform;
 import function.Utility;
 import jlib.core.ISystemManager;
+import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
 import jlib.util.IUtilityToolkit;
 import jmp.CommonRegister;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
 import jmp.lang.DefineLanguage;
+import jmp.lang.DefineLanguage.LangID;
 import jmp.midi.toolkit.MidiToolkitManager;
 import jmp.util.JmpUtil;
 import jmp.util.toolkit.UtilityToolkitManager;
@@ -31,9 +35,6 @@ import wrapper.ProcessingFFmpegWrapper;
  *
  */
 public class SystemManager extends AbstractManager implements ISystemManager {
-
-    /** 例外メッセージのテンポラリ */
-    public static Exception TempResisterEx = null;
 
     /** データディレクトリ名 */
     public static final String PLUGINS_DIR_NAME = "plugins";
@@ -99,6 +100,102 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     private String syscommonPath = "";
     private String skinPath = "";
 
+    /* エラーID定義 */
+    public static final int UNIT_OF_ERROR_ID = 100;
+    // UNKNOWN区分
+    public static final int ERROR_ID_UNKNOWN = (UNIT_OF_ERROR_ID * 1);
+    public static final int ERROR_ID_UNKNOWN_EXIT_APPLI = (ERROR_ID_UNKNOWN + 1);
+    public static final int ERROR_ID_UNKNOWN_FAIL_LOAD_PLAYER = (ERROR_ID_UNKNOWN_EXIT_APPLI + 1);
+    // SYSTEM区分
+    public static final int ERROR_ID_SYSTEM = (UNIT_OF_ERROR_ID * 2);
+    public static final int ERROR_ID_SYSTEM_FAIL_INIT_FUNC = (ERROR_ID_SYSTEM + 1);
+    public static final int ERROR_ID_SYSTEM_FAIL_END_FUNC = (ERROR_ID_SYSTEM_FAIL_INIT_FUNC + 1);
+    // SOUND区分
+    public static final int ERROR_ID_SOUND = (UNIT_OF_ERROR_ID * 3);
+    // FILE区分
+    public static final int ERROR_ID_FILE = (UNIT_OF_ERROR_ID * 4);
+    // PLUGIN区分
+    public static final int ERROR_ID_PLUGIN = (UNIT_OF_ERROR_ID * 5);
+    public static final int ERROR_ID_PLUGIN_FAIL_LOAD = (ERROR_ID_PLUGIN + 1);
+
+    public void showSystemErrorMessage(int errorID) {
+        LanguageManager lm = JMPCore.getLanguageManager();
+        String sErrorID = "";
+        String errorMsg = "";
+        String primMsg = "Unknown error.";
+        String subMsg = "";
+        if (ERROR_ID_UNKNOWN <= errorID && errorID < ERROR_ID_UNKNOWN + UNIT_OF_ERROR_ID) {
+            /* unknown */
+            sErrorID = String.format("(ErrorID = %d)", errorID);
+            primMsg = lm.getLanguageStr(LangID.An_unexpected_error_has_occurred);
+
+            switch (errorID) {
+                case ERROR_ID_UNKNOWN_EXIT_APPLI:
+                    subMsg = lm.getLanguageStr(LangID.Exit_the_application);
+                    break;
+                case ERROR_ID_UNKNOWN_FAIL_LOAD_PLAYER:
+                    subMsg = lm.getLanguageStr(LangID.There_was_a_problem_preparing_the_music_player);
+                    break;
+                default:
+                    break;
+            }
+        }
+        else if (ERROR_ID_SYSTEM <= errorID && errorID < ERROR_ID_SYSTEM + UNIT_OF_ERROR_ID) {
+            /* system */
+            switch (errorID) {
+                case ERROR_ID_SYSTEM_FAIL_INIT_FUNC:
+                    primMsg = lm.getLanguageStr(LangID.Failed_to_initialize_the_application);
+                    break;
+                case ERROR_ID_SYSTEM_FAIL_END_FUNC:
+                    primMsg = lm.getLanguageStr(LangID.The_application_could_not_be_terminated_successfully);
+                    break;
+                default:
+                    break;
+            }
+        }
+        else if (ERROR_ID_SOUND <= errorID && errorID < ERROR_ID_SOUND + UNIT_OF_ERROR_ID) {
+            /* sound */
+        }
+        else if (ERROR_ID_FILE <= errorID && errorID < ERROR_ID_FILE + UNIT_OF_ERROR_ID) {
+            /* file */
+        }
+        else if (ERROR_ID_PLUGIN <= errorID && errorID < ERROR_ID_PLUGIN + UNIT_OF_ERROR_ID) {
+            /* plugin */
+            primMsg = "";
+            switch (errorID) {
+                case ERROR_ID_PLUGIN_FAIL_LOAD:
+                    primMsg = lm.getLanguageStr(LangID.PLUGIN_LOAD_ERROR);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        errorMsg = primMsg;
+        if (subMsg.isEmpty() == false) {
+            errorMsg += Platform.getNewLine() + subMsg;
+        }
+        if (sErrorID.isEmpty() == false) {
+            errorMsg += Platform.getNewLine() + sErrorID;
+        }
+
+        Component parent = null;
+        if (JMPCore.getWindowManager().isFinishedInitialize() == true) {
+            IJmpMainWindow win = JMPCore.getWindowManager().getMainWindow();
+            if (win != null) {
+                if (win.isWindowVisible() == true) {
+                    if (win instanceof Component) {
+                        parent = (Component) win;
+                    }
+                    else {
+                        parent = null;
+                    }
+                }
+            }
+        }
+        JOptionPane.showMessageDialog(parent, errorMsg, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
     public static void consoleOutSystemInfo() {
         JMPFlags.Log.cprintln("Date : " + Utility.getCurrentTimeStr());
         JMPFlags.Log.cprintln("Java : " + Platform.getJavaVersion());
@@ -113,7 +210,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     }
 
     protected boolean initFunc() {
-        TempResisterEx = null;
 
         utilToolkit = UtilityToolkitManager.getInstance().getUtilityToolkit(UtilityToolkitManager.DEFAULT_UTIL_TOOLKIT_NAME);
 

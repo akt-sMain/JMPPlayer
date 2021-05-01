@@ -3,7 +3,6 @@ package jmp;
 import java.io.File;
 
 import function.Platform;
-import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
@@ -285,7 +284,7 @@ public class JMPLoader {
                     taskManager.queuing(new ICallbackFunction() {
                         @Override
                         public void callback() {
-                            JmpUtil.threadSleep(1000);
+                            JmpUtil.threadSleep(500);
                             JMPCore.getFileManager().loadFile(loadFile);
                         }
                     });
@@ -303,8 +302,7 @@ public class JMPLoader {
                 // 強制終了
                 exit();
 
-                String taskErrorMsg = "予期せぬエラーが発生しました。(Task error.)" + Platform.getNewLine() + "アプリケーションを強制終了します。";
-                JMPCore.getWindowManager().showErrorMessageDialogSync(taskErrorMsg);
+                JMPCore.getSystemManager().showSystemErrorMessage(SystemManager.ERROR_ID_UNKNOWN_EXIT_APPLI);
             }
         }
 
@@ -373,12 +371,18 @@ public class JMPLoader {
 
         // 管理クラス初期化処理
         boolean result = JMPCore.initFunc();
+        if (result == false) {
+            JMPCore.getSystemManager().showSystemErrorMessage(SystemManager.ERROR_ID_SYSTEM_FAIL_INIT_FUNC);
+        }
 
+        /* ライセンス確認 */
         if (JMPFlags.LibraryMode == false) {
             if (result == true) {
                 /* ライセンス確認 */
                 if (JMPFlags.ActivateFlag == false) {
                     JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LANGUAGE).showWindow();
+                    //Notifyがまだ有効ではないため、ここで言語更新する必要がある
+                    JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE).updateLanguage();
                     JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE).showWindow();
                 }
 
@@ -393,40 +397,32 @@ public class JMPLoader {
         /* プレイヤーロード */
         if (result == true) {
             result = JMPCore.getSoundManager().openPlayer();
+            if (result == false) {
+                JMPCore.getSystemManager().showSystemErrorMessage(SystemManager.ERROR_ID_UNKNOWN_FAIL_LOAD_PLAYER);
+            }
         }
 
         /* 起動準備 */
         if (result == true) {
 
-            /* MIDI設定の初期処理 */
-            if (JMPFlags.StartupAutoConectSynth == false) {
-                // Midiデバイス選択ダイアログの表示
-                JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_SETUP).showWindow();
-
-//                SelectSoundFontDIalog dialog = new SelectSoundFontDIalog();
-//                dialog.start();
-            }
-            else {
-                // Midiデバイスの読み込み
-                JMPCore.getSoundManager().reloadMidiDevice(true, true);
-            }
-
             // プラグイン準備
             JMPCore.getPluginManager().startupPluginInstance();
 
-            // メインウィンドウ初期化
-            IJmpMainWindow win = JMPCore.getWindowManager().getMainWindow();
-            win.initializeSetting();
-            win.hideWindow();
+            if (JMPCore.getDataManager().isShowStartupDeviceSetup() == false) {
+                // 自動接続フラグを立てる
+                JMPFlags.StartupAutoConectSynth = true;
+            }
+            // サウンドデバイス設定の初期処理
+            JMPCore.getSoundManager().startupDeviceSetup();
 
-            // 言語更新
-            JMPCore.getWindowManager().updateLanguage();
+            // Window初期処理
+            JMPCore.getWindowManager().startupWindow();
 
             // 起動構成
             if (JMPCore.isEnableStandAlonePlugin() == false) {
                 // JMPPlayer起動
                 if (JMPFlags.LibraryMode == false) {
-                    win.showWindow();
+                    JMPCore.getWindowManager().getMainWindow().showWindow();
                 }
             }
             else {
@@ -461,6 +457,9 @@ public class JMPLoader {
         JMPCore.getWindowManager().setVisibleAll(false);
 
         boolean result = JMPCore.endFunc();
+        if (result == false && JMPCore.isFinishedInitialize() == true) {
+            JMPCore.getSystemManager().showSystemErrorMessage(SystemManager.ERROR_ID_SYSTEM_FAIL_END_FUNC);
+        }
         return result;
     }
 

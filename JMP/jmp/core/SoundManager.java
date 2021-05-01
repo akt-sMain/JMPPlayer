@@ -98,10 +98,6 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     @Override
     protected boolean initFunc() {
-        if (JMPCore.getDataManager().isShowStartupDeviceSetup() == false) {
-            // 自動接続フラグを立てる
-            JMPFlags.StartupAutoConectSynth = true;
-        }
 
         // MidiToolKitを更新する
         updateMidiToolkit();
@@ -227,6 +223,21 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         PlayerAccessor.stopAllPlayer();
         PlayerAccessor.close();
         return true;
+    }
+
+    public void startupDeviceSetup() {
+        /* MIDI設定の初期処理 */
+        if (JMPFlags.StartupAutoConectSynth == false) {
+            // Midiデバイス選択ダイアログの表示
+            JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_SETUP).showWindow();
+
+//            SelectSoundFontDIalog dialog = new SelectSoundFontDIalog();
+//            dialog.start();
+        }
+        else {
+            // Midiデバイスの読み込み
+            JMPCore.getSoundManager().reloadMidiDevice(true, true);
+        }
     }
 
     public boolean filter(MidiMessage message, short senderType) {

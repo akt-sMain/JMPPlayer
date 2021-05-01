@@ -1367,6 +1367,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
     @Override
     public void catchDropFile(File file) {
         WindowManager wm = JMPCore.getWindowManager();
+        SystemManager system = JMPCore.getSystemManager();
         LanguageManager lm = JMPCore.getLanguageManager();
 
         String path = file.getPath();
@@ -1376,7 +1377,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                 wm.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
             }
             else {
-                wm.showErrorMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_ERROR));
+                system.showSystemErrorMessage(SystemManager.ERROR_ID_PLUGIN_FAIL_LOAD);
             }
         }
         else if (Utility.checkExtension(path, PluginManager.SETUP_FILE_EX) == true) {
@@ -1384,7 +1385,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                 wm.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
             }
             else {
-                wm.showErrorMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_ERROR));
+                system.showSystemErrorMessage(SystemManager.ERROR_ID_PLUGIN_FAIL_LOAD);
             }
         }
         else {

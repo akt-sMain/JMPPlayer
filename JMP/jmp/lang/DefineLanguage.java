@@ -101,6 +101,11 @@ public class DefineLanguage {
         Automatic_selection,//
         Builtin_synthesizer,//
         Builtin_synthesizer_settings,//
+        An_unexpected_error_has_occurred,//
+        Exit_the_application,//
+        There_was_a_problem_preparing_the_music_player,//
+        Failed_to_initialize_the_application,//
+        The_application_could_not_be_terminated_successfully,//
     }//
     static LangMap langMap = new LangMap() {
         {
@@ -197,6 +202,11 @@ public class DefineLanguage {
             put(LangID.Automatic_selection, new LanguageWords("Automatic selection","自動選択","自动选择"));
             put(LangID.Builtin_synthesizer, new LanguageWords("Built-in synthesizer","内蔵シンセサイザー","Built-in synthesizer"));
             put(LangID.Builtin_synthesizer_settings, new LanguageWords("Built-in synthesizer settings","内蔵シンセサイザー設定","Built-in synthesizer settings"));
+            put(LangID.An_unexpected_error_has_occurred, new LanguageWords("An unexpected error has occurred.","予期しないエラーが発生しました。","发生意外的错误。"));
+            put(LangID.Exit_the_application, new LanguageWords("Exit the application.","アプリケーションを終了します。","退出应用程序。"));
+            put(LangID.There_was_a_problem_preparing_the_music_player, new LanguageWords("There was a problem preparing the music player.","音楽プレイヤーの準備に問題が発生しました。","准备音乐播放器时出现问题。"));
+            put(LangID.Failed_to_initialize_the_application, new LanguageWords("Failed to initialize the application.","アプリケーションの初期化処理に失敗しました。","无法初始化应用程序。"));
+            put(LangID.The_application_could_not_be_terminated_successfully, new LanguageWords("The application could not be terminated successfully.","アプリケーションを正常に終了できませんでした。","无法成功终止该应用程序。"));
         }
     };
 }

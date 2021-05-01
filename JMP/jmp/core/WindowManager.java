@@ -7,8 +7,6 @@ import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-import function.Platform;
-import function.Utility;
 import jlib.core.IWindowManager;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
@@ -77,6 +75,16 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         closeBuiltinSynthFrame();
         setVisibleAll(false);
         return true;
+    }
+
+    public void startupWindow() {
+        // メインウィンドウ初期化
+        IJmpMainWindow win = getMainWindow();
+        win.initializeSetting();
+        win.hideWindow();
+
+        // 言語更新
+        updateLanguage();
     }
 
     @Override
@@ -272,30 +280,33 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         JMPFlags.ForcedCyclicRepaintFlag = true;
     }
 
-    public void showErrorMessageDialogSync(String message) {
-        IJmpMainWindow win = getMainWindow();
-        Component parent = null;
-        if (win instanceof Component) {
-            parent = (Component) win;
-        }
-        else {
-            parent = null;
-        }
+//    public void showErrorMessageDialogSync(String message) {
+//        IJmpMainWindow win = getMainWindow();
+//        Component parent = null;
+//        if (win instanceof Component) {
+//            parent = (Component) win;
+//        }
+//        else {
+//            parent = null;
+//        }
+//
+//        JOptionPane.showMessageDialog(parent, message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
+//        SystemManager.TempResisterEx = null;
+//    }
+//
+//    public void showErrorMessageDialog(String message) {
+//        if (SystemManager.TempResisterEx != null) {
+//            String stackTrace = function.Error.getMsg(SystemManager.TempResisterEx);
+//            showMessageDialog(Utility.stringsCombin(message, Platform.getNewLine(), Platform.getNewLine(), stackTrace),
+//                    JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
+//        }
+//        else {
+//            showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
+//        }
+//        SystemManager.TempResisterEx = null;
+//    }
+    public void showErrorMessageDialog(int errorID) {
 
-        JOptionPane.showMessageDialog(parent, message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
-        SystemManager.TempResisterEx = null;
-    }
-
-    public void showErrorMessageDialog(String message) {
-        if (SystemManager.TempResisterEx != null) {
-            String stackTrace = function.Error.getMsg(SystemManager.TempResisterEx);
-            showMessageDialog(Utility.stringsCombin(message, Platform.getNewLine(), Platform.getNewLine(), stackTrace),
-                    JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
-        }
-        else {
-            showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
-        }
-        SystemManager.TempResisterEx = null;
     }
 
     public void showInformationMessageDialog(String message) {

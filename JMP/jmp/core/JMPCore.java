@@ -4,6 +4,7 @@ import jlib.JMPLIB;
 import jlib.plugin.IPlugin;
 import jmp.core.TaskManager.TaskID;
 import jmp.task.ICallbackFunction;
+import jmp.util.JmpUtil;
 
 public class JMPCore {
 
@@ -42,13 +43,37 @@ public class JMPCore {
 
     public static boolean initFunc() {
         boolean result = true;
-        result = AbstractManager.callInitFunc();
+        try {
+            result = AbstractManager.callInitFunc();
+        }
+        catch (Exception e) {
+            try {
+                String eMsg = function.Utility.getCurrentTimeStr() + function.Platform.getNewLine() + function.Error.getPrintStackTrace(e);
+                JmpUtil.writeTextFile("errorlog_init", eMsg);
+            }
+            catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            result = false;
+        }
         return result;
     }
 
     public static boolean endFunc() {
         boolean result = true;
-        result = AbstractManager.callEndFunc();
+        try {
+            result = AbstractManager.callEndFunc();
+        }
+        catch (Exception e) {
+            try {
+                String eMsg = function.Utility.getCurrentTimeStr() + function.Platform.getNewLine() + function.Error.getPrintStackTrace(e);
+                JmpUtil.writeTextFile("errorlog_end", eMsg);
+            }
+            catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            result = false;
+        }
         return result;
     }
 
