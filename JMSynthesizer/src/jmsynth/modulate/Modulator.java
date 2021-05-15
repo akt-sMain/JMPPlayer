@@ -30,12 +30,11 @@ public class Modulator {
             double f = (double)t / (double)MODULATION_RATE_TIME;
             int base = MODULATION_MAX_VALUE / 2;
             int value = (int)((double)makeTriangleWave(f, base, false));
-            float fVal = (float)value * (float)depthOffset;
+            float fVal = (float)value / (float)base * (float)depthOffset;
             for (int i = 0; i < targetTones.size(); i++) {
                 try {
                     Tone tone = (Tone) targetTones.get(i);
-                    float mv = fVal / (float)MODULATION_MAX_VALUE;
-                    tone.setModulationValue(mv);
+                    tone.setModulationValue(fVal);
                 }
                 catch (Exception e) {
                 }

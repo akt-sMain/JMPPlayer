@@ -371,17 +371,25 @@ public class JMPLoader {
 
         // 管理クラス初期化処理
         boolean result = JMPCore.initFunc();
-        if (result == false) {
+        if (result == true) {
+            // 全ての画面を最新版にする
+            JMPCore.getWindowManager().updateBackColor();
+            JMPCore.getWindowManager().updateDebugMenu();
+            JMPCore.getWindowManager().updateLanguage();
+        }
+        else {
+            // 立ち上げ失敗
             JMPCore.getSystemManager().showSystemErrorMessage(SystemManager.ERROR_ID_SYSTEM_FAIL_INIT_FUNC);
         }
 
         /* ライセンス確認 */
         if (JMPFlags.LibraryMode == false) {
             if (result == true) {
+
                 /* ライセンス確認 */
                 if (JMPFlags.ActivateFlag == false) {
                     JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LANGUAGE).showWindow();
-                    //Notifyがまだ有効ではないため、ここで言語更新する必要がある
+                    //Notifyタスクがまだ有効ではないため、ここで言語更新する必要がある
                     JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE).updateLanguage();
                     JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE).showWindow();
                 }
@@ -405,34 +413,40 @@ public class JMPLoader {
         /* 起動準備 */
         if (result == true) {
 
-            // プラグイン準備
-            JMPCore.getPluginManager().startupPluginInstance();
-
             if (JMPCore.getDataManager().isShowStartupDeviceSetup() == false) {
                 // 自動接続フラグを立てる
                 JMPFlags.StartupAutoConectSynth = true;
             }
+
             // サウンドデバイス設定の初期処理
-            JMPCore.getSoundManager().startupDeviceSetup();
+            if (JMPCore.getSoundManager().startupDeviceSetup() == true) {
+                /* サウンドデバイスが用意出来たら次の設定へ */
 
-            // Window初期処理
-            JMPCore.getWindowManager().startupWindow();
+                // プラグイン準備
+                JMPCore.getPluginManager().startupPluginInstance();
 
-            // 起動構成
-            if (JMPCore.isEnableStandAlonePlugin() == false) {
-                // JMPPlayer起動
-                if (JMPFlags.LibraryMode == false) {
-                    JMPCore.getWindowManager().getMainWindow().showWindow();
+                // Window初期処理
+                JMPCore.getWindowManager().startupWindow();
+
+                // 起動構成
+                if (JMPCore.isEnableStandAlonePlugin() == false) {
+                    // JMPPlayer起動
+                    if (JMPFlags.LibraryMode == false) {
+                        JMPCore.getWindowManager().getMainWindow().showWindow();
+                    }
                 }
+                else {
+                    // スタンドアロンプラグイン起動
+                    JMPCore.getStandAlonePlugin().open();
+                }
+
+                // タスク開始
+                TaskManager taskManager = JMPCore.getTaskManager();
+                taskManager.taskStart();
             }
             else {
-                // スタンドアロンプラグイン起動
-                JMPCore.getStandAlonePlugin().open();
+                result = false;
             }
-
-            // タスク開始
-            TaskManager taskManager = JMPCore.getTaskManager();
-            taskManager.taskStart();
         }
         return result;
     }

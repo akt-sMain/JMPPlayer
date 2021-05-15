@@ -49,7 +49,7 @@ public class JMPCore {
         catch (Exception e) {
             try {
                 String eMsg = function.Utility.getCurrentTimeStr() + function.Platform.getNewLine() + function.Error.getPrintStackTrace(e);
-                JmpUtil.writeTextFile("errorlog_init", eMsg);
+                JmpUtil.writeTextFile("errorlog_init.txt", eMsg);
             }
             catch (Exception e1) {
                 e1.printStackTrace();
@@ -67,7 +67,7 @@ public class JMPCore {
         catch (Exception e) {
             try {
                 String eMsg = function.Utility.getCurrentTimeStr() + function.Platform.getNewLine() + function.Error.getPrintStackTrace(e);
-                JmpUtil.writeTextFile("errorlog_end", eMsg);
+                JmpUtil.writeTextFile("errorlog_end.txt", eMsg);
             }
             catch (Exception e1) {
                 e1.printStackTrace();

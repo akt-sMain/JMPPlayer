@@ -1434,4 +1434,9 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
     public void setDefaultWindowLocation() {
         this.setBounds(WindowManager.DEFAULT_PLAYER_WINDOW_SIZE);
     }
+
+    @Override
+    public void repaintWindow() {
+        repaint();
+    }
 }

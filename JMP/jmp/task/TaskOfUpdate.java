@@ -1,7 +1,5 @@
 package jmp.task;
 
-import java.awt.Window;
-
 import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
 import jmp.JMPFlags;
@@ -37,26 +35,27 @@ public class TaskOfUpdate extends TaskOfBase {
     void loop() {
         WindowManager wm = JMPCore.getWindowManager();
         PluginManager pm = JMPCore.getPluginManager();
-        IJmpMainWindow win = wm.getMainWindow();
+        IJmpMainWindow mainWindow = wm.getMainWindow();
 
         boolean isUpdate = false;
         boolean isRepaint = false;
+        boolean isRepaintMain = false;
 
         // 再描画カウント
         if (JMPCore.getSoundManager().isPlay() == true) {
             if ((CYCLIC_REPAINT_MSEC_PLAY / getSleepTime()) <= cyclicRepaintCount) {
-                isRepaint = true;
+                isRepaintMain = true;
             }
         }
         else {
-            if ((CYCLIC_REPAINT_MSEC / getSleepTime()) <= cyclicRepaintCount) {
-                // 定周期
-                isRepaint = true;
-            }
             if (pastRunnableState == true) {
                 // 停止時の初回のみ再描画する
                 isRepaint = true;
             }
+        }
+        // 定周期再描画
+        if ((CYCLIC_REPAINT_MSEC / getSleepTime()) <= cyclicRepaintCount) {
+            isRepaint = true;
         }
         // 更新カウント
         if ((CYCLIC_UPDATE_MSEC / getSleepTime()) <= cyclicUpdateCount) {
@@ -75,19 +74,21 @@ public class TaskOfUpdate extends TaskOfBase {
 
         // 更新
         if (isUpdate == true) {
-            win.update();
+            mainWindow.update();
             pm.update();
             cyclicUpdateCount = 0;
         }
         if (isRepaint == true) {
             // 再描画
-            if (win instanceof Window) {
-                ((Window)win).repaint();
-            }
+            isRepaintMain = true;
+            wm.repaintAll();
+            cyclicRepaintCount = 0;
+        }
+        if (isRepaintMain == true) {
+            mainWindow.repaintWindow();
             for (JmpQuickLaunch launch : JmpQuickLaunch.Accessor) {
                 launch.repaint();
             }
-            cyclicRepaintCount = 0;
         }
         cyclicRepaintCount++;
         cyclicUpdateCount++;

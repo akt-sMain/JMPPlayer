@@ -57,6 +57,7 @@ public class JMPFrame extends JFrame implements IJMPComponentUI, IJmpWindow {
     @Override
     public void showWindow() {
         setVisible(true);
+        repaintWindow();
     }
 
     @Override
@@ -72,6 +73,11 @@ public class JMPFrame extends JFrame implements IJMPComponentUI, IJmpWindow {
     @Override
     public void updateBackColor() {
         getContentPane().setBackground(getJmpBackColor());
+    }
+
+    @Override
+    public void repaintWindow() {
+        repaint();
     }
 
 }

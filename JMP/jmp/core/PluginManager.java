@@ -87,7 +87,7 @@ public class PluginManager extends AbstractManager {
     /** スキップタグ */
     public static final String SETUP_SKIP_TAG = "_";
 
-    public static final String PLUGIN_STATE_FILE_NAME = "plgstate.txt";
+    public static final String PLUGIN_STATE_FILE_NAME = "plgstate";
 
     // ---------------------------------------------
     // 変数

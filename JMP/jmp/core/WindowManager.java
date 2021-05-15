@@ -91,24 +91,10 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     protected void notifyUpdateCommonRegister(String key) {
         SystemManager system = JMPCore.getSystemManager();
         if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_PLAYER_BACK_COLOR)) == true) {
-            for (IJmpWindow win : database.getAccessor()) {
-                if (win != null) {
-                    if (win instanceof IJMPComponentUI) {
-                        IJMPComponentUI ui = (IJMPComponentUI) win;
-                        ui.updateBackColor();
-                    }
-                }
-            }
+            updateBackColor();
         }
         else if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_DEBUGMODE)) == true) {
-            for (IJmpWindow win : database.getAccessor()) {
-                if (win != null) {
-                    if (win instanceof IJMPComponentUI) {
-                        IJMPComponentUI ui = (IJMPComponentUI) win;
-                        ui.updateDebugMenu();
-                    }
-                }
-            }
+            updateDebugMenu();
         }
         super.notifyUpdateCommonRegister(key);
     }
@@ -280,35 +266,6 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         JMPFlags.ForcedCyclicRepaintFlag = true;
     }
 
-//    public void showErrorMessageDialogSync(String message) {
-//        IJmpMainWindow win = getMainWindow();
-//        Component parent = null;
-//        if (win instanceof Component) {
-//            parent = (Component) win;
-//        }
-//        else {
-//            parent = null;
-//        }
-//
-//        JOptionPane.showMessageDialog(parent, message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
-//        SystemManager.TempResisterEx = null;
-//    }
-//
-//    public void showErrorMessageDialog(String message) {
-//        if (SystemManager.TempResisterEx != null) {
-//            String stackTrace = function.Error.getMsg(SystemManager.TempResisterEx);
-//            showMessageDialog(Utility.stringsCombin(message, Platform.getNewLine(), Platform.getNewLine(), stackTrace),
-//                    JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
-//        }
-//        else {
-//            showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Error), JOptionPane.ERROR_MESSAGE);
-//        }
-//        SystemManager.TempResisterEx = null;
-//    }
-    public void showErrorMessageDialog(int errorID) {
-
-    }
-
     public void showInformationMessageDialog(String message) {
         showMessageDialog(message, JMPCore.getLanguageManager().getLanguageStr(LangID.Message), JOptionPane.INFORMATION_MESSAGE);
     }
@@ -334,15 +291,26 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         });
     }
 
-    public void setBuiltinSynthFrame(BuiltinSynthSetupDialog frame) {
-        if (this.builtinSynthFrame != null && this.builtinSynthFrame != frame) {
+    // 新しいJMsynthインスタンスを登録する
+    public void registerBuiltinSynthFrame(BuiltinSynthSetupDialog wvf) {
+
+        closeBuiltinSynthFrame();
+
+        if (this.builtinSynthFrame != wvf) {
+            disposeBuiltinSynthFrame();
+        }
+        this.builtinSynthFrame = wvf;
+    }
+
+    public void disposeBuiltinSynthFrame() {
+        if (this.builtinSynthFrame != null) {
             this.builtinSynthFrame.dispose();
         }
-        this.builtinSynthFrame = frame;
+        this.builtinSynthFrame = null;
     }
 
     public boolean isValidBuiltinSynthFrame() {
-        if (JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT).equals(SelectSynthsizerDialog.JMSYNTH_ITEM_NAME) == false) {
+        if (JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT).equals(SystemManager.JMSYNTH_LIB_NAME) == false) {
             return false;
         }
         if (builtinSynthFrame == null) {
@@ -381,15 +349,36 @@ public class WindowManager extends AbstractManager implements IWindowManager {
 
     public void repaint(String name) {
         IJmpWindow win = getWindow(name);
-        repaint(win);
+        win.repaintWindow();
     }
 
-    public void repaint(IJmpWindow win) {
-        if (win != null) {
-            if (win instanceof Component) {
-                Component w = (Component)win;
-                if (w != null) {
-                    w.repaint();
+    public void repaintAll() {
+        for (IJmpWindow win : database.getAccessor()) {
+            if (win != null) {
+                if (win.isWindowVisible() == true) {
+                    win.repaintWindow();
+                }
+            }
+        }
+    }
+
+    public void updateBackColor() {
+        for (IJmpWindow win : database.getAccessor()) {
+            if (win != null) {
+                if (win instanceof IJMPComponentUI) {
+                    IJMPComponentUI ui = (IJMPComponentUI) win;
+                    ui.updateBackColor();
+                }
+            }
+        }
+    }
+
+    public void updateDebugMenu() {
+        for (IJmpWindow win : database.getAccessor()) {
+            if (win != null) {
+                if (win instanceof IJMPComponentUI) {
+                    IJMPComponentUI ui = (IJMPComponentUI) win;
+                    ui.updateDebugMenu();
                 }
             }
         }

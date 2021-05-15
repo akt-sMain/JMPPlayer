@@ -100,14 +100,16 @@ public class ChannelSetupDialog extends JDialog {
 
             String wave = "";
             double a, d, s, r;
-            wave = getWaveStr(synth.getWaveType(ch));
-            a = env.getAttackTime();
-            d = env.getDecayTime();
-            s = env.getSustainLevel();
-            r = env.getReleaseTime();
-            paintWave(g, synth.getWaveType(ch), Color.GRAY);
-            paintCurve(g, a, d, s, r, ma, md, mr, Color.GRAY);
-            paintInfo(g, w - 90, 90, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), wave, Color.GRAY);
+            if (chckbxRealTime.isSelected() == false) {
+                wave = getWaveStr(synth.getWaveType(ch));
+                a = env.getAttackTime();
+                d = env.getDecayTime();
+                s = env.getSustainLevel();
+                r = env.getReleaseTime();
+                paintWave(g, synth.getWaveType(ch), Color.GRAY);
+                paintCurve(g, a, d, s, r, ma, md, mr, Color.GRAY);
+                paintInfo(g, w - 90, 90, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), wave, Color.GRAY);
+            }
 
             wave = comboBoxWaveType.getSelectedItem().toString();
             a = getAttackSli();
@@ -400,6 +402,7 @@ public class ChannelSetupDialog extends JDialog {
             });
 
                     chckbxRealTime = new JCheckBox("Real time");
+                    chckbxRealTime.setSelected(true);
                     buttonPane.add(chckbxRealTime);
 
                     btnTest = new JButton("Test");
@@ -407,14 +410,12 @@ public class ChannelSetupDialog extends JDialog {
                     btnTest.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mousePressed(MouseEvent e) {
-                            int ch = getChannel();
-                            synth.noteOn(ch, TEST_NOTE_NUMBER, 100);
+                            testSoundOn();
                         }
 
                         @Override
                         public void mouseReleased(MouseEvent e) {
-                            int ch = getChannel();
-                            synth.noteOff(ch, TEST_NOTE_NUMBER);
+                            testSoundOff();
                         }
                     });
                     btnTest.addActionListener(new ActionListener() {
@@ -451,10 +452,26 @@ public class ChannelSetupDialog extends JDialog {
         lblMod.setVisible(true);
     }
 
+    int testNotesStep = 0;
+    static int[] testNotes = new int[] {60, 60, 65, 67, 69, 70, 72, 77, 76, 74, 74, 72, 71, 71, 74, 72, 69};
+    private void testSoundOn() {
+        int ch = getChannel();
+        synth.noteOn(ch, testNotes[testNotesStep], 100);
+    }
+    private void testSoundOff() {
+        int ch = getChannel();
+        synth.noteOff(ch, testNotes[testNotesStep]);
+        testNotesStep++;
+        if (testNotesStep >= testNotes.length) {
+            testNotesStep = 0;
+        }
+    }
+
     @Override
     public void setVisible(boolean b) {
         if (isVisible() == false && b == true) {
             reset();
+            testNotesStep = 0;
         }
         super.setVisible(b);
     }

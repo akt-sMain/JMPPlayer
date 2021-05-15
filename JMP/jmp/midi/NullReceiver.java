@@ -3,9 +3,6 @@ package jmp.midi;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 
-import jlib.midi.IMidiEventListener;
-import jmp.core.JMPCore;
-
 /**
  * プラグインのみにMIDIメッセージを転送する
  *
@@ -19,11 +16,6 @@ public class NullReceiver implements Receiver {
 
     @Override
     public void send(MidiMessage message, long timeStamp) {
-        if (JMPCore.getSoundManager().filter(message, IMidiEventListener.SENDER_MIDI_OUT) == false) {
-            return;
-        }
-
-        JMPCore.getPluginManager().catchMidiEvent(message, timeStamp, IMidiEventListener.SENDER_MIDI_OUT);
     }
 
     @Override

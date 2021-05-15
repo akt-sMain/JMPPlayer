@@ -1,0 +1,6 @@
+jlib
+jlib.core
+jlib.gui
+jlib.midi
+jlib.player
+jlib.plugin

@@ -34,6 +34,11 @@ public interface IJmpWindow {
     abstract void setDefaultWindowLocation();
 
     /**
+     * 画面再描画
+     */
+    abstract void repaintWindow();
+
+    /**
      * ウィンドウ表示/非表示切り替え
      */
     default void toggleWindowVisible() {

@@ -28,7 +28,8 @@ public class WaveGenerater {
         return makePulseWave(f, overallLevel, 0.5, reverse);
     }
 
-    private static final double DUTY_THRESHOLD = 0.02;
+    //private static final double DUTY_THRESHOLD = 0.05;
+    private static final double DUTY_THRESHOLD = 0.04;
     private static final double DUTY_OFFSET = 0.5;
 
     /**

@@ -134,6 +134,7 @@ public class JMPDialog extends JDialog implements IJMPComponentUI, IJmpWindow {
     @Override
     public void showWindow() {
         setVisible(true);
+        repaintWindow();
     }
 
     @Override
@@ -149,5 +150,10 @@ public class JMPDialog extends JDialog implements IJMPComponentUI, IJmpWindow {
     @Override
     public void updateBackColor() {
         getContentPane().setBackground(getJmpBackColor());
+    }
+
+    @Override
+    public void repaintWindow() {
+        repaint();
     }
 }

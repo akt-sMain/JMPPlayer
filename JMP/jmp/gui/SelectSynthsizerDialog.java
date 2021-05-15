@@ -25,14 +25,13 @@ import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
+import jmp.core.SystemManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.player.MidiPlayer;
 import jmsynth.midi.JMSynthMidiDevice;
 
 public class SelectSynthsizerDialog extends JMPDialog {
-    private boolean isOkActionClose = false;
-
     public static final int MAX_ROW_COUNT = 15;
 
     private MidiDevice.Info[] infosOfRecv = null;
@@ -58,7 +57,6 @@ public class SelectSynthsizerDialog extends JMPDialog {
     private JLabel lblPortOfTrans;
 
     public static final String DEFAULT_ITEM_NAME = "Using Default";
-    public static final String JMSYNTH_ITEM_NAME = "Built-in soft synthesizer";
     public static final int NUMBER_OF_CUSTOM_SYNTH = 2;
 
     private JLabel labelDevelop;
@@ -333,7 +331,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
             }
         }
 
-        isOkActionClose = false;
+        JMPCore.getSoundManager().setCommitDeviceSelectAction(false);
 
         if (JMPFlags.DebugMode == true) {
             labelDevelop.setText("開発者モード");
@@ -370,7 +368,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
             String saveInfoOfRecv = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
             if (saveInfoOfRecv.isEmpty() == false) {
                 comboRecvMode.setSelectedIndex(0);
-                if (saveInfoOfRecv.equals(JMSYNTH_ITEM_NAME) == true) {
+                if (saveInfoOfRecv.equals(SystemManager.JMSYNTH_LIB_NAME) == true) {
                     comboRecvMode.setSelectedIndex(1);
                 }
                 else {
@@ -408,7 +406,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
     }
 
     protected void commit() {
-        isOkActionClose = true;
+        JMPCore.getSoundManager().setCommitDeviceSelectAction(true);
 
         JMPCore.getWindowManager().closeBuiltinSynthFrame();
 
@@ -421,7 +419,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
                 break;
             case 1:
                 // 内蔵シンセ
-                midiOutName = JMSYNTH_ITEM_NAME;
+                midiOutName = SystemManager.JMSYNTH_LIB_NAME;
                 break;
             default:
                 midiOutName = getOrgDeviceName(comboRecvMode.getSelectedItem().toString().trim());
@@ -474,10 +472,6 @@ public class SelectSynthsizerDialog extends JMPDialog {
         return name.substring(3);
     }
 
-    public boolean isOkActionClose() {
-        return isOkActionClose;
-    }
-
     @Override
     public void updateLanguage() {
         super.updateLanguage();
@@ -485,5 +479,12 @@ public class SelectSynthsizerDialog extends JMPDialog {
         LanguageManager lm = JMPCore.getLanguageManager();
         setTitle(lm.getLanguageStr(LangID.MIDI_device_settings));
         chckbxStartupShowDialog.setText(lm.getLanguageStr(LangID.Whether_to_display_every_time_at_startup));
+    }
+
+    @Override
+    public void updateBackColor() {
+        super.updateBackColor();
+        this.setBackground(getJmpBackColor());
+        chckbxStartupShowDialog.setBackground(getJmpBackColor());
     }
 }

@@ -31,7 +31,6 @@ import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.SystemManager;
 import jmp.core.WindowManager;
-import jmp.gui.SelectSynthsizerDialog;
 import jmp.midi.JMPSequencer;
 import jmp.midi.MIReceiver;
 import jmp.midi.MITransmitter;
@@ -415,7 +414,7 @@ public class MidiPlayer extends Player {
                 inReciever = inDev.getReceiver();
             }
             else {
-                if (name.equals(SelectSynthsizerDialog.JMSYNTH_ITEM_NAME) == true) {
+                if (name.equals(SystemManager.JMSYNTH_LIB_NAME) == true) {
                     inReciever = JMPCore.getSoundManager().createBuiltinSynth();
                 }
                 else {

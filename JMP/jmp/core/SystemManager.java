@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -19,11 +21,15 @@ import jlib.util.IUtilityToolkit;
 import jmp.CommonRegister;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
+import jmp.gui.BuiltinSynthSetupDialog;
 import jmp.lang.DefineLanguage;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.midi.toolkit.MidiToolkitManager;
 import jmp.util.JmpUtil;
 import jmp.util.toolkit.UtilityToolkitManager;
+import jmsynth.JMSoftSynthesizer;
+import jmsynth.JMSynthEngine;
+import jmsynth.midi.MidiInterface;
 import wffmpeg.FFmpegWrapper;
 import wrapper.IProcessingCallback;
 import wrapper.ProcessingFFmpegWrapper;
@@ -77,6 +83,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     public static final String COMMON_REGKEY_CH_COLOR_FORMAT = "ch_color_%d";
 
+    /** JMSynthライブラリ名 */
+    public static final String JMSYNTH_LIB_NAME = JMSoftSynthesizer.INFO_NAME;
+
     /** 共通レジスタ */
     private CommonRegister cReg = null;
     private String[] cRegKeys = null;
@@ -118,40 +127,55 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     public static final int ERROR_ID_PLUGIN = (UNIT_OF_ERROR_ID * 5);
     public static final int ERROR_ID_PLUGIN_FAIL_LOAD = (ERROR_ID_PLUGIN + 1);
 
-    public void showSystemErrorMessage(int errorID) {
-        LanguageManager lm = JMPCore.getLanguageManager();
-        String sErrorID = "";
-        String errorMsg = "";
-        String primMsg = "Unknown error.";
-        String subMsg = "";
+    // エラーIDとエラーメッセージの対応表
+    private static final Map<Integer, LangID> errorSubMsgTable = new HashMap<Integer, LangID>() {
+        {
+            // UNKNOWN区分
+            put(ERROR_ID_UNKNOWN_EXIT_APPLI, LangID.Exit_the_application);
+            put(ERROR_ID_UNKNOWN_FAIL_LOAD_PLAYER, LangID.There_was_a_problem_preparing_the_music_player);
+            // SYSTEM区分
+            put(ERROR_ID_SYSTEM_FAIL_INIT_FUNC, LangID.Failed_to_initialize_the_application);
+            put(ERROR_ID_SYSTEM_FAIL_END_FUNC, LangID.The_application_could_not_be_terminated_successfully);
+            // PLUGIN区分
+            put(ERROR_ID_PLUGIN_FAIL_LOAD, LangID.PLUGIN_LOAD_ERROR);
+        }
+    };
+    private static boolean isVisibleErrorID(int errorID) {
+        boolean visible = false;
         if (ERROR_ID_UNKNOWN <= errorID && errorID < ERROR_ID_UNKNOWN + UNIT_OF_ERROR_ID) {
             /* unknown */
-            sErrorID = String.format("(ErrorID = %d)", errorID);
-            primMsg = lm.getLanguageStr(LangID.An_unexpected_error_has_occurred);
-
-            switch (errorID) {
-                case ERROR_ID_UNKNOWN_EXIT_APPLI:
-                    subMsg = lm.getLanguageStr(LangID.Exit_the_application);
-                    break;
-                case ERROR_ID_UNKNOWN_FAIL_LOAD_PLAYER:
-                    subMsg = lm.getLanguageStr(LangID.There_was_a_problem_preparing_the_music_player);
-                    break;
-                default:
-                    break;
-            }
+            visible = true;
         }
         else if (ERROR_ID_SYSTEM <= errorID && errorID < ERROR_ID_SYSTEM + UNIT_OF_ERROR_ID) {
             /* system */
-            switch (errorID) {
-                case ERROR_ID_SYSTEM_FAIL_INIT_FUNC:
-                    primMsg = lm.getLanguageStr(LangID.Failed_to_initialize_the_application);
-                    break;
-                case ERROR_ID_SYSTEM_FAIL_END_FUNC:
-                    primMsg = lm.getLanguageStr(LangID.The_application_could_not_be_terminated_successfully);
-                    break;
-                default:
-                    break;
-            }
+            visible = true;
+        }
+        else if (ERROR_ID_SOUND <= errorID && errorID < ERROR_ID_SOUND + UNIT_OF_ERROR_ID) {
+            /* sound */
+            visible = false;
+        }
+        else if (ERROR_ID_FILE <= errorID && errorID < ERROR_ID_FILE + UNIT_OF_ERROR_ID) {
+            /* file */
+            visible = false;
+        }
+        else if (ERROR_ID_PLUGIN <= errorID && errorID < ERROR_ID_PLUGIN + UNIT_OF_ERROR_ID) {
+            /* plugin */
+            visible = false;
+        }
+
+        if (JMPFlags.DebugMode == true) {
+            visible = true;
+        }
+        return visible;
+    }
+    private static String getPrimMsg(int errorID) {
+        String msg = "";
+        if (ERROR_ID_UNKNOWN <= errorID && errorID < ERROR_ID_UNKNOWN + UNIT_OF_ERROR_ID) {
+            /* unknown */
+            msg = JMPCore.getLanguageManager().getLanguageStr(LangID.An_unexpected_error_has_occurred);
+        }
+        else if (ERROR_ID_SYSTEM <= errorID && errorID < ERROR_ID_SYSTEM + UNIT_OF_ERROR_ID) {
+            /* system */
         }
         else if (ERROR_ID_SOUND <= errorID && errorID < ERROR_ID_SOUND + UNIT_OF_ERROR_ID) {
             /* sound */
@@ -161,22 +185,43 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
         else if (ERROR_ID_PLUGIN <= errorID && errorID < ERROR_ID_PLUGIN + UNIT_OF_ERROR_ID) {
             /* plugin */
-            primMsg = "";
-            switch (errorID) {
-                case ERROR_ID_PLUGIN_FAIL_LOAD:
-                    primMsg = lm.getLanguageStr(LangID.PLUGIN_LOAD_ERROR);
-                    break;
-                default:
-                    break;
-            }
+        }
+        return msg;
+    }
+    private static String getSubMsg(int errorID) {
+        String msg = "";
+        if (errorSubMsgTable.containsKey(errorID) == true) {
+            msg = JMPCore.getLanguageManager().getLanguageStr(errorSubMsgTable.get(errorID));
+        }
+        return msg;
+    }
+
+    public void showSystemErrorMessage(int errorID) {
+        String errorMsg = "";
+        String primMsg = getPrimMsg(errorID);
+        String subMsg = getSubMsg(errorID);
+        String sErrorID = "";
+        if (isVisibleErrorID(errorID) == true) {
+            sErrorID = String.format("(ErrorID = %d)", errorID);
         }
 
-        errorMsg = primMsg;
+        if (primMsg.isEmpty() == false) {
+            if (errorMsg.isEmpty() == false) {
+                errorMsg += Platform.getNewLine();
+            }
+            errorMsg += primMsg;
+        }
         if (subMsg.isEmpty() == false) {
-            errorMsg += Platform.getNewLine() + subMsg;
+            if (errorMsg.isEmpty() == false) {
+                errorMsg += Platform.getNewLine();
+            }
+            errorMsg += subMsg;
         }
         if (sErrorID.isEmpty() == false) {
-            errorMsg += Platform.getNewLine() + sErrorID;
+            if (errorMsg.isEmpty() == false) {
+                errorMsg += Platform.getNewLine();
+            }
+            errorMsg += sErrorID;
         }
 
         Component parent = null;
@@ -311,7 +356,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         updateUtilToolkit();
 
         // ResourceとcRegの同期
-        setCommonRegisterValue(COMMON_REGKEY_NO_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(JMPCore.getResourceManager().getAppBackgroundColor()));
+        setCommonRegisterValueAdmin(COMMON_REGKEY_NO_PLAYER_BACK_COLOR, Utility.convertHtmlColorToCode(JMPCore.getResourceManager().getAppBackgroundColor()));
 
         // ルックアンドフィールの設定
         setupLookAndFeel();
@@ -476,17 +521,12 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
     }
 
-    public boolean setCommonRegisterValue(String key, String value) {
+    public boolean setCommonRegisterValueAdmin(int keyNo, String value) {
+        return setCommonRegisterValueAdmin(getCommonRegisterKeyName(keyNo), value);
+    }
+    public boolean setCommonRegisterValueAdmin(String key, String value) {
         if (cReg == null) {
             return false;
-        }
-
-        if (key.equalsIgnoreCase(getCommonRegisterKeyName(COMMON_REGKEY_NO_DEBUGMODE)) == false) {
-            // デバッグモードの切り替えのみ許可
-            if (JMPFlags.DebugMode == false) {
-                // デバッグモード時のみ設定可能
-                return false;
-            }
         }
 
         boolean ret = cReg.setValue(key, value);
@@ -495,6 +535,17 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             JMPCore.callNotifyUpdateCommonRegister(key);
         }
         return ret;
+    }
+
+    public boolean setCommonRegisterValue(String key, String value) {
+        if (key.equalsIgnoreCase(getCommonRegisterKeyName(COMMON_REGKEY_NO_DEBUGMODE)) == false) {
+            // デバッグモードの切り替えのみ許可
+            if (JMPFlags.DebugMode == false) {
+                // デバッグモード時のみ設定可能
+                return false;
+            }
+        }
+        return setCommonRegisterValueAdmin(key, value);
     }
 
     public String getCommonRegisterValue(String key) {
@@ -820,5 +871,21 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             array[i] = new String(lm.getLanguageCode(i));
         }
         return array;
+    }
+
+    // 新しいJMSynthインスタンスを取得する
+    public MidiInterface newBuiltinSynthInstance() {
+        MidiInterface miface = JMSynthEngine.getMidiInterface(true);
+
+        // Window登録
+        BuiltinSynthSetupDialog wvf = new BuiltinSynthSetupDialog(miface);
+        Color[] ct = new Color[16];
+        for (int i = 0; i < 16; i++) {
+            String key = String.format(SystemManager.COMMON_REGKEY_CH_COLOR_FORMAT, i + 1);
+            ct[i] = getUtilityToolkit().convertCodeToHtmlColor(getCommonRegisterValue(key));
+        }
+        wvf.setWaveColorTable(ct);
+        JMPCore.getWindowManager().registerBuiltinSynthFrame(wvf);
+        return miface;
     }
 }

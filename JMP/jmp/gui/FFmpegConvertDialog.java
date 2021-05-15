@@ -442,5 +442,7 @@ public class FFmpegConvertDialog extends JMPDialog {
         contentPanel.setBackground(getJmpBackColor());
         chckbxInstalled.setBackground(getJmpBackColor());
         chckbxInstalled.setForeground(Utility.getForegroundColor(getJmpBackColor()));
+        checkBoxUsePlayer.setBackground(getJmpBackColor());
+        checkBoxUsePlayer.setForeground(Utility.getForegroundColor(getJmpBackColor()));
     }
 }

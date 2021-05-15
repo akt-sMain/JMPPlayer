@@ -33,4 +33,9 @@ public class BuiltinSynthSetupDialog extends WaveViewerFrame implements IJmpWind
 
     }
 
+    @Override
+    public void repaintWindow() {
+        repaint();
+    }
+
 }

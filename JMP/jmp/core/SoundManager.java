@@ -1,6 +1,5 @@
 package jmp.core;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,10 +36,10 @@ import jlib.midi.MidiByte;
 import jlib.player.IPlayer;
 import jlib.player.Player;
 import jmp.JMPFlags;
-import jmp.gui.BuiltinSynthSetupDialog;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.midi.MidiByteMessage;
 import jmp.midi.MidiController;
+import jmp.midi.NullReceiver;
 import jmp.midi.toolkit.MidiToolkitManager;
 import jmp.player.FFmpegPlayer;
 import jmp.player.MidiPlayer;
@@ -49,8 +48,6 @@ import jmp.player.MusicXmlPlayer;
 import jmp.player.PlayerAccessor;
 import jmp.player.WavPlayer;
 import jmp.util.JmpUtil;
-import jmsynth.JMSynthEngine;
-import jmsynth.midi.MidiInterface;
 
 /**
  * サウンド管理クラス
@@ -91,6 +88,12 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     // 音量をネイティブ変数として保持しておく
     private float nativeVolume = -1.0f;
+
+    // MIDIデバイス設定をコミットしたか保持する必要がある
+    private boolean isCommitDeviceSelectAction = false;
+    public void setCommitDeviceSelectAction(boolean b) {
+        isCommitDeviceSelectAction = b;
+    }
 
     SoundManager(int pri) {
         super(pri, "sound");
@@ -225,19 +228,24 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         return true;
     }
 
-    public void startupDeviceSetup() {
+    public boolean startupDeviceSetup() {
         /* MIDI設定の初期処理 */
+        boolean wasCommit = true;
         if (JMPFlags.StartupAutoConectSynth == false) {
             // Midiデバイス選択ダイアログの表示
             JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_SETUP).showWindow();
 
 //            SelectSoundFontDIalog dialog = new SelectSoundFontDIalog();
 //            dialog.start();
+//            isCommitDeviceSelectAction = true;
+
+            wasCommit = isCommitDeviceSelectAction;
         }
         else {
             // Midiデバイスの読み込み
             JMPCore.getSoundManager().reloadMidiDevice(true, true);
         }
+        return wasCommit;
     }
 
     public boolean filter(MidiMessage message, short senderType) {
@@ -897,20 +905,13 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     /* 内蔵シンセサイザー音源を取得する */
     public Receiver createBuiltinSynth() {
-        MidiInterface miface = JMSynthEngine.getMidiInterface();
-        Receiver reciever = miface;
-
-        // Window登録
-        BuiltinSynthSetupDialog wvf = new BuiltinSynthSetupDialog(miface);
-        Color[] ct = new Color[16];
-        for (int i = 0; i < 16; i++) {
-            String key = String.format(SystemManager.COMMON_REGKEY_CH_COLOR_FORMAT, i + 1);
-            ct[i] = JMPCore.getSystemManager().getUtilityToolkit().convertCodeToHtmlColor(JMPCore.getSystemManager().getCommonRegisterValue(key));
+        // 新しいJMSynthインスタンスを取得する
+        Receiver reciever = (Receiver)JMPCore.getSystemManager().newBuiltinSynthInstance();
+        if (reciever == null) {
+            /* 例外処理 */
+            JMPCore.getWindowManager().disposeBuiltinSynthFrame();
+            reciever = new NullReceiver();
         }
-        wvf.setWaveColorTable(ct);
-
-        JMPCore.getWindowManager().closeBuiltinSynthFrame();
-        JMPCore.getWindowManager().setBuiltinSynthFrame(wvf);
         return reciever;
     }
 
