@@ -443,6 +443,14 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             }
         });
 
+        mntmYoutubeDL = new JMenuItem("youtube-dl");
+        mntmYoutubeDL.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                showChildWindow(WindowManager.WINDOW_NAME_YOUTUBEDL);
+            }
+        });
+        mnTool.add(mntmYoutubeDL);
+
         mntmMidiMonitor = new JMenuItem("MIDIメッセージモニタ");
         mnTool.add(mntmMidiMonitor);
 
@@ -1077,6 +1085,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
     }
 
     private List<JMenuItem> pluginItemsCache = new ArrayList<JMenuItem>();
+    private JMenuItem mntmYoutubeDL;
 
     public void updatePluginMenu() {
         pluginMenu.removeAll();

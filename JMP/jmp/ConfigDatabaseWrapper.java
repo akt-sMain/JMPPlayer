@@ -37,6 +37,7 @@ public class ConfigDatabaseWrapper implements IJmpConfigDatabase {
         database.setConfigParam(DataManager.CFG_KEY_USE_FFMPEG_PLAYER, "TRUE");
         database.setConfigParam(DataManager.CFG_KEY_FFMPEG_INSTALLED, "TRUE");
         database.setConfigParam(DataManager.CFG_KEY_SEND_MIDI_SYSTEMSETUP, "TRUE");
+        database.setConfigParam(DataManager.CFG_KEY_YOUTUBEDL_PATH, "youtube-dl.exe");
     }
 
     private String getDesktopPath(String defaultPath) {

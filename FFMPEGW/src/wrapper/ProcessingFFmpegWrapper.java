@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+import process.IProcessingCallback;
+import process.ProcessInvoker;
 import wffmpeg.FFmpegWrapper;
 
 /**
@@ -19,66 +19,13 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
     /** FFmpegの実行パス */
     protected String path = "";
 
-    /** waitあり */
-    protected boolean waitFor = false;
-
     /** 環境変数定義有効 */
     protected boolean isFFmpegInstalled = false;
 
     /** コマンド */
     protected String ffmpegCommand = "ffmpeg";
 
-    private IProcessingCallback callback = null;
-
-    public class LogingRunnable implements Runnable {
-        private boolean isRunnable = true;
-        private Process proc;
-
-        public LogingRunnable(Process p) {
-            proc = p;
-            isRunnable = true;
-        }
-
-        @Override
-        public void run() {
-            pPrintln("## Converting... ##");
-            notifyBegin();
-
-            try {
-                proc.waitFor();
-            }
-            catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            int result = proc.exitValue();
-
-            pPrintln("## EXIT(" + result + ") ##");
-            notifyEnd(result);
-
-            isRunnable = false;
-        }
-
-        private void notifyBegin() {
-            if (callback != null) {
-                callback.begin();
-            }
-        }
-
-        private void notifyEnd(int result) {
-            if (callback != null) {
-                callback.end(result);
-            }
-        }
-
-        private void pPrintln(String str) {
-            System.out.println(str);
-        }
-
-        public boolean isRunnable() {
-            return isRunnable;
-        }
-
-    }
+    protected ProcessInvoker invoker = null;
 
     /**
      * コンストラクタ
@@ -90,18 +37,19 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
         super();
 
         this.path = path;
+        this.invoker = new ProcessInvoker();
     }
 
     public ProcessingFFmpegWrapper() {
         super();
+
+        this.invoker = new ProcessInvoker();
     }
 
     @Override
     protected void init() {
         super.init();
         this.path = "";
-        this.waitFor = false;
-        this.callback = null;
     }
 
     public void setPath(String path) {
@@ -113,15 +61,15 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
     }
 
     public boolean isWaitFor() {
-        return waitFor;
+        return invoker.isWaitFor();
     }
 
     public void setWaitFor(boolean waitFor) {
-        this.waitFor = waitFor;
+        invoker.setWaitFor(waitFor);
     }
 
     public void setCallback(IProcessingCallback callback) {
-        this.callback = callback;
+        invoker.setCallback(callback);
     }
 
     @Override
@@ -185,38 +133,7 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
         else {
             cmd.add(0, path);
         }
-
-        for (String c : cmd) {
-            System.out.print(c + " ");
-        }
-        System.out.println();
-
-        ProcessBuilder pb = new ProcessBuilder();
-        pb.inheritIO();
-
-        pb.command(cmd);
-        Process p = pb.start();
-
-        LogingRunnable lr = new LogingRunnable(p);
-        ExecutorService execTh = Executors.newSingleThreadExecutor();
-        execTh.submit(lr);
-
-        if (isWaitFor() == true) {
-            while (lr.isRunnable() == true) {
-                try {
-                    Thread.sleep(1000);
-                }
-                catch (InterruptedException e) {
-                    break;
-                }
-
-                if (isWaitFor() == false) {
-                    // Wait設定解除時に抜ける
-                    break;
-                }
-            }
-        }
-
+        invoker.exec(cmd);
     }
 
     public boolean isFFmpegInstalled() {

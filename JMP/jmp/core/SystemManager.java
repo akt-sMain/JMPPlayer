@@ -30,9 +30,10 @@ import jmp.util.toolkit.UtilityToolkitManager;
 import jmsynth.JMSoftSynthesizer;
 import jmsynth.JMSynthEngine;
 import jmsynth.midi.MidiInterface;
+import process.IProcessingCallback;
 import wffmpeg.FFmpegWrapper;
-import wrapper.IProcessingCallback;
 import wrapper.ProcessingFFmpegWrapper;
+import wrapper.ProcessingYoutubeDLWrapper;
 
 /**
  * システム管理クラス
@@ -92,6 +93,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     /** FFmpeg wrapper インスタンス */
     private FFmpegWrapper ffmpegWrapper = null;
+
+    /** youtube-dl wrapper インスタンス */
+    private ProcessingYoutubeDLWrapper youtubeDlWrapper = null;
 
     /** Utilityツールキット */
     private IUtilityToolkit utilToolkit = null;
@@ -261,6 +265,8 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         // FFmpegWrapperインスタンス生成
         ffmpegWrapper = new ProcessingFFmpegWrapper();
         ffmpegWrapper.setOverwrite(true);
+
+        youtubeDlWrapper = new ProcessingYoutubeDLWrapper();
 
         // 共通レジスタのキー名登録
         cRegKeys = new String[NUMBER_OF_COMMON_REGKEY];
@@ -816,6 +822,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         if (JmpUtil.checkConfigKey(key, DataManager.CFG_KEY_FFMPEG_INSTALLED) == true) {
             setFFmpegInstalled(dm.isFFmpegInstalled());
         }
+        if (JmpUtil.checkConfigKey(key, DataManager.CFG_KEY_YOUTUBEDL_PATH) == true) {
+            setYoutubeDlWrapperPath(dm.getYoutubeDlPath());
+        }
     }
 
     public boolean isFFmpegInstalled() {
@@ -887,5 +896,21 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         wvf.setWaveColorTable(ct);
         JMPCore.getWindowManager().registerBuiltinSynthFrame(wvf);
         return miface;
+    }
+
+    public ProcessingYoutubeDLWrapper getYoutubeDlWrapper() {
+        return youtubeDlWrapper;
+    }
+
+    public void setYoutubeDlWrapperPath(String path) {
+        youtubeDlWrapper.setPath(path);
+    }
+
+    public String getYoutubeDlWrapperPath() {
+        return youtubeDlWrapper.getPath();
+    }
+
+    public boolean isValidYoutubeDlWrapper() {
+        return youtubeDlWrapper.isValid();
     }
 }

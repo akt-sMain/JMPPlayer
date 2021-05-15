@@ -30,8 +30,9 @@ import jmp.core.SystemManager;
 import jmp.gui.ui.DropFileCallbackHandler;
 import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.JMPDialog;
+import jmp.gui.ui.MultiKeyActionTextField;
 import jmp.lang.DefineLanguage.LangID;
-import wrapper.IProcessingCallback;
+import process.IProcessingCallback;
 
 public class FFmpegConvertDialog extends JMPDialog {
 
@@ -72,7 +73,7 @@ public class FFmpegConvertDialog extends JMPDialog {
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(null);
 
-        textFieldFFmpegExePath = new JTextField();
+        textFieldFFmpegExePath = new MultiKeyActionTextField();
         textFieldFFmpegExePath.setBounds(12, 48, 373, 19);
         contentPanel.add(textFieldFFmpegExePath);
         textFieldFFmpegExePath.setColumns(10);
@@ -96,7 +97,7 @@ public class FFmpegConvertDialog extends JMPDialog {
         lblInputFile.setBounds(12, 83, 373, 19);
         contentPanel.add(lblInputFile);
 
-        textFieldInputFile = new JTextField();
+        textFieldInputFile = new MultiKeyActionTextField();
         textFieldInputFile.setColumns(10);
         textFieldInputFile.setBounds(12, 106, 373, 19);
         contentPanel.add(textFieldInputFile);

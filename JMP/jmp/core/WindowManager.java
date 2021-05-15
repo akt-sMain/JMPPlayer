@@ -23,6 +23,7 @@ import jmp.gui.PluginManagerDialog;
 import jmp.gui.SelectLanguageDialog;
 import jmp.gui.SelectSynthsizerDialog;
 import jmp.gui.WindowDatabase;
+import jmp.gui.YoutubeConvertDialog;
 import jmp.gui.ui.IJMPComponentUI;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.task.ICallbackFunction;
@@ -60,6 +61,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         register(WINDOW_NAME_PLUGIN_MANAGER, new PluginManagerDialog());
         register(WINDOW_NAME_FFMPEG, new FFmpegConvertDialog());
         register(WINDOW_NAME_MIDI_SETUP, new SelectSynthsizerDialog(true, true));
+        register(WINDOW_NAME_YOUTUBEDL, new YoutubeConvertDialog());
 
         // メインウィンドウ登録
         registerMainWindow(new JMPPlayerWindow());

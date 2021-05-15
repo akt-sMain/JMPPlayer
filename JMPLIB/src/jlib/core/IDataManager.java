@@ -30,6 +30,8 @@ public interface IDataManager {
     public static final String CFG_KEY_FFMPEG_INSTALLED = "FFMPEG_INSTALLED";
     /** 再生前にシステムセットアップを送信するか */
     public static final String CFG_KEY_SEND_MIDI_SYSTEMSETUP = "SEND_MIDI_SYSTEMSETUP";
+    /** YoutubeDL exeパス */
+    public static final String CFG_KEY_YOUTUBEDL_PATH = "YOUTUBEDL_PATH";
 
     /**
      * コンフィグ変更

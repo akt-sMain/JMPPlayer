@@ -15,6 +15,7 @@ public interface IWindowManager {
     public static final String WINDOW_NAME_LICENSE = "LICENSE";
     public static final String WINDOW_NAME_FFMPEG = "FFMPEG";
     public static final String WINDOW_NAME_PLUGIN_MANAGER = "PLUGIN_MANAGER";
+    public static final String WINDOW_NAME_YOUTUBEDL = "YOUTUBEDL";
 
     /**
      * MainWindow取得

@@ -32,7 +32,7 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
     // ↓KEY追加後、必ずCFG_KEYSETに追加すること!!
     public static final String[] CFG_KEYSET = { CFG_KEY_PLAYLIST, CFG_KEY_MIDIOUT, CFG_KEY_MIDIIN, CFG_KEY_AUTOPLAY, CFG_KEY_LOOPPLAY,
             CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, CFG_KEY_LANGUAGE, CFG_KEY_LOADED_FILE, CFG_KEY_LYRIC_VIEW, CFG_KEY_FFMPEG_PATH, CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE,
-            CFG_KEY_USE_FFMPEG_PLAYER, CFG_KEY_FFMPEG_INSTALLED, CFG_KEY_SEND_MIDI_SYSTEMSETUP };
+            CFG_KEY_USE_FFMPEG_PLAYER, CFG_KEY_FFMPEG_INSTALLED, CFG_KEY_SEND_MIDI_SYSTEMSETUP, CFG_KEY_YOUTUBEDL_PATH };
 
     /**
      * コンストラクタ
@@ -55,9 +55,10 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         readingConvertedFile();
         deletedCachedFiles();
 
-        // 設定ファイルのFFmpeg設定を同期
+        // SystemManagerが持つ固有の設定値と設定ファイルの項目を同期
         JMPCore.getSystemManager().setFFmpegWrapperPath(getFFmpegPath());
         JMPCore.getSystemManager().setFFmpegInstalled(isFFmpegInstalled());
+        JMPCore.getSystemManager().setYoutubeDlWrapperPath(getYoutubeDlPath());
 
         // ロードファイルの初期化
         setLoadedFile("");
