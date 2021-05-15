@@ -3,6 +3,7 @@ zip/
 plugins/
 output/
 skin/
+save/
 *.jmz
 *.jar
 *.exe

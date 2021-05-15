@@ -257,7 +257,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
 
         SoundManager sm = JMPCore.getSoundManager();
 
-        String time = String.format(TIME_STR_FORMAT, sm.getSequencer().getTickPosition(), sm.getPositionTimeString());
+        String time = String.format(TIME_STR_FORMAT, sm.getPosition(), sm.getPositionTimeString());
         String byteStr = getByteMessageStr(mes);
         String strChannel = "--";
         String strCommand = "--";
@@ -457,7 +457,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
 
     private void updateTempoLabel() {
         synchronized (lblTempo) {
-            double tempo = JMPCore.getSoundManager().getSequencer().getTempoInBPM();
+            double tempo = JMPCore.getSoundManager().getMidiUnit().getTempoInBPM();
             String value = String.format("BPM:%.2f", tempo);
             lblTempo.setText(value);
             lblTempo.repaint();

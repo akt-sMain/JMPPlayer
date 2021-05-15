@@ -1,18 +1,11 @@
 package jlib.core;
 
-import javax.sound.midi.Sequencer;
-
 import jlib.midi.IMidiController;
 import jlib.midi.IMidiEventListener;
 import jlib.midi.IMidiToolkit;
+import jlib.midi.IMidiUnit;
 
 public interface ISoundManager {
-    /**
-     * MIDIシーケンサーを取得
-     *
-     * @return MIDIシーケンサー
-     */
-    abstract Sequencer getSequencer();
 
     /**
      * 再生中か
@@ -160,6 +153,13 @@ public interface ISoundManager {
     default IMidiController getMidiController() {
         return getMidiController(IMidiEventListener.SENDER_MIDI_OUT);
     }
+
+    /**
+     * 高度なMidi設定を取得する
+     *
+     * @return
+     */
+    abstract IMidiUnit getMidiUnit();
 
     /**
      * ラインボリューム設定

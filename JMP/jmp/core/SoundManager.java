@@ -13,7 +13,6 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
-import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 import javax.sound.sampled.AudioSystem;
@@ -32,6 +31,7 @@ import jlib.midi.IMidiController;
 import jlib.midi.IMidiEventListener;
 import jlib.midi.IMidiFilter;
 import jlib.midi.IMidiToolkit;
+import jlib.midi.IMidiUnit;
 import jlib.midi.MidiByte;
 import jlib.player.IPlayer;
 import jlib.player.Player;
@@ -39,6 +39,7 @@ import jmp.JMPFlags;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.midi.MidiByteMessage;
 import jmp.midi.MidiController;
+import jmp.midi.MidiUnit;
 import jmp.midi.NullReceiver;
 import jmp.midi.toolkit.MidiToolkitManager;
 import jmp.player.FFmpegPlayer;
@@ -82,6 +83,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     private IMidiToolkit midiToolkit = null;
     private IMidiController midiInController = null;
     private IMidiController midiOutController = null;
+    private IMidiUnit midiUnit = null;
 
     // Line情報
     private static Line.Info[] LineInfos = new Line.Info[] { Port.Info.SPEAKER, Port.Info.LINE_OUT, Port.Info.HEADPHONE };
@@ -141,6 +143,9 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
         // デフォルトはMIDIプレイヤーにする
         PlayerAccessor.change(SMidiPlayer);
+
+        // Midiユニットインスタンス生成
+        midiUnit = new MidiUnit();
 
         // デフォルトMIDIフィルター
         defaultMidiFilter = new IMidiFilter() {
@@ -264,6 +269,11 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     @Override
+    public IMidiUnit getMidiUnit() {
+        return midiUnit;
+    }
+
+    @Override
     public IMidiController getMidiController(short senderType) {
         IMidiController controller = null;
         switch (senderType) {
@@ -301,15 +311,6 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         JMPFlags.Log.cprintln("##");
         JMPFlags.Log.cprintln();
         return result;
-    }
-
-    /**
-     * MIDIシーケンサーを取得
-     *
-     * @return MIDIシーケンサー
-     */
-    public Sequencer getSequencer() {
-        return SMidiPlayer.getSequencer();
     }
 
     public IPlayer getCurrentPlayer() {

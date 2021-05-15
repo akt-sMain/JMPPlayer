@@ -1136,11 +1136,9 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         int mntmVolumeSliderValue = (int) (JMPCore.getSoundManager().getLineVolume() * (float) mntmVolumeSlider.getMaximum());
         mntmVolumeSlider.setValue(mntmVolumeSliderValue);
 
-        if (JMPCore.getSoundManager().getSequencer() != null) {
-            // Sequencerが実行中の場合は設定不可
-            boolean isRunning = JMPCore.getSoundManager().getSequencer().isRunning();
-            mntmMidiDeviceSetup.setEnabled(!isRunning);
-        }
+        // Sequencerが実行中の場合は設定不可
+        boolean isRunning = JMPCore.getSoundManager().isPlay();
+        mntmMidiDeviceSetup.setEnabled(!isRunning);
     }
 
     /**
