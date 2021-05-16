@@ -825,6 +825,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         if (JmpUtil.checkConfigKey(key, DataManager.CFG_KEY_YOUTUBEDL_PATH) == true) {
             setYoutubeDlWrapperPath(dm.getYoutubeDlPath());
         }
+        if (JmpUtil.checkConfigKey(key, DataManager.CFG_KEY_YOUTUBEDL_INSTALLED) == true) {
+            setYoutubeDlInstalled(dm.isYoutubeDlInstalled());
+        }
     }
 
     public boolean isFFmpegInstalled() {
@@ -912,5 +915,13 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     public boolean isValidYoutubeDlWrapper() {
         return youtubeDlWrapper.isValid();
+    }
+
+    public boolean isYoutubeDlInstalled() {
+        return youtubeDlWrapper.isYoutubeDlInstalled();
+    }
+
+    public void setYoutubeDlInstalled(boolean isEnableEnvironmentVariable) {
+        youtubeDlWrapper.setYoutubeDlInstalled(isEnableEnvironmentVariable);
     }
 }

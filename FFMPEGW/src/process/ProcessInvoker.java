@@ -7,6 +7,24 @@ import java.util.concurrent.Executors;
 
 public class ProcessInvoker {
 
+    private boolean isConsoleOut = true;
+
+    private void pPrintln() {
+        if (isConsoleOut() == true) {
+            System.out.println();
+        }
+    }
+    private void pPrintln(String str) {
+        if (isConsoleOut() == true) {
+            System.out.println(str);
+        }
+    }
+    private void pPrint(String str) {
+        if (isConsoleOut() == true) {
+            System.out.print(str);
+        }
+    }
+
     public class LogingRunnable implements Runnable {
         private boolean isRunnable = true;
         private Process proc;
@@ -47,10 +65,6 @@ public class ProcessInvoker {
             }
         }
 
-        private void pPrintln(String str) {
-            System.out.println(str);
-        }
-
         public boolean isRunnable() {
             return isRunnable;
         }
@@ -89,9 +103,9 @@ public class ProcessInvoker {
      */
     public void exec(List<String> cmd) throws IOException {
         for (String c : cmd) {
-            System.out.print(c + " ");
+            pPrint(c + " ");
         }
-        System.out.println();
+        pPrintln();
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.inheritIO();
@@ -119,5 +133,13 @@ public class ProcessInvoker {
             }
         }
 
+    }
+
+    public boolean isConsoleOut() {
+        return isConsoleOut;
+    }
+
+    public void setConsoleOut(boolean isConsoleOut) {
+        this.isConsoleOut = isConsoleOut;
     }
 }

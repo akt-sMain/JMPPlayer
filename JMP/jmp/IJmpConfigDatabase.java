@@ -123,4 +123,15 @@ public interface IJmpConfigDatabase {
     default void setYoutubeDlPath(String filePath) {
         setConfigParam(DataManager.CFG_KEY_YOUTUBEDL_PATH, filePath);
     }
+
+    default boolean isYoutubeDlInstalled() {
+        if (Platform.getRunPlatform() != KindOfPlatform.WINDOWS) {
+            return true;
+        }
+        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_YOUTUBEDL_INSTALLED));
+    }
+
+    default void setYoutubeDlInstalled(boolean isEnableEnvironmentVariable) {
+        setConfigParam(DataManager.CFG_KEY_YOUTUBEDL_INSTALLED, isEnableEnvironmentVariable ? "TRUE" : "FALSE");
+    }
 }

@@ -4,6 +4,7 @@ plugins/
 output/
 skin/
 save/
+.idea/
 *.jmz
 *.jar
 *.exe
@@ -12,5 +13,8 @@ activate
 config.txt
 history.txt
 skin.txt
+*.mp3
+*.wav
+*.mid
 
 !convert_to_exe.bat

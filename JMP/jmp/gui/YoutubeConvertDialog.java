@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,6 +22,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import function.Platform;
+import function.Platform.KindOfPlatform;
 import function.Utility;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
@@ -48,6 +50,7 @@ public class YoutubeConvertDialog extends JMPDialog {
     private JTextField dstExtTextField;
     private JButton btnOpenExe;
     private JPanel buttonPane;
+    private JCheckBox chckbxInstalled;
 
     /**
      * Create the dialog.
@@ -183,6 +186,17 @@ public class YoutubeConvertDialog extends JMPDialog {
         });
         buttonPaste.setBounds(362, 105, 70, 21);
         contentPanel.add(buttonPaste);
+
+        chckbxInstalled = new JCheckBox("installed");
+        chckbxInstalled.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                boolean isSelected = chckbxInstalled.isSelected();
+                JMPCore.getDataManager().setYoutubeDlInstalled(isSelected);
+                updateGuiState();
+            }
+        });
+        chckbxInstalled.setBounds(329, 24, 103, 21);
+        contentPanel.add(chckbxInstalled);
         {
             buttonPane = new JPanel();
             buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -210,11 +224,18 @@ public class YoutubeConvertDialog extends JMPDialog {
 
         dstExtTextField.setText(DEFAULT_DST_EXT);
 
-        // updateGuiState();
-        // updateBackColor();
+        updateGuiState();
+        updateBackColor();
     }
 
     private void updateGuiState() {
+        textFieldExePath.setEnabled(!JMPCore.getDataManager().isYoutubeDlInstalled());
+        if (JMPCore.getDataManager().isYoutubeDlInstalled() == true) {
+            textFieldExePath.setText("youtube-dl");
+        }
+        else {
+            textFieldExePath.setText(JMPCore.getDataManager().getYoutubeDlPath());
+        }
     }
 
     private FileNameExtensionFilter createFileFilter(String exName, String... ex) {
@@ -241,25 +262,31 @@ public class YoutubeConvertDialog extends JMPDialog {
     }
 
     public void openOutputFolder() {
-        //File outdir = new File(JMPCore.getSystemManager().getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_FFMPEG_OUTPUT));
-        SystemManager system = JMPCore.getSystemManager();
-        File outdir = new File(system.getYoutubeDlWrapperPath());
-        outdir = outdir.getParentFile();
-        if (outdir != null) {
-            if (outdir.exists() == true) {
-                try {
-                    Utility.openExproler(outdir);
-                }
-                catch (IOException e2) {
-                }
-            }
+//        SystemManager system = JMPCore.getSystemManager();
+//        File outdir = new File(system.getYoutubeDlWrapperPath());
+//        outdir = outdir.getParentFile();
+//        if (outdir != null) {
+//            if (outdir.exists() == true) {
+//                try {
+//                    Utility.openExproler(outdir);
+//                }
+//                catch (IOException e2) {
+//                }
+//            }
+//        }
+//        else {
+//            try {
+//                Utility.openExproler(Platform.getCurrentPath());
+//            }
+//            catch (IOException e2) {
+//            }
+//        }
+
+        /* 常にカレントを開く */
+        try {
+            Utility.openExproler(Platform.getCurrentPath());
         }
-        else {
-            try {
-                Utility.openExproler(Platform.getCurrentPath());
-            }
-            catch (IOException e2) {
-            }
+        catch (IOException e2) {
         }
     }
 
@@ -354,6 +381,14 @@ public class YoutubeConvertDialog extends JMPDialog {
     @Override
     public void updateConfig(String key) {
         textFieldExePath.setText(JMPCore.getDataManager().getYoutubeDlPath());
+        chckbxInstalled.setSelected(JMPCore.getDataManager().isYoutubeDlInstalled());
+        if (Platform.getRunPlatform() != KindOfPlatform.WINDOWS) {
+            chckbxInstalled.setEnabled(false);
+        }
+        else {
+            chckbxInstalled.setEnabled(true);
+        }
+
         super.updateConfig(key);
 
         updateGuiState();
@@ -364,5 +399,7 @@ public class YoutubeConvertDialog extends JMPDialog {
         super.updateBackColor();
         contentPanel.setBackground(getJmpBackColor());
         buttonPane.setBackground(getJmpBackColor());
+        chckbxInstalled.setBackground(getJmpBackColor());
+        chckbxInstalled.setForeground(Utility.getForegroundColor(getJmpBackColor()));
     }
 }

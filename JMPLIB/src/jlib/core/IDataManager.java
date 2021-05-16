@@ -32,6 +32,8 @@ public interface IDataManager {
     public static final String CFG_KEY_SEND_MIDI_SYSTEMSETUP = "SEND_MIDI_SYSTEMSETUP";
     /** YoutubeDL exeパス */
     public static final String CFG_KEY_YOUTUBEDL_PATH = "YOUTUBEDL_PATH";
+    /** 内蔵YoutubeDL使用 */
+    public static final String CFG_KEY_YOUTUBEDL_INSTALLED = "YOUTUBEDL_INSTALLED";
 
     /**
      * コンフィグ変更

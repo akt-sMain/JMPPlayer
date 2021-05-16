@@ -63,3 +63,6 @@ exewrap.exe
 #.project
 /JMPPlayer
 /jre
+/project/JMP/errorlog_init.txt
+/project/JMP/save
+/project/JMP/*.mkj

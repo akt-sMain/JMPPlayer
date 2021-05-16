@@ -2,7 +2,7 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>project\JMP\JamPlayer.jar</jar>
+  <jar>project\JMP\JMPPlayer.jar</jar>
   <outfile>JamPlayer.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
