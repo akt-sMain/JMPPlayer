@@ -3,7 +3,6 @@ package wrapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import process.IProcessingCallback;
 import process.ProcessInvoker;
@@ -91,29 +90,6 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
         cmd.add("-i");
         cmd.add(inPath);
         cmd.add(outPath);
-        exec(cmd);
-    }
-
-    /**
-     * コマンド実行
-     *
-     * @param cmd
-     *            コマンド
-     * @throws IOException
-     */
-    public void exec(String... cmd) throws IOException {
-        exec(cmd);
-    }
-
-    /**
-     * コマンド実行
-     *
-     * @param cmd
-     *            コマンド
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    public void exec(List<String> cmd) throws IOException {
 
         if (isFFmpegInstalled() == true) {
             boolean isExistsCurrent = false;

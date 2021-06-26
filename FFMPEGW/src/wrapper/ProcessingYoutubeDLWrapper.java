@@ -3,7 +3,6 @@ package wrapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import process.IProcessingCallback;
 import process.ProcessInvoker;
@@ -69,14 +68,7 @@ public class ProcessingYoutubeDLWrapper {
         cmd.add("-x");
         cmd.add("--audio-format");
         cmd.add(audioFormat);
-        exec(cmd);
-    }
 
-    public void exec(String... cmd) throws IOException {
-        exec(cmd);
-    }
-
-    public void exec(List<String> cmd) throws IOException {
         if (isYoutubeDlInstalled() == true) {
             boolean isExistsCurrent = false;
             File exeFile = new File("youtube-dl.exe");

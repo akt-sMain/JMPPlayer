@@ -80,7 +80,7 @@ public class MidiFileListDialog extends JMPFrame {
         FOLDER,
         MIDI,
         WAV,
-        XML,
+        TXT,
         MUSIC,
         OTHER,
         ALL,
@@ -90,7 +90,7 @@ public class MidiFileListDialog extends JMPFrame {
             put(FileFilterType.FOLDER, true);
             put(FileFilterType.MIDI, true);
             put(FileFilterType.WAV, true);
-            put(FileFilterType.XML, true);
+            put(FileFilterType.TXT, true);
             put(FileFilterType.MUSIC, true);
             put(FileFilterType.OTHER, true);
         }
@@ -111,7 +111,17 @@ public class MidiFileListDialog extends JMPFrame {
                 g.setColor(Color.BLUE);
                 g.fillRect(0, 0, FileFilterPanel.this.getWidth(), FileFilterPanel.this.getHeight());
                 g.setColor(Color.GREEN);
-                g.fillRect(5, 5, FileFilterPanel.this.getWidth() - 10, FileFilterPanel.this.getHeight() - 10);
+
+                boolean isSelected = true;
+                for (FileFilterType k : filterDatabase.keySet()) {
+                    if (filterDatabase.get(k) == false) {
+                        isSelected = false;
+                    }
+                }
+
+                if (isSelected == true) {
+                    g.fillRect(5, 5, FileFilterPanel.this.getWidth() - 10, FileFilterPanel.this.getHeight() - 10);
+                }
                 g.drawRect(0, 0, FileFilterPanel.this.getWidth() - 1, FileFilterPanel.this.getHeight() - 1);
                 return;
             }
@@ -137,7 +147,7 @@ public class MidiFileListDialog extends JMPFrame {
                 case WAV:
                     g.drawImage(wavIcon, 0, 0, null);
                     break;
-                case XML:
+                case TXT:
                     g.drawImage(xmlIcon, 0, 0, null);
                     break;
                 case OTHER:
@@ -156,8 +166,22 @@ public class MidiFileListDialog extends JMPFrame {
         @Override
         public void mouseReleased(MouseEvent e) {
             if (type == FileFilterType.ALL) {
-                for (FileFilterType t : filterDatabase.keySet()) {
-                    filterDatabase.put(t, true);
+                boolean isSelected = true;
+                for (FileFilterType k : filterDatabase.keySet()) {
+                    if (filterDatabase.get(k) == false) {
+                        isSelected = false;
+                    }
+                }
+
+                if (isSelected == true) {
+                    for (FileFilterType k : filterDatabase.keySet()) {
+                        filterDatabase.put(k, false);
+                    }
+                }
+                else {
+                    for (FileFilterType k : filterDatabase.keySet()) {
+                        filterDatabase.put(k, true);
+                    }
                 }
             }
             else {
@@ -406,7 +430,7 @@ public class MidiFileListDialog extends JMPFrame {
         fileFilterPanel_MUSIC.setBounds(_ffx, 32, 20, 20);
         contentPanel.add(fileFilterPanel_MUSIC);
         _ffx += _ffMargin;
-        JPanel fileFilterPanel_XML = new FileFilterPanel(FileFilterType.XML);
+        JPanel fileFilterPanel_XML = new FileFilterPanel(FileFilterType.TXT);
         fileFilterPanel_XML.setBounds(_ffx, 32, 20, 20);
         contentPanel.add(fileFilterPanel_XML);
         _ffx += _ffMargin;
@@ -601,9 +625,9 @@ public class MidiFileListDialog extends JMPFrame {
         }
         if (file.isDirectory() == false) {
             file = file.getParentFile();
-        }
-        if (file.canRead() == false) {
-            return;
+            if (file.canRead() == false) {
+                return;
+            }
         }
 
         setCurrentPathText(file.getPath());
@@ -757,13 +781,13 @@ public class MidiFileListDialog extends JMPFrame {
                         }
                     }
                     else if (Utility.checkExtensions(name, exMUSICXML) == true) {
-                        if (filterDatabase.get(FileFilterType.XML) == true) {
+                        if (filterDatabase.get(FileFilterType.TXT) == true) {
                             Object[] row = createFileListRows(xmlIcon, "XM", name);
                             model.addRow(row);
                         }
                     }
                     else if (Utility.checkExtensions(name, exMML) == true) {
-                        if (filterDatabase.get(FileFilterType.XML) == true) {
+                        if (filterDatabase.get(FileFilterType.TXT) == true) {
                             Object[] row = createFileListRows(xmlIcon, "MM", name);
                             model.addRow(row);
                         }
@@ -836,7 +860,9 @@ public class MidiFileListDialog extends JMPFrame {
         }
     }
 
-    private static final String NODE_COLOR = "yellow";
+    private static final int NODE_DISPLAY_LEVEL = 3;
+    private static final String NODE_COLOR = "white";
+    private static final String NODE_COLOR_CUR = "yellow";
     private static final String SEP_COLOR = "gray";
     private JLabel labelContinuePlayback;
     private JButton addButton;
@@ -852,11 +878,11 @@ public class MidiFileListDialog extends JMPFrame {
         File file = new File(path);
 
         final String htmlFormat = "<html>%s</html>";
-        final String fontFormat = "<font color=%s> %s </font>";
+        final String fontFormat = "<font color=%s>%s</font>";
 
         String text = "";
         String[] nodes = Utility.getFileNodeNames(file);
-        int start = nodes.length - 2;
+        int start = nodes.length - NODE_DISPLAY_LEVEL;
         if (start < 0) {
             start = 0;
         }
@@ -864,11 +890,16 @@ public class MidiFileListDialog extends JMPFrame {
             if (i > 0) {
                 text += String.format(fontFormat, SEP_COLOR, ">");
             }
+
+            String nodeColor = NODE_COLOR;
+            if (i == (nodes.length - 1)) {
+                nodeColor = NODE_COLOR_CUR;
+            }
             String node = nodes[i];
             if (node.equals("") == true) {
-                node = String.format(fontFormat, NODE_COLOR, "~");
+                node = String.format(fontFormat, nodeColor, "~");
             }
-            text += String.format(fontFormat, NODE_COLOR, node);
+            text += String.format(fontFormat, nodeColor, node);
         }
         lblPath.setText(String.format(htmlFormat, text));
     }

@@ -230,6 +230,7 @@ public class YoutubeConvertDialog extends JMPDialog {
 
     private void updateGuiState() {
         textFieldExePath.setEnabled(!JMPCore.getDataManager().isYoutubeDlInstalled());
+        btnOpenExe.setEnabled(!JMPCore.getDataManager().isYoutubeDlInstalled());
         if (JMPCore.getDataManager().isYoutubeDlInstalled() == true) {
             textFieldExePath.setText("youtube-dl");
         }

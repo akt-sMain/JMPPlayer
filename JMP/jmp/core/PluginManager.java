@@ -583,7 +583,8 @@ public class PluginManager extends AbstractManager {
             // プラグインをインポート
             boolean isValid = true;
             if (plginStateMem != null) {
-                if (plginStateMem.getConfigParam(JmpUtil.getFileNameNotExtension(jms.getJar())).equalsIgnoreCase("INVALID") == true) {
+                String jarName = JmpUtil.getFileNameNotExtension(jms.getJar());
+                if (plginStateMem.getConfigParam(jarName).equalsIgnoreCase(PluginWrapper.toString(PluginState.INVALID)) == true) {
                     isValid = false;
                 }
             }

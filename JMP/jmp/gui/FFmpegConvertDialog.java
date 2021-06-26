@@ -273,7 +273,6 @@ public class FFmpegConvertDialog extends JMPDialog {
     private void updateGuiState() {
         textFieldFFmpegExePath.setEnabled(!JMPCore.getDataManager().isFFmpegInstalled());
         btnOpenExe.setEnabled(!JMPCore.getDataManager().isFFmpegInstalled());
-        lblPath.setEnabled(!JMPCore.getDataManager().isFFmpegInstalled());
         if (JMPCore.getDataManager().isFFmpegInstalled() == true) {
             textFieldFFmpegExePath.setText(JMPCore.getSystemManager().getFFmpegCommand());
         }
