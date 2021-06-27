@@ -1,40 +1,12 @@
 package jlib.core;
 
 /**
- * 各マネージャークラスへのアクセス制御をおこなうクラス
+ * 各マネージャークラスへアクセスする
  *
  * @author abs
  *
  */
 public class JMPCoreAccessor {
-    private static ISystemManager systemManager = null;
-    private static ISoundManager soundManager = null;
-    private static IDataManager dataManager = null;
-    private static IWindowManager windowManager = null;
-    private static IFileManager fileManager = null;
-
-    /**
-     * マネージャー登録
-     *
-     * @param manager
-     */
-    public static void register(IManager manager) {
-        if (manager instanceof ISystemManager) {
-            systemManager = (ISystemManager) (systemManager == null ? manager : systemManager);
-        }
-        else if (manager instanceof ISoundManager) {
-            soundManager = (ISoundManager) (soundManager == null ? manager : soundManager);
-        }
-        else if (manager instanceof IDataManager) {
-            dataManager = (IDataManager) (dataManager == null ? manager : dataManager);
-        }
-        else if (manager instanceof IWindowManager) {
-            windowManager = (IWindowManager) (windowManager == null ? manager : windowManager);
-        }
-        else if (manager instanceof IFileManager) {
-            fileManager = (IFileManager) (fileManager == null ? manager : fileManager);
-        }
-    }
 
     /**
      * SystemManager取得
@@ -42,7 +14,7 @@ public class JMPCoreAccessor {
      * @return
      */
     public static ISystemManager getSystemManager() {
-        return systemManager;
+        return JMPCoreManagerRegister.systemManager;
     }
 
     /**
@@ -51,7 +23,7 @@ public class JMPCoreAccessor {
      * @return
      */
     public static ISoundManager getSoundManager() {
-        return soundManager;
+        return JMPCoreManagerRegister.soundManager;
     }
 
     /**
@@ -60,7 +32,7 @@ public class JMPCoreAccessor {
      * @return
      */
     public static IDataManager getDataManager() {
-        return dataManager;
+        return JMPCoreManagerRegister.dataManager;
     }
 
     /**
@@ -69,7 +41,7 @@ public class JMPCoreAccessor {
      * @return
      */
     public static IWindowManager getWindowManager() {
-        return windowManager;
+        return JMPCoreManagerRegister.windowManager;
     }
 
     /**
@@ -78,6 +50,6 @@ public class JMPCoreAccessor {
      * @return
      */
     public static IFileManager getFileManager() {
-        return fileManager;
+        return JMPCoreManagerRegister.fileManager;
     }
 }

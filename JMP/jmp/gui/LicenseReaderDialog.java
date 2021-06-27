@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,7 +30,7 @@ import jmp.core.LanguageManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 
-public class LicenseReaderDialog extends JMPDialog {
+public class LicenseReaderDialog extends JMPDialog implements WindowListener {
 
     private final JPanel contentPanel = new JPanel();
     private ButtonGroup btnGroupAcc;
@@ -52,6 +54,7 @@ public class LicenseReaderDialog extends JMPDialog {
         setTitle("License");
         setBounds(100, 100, 725, 550);
         getContentPane().setLayout(new BorderLayout());
+        addWindowListener(this);
 
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -124,13 +127,6 @@ public class LicenseReaderDialog extends JMPDialog {
             contentPanel.add(okButton);
             okButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    if (rdbtnAccept.isSelected() == true) {
-                        /* 使用可能 */
-                        JMPFlags.ActivateFlag = true;
-                    }
-                    else {
-                        JMPFlags.ActivateFlag = false;
-                    }
                     close();
                 }
             });
@@ -171,6 +167,13 @@ public class LicenseReaderDialog extends JMPDialog {
     }
 
     public void close() {
+        if (rdbtnAccept.isSelected() == true) {
+            /* 使用可能 */
+            JMPFlags.ActivateFlag = true;
+        }
+        else {
+            JMPFlags.ActivateFlag = false;
+        }
         setVisible(false);
     }
 
@@ -186,5 +189,38 @@ public class LicenseReaderDialog extends JMPDialog {
         // labelClipMes.setText(lm.getLanguageStr(LangID.Copied_to_clipboard));
         labelClipMes.setText("");
         buttonCopy.setText(lm.getLanguageStr(LangID.Original_copy));
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        if (JMPFlags.ActivateFlag == false) {
+            rdbtnAccept.setSelected(false);
+            rdbtnReject.setSelected(true);
+        }
+        close();
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
     }
 }

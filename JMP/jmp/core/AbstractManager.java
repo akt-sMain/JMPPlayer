@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jlib.core.IManager;
-import jlib.core.JMPCoreAccessor;
+import jlib.core.JMPCoreManagerRegister;
 import jmp.JMPFlags;
 
 public abstract class AbstractManager implements IManager {
@@ -28,8 +28,8 @@ public abstract class AbstractManager implements IManager {
         }
         managers.add(this);
 
-        // アクセッサに登録
-        JMPCoreAccessor.register(this);
+        // ライブラリに登録
+        JMPCoreManagerRegister.register(this);
     }
 
     static boolean isFinishedAllInitialize() {

@@ -32,12 +32,10 @@ public interface IFileManager {
     }
 
     /**
-     * ファイルロード処理
+     * ファイルロード処理(ロード後、再生する)
      *
      * @param path
      *            ファイルパス
-     * @param isPlay
-     *            再生するか
      */
     default void loadFileToPlay(String path) {
         loadFileToPlay(new File(path));
