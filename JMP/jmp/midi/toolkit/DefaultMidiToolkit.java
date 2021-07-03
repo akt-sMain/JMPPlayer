@@ -1,9 +1,16 @@
 package jmp.midi.toolkit;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
 import jlib.midi.IMidiToolkit;
@@ -13,6 +20,83 @@ import jmp.midi.MidiByteMessage;
 public class DefaultMidiToolkit implements IMidiToolkit {
     DefaultMidiToolkit() {
     };
+
+    @Override
+    public List<MidiDevice> getMidiDevices() {
+        ArrayList<MidiDevice> devices = new ArrayList<MidiDevice>();
+
+        MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+
+        for (int i = 0; i < infos.length; i++) {
+            MidiDevice.Info info = infos[i];
+            MidiDevice device = null;
+
+            try {
+                device = MidiSystem.getMidiDevice(info);
+                devices.add(device);
+            }
+            catch (MidiUnavailableException me) {
+            }
+            catch (Exception e) {
+            }
+        }
+
+        return devices;
+    }
+
+    @Override
+    public MidiDevice.Info[] getMidiDeviceInfo(boolean incTransmitter, boolean incReciever) {
+        ArrayList<MidiDevice.Info> ret = new ArrayList<MidiDevice.Info>();
+
+        MidiDevice.Info[] tmp = MidiSystem.getMidiDeviceInfo();
+        for (int i = 0; i < tmp.length; i++) {
+            MidiDevice dev;
+            try {
+                dev = MidiSystem.getMidiDevice(tmp[i]);
+            }
+            catch (MidiUnavailableException e) {
+                continue;
+            }
+
+            if (incTransmitter == false && dev.getMaxTransmitters() != 0) {
+                // Transmitterは除外
+                continue;
+            }
+            else if (incReciever == false && dev.getMaxReceivers() != 0) {
+                // Recieverは除外
+                continue;
+            }
+            ret.add(tmp[i]);
+        }
+        return (MidiDevice.Info[]) ret.toArray(new MidiDevice.Info[0]);
+    }
+
+    @Override
+    public Receiver findReciver(String recvName) {
+        Receiver receiver = null;
+
+        try {
+            MidiDevice.Info[] devices = MidiSystem.getMidiDeviceInfo();
+            for (MidiDevice.Info info : devices) {
+                if (info.getName().startsWith(recvName) == false) {
+                    // ネームチェック
+                    continue;
+                }
+
+                MidiDevice dv = MidiSystem.getMidiDevice(info);
+                if (dv.getMaxReceivers() > 0) {
+                    dv.open();
+                    receiver = dv.getReceiver();
+                    break;
+                }
+            }
+        }
+        catch (MidiUnavailableException e) {
+            receiver = null;
+        }
+
+        return receiver;
+    }
 
     @Override
     public boolean isNoteOn(MidiMessage mes) {

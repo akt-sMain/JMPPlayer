@@ -2,6 +2,7 @@ package jmp.core;
 
 import jlib.JMPLIB;
 import jlib.plugin.IPlugin;
+import jmp.JMPFlags;
 import jmp.core.TaskManager.TaskID;
 import jmp.task.ICallbackFunction;
 import jmp.util.JmpUtil;
@@ -94,7 +95,7 @@ public class JMPCore {
 
     /** 通知メソッド作成 */
     private static void createNotifyFunc(ICallbackFunction func) {
-        if (AbstractManager.isFinishedAllInitialize() == false) {
+        if (JMPFlags.EnableNotifyFlag == false) {
             return;
         }
         getTaskManager().queuing(TaskID.SEQUENCE, func);

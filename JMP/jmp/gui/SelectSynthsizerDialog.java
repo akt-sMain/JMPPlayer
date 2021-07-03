@@ -28,7 +28,6 @@ import jmp.core.SoundManager;
 import jmp.core.SystemManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
-import jmp.player.MidiPlayer;
 import jmsynth.midi.JMSynthMidiDevice;
 
 public class SelectSynthsizerDialog extends JMPDialog {
@@ -346,7 +345,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
         // レシーバー
         comboRecvMode.removeAllItems();
-        infosOfRecv = MidiPlayer.getMidiDeviceInfo(false, true);
+        infosOfRecv = JMPCore.getSoundManager().getMidiToolkit().getMidiDeviceInfo(false, true);
         comboRecvMode.addItem(itemListNameDefault);
         comboRecvMode.addItem(itemListNameJMSynth);
         for (int i = 0; i < infosOfRecv.length; i++) {
@@ -356,7 +355,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
         // トランスミッター
         comboTransMode.removeAllItems();
-        infosOfTrans = MidiPlayer.getMidiDeviceInfo(true, false);
+        infosOfTrans = JMPCore.getSoundManager().getMidiToolkit().getMidiDeviceInfo(true, false);
         comboTransMode.addItem("");
         for (int i = 0; i < infosOfTrans.length; i++) {
             String line = createItemName(i, infosOfTrans[i].getName());

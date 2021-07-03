@@ -77,4 +77,7 @@ public class JMPFlags {
     /** 再生中の点滅表示を制御するためのフラグ。主にシーケンスバーで使用 */
     public static boolean PlayingTimerToggleFlag = false;
 
+    /** Notifyを各マネージャークラスに送信するか？ */
+    public static boolean EnableNotifyFlag = true;
+
 }

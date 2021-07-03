@@ -8,10 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
@@ -40,7 +37,6 @@ import jmp.lang.DefineLanguage.LangID;
 import jmp.midi.MidiByteMessage;
 import jmp.midi.MidiController;
 import jmp.midi.MidiUnit;
-import jmp.midi.NullReceiver;
 import jmp.midi.toolkit.MidiToolkitManager;
 import jmp.player.FFmpegPlayer;
 import jmp.player.MidiPlayer;
@@ -246,10 +242,9 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
             wasCommit = isCommitDeviceSelectAction;
         }
-        else {
-            // Midiデバイスの読み込み
-            JMPCore.getSoundManager().reloadMidiDevice(true, true);
-        }
+
+        // Midiデバイスの読み込み
+        JMPCore.getSoundManager().reloadMidiDevice(true, true);
         return wasCommit;
     }
 
@@ -300,16 +295,6 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             e.printStackTrace();
             result = false;
         }
-
-        JMPFlags.Log.cprintln("###");
-        JMPFlags.Log.cprintln("## Midi device info");
-        JMPFlags.Log.cprintln("##");
-        String midiOutName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
-        String midiInName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
-        JMPFlags.Log.cprintln("OUT : " + (midiOutName.isEmpty() ? "Default" : midiOutName));
-        JMPFlags.Log.cprintln("IN  : " + (midiInName.isEmpty() ? "None" : midiInName));
-        JMPFlags.Log.cprintln("##");
-        JMPFlags.Log.cprintln();
         return result;
     }
 
@@ -857,74 +842,17 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         return nativeVolume;
     }
 
-    /* Midi音源を自動取得する */
-    public Receiver createAutoSelectSynth() {
-
-        MidiDevice.Info[] infosOfRecv = MidiPlayer.getMidiDeviceInfo(false, true);
-
-        // デフォルト
-        int defIndex = -1;
-        for (int i = 0; i < infosOfRecv.length; i++) {
-            if (infosOfRecv[i].getName().contains("Gervill") == true) {
-                defIndex = i;
-                break;
-            }
-        }
-
-        /* デフォルト使用 */
-        Receiver reciever = null;
-        if (defIndex != -1) {
-            // "Gervill"を優先的に使用
-            try {
-                MidiDevice outDev;
-                outDev = MidiSystem.getMidiDevice(infosOfRecv[defIndex]);
-                if (outDev.isOpen() == false) {
-                    outDev.open();
-                }
-                reciever = outDev.getReceiver();
-            }
-            catch (MidiUnavailableException e) {
-                reciever = null;
-            }
-        }
-        else {
-            // SoundAPIの自動選択に従う
-            try {
-                reciever = MidiSystem.getReceiver();
-            }
-            catch (Exception e3) {
-                reciever = null;
-            }
-        }
-
-        // ない場合は内蔵シンセを採用する
-        if (reciever == null) {
-            reciever = createBuiltinSynth();
-        }
-        return reciever;
-    }
-
-    /* 内蔵シンセサイザー音源を取得する */
-    public Receiver createBuiltinSynth() {
-        // 新しいJMSynthインスタンスを取得する
-        Receiver reciever = (Receiver)JMPCore.getSystemManager().newBuiltinSynthInstance();
-        if (reciever == null) {
-            /* 例外処理 */
-            JMPCore.getWindowManager().disposeBuiltinSynthFrame();
-            reciever = new NullReceiver();
-        }
-        return reciever;
-    }
-
     public void reloadMidiDevice(boolean out, boolean in) {
         // DataManagerのデバイスを再設定する
+        String outName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
+        String inName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
         if (out == true) {
-            String outName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
             SMidiPlayer.updateMidiOut(outName);
+            JMPFlags.Log.cprintln("Device update[OUT] : " + (outName.isEmpty() ? "Auto selection" : outName));
         }
         if (in == true) {
-            String inName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
             SMidiPlayer.updateMidiIn(inName);
+            JMPFlags.Log.cprintln("Device update[IN]  : " + (inName.isEmpty() ? "None" : inName));
         }
     }
 }

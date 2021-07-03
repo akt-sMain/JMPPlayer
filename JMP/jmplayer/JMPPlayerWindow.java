@@ -43,6 +43,7 @@ import function.Utility;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jlib.plugin.IPlugin;
+import jmp.ErrorDef;
 import jmp.FileResult;
 import jmp.IFileResultCallback;
 import jmp.JMPFlags;
@@ -1384,7 +1385,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                 wm.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
             }
             else {
-                system.showSystemErrorMessage(SystemManager.ERROR_ID_PLUGIN_FAIL_LOAD);
+                system.showSystemErrorMessage(ErrorDef.ERROR_ID_PLUGIN_FAIL_LOAD);
             }
         }
         else if (Utility.checkExtension(path, PluginManager.SETUP_FILE_EX) == true) {
@@ -1392,7 +1393,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                 wm.showInformationMessageDialog(lm.getLanguageStr(LangID.PLUGIN_LOAD_SUCCESS));
             }
             else {
-                system.showSystemErrorMessage(SystemManager.ERROR_ID_PLUGIN_FAIL_LOAD);
+                system.showSystemErrorMessage(ErrorDef.ERROR_ID_PLUGIN_FAIL_LOAD);
             }
         }
         else {

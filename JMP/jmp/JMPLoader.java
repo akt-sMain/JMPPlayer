@@ -302,7 +302,7 @@ public class JMPLoader {
                 // 強制終了
                 exit();
 
-                JMPCore.getSystemManager().showSystemErrorMessage(SystemManager.ERROR_ID_UNKNOWN_EXIT_APPLI);
+                JMPCore.getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_UNKNOWN_EXIT_APPLI);
             }
         }
 
@@ -355,6 +355,9 @@ public class JMPLoader {
      */
     public static boolean initLibrary(ConfigDatabaseWrapper config, IPlugin plugin) {
 
+        // Sequenceタスクが準備出来るまではNotifyを破棄する必要がある
+        JMPFlags.EnableNotifyFlag = false;
+
         // スタンドアロンプラグイン設定
         JMPCore.setStandAlonePlugin(plugin);
 
@@ -379,7 +382,7 @@ public class JMPLoader {
         }
         else {
             // 立ち上げ失敗
-            JMPCore.getSystemManager().showSystemErrorMessage(SystemManager.ERROR_ID_SYSTEM_FAIL_INIT_FUNC);
+            JMPCore.getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_SYSTEM_FAIL_INIT_FUNC);
         }
 
         /* ライセンス確認 */
@@ -406,7 +409,7 @@ public class JMPLoader {
         if (result == true) {
             result = JMPCore.getSoundManager().openPlayer();
             if (result == false) {
-                JMPCore.getSystemManager().showSystemErrorMessage(SystemManager.ERROR_ID_UNKNOWN_FAIL_LOAD_PLAYER);
+                JMPCore.getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_UNKNOWN_FAIL_LOAD_PLAYER);
             }
         }
 
@@ -448,6 +451,9 @@ public class JMPLoader {
                 result = false;
             }
         }
+
+        // Notify有効化
+        JMPFlags.EnableNotifyFlag = true;
         return result;
     }
 
@@ -472,7 +478,7 @@ public class JMPLoader {
 
         boolean result = JMPCore.endFunc();
         if (result == false && JMPCore.isFinishedInitialize() == true) {
-            JMPCore.getSystemManager().showSystemErrorMessage(SystemManager.ERROR_ID_SYSTEM_FAIL_END_FUNC);
+            JMPCore.getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_SYSTEM_FAIL_END_FUNC);
         }
         return result;
     }

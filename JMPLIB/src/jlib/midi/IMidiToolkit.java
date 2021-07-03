@@ -1,10 +1,39 @@
 package jlib.midi;
 
+import java.util.List;
+
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.Receiver;
 
 public interface IMidiToolkit {
+
+    /**
+     * MIDIデバイスの一覧を取得
+     *
+     * @return
+     */
+    abstract List<MidiDevice> getMidiDevices();
+
+    /**
+     * MIDIデバイス情報一覧取得
+     *
+     * @param incTransmitter
+     * @param incReciever
+     * @return
+     */
+    abstract MidiDevice.Info[] getMidiDeviceInfo(boolean incTransmitter, boolean incReciever);
+
+    /**
+     * レシーバー名を探索する
+     *
+     * @param recvName
+     *            指定レシーバー
+     * @return レシーバー
+     */
+    abstract Receiver findReciver(String recvName);
 
     /**
      * NoteOnイベントか判定
