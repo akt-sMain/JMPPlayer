@@ -35,7 +35,7 @@ import jmp.util.JmpUtil;
 
 public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener {
 
-    private static final int MAX_STACK = 3000;
+    private static final int MAX_STACK = 300;
     private static final String COUNTER_STR_FORMAT = " Counter : %d";
     private static final String STACK_STR_FORMAT = "Stack:%d";
     private static final String TIME_STR_FORMAT = "%d[%s] ";
