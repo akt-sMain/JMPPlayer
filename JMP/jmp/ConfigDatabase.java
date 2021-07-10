@@ -3,9 +3,11 @@ package jmp;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jmp.util.JmpUtil;
 
@@ -19,13 +21,33 @@ public class ConfigDatabase {
     private String[] keyset = null;
 
     public ConfigDatabase(String[] keys) {
+        setup(keys);
+    }
+    public ConfigDatabase(Set<String> keys) {
+        setup(keySetToArray(keys));
+    }
+
+    private void setup(String[] keys) {
         database = new HashMap<String, String>();
         database.clear();
+
         keyset = keys;
 
         for (String key : keyset) {
             database.put(key, "");
         }
+    }
+
+    public static String[] keySetToArray(Set<String> keys) {
+        String[] aKey = new String[keys.size()];
+        int i = 0;
+        Iterator<String> ite = keys.iterator();
+        while (ite.hasNext()) {
+            String s = ite.next();
+            aKey[i] = s;
+            i++;
+        }
+        return aKey;
     }
 
     public static ConfigDatabase create(String path) {

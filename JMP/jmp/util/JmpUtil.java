@@ -12,11 +12,31 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import function.Platform;
+import function.Platform.SystemProperty;
 import function.Utility;
 import jmp.core.DataManager;
 
 public class JmpUtil {
     private JmpUtil() {
+    }
+
+    public static String getDesktopPathOrCurrent() {
+        String current = Platform.getCurrentPath();
+        return getDesktopPath(current);
+    }
+
+    public static String getDesktopPath(String defaultPath) {
+        String desktop = Platform.getProperty(SystemProperty.USER_HOME);
+        if (JmpUtil.isExsistFile(desktop) == false) {
+            return defaultPath;
+        }
+
+        String newDesktop = JmpUtil.pathCombin(desktop, "Desktop");
+        if (JmpUtil.isExsistFile(newDesktop) == false) {
+            return desktop;
+        }
+        return newDesktop;
     }
 
     public static String genExtensions2Str(String... ex) {

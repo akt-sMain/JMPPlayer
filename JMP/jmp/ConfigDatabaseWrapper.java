@@ -1,16 +1,13 @@
 package jmp;
 
-import function.Platform;
-import function.Platform.SystemProperty;
 import jmp.core.DataManager;
-import jmp.util.JmpUtil;
 
 public class ConfigDatabaseWrapper implements IJmpConfigDatabase {
 
     private ConfigDatabase database = null;
 
     public ConfigDatabaseWrapper() {
-        database = new ConfigDatabase(DataManager.CFG_KEYSET);
+        database = new ConfigDatabase(DataManager.CFG_INIT_TABLE.keySet());
         initialize();
     }
 
@@ -19,39 +16,13 @@ public class ConfigDatabaseWrapper implements IJmpConfigDatabase {
     }
 
     public void initialize() {
-        String current = Platform.getCurrentPath();
-        String desktop = getDesktopPath(current);
-
-        // 初期化
-        database.setConfigParam(DataManager.CFG_KEY_PLAYLIST, desktop);
-        database.setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
-        database.setConfigParam(DataManager.CFG_KEY_MIDIIN, "");
-        database.setConfigParam(DataManager.CFG_KEY_AUTOPLAY, "FALSE");
-        database.setConfigParam(DataManager.CFG_KEY_LOOPPLAY, "FALSE");
-        database.setConfigParam(DataManager.CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, "TRUE");
-        database.setConfigParam(DataManager.CFG_KEY_LANGUAGE, "0");
-        database.setConfigParam(DataManager.CFG_KEY_LOADED_FILE, "");
-        database.setConfigParam(DataManager.CFG_KEY_LYRIC_VIEW, "TRUE");
-        database.setConfigParam(DataManager.CFG_KEY_FFMPEG_PATH, "ffmpeg.exe");
-        database.setConfigParam(DataManager.CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, "FALSE");
-        database.setConfigParam(DataManager.CFG_KEY_USE_FFMPEG_PLAYER, "TRUE");
-        database.setConfigParam(DataManager.CFG_KEY_FFMPEG_INSTALLED, "TRUE");
-        database.setConfigParam(DataManager.CFG_KEY_SEND_MIDI_SYSTEMSETUP, "TRUE");
-        database.setConfigParam(DataManager.CFG_KEY_YOUTUBEDL_PATH, "youtube-dl.exe");
-        database.setConfigParam(DataManager.CFG_KEY_YOUTUBEDL_INSTALLED, "TRUE");
-    }
-
-    private String getDesktopPath(String defaultPath) {
-        String desktop = Platform.getProperty(SystemProperty.USER_HOME);
-        if (JmpUtil.isExsistFile(desktop) == false) {
-            return defaultPath;
+        for (String key : DataManager.CFG_INIT_TABLE.keySet()) {
+            String init = "";
+            if (DataManager.CFG_INIT_TABLE.containsKey(key) == true) {
+                init = new String(DataManager.CFG_INIT_TABLE.get(key));
+            }
+            database.setConfigParam(key, init);
         }
-
-        String newDesktop = JmpUtil.pathCombin(desktop, "Desktop");
-        if (JmpUtil.isExsistFile(newDesktop) == false) {
-            return desktop;
-        }
-        return newDesktop;
     }
 
     public ConfigDatabase getConfigDatabase() {

@@ -1,6 +1,7 @@
 package jmp.core;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,10 +30,33 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
     /** 初期化キー */
     public static final String CFG_KEY_INITIALIZE = "INITIALIZE";
 
-    // ↓KEY追加後、必ずCFG_KEYSETに追加すること!!
-    public static final String[] CFG_KEYSET = { CFG_KEY_PLAYLIST, CFG_KEY_MIDIOUT, CFG_KEY_MIDIIN, CFG_KEY_AUTOPLAY, CFG_KEY_LOOPPLAY,
-            CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, CFG_KEY_LANGUAGE, CFG_KEY_LOADED_FILE, CFG_KEY_LYRIC_VIEW, CFG_KEY_FFMPEG_PATH, CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE,
-            CFG_KEY_USE_FFMPEG_PLAYER, CFG_KEY_FFMPEG_INSTALLED, CFG_KEY_SEND_MIDI_SYSTEMSETUP, CFG_KEY_YOUTUBEDL_PATH, CFG_KEY_YOUTUBEDL_INSTALLED };
+    // 設定キーリスト
+    // ↓KEY追加後、必ず追加すること!!
+    public static final HashMap<String, String> CFG_INIT_TABLE = new HashMap<String, String>() {
+        {
+            // キー文字列, 初期値
+            put(CFG_KEY_PLAYLIST, JmpUtil.getDesktopPathOrCurrent());
+            put(CFG_KEY_MIDIOUT, "");
+            put(CFG_KEY_MIDIIN, "");
+            put(CFG_KEY_AUTOPLAY, "FALSE");
+            put(CFG_KEY_LOOPPLAY, "FALSE");
+            put(CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, "TRUE");
+            put(CFG_KEY_LANGUAGE, "0");
+            put(CFG_KEY_LOADED_FILE, "");
+            put(CFG_KEY_LYRIC_VIEW, "TRUE");
+            put(CFG_KEY_FFMPEG_PATH, "ffmpeg.exe");
+            put(CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, "FALSE");
+            put(CFG_KEY_USE_FFMPEG_PLAYER, "TRUE");
+            put(CFG_KEY_FFMPEG_INSTALLED, "TRUE");
+            put(CFG_KEY_SEND_MIDI_SYSTEMSETUP, "TRUE");
+            put(CFG_KEY_YOUTUBEDL_PATH, "youtube-dl.exe");
+            put(CFG_KEY_YOUTUBEDL_INSTALLED, "TRUE");
+        }
+    };
+
+    public static String[] createKeySet() {
+        return ConfigDatabase.keySetToArray(CFG_INIT_TABLE.keySet());
+    }
 
     /**
      * コンストラクタ
