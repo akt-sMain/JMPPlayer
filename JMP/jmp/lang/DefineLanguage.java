@@ -106,6 +106,7 @@ public class DefineLanguage {
         There_was_a_problem_preparing_the_music_player,//
         Failed_to_initialize_the_application,//
         The_application_could_not_be_terminated_successfully,//
+        Dont_choose_a_synthesizer,//
     }//
     static LangMap langMap = new LangMap() {
         {
@@ -207,6 +208,7 @@ public class DefineLanguage {
             put(LangID.There_was_a_problem_preparing_the_music_player, new LanguageWords("There was a problem preparing the music player.","音楽プレイヤーの準備に問題が発生しました。","准备音乐播放器时出现问题。"));
             put(LangID.Failed_to_initialize_the_application, new LanguageWords("Failed to initialize the application.","アプリケーションの初期化処理に失敗しました。","无法初始化应用程序。"));
             put(LangID.The_application_could_not_be_terminated_successfully, new LanguageWords("The application could not be terminated successfully.","アプリケーションを正常に終了できませんでした。","无法成功终止该应用程序。"));
+            put(LangID.Dont_choose_a_synthesizer, new LanguageWords("Don't choose a synthesizer","シンセサイザーを選択しない","不要选择合成器"));
         }
     };
 }

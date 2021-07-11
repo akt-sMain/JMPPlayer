@@ -80,4 +80,10 @@ public class JMPFlags {
     /** Notifyを各マネージャークラスに送信するか？ */
     public static boolean EnableNotifyFlag = true;
 
+    /** 拡張プレイリスト機能有効化 */
+    public static boolean PlayListExtention = false;
+
+    /** 次の曲再生検索フラグ */
+    public static boolean NextPlayFlag = false;
+
 }

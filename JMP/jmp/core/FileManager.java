@@ -6,10 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
 import jlib.core.IFileManager;
 import jmp.FileResult;
 import jmp.IFileResultCallback;
 import jmp.JMPFlags;
+import jmp.gui.ui.FileListTableModel;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.task.ICallbackFunction;
 import jmp.util.JmpUtil;
@@ -28,6 +32,18 @@ public class FileManager extends AbstractManager implements IFileManager {
 
     private List<IFileResultCallback> loadCallbacks = null;
 
+    /* ファイルリスト */
+    private static final String[] columnNames = new String[] { "", "Name" };
+    private DefaultTableModel fileListModel;
+    private JTable fileList;
+    private Map<String, File> midiFileMap = null;
+    public DefaultTableModel getFileListModel() {
+        return fileListModel;
+    }
+    public JTable getFileList() {
+        return fileList;
+    }
+
     FileManager(int pri) {
         super(pri, "file");
     }
@@ -35,6 +51,8 @@ public class FileManager extends AbstractManager implements IFileManager {
     @Override
     protected boolean initFunc() {
         loadCallbacks = new ArrayList<IFileResultCallback>();
+        fileListModel = new FileListTableModel(columnNames, 0);
+        fileList = new JTable(fileListModel);
         return super.initFunc();
     }
 
@@ -45,7 +63,7 @@ public class FileManager extends AbstractManager implements IFileManager {
      *            ディレクトリ
      * @return ファイルリスト(key:ファイル名, value:Fileオブジェクト)
      */
-    public Map<String, File> getFileList(File dir) {
+    public Map<String, File> getFileMap(File dir) {
         HashMap<String, File> result = new HashMap<String, File>();
         if (dir.isDirectory() == false) {
             return result;

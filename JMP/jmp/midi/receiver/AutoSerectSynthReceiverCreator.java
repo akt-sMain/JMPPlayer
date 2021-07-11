@@ -9,6 +9,8 @@ import jmp.core.JMPCore;
 
 class AutoSerectSynthReceiverCreator extends ReceiverCreator {
 
+    public static final String DEFAULT_RECVNAME = "Gervill";
+
     @Override
     public Receiver getReciever() {
 
@@ -17,7 +19,7 @@ class AutoSerectSynthReceiverCreator extends ReceiverCreator {
         // デフォルト
         int defIndex = -1;
         for (int i = 0; i < infosOfRecv.length; i++) {
-            if (infosOfRecv[i].getName().contains("Gervill") == true) {
+            if (infosOfRecv[i].getName().contains(DEFAULT_RECVNAME) == true) {
                 defIndex = i;
                 break;
             }
@@ -26,7 +28,7 @@ class AutoSerectSynthReceiverCreator extends ReceiverCreator {
         /* デフォルト使用 */
         Receiver reciever = null;
         if (defIndex != -1) {
-            // "Gervill"を優先的に使用
+            // "DEFAULT_RECVNAME"を優先的に使用
             try {
                 MidiDevice outDev;
                 outDev = MidiSystem.getMidiDevice(infosOfRecv[defIndex]);

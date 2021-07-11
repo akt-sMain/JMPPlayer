@@ -1,5 +1,6 @@
 package jmp.midi.receiver;
 
+import jmp.core.SoundManager;
 import jmp.core.SystemManager;
 
 public class ReceiverFactory {
@@ -12,6 +13,9 @@ public class ReceiverFactory {
         }
         else if (name.equals(SystemManager.JMSYNTH_LIB_NAME) == true) {
             return new BuiltinSynthReceiverCreator();
+        }
+        else if (name.equals(SoundManager.NULL_RECEIVER_NAME) == true) {
+            return new NoneReceiverCreator();
         }
         else {
             return new SelectedSynthReceiverCreator(name);

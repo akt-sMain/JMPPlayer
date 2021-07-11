@@ -187,6 +187,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         cRegKeys[COMMON_REGKEY_NO_FFMPEG_MAC] = "ffmpeg_env_mac";
         cRegKeys[COMMON_REGKEY_NO_FFMPEG_OTHER] = "ffmpeg_env_other";
         cRegKeys[COMMON_REGKEY_NO_LYRIC_CHARCODE] = "lyric_charcode";
+        cRegKeys[COMMON_REGKEY_NO_AUTOPLAY_FUNC] = "autoplay_func";
 
         // 共通レジスタのインスタンス生成・パラメータ登録
         cReg = new CommonRegister();
@@ -200,30 +201,54 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         cReg.add(cRegKeys[COMMON_REGKEY_NO_PLAYER_BACK_COLOR], Utility.convertHtmlColorToCode(DEFAULT_PLAYER_BACK_COLOR));
         cReg.add(cRegKeys[COMMON_REGKEY_NO_DEBUGMODE], JMPFlags.DebugMode ? "TRUE" : "FALSE");
         cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT], COMMON_REGKEY_CH_COLOR_FORMAT);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_1], "#00ff00", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_2], "#008000", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_3], "#808000", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_4], "#ffff00", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_5], "#000080", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_6], "#0000ff", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_7], "#008080", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_8], "#00ffff", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_9], "#ff0000", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_10], "#800000", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_11], "#800080", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_12], "#ff00ff", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_13], "#ffb6c1", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_14], "#ffa07a", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_15], "#20b2aa", true);
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_16], "#deb887", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_1], "#8ec21f", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_2], "#3dc21f", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_3], "#1fc253", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_4], "#1fc2a4", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_5], "#1f8ec2", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_6], "#1f3dc2", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_7], "#531fc2", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_8], "#a41fc2", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_9], "#ffc0cb", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_10], "#c21f3d", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_11], "#c2531f", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_12], "#c2a41f", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_13], "#3d00c2", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_14], "#ffff29", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_15], "#bbff29", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_16], "#f98608", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_1], "#00ff00", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_2], "#008000", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_3], "#808000", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_4], "#ffff00", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_5], "#000080", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_6], "#0000ff", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_7], "#008080", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_8], "#00ffff", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_9], "#ff0000", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_10], "#800000", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_11], "#800080", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_12], "#ff00ff", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_13], "#ffb6c1", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_14], "#ffa07a", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_15], "#20b2aa", true);
+//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_16], "#deb887", true);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_FFMPEG_OUTPUT], "output");
         cReg.add(cRegKeys[COMMON_REGKEY_NO_FFMPEG_WIN], "ffmpeg", true);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_FFMPEG_MAC], "/Usr/local/bin/ffmpeg", true);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_FFMPEG_OTHER], "/usr/local/bin/ffmpeg", true);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_LYRIC_CHARCODE], "SJIS", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_AUTOPLAY_FUNC], "DIR", true);
 
         // syscommon読み込み
         cReg.read(getSyscommonPath());
+
+        if (getCommonRegisterValue(COMMON_REGKEY_NO_AUTOPLAY_FUNC).equalsIgnoreCase("PLT")) {
+            JMPFlags.PlayListExtention = true;
+        }
+        else {
+            JMPFlags.PlayListExtention = false;
+        }
 
         // OSごとのFFmpeg設定
         if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
@@ -691,6 +716,14 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         super.notifyUpdateCommonRegister(key);
         if (key.equals(getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_USE_UTIL_TOOLKIT)) == true) {
             updateUtilToolkit();
+        }
+        if (key.equals(getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_AUTOPLAY_FUNC)) == true) {
+            if (getCommonRegisterValue(COMMON_REGKEY_NO_AUTOPLAY_FUNC).equalsIgnoreCase("PLT")) {
+                JMPFlags.PlayListExtention = true;
+            }
+            else {
+                JMPFlags.PlayListExtention = false;
+            }
         }
         if (key.equals(getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_DEBUGMODE)) == true) {
             JMPFlags.DebugMode = JmpUtil.toBoolean(getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_DEBUGMODE));

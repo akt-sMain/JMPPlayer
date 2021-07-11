@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
@@ -53,6 +54,9 @@ import jmp.util.JmpUtil;
  *
  */
 public class SoundManager extends AbstractManager implements ISoundManager {
+
+    /** NULLレシーバー */
+    public static final String NULL_RECEIVER_NAME = "NULL";
 
     public static final String PLAYLIST_FILE_EXTENTION = "plst";
     public static final String BACKUP_PLAYLIST_FILE_NAME = "backup." + PLAYLIST_FILE_EXTENTION;
@@ -319,28 +323,71 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     public boolean isValidPlayList() {
-        if ((playListModel.isEmpty() == true) || (playListModel.size() <= 0)) {
-            return false;
+        if (JMPFlags.PlayListExtention == true) {
+            if ((playListModel.isEmpty() == true) || (playListModel.size() <= 0)) {
+                return false;
+            }
+        }
+        else {
+            if (JMPCore.getFileManager().getFileListModel().getRowCount() <= 0) {
+                return false;
+            }
         }
         return true;
     }
 
     public boolean isValidPlayListIndex(int index) {
-        if (0 > index || index >= playListModel.size()) {
-            // インデックスが有効か判定
-            return false;
+        if (JMPFlags.PlayListExtention == true) {
+            if (0 > index || index >= playListModel.size()) {
+                // インデックスが有効か判定
+                return false;
+            }
+        }
+        else {
+            if (0 > index || index >= JMPCore.getFileManager().getFileListModel().getRowCount()) {
+                // インデックスが有効か判定
+                return false;
+            }
         }
         return true;
     }
 
+    public int getCurrentPlayListIndex() {
+        if (JMPFlags.PlayListExtention == true) {
+            return getPlayList().getSelectedIndex();
+        }
+        else {
+            return JMPCore.getFileManager().getFileList().getSelectedRow();
+        }
+    }
+
     public boolean isValidPlayListNext() {
-        int index = getPlayList().getSelectedIndex();
+        int index = getCurrentPlayListIndex();
         return isValidPlayListIndex(index + 1);
     }
 
     public boolean isValidPlayListPrev() {
-        int index = getPlayList().getSelectedIndex();
+        int index = getCurrentPlayListIndex();
         return isValidPlayListIndex(index - 1);
+    }
+
+    public boolean checkMusicFileExtention(File file) {
+        SystemManager system = JMPCore.getSystemManager();
+        String[] exts = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MIDI));
+        if (Utility.checkExtensions(file, exts) == true) {
+            return true;
+        }
+        exts = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_WAV));
+        if (Utility.checkExtensions(file, exts) == true) {
+            return true;
+        }
+        if (JMPCore.getSystemManager().isValidFFmpegWrapper() == true && JMPCore.getDataManager().isUseFFmpegPlayer() == true) {
+            exts = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSIC));
+            if (Utility.checkExtensions(file, exts) == true) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void playForList(int index) {
@@ -350,25 +397,49 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     public void playForList(int index, boolean isLoadOnly) {
         LanguageManager lm = JMPCore.getLanguageManager();
         IJmpMainWindow mainWindow = JMPCore.getWindowManager().getMainWindow();
-        if (isValidPlayListIndex(index) == false) {
-            mainWindow.setStatusText(lm.getLanguageStr(LangID.FILE_ERROR_6), false);
-            return;
-        }
 
-        String path = playListModel.getElementAt(index);
-        try {
-            IPlayer player = getCurrentPlayer();
-            player.stop();
-            if (isLoadOnly == false) {
-                // 自動再生フラグ
-                JMPFlags.LoadToPlayFlag = true;
+        if (JMPFlags.PlayListExtention == true) {
+            if (isValidPlayListIndex(index) == false) {
+                mainWindow.setStatusText(lm.getLanguageStr(LangID.FILE_ERROR_6), false);
+                return;
             }
-            JMPCore.getFileManager().loadFile(path);
-        }
-        catch (Exception e) {
-        }
 
-        getPlayList().setSelectedIndex(index);
+            String path = playListModel.getElementAt(index);
+            try {
+                IPlayer player = getCurrentPlayer();
+                player.stop();
+                if (isLoadOnly == false) {
+                    // 自動再生フラグ
+                    JMPFlags.LoadToPlayFlag = true;
+                }
+                JMPCore.getFileManager().loadFile(path);
+            }
+            catch (Exception e) {
+            }
+
+            getPlayList().setSelectedIndex(index);
+        }
+        else {
+
+            String name = JMPCore.getFileManager().getFileListModel().getValueAt(index, 1).toString();
+            File dir = new File(JMPCore.getDataManager().getPlayListPath());
+            Map<String, File> map = JMPCore.getFileManager().getFileMap(dir);
+            File file = map.get(name);
+
+            try {
+                IPlayer player = getCurrentPlayer();
+                player.stop();
+                if (isLoadOnly == false) {
+                    // 自動再生フラグ
+                    JMPFlags.LoadToPlayFlag = true;
+                }
+                JMPCore.getFileManager().loadFile(file);
+            }
+            catch (Exception e) {
+            }
+
+            JMPCore.getFileManager().getFileList().changeSelection(index, 1, false, false);
+        }
 
     }
 
@@ -377,7 +448,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     public void playCurrent(boolean isLoadOnly) {
-        int index = getPlayList().getSelectedIndex();
+        int index = getCurrentPlayListIndex();
         playForList(index, isLoadOnly);
     }
 
@@ -386,7 +457,52 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     public void playNext(boolean isLoadOnly) {
-        int index = getPlayList().getSelectedIndex();
+        DataManager dm = JMPCore.getDataManager();
+
+        int index = getCurrentPlayListIndex();
+        if (JMPFlags.PlayListExtention == false) {
+            if (JMPCore.getDataManager().isAutoPlay() == true) {
+                File dir = new File(dm.getPlayListPath());
+                Map<String, File> map = JMPCore.getFileManager().getFileMap(dir);
+
+                if (isValidPlayListIndex(index + 1) == false) {
+                    if (dm.isLoopPlay() == true) {
+                        index = 0;
+                    }
+                    else {
+                        JMPFlags.NextPlayFlag = false;
+                        return;
+                    }
+                }
+                String name = JMPCore.getFileManager().getFileListModel().getValueAt(index + 1, 1).toString();
+                File file = map.get(name);
+
+                int cnt = 0;
+                while(true) {
+                    if (file.isDirectory() == false && file.canRead() == true && checkMusicFileExtention(file) == true) {
+                        break;
+                    }
+                    index++;
+                    if (isValidPlayListIndex(index + 1) == false) {
+                        if (dm.isLoopPlay() == true) {
+                            index = 0;
+                        }
+                        else {
+                            JMPFlags.NextPlayFlag = false;
+                            return;
+                        }
+                    }
+                    name = JMPCore.getFileManager().getFileListModel().getValueAt(index + 1, 1).toString();
+                    file = map.get(name);
+
+                    cnt++;
+                    if (cnt >= JMPCore.getFileManager().getFileListModel().getRowCount()) {
+                        JMPFlags.NextPlayFlag = false;
+                        return;
+                    }
+                }
+            }
+        }
         playForList(index + 1, isLoadOnly);
     }
 
@@ -395,7 +511,48 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     public void playPrev(boolean isLoadOnly) {
-        int index = getPlayList().getSelectedIndex();
+        DataManager dm = JMPCore.getDataManager();
+        int index = getCurrentPlayListIndex();
+        if (JMPFlags.PlayListExtention == false) {
+            if (JMPCore.getDataManager().isAutoPlay() == true) {
+                File dir = new File(dm.getPlayListPath());
+                Map<String, File> map = JMPCore.getFileManager().getFileMap(dir);
+
+                if (isValidPlayListIndex(index - 1) == false) {
+                    if (dm.isLoopPlay() == true) {
+                        index = JMPCore.getFileManager().getFileListModel().getRowCount() - 1;
+                    }
+                    else {
+                        return;
+                    }
+                }
+                String name = JMPCore.getFileManager().getFileListModel().getValueAt(index - 1, 1).toString();
+                File file = map.get(name);
+
+                int cnt = 0;
+                while(true) {
+                    if (file.isDirectory() == false && file.canRead() == true && checkMusicFileExtention(file) == true) {
+                        break;
+                    }
+                    index--;
+                    if (isValidPlayListIndex(index - 1) == false) {
+                        if (dm.isLoopPlay() == true) {
+                            index = JMPCore.getFileManager().getFileListModel().getRowCount() - 1;
+                        }
+                        else {
+                            return;
+                        }
+                    }
+                    name = JMPCore.getFileManager().getFileListModel().getValueAt(index - 1, 1).toString();
+                    file = map.get(name);
+
+                    cnt++;
+                    if (cnt >= JMPCore.getFileManager().getFileListModel().getRowCount()) {
+                        return;
+                    }
+                }
+            }
+        }
         playForList(index - 1, isLoadOnly);
     }
 
@@ -553,6 +710,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         player.play();
 
         JMPCore.getWindowManager().processingAfterPlay();
+
+        JMPFlags.NextPlayFlag = true;
     }
 
     @Override
@@ -580,6 +739,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             midiMinitor.showWindow();
             JMPFlags.WindowAutomationPosFlag = true;
         }
+
+        JMPFlags.NextPlayFlag = false;
     }
 
     @Override

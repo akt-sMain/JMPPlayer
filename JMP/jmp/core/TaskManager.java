@@ -124,6 +124,10 @@ public class TaskManager extends AbstractManager {
                     return;
                 }
 
+                if (JMPFlags.NextPlayFlag == false) {
+                    return;
+                }
+
                 if (JMPFlags.NowLoadingFlag == false) {
                     if (tickPos >= tickLength) {
                         sm.playNextForList();

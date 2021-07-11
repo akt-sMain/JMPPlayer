@@ -46,7 +46,6 @@ import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
 import jmp.core.SystemManager;
 import jmp.gui.ui.DropFileCallbackHandler;
-import jmp.gui.ui.FileListTableModel;
 import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.JMPFrame;
 import jmp.lang.DefineLanguage.LangID;
@@ -65,7 +64,6 @@ public class MidiFileListDialog extends JMPFrame {
     private JList<String> playList;
 
     // 固有設定
-    private static final String[] columnNames = new String[] { "", "Name" };
     public static final int COLUMN_TYPE = 0;
     public static final int COLUMN_NAME = 1;
 
@@ -77,14 +75,9 @@ public class MidiFileListDialog extends JMPFrame {
     private static final int WINDOW_HEIGHT = 510;
 
     enum FileFilterType {
-        FOLDER,
-        MIDI,
-        WAV,
-        TXT,
-        MUSIC,
-        OTHER,
-        ALL,
+        FOLDER, MIDI, WAV, TXT, MUSIC, OTHER, ALL,
     }
+
     static Map<FileFilterType, Boolean> filterDatabase = new HashMap<FileFilterType, Boolean>() {
         {
             put(FileFilterType.FOLDER, true);
@@ -92,12 +85,13 @@ public class MidiFileListDialog extends JMPFrame {
             put(FileFilterType.WAV, true);
             put(FileFilterType.TXT, true);
             put(FileFilterType.MUSIC, true);
-            put(FileFilterType.OTHER, true);
+            put(FileFilterType.OTHER, false);
         }
     };
 
-    public class FileFilterPanel extends JPanel implements MouseListener{
+    public class FileFilterPanel extends JPanel implements MouseListener {
         public FileFilterType type = FileFilterType.OTHER;
+
         public FileFilterPanel(FileFilterType type) {
             super();
             this.type = type;
@@ -106,18 +100,18 @@ public class MidiFileListDialog extends JMPFrame {
 
         @Override
         public void paint(Graphics g) {
-            //super.paint(g);
+            // super.paint(g);
             if (type == FileFilterType.ALL) {
                 g.setColor(Color.BLUE);
                 g.fillRect(0, 0, FileFilterPanel.this.getWidth(), FileFilterPanel.this.getHeight());
                 g.setColor(Color.GREEN);
 
                 boolean isSelected = true;
-                for (FileFilterType k : filterDatabase.keySet()) {
-                    if (filterDatabase.get(k) == false) {
-                        isSelected = false;
-                    }
-                }
+                // for (FileFilterType k : filterDatabase.keySet()) {
+                // if (filterDatabase.get(k) == false) {
+                // isSelected = false;
+                // }
+                // }
 
                 if (isSelected == true) {
                     g.fillRect(5, 5, FileFilterPanel.this.getWidth() - 10, FileFilterPanel.this.getHeight() - 10);
@@ -157,31 +151,41 @@ public class MidiFileListDialog extends JMPFrame {
 
             }
         }
+
         @Override
         public void mouseClicked(MouseEvent e) {
         }
+
         @Override
         public void mousePressed(MouseEvent e) {
         }
+
         @Override
         public void mouseReleased(MouseEvent e) {
             if (type == FileFilterType.ALL) {
-                boolean isSelected = true;
-                for (FileFilterType k : filterDatabase.keySet()) {
-                    if (filterDatabase.get(k) == false) {
-                        isSelected = false;
-                    }
-                }
+//                boolean isSelected = true;
+//                for (FileFilterType k : filterDatabase.keySet()) {
+//                    if (filterDatabase.get(k) == false) {
+//                        isSelected = false;
+//                    }
+//                }
+//
+//                if (isSelected == true) {
+//                    for (FileFilterType k : filterDatabase.keySet()) {
+//                        filterDatabase.put(k, false);
+//                    }
+//                }
+//                else {
+//                    for (FileFilterType k : filterDatabase.keySet()) {
+//                        filterDatabase.put(k, true);
+//                    }
+//                }
 
-                if (isSelected == true) {
-                    for (FileFilterType k : filterDatabase.keySet()) {
-                        filterDatabase.put(k, false);
+                for (FileFilterType k : filterDatabase.keySet()) {
+                    if (k == FileFilterType.OTHER) {
+                        continue;
                     }
-                }
-                else {
-                    for (FileFilterType k : filterDatabase.keySet()) {
-                        filterDatabase.put(k, true);
-                    }
+                    filterDatabase.put(k, true);
                 }
             }
             else {
@@ -198,9 +202,11 @@ public class MidiFileListDialog extends JMPFrame {
             updateList();
             MidiFileListDialog.this.repaint();
         }
+
         @Override
         public void mouseEntered(MouseEvent e) {
         }
+
         @Override
         public void mouseExited(MouseEvent e) {
         }
@@ -236,8 +242,8 @@ public class MidiFileListDialog extends JMPFrame {
             }
         }));
 
-        model = new FileListTableModel(columnNames, 0);
-        midiFileList = new JTable(model);
+        model = JMPCore.getFileManager().getFileListModel();
+        midiFileList = JMPCore.getFileManager().getFileList();
         midiFileList.setFont(new Font("Yu Gothic UI Semibold", Font.PLAIN, 12));
         midiFileList.addMouseListener(new MouseAdapter() {
             @Override
@@ -499,6 +505,7 @@ public class MidiFileListDialog extends JMPFrame {
     }
 
     public void updateGUI() {
+
         if (JMPCore.getDataManager().isAutoPlay() == true) {
             setVisibleExtendGUI(true);
         }
@@ -508,6 +515,10 @@ public class MidiFileListDialog extends JMPFrame {
     }
 
     public void setVisibleExtendGUI(boolean visible) {
+        if (JMPFlags.PlayListExtention == false) {
+            visible = false;
+        }
+
         scrollPane_1.setVisible(visible);
         labelContinuePlayback.setVisible(visible);
         buttonClear.setVisible(visible);
@@ -630,10 +641,17 @@ public class MidiFileListDialog extends JMPFrame {
             }
         }
 
+        // 現在のフォーカスをバックアップ
+        int selectedRow = midiFileList.getSelectedRow();
+        String selectedRowName = "";
+        if (selectedRow >= 0) {
+            selectedRowName = model.getValueAt(selectedRow, 1).toString();
+        }
+
         setCurrentPathText(file.getPath());
         JMPCore.getDataManager().setPlayListPath(file.getPath());
 
-        midiFileMap = JMPCore.getFileManager().getFileList(file);
+        midiFileMap = JMPCore.getFileManager().getFileMap(file);
         removeAllRows();
 
         boolean validFFmpegPlayer = false;
@@ -808,6 +826,17 @@ public class MidiFileListDialog extends JMPFrame {
             }
 
             midiFileList.setRowHeight(ROW_SIZE);
+        }
+
+        // フォーカスを復元
+        if (selectedRow >= 0) {
+            for (int i = 0; i < model.getRowCount(); i++) {
+                String s = model.getValueAt(i, 1).toString();
+                if (s.equals(selectedRowName) == true) {
+                    midiFileList.changeSelection(i, 1, false, false);
+                    break;
+                }
+            }
         }
     }
 

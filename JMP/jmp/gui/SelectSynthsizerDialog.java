@@ -56,7 +56,11 @@ public class SelectSynthsizerDialog extends JMPDialog {
     private JLabel lblPortOfTrans;
 
     public static final String DEFAULT_ITEM_NAME = "Using Default";
-    public static final int NUMBER_OF_CUSTOM_SYNTH = 2;
+
+    public static final int INDEX_OF_AUTO_SELECTION = 0;
+    public static final int INDEX_OF_JMSYNTH = 1;
+    public static final int INDEX_OF_NONE = 2;
+    public static final int NUMBER_OF_CUSTOM_SYNTH = 3;
 
     private JLabel labelDevelop;
     private JCheckBox chckbxStartupShowDialog;
@@ -203,13 +207,18 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
                         MidiDevice.Info info = null;
 
-                        if (comboRecvMode.getSelectedIndex() == 0) {
+                        if (comboRecvMode.getSelectedIndex() == INDEX_OF_AUTO_SELECTION) {
                             vendor += "";
                             version += "";
                             description += "Automatically select an available synthesizer.";
                         }
-                        else if (comboRecvMode.getSelectedIndex() == 1) {
+                        else if (comboRecvMode.getSelectedIndex() == INDEX_OF_JMSYNTH) {
                             info = JMSynthMidiDevice.INFO;
+                        }
+                        else if (comboRecvMode.getSelectedIndex() == INDEX_OF_NONE) {
+                            vendor += "";
+                            version += "";
+                            description += "Don't use synthesizer.";
                         }
                         else {
                             info = infosOfRecv[devIndex];
@@ -342,12 +351,14 @@ public class SelectSynthsizerDialog extends JMPDialog {
         LanguageManager lm = JMPCore.getLanguageManager();
         String itemListNameDefault = "● " + lm.getLanguageStr(LangID.Automatic_selection);
         String itemListNameJMSynth = "● " + lm.getLanguageStr(LangID.Builtin_synthesizer);
+        String itemListNameNone = "● " + lm.getLanguageStr(LangID.Dont_choose_a_synthesizer);
 
         // レシーバー
         comboRecvMode.removeAllItems();
         infosOfRecv = JMPCore.getSoundManager().getMidiToolkit().getMidiDeviceInfo(false, true);
         comboRecvMode.addItem(itemListNameDefault);
         comboRecvMode.addItem(itemListNameJMSynth);
+        comboRecvMode.addItem(itemListNameNone);
         for (int i = 0; i < infosOfRecv.length; i++) {
             String line = createItemName(i, infosOfRecv[i].getName());
             comboRecvMode.addItem(line);
@@ -368,7 +379,10 @@ public class SelectSynthsizerDialog extends JMPDialog {
             if (saveInfoOfRecv.isEmpty() == false) {
                 comboRecvMode.setSelectedIndex(0);
                 if (saveInfoOfRecv.equals(SystemManager.JMSYNTH_LIB_NAME) == true) {
-                    comboRecvMode.setSelectedIndex(1);
+                    comboRecvMode.setSelectedIndex(INDEX_OF_JMSYNTH);
+                }
+                else if (saveInfoOfRecv.equals(SoundManager.NULL_RECEIVER_NAME) == true) {
+                    comboRecvMode.setSelectedIndex(INDEX_OF_NONE);
                 }
                 else {
                     for (int i = 0; i < infosOfRecv.length; i++) {
@@ -380,7 +394,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
                 }
             }
             else {
-                comboRecvMode.setSelectedIndex(0);
+                comboRecvMode.setSelectedIndex(INDEX_OF_AUTO_SELECTION);
             }
         }
 
@@ -412,13 +426,17 @@ public class SelectSynthsizerDialog extends JMPDialog {
         /* MIDI_OUT */
         String midiOutName = "";
         switch (comboRecvMode.getSelectedIndex()) {
-            case 0:
+            case INDEX_OF_AUTO_SELECTION:
                 // 自動選択
                 midiOutName = "";
                 break;
-            case 1:
+            case INDEX_OF_JMSYNTH:
                 // 内蔵シンセ
                 midiOutName = SystemManager.JMSYNTH_LIB_NAME;
+                break;
+            case INDEX_OF_NONE:
+                // NULLシンセ
+                midiOutName = SoundManager.NULL_RECEIVER_NAME;
                 break;
             default:
                 midiOutName = getOrgDeviceName(comboRecvMode.getSelectedItem().toString().trim());
