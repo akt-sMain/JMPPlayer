@@ -194,6 +194,8 @@ public class FileManager extends AbstractManager implements IFileManager {
 
         // ファイル名をバックアップ
         String tmpFileName = dm.getLoadedFile();
+        
+        dm.clearCachedFiles(f);
 
         /* ロード処理 */
         if (result.status == true) {
@@ -249,6 +251,9 @@ public class FileManager extends AbstractManager implements IFileManager {
         else {
             // 前のファイル名に戻す
             dm.setLoadedFile(tmpFileName);
+
+            // ファイル読み込み失敗時、連続再生を停止する
+            JMPFlags.NextPlayFlag = false;
         }
 
         // ロード中フラグ解除

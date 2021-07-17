@@ -51,12 +51,9 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
             put(CFG_KEY_SEND_MIDI_SYSTEMSETUP, "TRUE");
             put(CFG_KEY_YOUTUBEDL_PATH, "youtube-dl.exe");
             put(CFG_KEY_YOUTUBEDL_INSTALLED, "TRUE");
+            put(CFG_KEY_RANDOMPLAY, "FALSE");
         }
     };
-
-    public static String[] createKeySet() {
-        return ConfigDatabase.keySetToArray(CFG_INIT_TABLE.keySet());
-    }
 
     /**
      * コンストラクタ
@@ -96,10 +93,8 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
             return false;
         }
 
-        if (isFFmpegLeaveOutputFile() == false) {
-            deletedCachedFiles();
-            outputConvertedFile();
-        }
+        deletedCachedFiles();
+        outputConvertedFile();
         if (JMPLoader.UseConfigFile == true) {
             outputConfigFile();
         }
@@ -111,6 +106,23 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
     public void setConfigDatabase(ConfigDatabase db) {
         database = db;
+    }
+
+    public void clearCachedFiles(File eqnore) {
+        if (convertedFiles.size() > 0) {
+            for (int i = convertedFiles.size() - 1; i >= 0; i--) {
+                File f = convertedFiles.get(i);
+                if (eqnore.getName().equals(f.getName()) == true) {
+                    continue;
+                }
+
+                if (f.exists() == true) {
+                    if (JmpUtil.deleteFileDirectory(f) == true) {
+                    }
+                    JmpUtil.threadSleep(200);
+                }
+            }
+        }
     }
 
     private void deletedCachedFiles() {
@@ -266,7 +278,12 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
     @Override
     public String[] getKeySet() {
-        return database.getKeySet();
+        String[] keyset = database.getKeySet();
+        String[] arr = new String[keyset.length];
+        for (int i=0; i<arr.length; i++) {
+            arr[i] = keyset[i];
+        }
+        return arr;
     }
 
     public void addHistory(String path) {
@@ -291,6 +308,8 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
     }
 
     public void addConvertedFile(File file) {
-        convertedFiles.add(file);
+        if (convertedFiles.contains(file) == false) {
+            convertedFiles.add(file);
+        }
     }
 }

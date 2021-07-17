@@ -87,7 +87,7 @@ public class FFmpegPlayer extends Player {
         system.setFFmpegWrapperCallback(null);
 
         try {
-            system.executeConvert(in.getPath(), out.getPath());
+            system.executeConvert(in.getPath(), out.getPath(), true);
         }
         catch (Exception e1) {
             return false;

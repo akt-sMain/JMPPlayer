@@ -413,6 +413,14 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             }
         });
 
+        chckbxmntmRandomPLayCheckItem = new JCheckBoxMenuItem("ランダム再生");
+        chckbxmntmRandomPLayCheckItem.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                JMPCore.getDataManager().setRandomPlay(chckbxmntmRandomPLayCheckItem.isSelected());
+            }
+        });
+        playerMenu.add(chckbxmntmRandomPLayCheckItem);
+
         playlistItem = new JMenuItem("プレイリスト");
         playerMenu.add(playlistItem);
 
@@ -894,6 +902,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         alwayTopCheckBox.setSelected(false);
         autoPlayCheckBox.setSelected(dm.isAutoPlay());
         loopPlayCheckBoxMenuItem.setSelected(dm.isLoopPlay());
+        chckbxmntmRandomPLayCheckItem.setSelected(dm.isRandomPlay());
         chckbxmntmStartupmidisetup.setSelected(dm.isShowStartupDeviceSetup());
 
         int mntmVolumeSliderValue = (int) (JMPCore.getSoundManager().getLineVolume() * (float) mntmVolumeSlider.getMaximum());
@@ -1087,6 +1096,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
 
     private List<JMenuItem> pluginItemsCache = new ArrayList<JMenuItem>();
     private JMenuItem mntmYoutubeDL;
+    private JCheckBoxMenuItem chckbxmntmRandomPLayCheckItem;
 
     public void updatePluginMenu() {
         pluginMenu.removeAll();
@@ -1135,6 +1145,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         chckbxmntmStartupmidisetup.setSelected(dm.isShowStartupDeviceSetup());
         loopPlayCheckBoxMenuItem.setSelected(dm.isLoopPlay());
         autoPlayCheckBox.setSelected(dm.isAutoPlay());
+        chckbxmntmRandomPLayCheckItem.setSelected(dm.isRandomPlay());
         alwayTopCheckBox.setSelected(isAlwaysOnTop());
         chckbxmntmLyricView.setSelected(dm.isLyricView());
         chckbxmntmSendSystemSetupBeforePlayback.setSelected(dm.isSendMidiSystemSetup());
@@ -1332,6 +1343,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         playerMenu.setText(lm.getLanguageStr(LangID.Player));
         loopPlayCheckBoxMenuItem.setText(lm.getLanguageStr(LangID.Loop_playback));
         autoPlayCheckBox.setText(lm.getLanguageStr(LangID.Continuous_playback));
+        chckbxmntmRandomPLayCheckItem.setText(lm.getLanguageStr(LangID.Random_playback));
         playlistItem.setText(lm.getLanguageStr(LangID.Playlist));
         menuItemHistory.setText(lm.getLanguageStr(LangID.History));
         mntmPlayInit.setText(lm.getLanguageStr(LangID.Play_from_the_beginning));

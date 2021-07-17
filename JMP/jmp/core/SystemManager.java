@@ -662,7 +662,19 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     public void executeConvert(String inPath, String outPath) throws IOException {
         ffmpegWrapper.convert(inPath, outPath);
 
-        JMPCore.getDataManager().addConvertedFile(new File(outPath));
+        boolean deleteWav = true;
+        if (JMPCore.getDataManager().isFFmpegLeaveOutputFile() == true) {
+            deleteWav = false;
+        }
+        executeConvert(inPath, outPath, deleteWav);
+    }
+
+    public void executeConvert(String inPath, String outPath, boolean deleteWav) throws IOException {
+        ffmpegWrapper.convert(inPath, outPath);
+
+        if (deleteWav == true) {
+            JMPCore.getDataManager().addConvertedFile(new File(outPath));
+        }
     }
 
     public void setFFmpegWrapperCallback(IProcessingCallback cb) {

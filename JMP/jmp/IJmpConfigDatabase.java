@@ -134,4 +134,12 @@ public interface IJmpConfigDatabase {
     default void setYoutubeDlInstalled(boolean isEnableEnvironmentVariable) {
         setConfigParam(DataManager.CFG_KEY_YOUTUBEDL_INSTALLED, isEnableEnvironmentVariable ? "TRUE" : "FALSE");
     }
+
+    default boolean isRandomPlay() {
+        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_RANDOMPLAY));
+    }
+
+    default void setRandomPlay(boolean isRandomPlay) {
+        setConfigParam(DataManager.CFG_KEY_RANDOMPLAY, isRandomPlay ? "TRUE" : "FALSE");
+    }
 }
