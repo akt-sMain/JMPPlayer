@@ -1,10 +1,12 @@
 package jmp.core;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import jlib.core.IManager;
 import jlib.core.JMPCoreManagerRegister;
+import jmp.FileResult;
 import jmp.JMPFlags;
 
 public abstract class AbstractManager implements IManager {
@@ -91,7 +93,7 @@ public abstract class AbstractManager implements IManager {
         return result;
     }
 
-    private static List<AbstractManager> getCloneManagerList(boolean order) {
+    static List<AbstractManager> getCloneManagerList(boolean order) {
         // マネージャーリストをコピー
         List<AbstractManager> cloneMng = new ArrayList<AbstractManager>();
         for (AbstractManager am : managers) {
@@ -160,6 +162,9 @@ public abstract class AbstractManager implements IManager {
 
     public boolean isFinishedInitialize() {
         return initializeFlag;
+    }
+
+    protected void loadFileForCore(File file, FileResult result) {
     }
 
 }

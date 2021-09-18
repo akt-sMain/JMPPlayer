@@ -311,5 +311,6 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         if (convertedFiles.contains(file) == false) {
             convertedFiles.add(file);
         }
+        outputConvertedFile();
     }
 }

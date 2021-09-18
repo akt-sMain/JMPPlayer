@@ -11,7 +11,7 @@ import javax.swing.JMenuItem;
 
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
-import jlib.plugin.IPlugin;
+import jmp.plugin.PluginWrapper;
 
 public class WindowDatabase {
 
@@ -82,7 +82,7 @@ public class WindowDatabase {
     public void clearPluginMenuItem() {
         pluginMenuItems.clear();
     }
-    public void addPluginMenuItem(String name, IPlugin plugin) {
+    public void addPluginMenuItem(String name, PluginWrapper plugin) {
         for (int i = pluginMenuItems.size() - 1; i >= 0; i--) {
             JMenuItem item = pluginMenuItems.get(i);
             if (item != null) {

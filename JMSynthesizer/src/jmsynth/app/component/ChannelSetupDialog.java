@@ -270,6 +270,7 @@ public class ChannelSetupDialog extends JDialog {
      */
     public ChannelSetupDialog(JMSoftSynthesizer synth) {
         this.synth = synth;
+        setTitle("Channel setting");
         setBounds(100, 100, 450, 449);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -291,7 +292,14 @@ public class ChannelSetupDialog extends JDialog {
         comboBoxChannel = new JComboBox<String>();
         comboBoxChannel.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
+                if (testOn == true) {
+                    testSoundAction();
+                }
+
+                boolean bp = chckbxRealTime.isSelected();
+                chckbxRealTime.setSelected(false);
                 reset();
+                chckbxRealTime.setSelected(bp);
                 repaint();
             }
         });
@@ -402,7 +410,7 @@ public class ChannelSetupDialog extends JDialog {
             });
 
                     chckbxRealTime = new JCheckBox("Real time");
-                    chckbxRealTime.setSelected(true);
+                    chckbxRealTime.setSelected(false);
                     buttonPane.add(chckbxRealTime);
 
                     btnTest = new JButton("Test");
@@ -410,12 +418,11 @@ public class ChannelSetupDialog extends JDialog {
                     btnTest.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mousePressed(MouseEvent e) {
-                            testSoundOn();
                         }
 
                         @Override
                         public void mouseReleased(MouseEvent e) {
-                            testSoundOff();
+                            testSoundAction();
                         }
                     });
                     btnTest.addActionListener(new ActionListener() {
@@ -452,26 +459,31 @@ public class ChannelSetupDialog extends JDialog {
         lblMod.setVisible(true);
     }
 
-    int testNotesStep = 0;
-    static int[] testNotes = new int[] {60, 60, 65, 67, 69, 70, 72, 77, 76, 74, 74, 72, 71, 71, 74, 72, 69};
+    private final static int TEST_MIDINUM = 60;
+    private int cacheTestChannel = 0;
+    private boolean testOn = false;
+    private void testSoundAction() {
+        if (testOn == false) {
+            testSoundOn();
+        }
+        else {
+            testSoundOff();
+        }
+        testOn = !testOn;
+    }
     private void testSoundOn() {
-        int ch = getChannel();
-        synth.noteOn(ch, testNotes[testNotesStep], 100);
+        cacheTestChannel = getChannel();
+        synth.noteOn(cacheTestChannel, TEST_MIDINUM, 100);
     }
     private void testSoundOff() {
-        int ch = getChannel();
-        synth.noteOff(ch, testNotes[testNotesStep]);
-        testNotesStep++;
-        if (testNotesStep >= testNotes.length) {
-            testNotesStep = 0;
-        }
+        synth.noteOff(cacheTestChannel, TEST_MIDINUM);
     }
 
     @Override
     public void setVisible(boolean b) {
         if (isVisible() == false && b == true) {
+            chckbxRealTime.setSelected(false);
             reset();
-            testNotesStep = 0;
         }
         super.setVisible(b);
     }

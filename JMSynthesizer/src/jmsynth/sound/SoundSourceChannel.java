@@ -34,10 +34,14 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public static final int SAMPLE_SIZE = SAMPLE_16BITS ? 16 : 8;
     public static final int CHANNEL = 2;
     public static final int FRAME_SIZE = CHANNEL * (SAMPLE_SIZE / 8);
-    public static AudioFormat FORMAT = new AudioFormat(SAMPLE_RATE, SAMPLE_SIZE, CHANNEL, true, true); // 再生フォーマット
+    public static final boolean SIGNED = true;
+    public static final boolean BIG_ENDIAN = true;
 
     // 1フレームで再生するバイト数
     public static int BUF_SIZE = ((int) SAMPLE_RATE / 50 * FRAME_SIZE);
+
+    // 再生フォーマット
+    private AudioFormat audioFormat;
 
     // 出力ライン
     public SourceDataLine line = null;
@@ -105,6 +109,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     }
 
     private void init(int channel, WaveType oscType, int polyphony, Envelope envelope, Modulator modulator) {
+        this.audioFormat = new AudioFormat(SAMPLE_RATE, SAMPLE_SIZE, CHANNEL, SIGNED, BIG_ENDIAN);
+
         this.channel = channel;
 
         this.oscMap = makeOscillatorMap();
@@ -112,7 +118,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         setOscillator(oscType);
 
         // ライン情報取得
-        DataLine.Info info = new DataLine.Info(SourceDataLine.class, FORMAT, BUF_SIZE);
+        DataLine.Info info = new DataLine.Info(SourceDataLine.class, this.audioFormat, BUF_SIZE);
         try {
             // 出力ライン取得
             line = (SourceDataLine) AudioSystem.getLine(info);
@@ -433,14 +439,16 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public void setExpression(int ch, int exp) {
         for (int i = 0; i < activeTones.size(); i++) {
             Tone tone = activeTones.get(i);
-            if (tone == null)
+            if (tone == null) {
                 continue;
+            }
             tone.setExpression(exp);
         }
         for (int i = 0; i < tonePool.size(); i++) {
             Tone tone = tonePool.get(i);
-            if (tone == null)
+            if (tone == null) {
                 continue;
+            }
             tone.setExpression(exp);
         }
     }
@@ -471,7 +479,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                 continue;
             tone.reset();
         }
-        this.setVolume(1);
+        this.setVolume(1.0f);
     }
 
     public void allNoteOff(int ch) {

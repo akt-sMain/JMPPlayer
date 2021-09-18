@@ -95,6 +95,17 @@ public class TaskManager extends AbstractManager {
         }
     }
 
+    public boolean isRunnable() {
+        boolean r = false;
+        for (ITask task : taskMap.values()) {
+            if (task.isRunnable() == true) {
+                r = true;
+                break;
+            }
+        }
+        return r;
+    }
+
     public void addMidiEvent(MidiMessage message, long timeStamp, short senderType) {
         TaskOfMidiEvent task = (TaskOfMidiEvent)taskMap.get(TaskID.MIDI);
         task.add(message, timeStamp, senderType);

@@ -6,7 +6,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.Receiver;
+import javax.sound.midi.MidiUnavailableException;
 
 public interface IMidiToolkit {
 
@@ -27,13 +27,22 @@ public interface IMidiToolkit {
     abstract MidiDevice.Info[] getMidiDeviceInfo(boolean incTransmitter, boolean incReciever);
 
     /**
-     * レシーバー名を探索する
+     * MIDIデバイス取得
      *
-     * @param recvName
-     *            指定レシーバー
-     * @return レシーバー
+     * @param info
+     * @throws MidiUnavailableException
+     * @return
      */
-    abstract Receiver findReciver(String recvName);
+    abstract MidiDevice getMidiDevice(MidiDevice.Info info) throws MidiUnavailableException;
+
+    /**
+     * MIDIデバイス取得
+     *
+     * @param name
+     * @return
+     * @throws MidiUnavailableException
+     */
+    abstract MidiDevice getMidiDevice(String name) throws MidiUnavailableException;
 
     /**
      * NoteOnイベントか判定

@@ -6,11 +6,11 @@ import java.util.List;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
 import jlib.midi.IMidiToolkit;
@@ -72,30 +72,27 @@ public class DefaultMidiToolkit implements IMidiToolkit {
     }
 
     @Override
-    public Receiver findReciver(String recvName) {
-        Receiver receiver = null;
+    public MidiDevice getMidiDevice(Info info) throws MidiUnavailableException {
+        return MidiSystem.getMidiDevice(info);
+    }
 
-        try {
-            MidiDevice.Info[] devices = MidiSystem.getMidiDeviceInfo();
-            for (MidiDevice.Info info : devices) {
-                if (info.getName().startsWith(recvName) == false) {
-                    // ネームチェック
-                    continue;
-                }
-
-                MidiDevice dv = MidiSystem.getMidiDevice(info);
-                if (dv.getMaxReceivers() > 0) {
-                    dv.open();
-                    receiver = dv.getReceiver();
-                    break;
-                }
+    @Override
+    public MidiDevice getMidiDevice(String name) throws MidiUnavailableException {
+        MidiDevice dev = null;
+        MidiDevice.Info recInfo = null;
+        for (MidiDevice.Info info : getMidiDeviceInfo(true, true)) {
+            if (info.getName().equals(name) == true) {
+                recInfo = info;
+                break;
             }
         }
-        catch (MidiUnavailableException e) {
-            receiver = null;
+        if (recInfo != null) {
+            dev = MidiSystem.getMidiDevice(recInfo);
         }
-
-        return receiver;
+        else {
+            throw new MidiUnavailableException();
+        }
+        return dev;
     }
 
     @Override

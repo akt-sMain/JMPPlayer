@@ -31,7 +31,7 @@ class AutoSerectSynthReceiverCreator extends ReceiverCreator {
             // "DEFAULT_RECVNAME"を優先的に使用
             try {
                 MidiDevice outDev;
-                outDev = MidiSystem.getMidiDevice(infosOfRecv[defIndex]);
+                outDev = JMPCore.getSoundManager().getMidiToolkit().getMidiDevice(infosOfRecv[defIndex]);
                 if (outDev.isOpen() == false) {
                     outDev.open();
                 }

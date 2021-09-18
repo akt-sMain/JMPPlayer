@@ -307,9 +307,18 @@ public class MidiPlayer extends Player {
         return result;
     }
 
+    private static final String NO_CACHE = "NO_CACHE";
+    private String cachedMidiOutName = NO_CACHE;
+    private String cachedMidiInName = NO_CACHE;
+
     private static MOReceiver s_MOReceiver = null;
 
     public void updateMidiOut(String name) {
+        if (cachedMidiOutName.equals(NO_CACHE) == false && cachedMidiOutName.equals(name) == true) {
+            // 同名は処理しない
+            return;
+        }
+
         Receiver receiver = null;
         try {
             /* Receiverインスタンス生成 */
@@ -333,9 +342,12 @@ public class MidiPlayer extends Player {
             if (s_MIReceiver != null) {
                 s_MIReceiver.changeAbsReceiver(currentReceiver);
             }
+
+            cachedMidiOutName = new String(name);
         }
         catch (MidiUnavailableException e) {
             JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
+            cachedMidiOutName = NO_CACHE;
         }
     }
 
@@ -343,6 +355,11 @@ public class MidiPlayer extends Player {
     private static MIReceiver s_MIReceiver = null;
 
     public void updateMidiIn(String name) {
+        if (cachedMidiInName.equals(NO_CACHE) == false && cachedMidiInName.equals(name) == true) {
+            // 同名は処理しない
+            return;
+        }
+
         Transmitter transmitter = null;
         try {
             /* Transmitterインスタンス生成 */
@@ -370,9 +387,12 @@ public class MidiPlayer extends Player {
                 s_MIReceiver.changeAbsReceiver(currentReceiver);
             }
             currentTransmitter.setReceiver(s_MIReceiver);
+
+            cachedMidiInName = new String(name);
         }
         catch (MidiUnavailableException e) {
             JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIIN, "");
+            cachedMidiInName = NO_CACHE;
         }
     }
 

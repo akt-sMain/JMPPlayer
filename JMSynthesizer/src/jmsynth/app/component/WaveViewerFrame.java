@@ -53,6 +53,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
      * @wbp.parser.constructor
      */
     public WaveViewerFrame(JMSoftSynthesizer synth) {
+        setTitle("Synthesizer setting");
         setResizable(false);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setBounds(100, 100, 853, 662);

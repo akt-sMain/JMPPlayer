@@ -12,7 +12,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import function.Utility;
-import jlib.plugin.IPlugin;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
 import jmp.core.SoundManager;
@@ -76,7 +75,7 @@ public class PluginManagerDialog extends JMPFrame {
                 PluginManager pm = JMPCore.getPluginManager();
                 for (int i = 0; i < selected.length; i++) {
                     String name = model.getValueAt(selected[i], 0).toString();
-                    IPlugin plg = pm.getPlugin(name);
+                    PluginWrapper plg = pm.getPluginWrapper(name);
                     if (plg != null) {
                         if (plg.isEnable() == true) {
                             plg.open();
@@ -142,7 +141,7 @@ public class PluginManagerDialog extends JMPFrame {
                 PluginManager pm = JMPCore.getPluginManager();
                 for (int i = 0; i < selected.length; i++) {
                     String name = model.getValueAt(selected[i], 0).toString();
-                    IPlugin plg = pm.getPlugin(name);
+                    PluginWrapper plg = pm.getPluginWrapper(name);
                     if (plg != null) {
                         plg.close();
                     }
@@ -185,7 +184,8 @@ public class PluginManagerDialog extends JMPFrame {
         }
         for (int i = model.getRowCount() - 1; i >= 0; i--) {
             String name = model.getValueAt(i, 0).toString();
-            String visibleState = pm.getPlugin(name).isOpen() == true ? "Open" : "Close";
+            PluginWrapper plg = pm.getPluginWrapper(name);
+            String visibleState = plg.isOpen() == true ? "Open" : "Close";
             String pluginState = PluginWrapper.toString(pm.getPluginState(name));
             if (pm.getPluginState(name) == PluginState.INVALID) {
                 visibleState = "----";

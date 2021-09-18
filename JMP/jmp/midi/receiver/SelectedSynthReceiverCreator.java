@@ -1,7 +1,6 @@
 package jmp.midi.receiver;
 
 import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 
@@ -17,23 +16,16 @@ class SelectedSynthReceiverCreator extends ReceiverCreator {
 
     @Override
     public Receiver getReciever() throws MidiUnavailableException {
+        MidiDevice dev = null;
         Receiver rec = null;
-        MidiDevice.Info recInfo = null;
-        MidiDevice inDev = null;
-        for (MidiDevice.Info info : JMPCore.getSoundManager().getMidiToolkit().getMidiDeviceInfo(false, true)) {
-            if (info.getName().equals(selected) == true) {
-                recInfo = info;
-                break;
+        try {
+            dev = JMPCore.getSoundManager().getMidiToolkit().getMidiDevice(selected);
+            if (dev.isOpen() == false) {
+                dev.open();
             }
+            rec = dev.getReceiver();
         }
-        if (recInfo != null) {
-            inDev = MidiSystem.getMidiDevice(recInfo);
-            if (inDev.isOpen() == false) {
-                inDev.open();
-            }
-            rec = inDev.getReceiver();
-        }
-        else {
+        catch (Exception e) {
             AutoSerectSynthReceiverCreator cre = new AutoSerectSynthReceiverCreator();
             rec = cre.getReciever();
         }

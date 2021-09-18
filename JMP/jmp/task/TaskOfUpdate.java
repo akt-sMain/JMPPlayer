@@ -1,13 +1,13 @@
 package jmp.task;
 
 import jlib.gui.IJmpMainWindow;
-import jlib.plugin.IPlugin;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
 import jmp.core.WindowManager;
 import jmp.gui.JmpQuickLaunch;
+import jmp.plugin.PluginWrapper;
 
 /**
  * 更新タスク
@@ -97,9 +97,9 @@ public class TaskOfUpdate extends TaskOfBase {
 
         // スタンドアロンプラグインが閉じられているか確認
         if (JMPCore.isEnableStandAlonePlugin() == true) {
-            IPlugin plg = JMPCore.getStandAlonePlugin();
-            if (plg != null) {
-                if (plg.isOpen() == false) {
+            PluginWrapper pw = JMPCore.getStandAlonePluginWrapper();
+            if (pw != null) {
+                if (pw.isOpen() == false) {
                     JMPLoader.exit();
                 }
             }

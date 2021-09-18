@@ -14,6 +14,7 @@ import function.Utility;
 import jlib.plugin.IPlugin;
 import jlib.plugin.ISupportExtensionConstraints;
 import jmp.ConfigDatabase;
+import jmp.FileResult;
 import jmp.JMPFlags;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.plugin.JMPPluginLoader;
@@ -35,29 +36,6 @@ public class PluginManager extends AbstractManager {
     // ---------------------------------------------
     // 定数
     // ---------------------------------------------
-    private final static IPlugin NULL_PLG = new IPlugin() {
-
-        @Override
-        public void open() {
-        }
-
-        @Override
-        public void initialize() {
-        }
-
-        @Override
-        public void exit() {
-        }
-
-        @Override
-        public void close() {
-        }
-
-        @Override
-        public boolean isEnable() {
-            return false;
-        }
-    };
 
     // ---------------------------------------------
     // セットアップ用の定義
@@ -110,7 +88,7 @@ public class PluginManager extends AbstractManager {
         super.initFunc();
 
         // プラグイン状態の復帰
-        plginStateMem = ConfigDatabase.create(Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), PLUGIN_STATE_FILE_NAME));
+        loadPluginState();
 
         return true;
     }
@@ -126,6 +104,11 @@ public class PluginManager extends AbstractManager {
         return true;
     }
 
+    private void loadPluginState() {
+        String path = Utility.pathCombin(JMPCore.getSystemManager().getPluginsDirPath(), PLUGIN_STATE_FILE_NAME);
+        plginStateMem = ConfigDatabase.create(path);
+    }
+
     private void savePluginState() {
         // プラグイン状態の保存
         int j = 0;
@@ -139,21 +122,22 @@ public class PluginManager extends AbstractManager {
             String state = PluginWrapper.toString(observers.getPluginWrapper(plgKey).getState());
             plginStateMem.setConfigParam(plgKey, state);
         }
-        plginStateMem.output(Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), PLUGIN_STATE_FILE_NAME));
+        plginStateMem.output(Utility.pathCombin(JMPCore.getSystemManager().getPluginsDirPath(), PLUGIN_STATE_FILE_NAME));
     }
 
-    public void startupPluginInstance() {
+    public void startupPluginInstance(IPlugin stdPlugin) {
         if (JMPFlags.NonPluginLoadFlag == true) {
             return;
         }
 
         // プラグイン読み込み
-        if (JMPCore.isEnableStandAlonePlugin() == true) {
+        if (stdPlugin != null) {
             // スタンドアロンプラグインを登録
-            String name = JMPCore.getStandAlonePlugin().getClass().getName().trim();
-            if (addPlugin(name, JMPCore.getStandAlonePlugin()) == false) {
+            String name = stdPlugin.getClass().getName().trim();
+            if (addPlugin(name, stdPlugin) == false) {
                 // return false;
             }
+            JMPCore.setStandAlonePluginWrapper(getPluginWrapper(name));
         }
         else {
             // 起動時に削除予定のプラグインを削除する
@@ -514,7 +498,7 @@ public class PluginManager extends AbstractManager {
                     // プラグインを抽出
                     String name = importPlugin(pluginFile);
                     if (name != null) {
-                        IPlugin plugin = getPlugin(name);
+                        PluginWrapper plugin = getPluginWrapper(name);
                         plugin.initialize();
                     }
                 }
@@ -558,7 +542,7 @@ public class PluginManager extends AbstractManager {
 
         // プラグインをインポート
         String name = importPlugin(jms.getJar());
-        return getPlugin(name);
+        return getPluginWrapper(name);
     }
 
     private void readingPlugin() {
@@ -593,7 +577,7 @@ public class PluginManager extends AbstractManager {
             }
             else {
                 String name = JmpUtil.getFileNameNotExtension(jms.getJar());
-                addPlugin(name, NULL_PLG, true);
+                addInvalidPlugin(name, true);
             }
         }
 
@@ -651,8 +635,8 @@ public class PluginManager extends AbstractManager {
             return;
         }
 
-        pw.setPlugin(newPlugin);
-        pw.getPlugin().initialize();
+        pw.setInterface(newPlugin);
+        pw.initialize();
         pw.setState(PluginState.CONNECTED);
 
         if (JMPCore.getWindowManager().isFinishedInitialize() == true) {
@@ -667,9 +651,9 @@ public class PluginManager extends AbstractManager {
             return;
         }
 
-        pw.getPlugin().close();
-        pw.getPlugin().exit();
-        pw.setPlugin(NULL_PLG);
+        pw.close();
+        pw.exit();
+        pw.toInvalidPlugin();
         pw.setState(PluginState.INVALID);
 
         if (JMPCore.getWindowManager().isFinishedInitialize() == true) {
@@ -747,6 +731,10 @@ public class PluginManager extends AbstractManager {
         return addPlugin(name, plugin, false);
     }
 
+    public boolean addInvalidPlugin(String name, boolean isOverwrite) {
+        return observers.addPlugin(name, null, isOverwrite);
+    }
+
     public boolean addPlugin(String name, IPlugin plugin, boolean isOverwrite) {
         return observers.addPlugin(name, plugin, isOverwrite);
     }
@@ -759,8 +747,8 @@ public class PluginManager extends AbstractManager {
         return observers.getPluginsNameSet();
     }
 
-    public IPlugin getPlugin(String name) {
-        return observers.getPlugin(name);
+    public PluginWrapper getPluginWrapper(String name) {
+        return observers.getPluginWrapper(name);
     }
 
     public void setPluginState(String name, PluginState state) {
@@ -812,29 +800,17 @@ public class PluginManager extends AbstractManager {
         observers.catchMidiEvent(packet.message, packet.timeStamp, packet.senderType);
     }
 
-    public boolean isSupportExtension(File file, IPlugin plugin) {
-        boolean ret = false;
-        if (plugin instanceof ISupportExtensionConstraints) {
-            ISupportExtensionConstraints sec = (ISupportExtensionConstraints) plugin;
-            String[] allowsEx = sec.allowedExtensionsArray();
-            for (String ae : allowsEx) {
-                if (Utility.checkExtension(file, ae) == true) {
-                    ret = true;
-                    break;
-                }
-            }
-        }
-        else {
-            ret = true;
-        }
-        return ret;
-    }
+    @Override
+    protected void loadFileForCore(File file, FileResult result) {
+        super.loadFileForCore(file, result);
 
-    void loadFile(File file) {
-        for (PluginWrapper pm : observers.getPlugins()) {
-            if (isSupportExtension(file, pm.getPlugin()) == true) {
-                pm.getPlugin().loadFile(file);
-            }
+        try {
+            observers.loadFile(file);
+        }
+        catch (Exception e) {
+            LanguageManager lm = JMPCore.getLanguageManager();
+            result.status = false;
+            result.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_5) + "(" + lm.getLanguageStr(LangID.Plugin_error) + ")";
         }
     }
 
@@ -849,9 +825,8 @@ public class PluginManager extends AbstractManager {
         }
 
         for (PluginWrapper pm : observers.getPlugins()) {
-            IPlugin plugin = pm.getPlugin();
-            if (plugin instanceof ISupportExtensionConstraints) {
-                ISupportExtensionConstraints sec = (ISupportExtensionConstraints) plugin;
+            ISupportExtensionConstraints sec = pm.getSupportExtensionConstraints();
+            if (sec != null) {
                 String[] allowsEx = sec.allowedExtensionsArray();
                 boolean ret = false;
                 for (String ae : allowsEx) {
@@ -862,8 +837,8 @@ public class PluginManager extends AbstractManager {
                 }
 
                 if (ret == false) {
-                    if (plugin.isOpen() == true) {
-                        plugin.close();
+                    if (pm.isOpen() == true) {
+                        pm.close();
                     }
                 }
             }
@@ -880,7 +855,7 @@ public class PluginManager extends AbstractManager {
     protected void notifyUpdateConfig(String key) {
         super.notifyUpdateConfig(key);
         if (key.equals(DataManager.CFG_KEY_INITIALIZE) == true) {
-            // 初期化はすべてのキーは通知する
+            // 初期化はすべてのキーを通知する
             DataManager dm = JMPCore.getDataManager();
             for (String k : dm.getKeySet()) {
                 observers.notifyUpdateConfig(k);

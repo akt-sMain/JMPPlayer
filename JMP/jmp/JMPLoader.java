@@ -358,9 +358,6 @@ public class JMPLoader {
         // Sequenceタスクが準備出来るまではNotifyを破棄する必要がある
         JMPFlags.EnableNotifyFlag = false;
 
-        // スタンドアロンプラグイン設定
-        JMPCore.setStandAlonePlugin(plugin);
-
         // システムパス設定
         JMPCore.getSystemManager().makeSystemPath();
 
@@ -379,16 +376,9 @@ public class JMPLoader {
             JMPCore.getWindowManager().updateBackColor();
             JMPCore.getWindowManager().updateDebugMenu();
             JMPCore.getWindowManager().updateLanguage();
-        }
-        else {
-            // 立ち上げ失敗
-            JMPCore.getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_SYSTEM_FAIL_INIT_FUNC);
-        }
 
-        /* ライセンス確認 */
-        if (JMPFlags.LibraryMode == false) {
-            if (result == true) {
-
+            /* ライセンス確認 */
+            if (JMPFlags.LibraryMode == false) {
                 /* ライセンス確認 */
                 if (JMPFlags.ActivateFlag == false) {
                     JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LANGUAGE).showWindow();
@@ -403,6 +393,10 @@ public class JMPLoader {
                     result = false;
                 }
             }
+        }
+        else {
+            // 立ち上げ失敗
+            JMPCore.getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_SYSTEM_FAIL_INIT_FUNC);
         }
 
         /* プレイヤーロード */
@@ -426,7 +420,7 @@ public class JMPLoader {
                 /* サウンドデバイスが用意出来たら次の設定へ */
 
                 // プラグイン準備
-                JMPCore.getPluginManager().startupPluginInstance();
+                JMPCore.getPluginManager().startupPluginInstance(plugin);
 
                 // Window初期処理
                 JMPCore.getWindowManager().startupWindow();
@@ -440,7 +434,7 @@ public class JMPLoader {
                 }
                 else {
                     // スタンドアロンプラグイン起動
-                    JMPCore.getStandAlonePlugin().open();
+                    JMPCore.getStandAlonePluginWrapper().open();
                 }
 
                 // タスク開始
@@ -463,14 +457,19 @@ public class JMPLoader {
      * @return
      */
     public static boolean exitLibrary() {
-        exit();
 
-        // タスクジョイン
-        try {
-            TaskManager taskManager = JMPCore.getTaskManager();
-            taskManager.join();
-        }
-        catch (InterruptedException e) {
+        // 生きているタスクが無いか確認、あったら終了させる
+        TaskManager taskManager = JMPCore.getTaskManager();
+        if (taskManager.isRunnable() == true) {
+            exitFlag = false;
+            exit();
+
+            // タスクジョイン
+            try {
+                taskManager.join();
+            }
+            catch (InterruptedException e) {
+            }
         }
 
         // Windowを閉じる

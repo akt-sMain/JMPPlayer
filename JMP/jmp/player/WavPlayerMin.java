@@ -9,27 +9,35 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import jlib.player.Player;
+import jmp.util.JmpUtil;
 
 public class WavPlayerMin extends Player {
 
-    public class PlayThread extends Thread {
+    private PlayThread thread = null;
+    private long frameOffset = 0;
 
+    public class PlayThread extends Thread {
         static final int STOP = 0;
         static final int PLAY = 1;
-        static final int EXIT = 2;
+        static final int RESET = 2;
+        static final int EXIT = 3;
 
         public int state = STOP;
-        private AudioInputStream ais;
-        private AudioFormat af;
-        private DataLine.Info dataLine;
-        private SourceDataLine sourceDataLine;
 
-        public PlayThread(AudioInputStream ais) throws LineUnavailableException, IOException {
+        public File file;
+        public AudioInputStream ais;
+        public AudioFormat af;
+        public DataLine.Info dataLine;
+        public SourceDataLine sourceDataLine;
+
+        public PlayThread(File file) throws LineUnavailableException, IOException, UnsupportedAudioFileException {
             super();
 
-            this.ais = ais;
+            this.file = file;
+            this.ais = AudioSystem.getAudioInputStream(file);
             af = ais.getFormat();
             dataLine = new DataLine.Info(SourceDataLine.class, af);
             sourceDataLine = (SourceDataLine)AudioSystem.getLine(dataLine);
@@ -45,6 +53,7 @@ public class WavPlayerMin extends Player {
             //ais.skip((int)af.getSampleRate() * af.getSampleSizeInBits() * af.getChannels() / 8 * 3);
             try {
                 ais.skip(0);
+                frameOffset = 0;
 
                 boolean runnableFlag = true;
                 int size = -1;
@@ -52,9 +61,27 @@ public class WavPlayerMin extends Player {
                 while (true) {
                     switch (state) {
                         case STOP:
+                            JmpUtil.threadSleep(10);
                             continue;
                         case PLAY:
                             break;
+                        case RESET:
+                            sourceDataLine.drain();
+                            sourceDataLine.stop();
+                            sourceDataLine.close();
+                            sourceDataLine = null;
+
+                            this.ais = AudioSystem.getAudioInputStream(file);
+                            dataLine = new DataLine.Info(SourceDataLine.class, af);
+                            sourceDataLine = (SourceDataLine)AudioSystem.getLine(dataLine);
+                            thread.ais.skip(skipValue);
+
+                            sourceDataLine.open();
+                            sourceDataLine.start();
+
+                            data = new byte[sourceDataLine.getBufferSize()];
+                            state = backupState;
+                            continue;
                         case EXIT:
                             runnableFlag = false;
                             break;
@@ -77,8 +104,13 @@ public class WavPlayerMin extends Player {
                 sourceDataLine.stop();
                 sourceDataLine.close();
             }
-            catch (IOException e) {
+            catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
             }
+        }
+
+        public void forcedStop() {
+            state = STOP;
+            sourceDataLine.flush();
         }
     }
 
@@ -88,85 +120,108 @@ public class WavPlayerMin extends Player {
 
     @Override
     public void play() {
-        // TODO 自動生成されたメソッド・スタブ
-
+        thread.state = PlayThread.PLAY;
+        thread.sourceDataLine.start();
     }
 
     @Override
     public void stop() {
-        // TODO 自動生成されたメソッド・スタブ
-
+        thread.state = PlayThread.STOP;
+        thread.sourceDataLine.stop();
     }
 
     @Override
     public boolean isRunnable() {
-        // TODO 自動生成されたメソッド・スタブ
+        if (thread.state == PlayThread.PLAY) {
+            return true;
+        }
         return false;
     }
 
+    private static int backupState = 0;
+    private static long skipValue = 0;
+
     @Override
     public void setPosition(long pos) {
-        // TODO 自動生成されたメソッド・スタブ
+        if (isValid() == false) {
+            return;
+        }
+        backupState = thread.state;
+        thread.state = PlayThread.RESET;
 
+        int rate = ((int)thread.af.getSampleRate() * thread.af.getSampleSizeInBits() * thread.af.getChannels() / 8);
+        int sec = (int)(pos / thread.af.getFrameRate());
+        skipValue = rate * sec;
+        frameOffset = pos;
     }
 
     @Override
     public long getPosition() {
-        // TODO 自動生成されたメソッド・スタブ
-        return 0;
+        if (isValid() == false) {
+            return 0;
+        }
+        return thread.sourceDataLine.getFramePosition() + frameOffset;
     }
 
     @Override
     public long getLength() {
-        // TODO 自動生成されたメソッド・スタブ
-        return 0;
+        if (isValid() == false) {
+            return 0;
+        }
+        return thread.ais.getFrameLength();
     }
 
     @Override
     public boolean isValid() {
-        // TODO 自動生成されたメソッド・スタブ
-        return false;
+        if (thread == null) {
+            return false;
+        }
+        if (thread.ais == null || thread.sourceDataLine == null || thread.af == null) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public int getPositionSecond() {
-        // TODO 自動生成されたメソッド・スタブ
-        return 0;
+        if (isValid() == false) {
+            return 0;
+        }
+        return (int) (getPosition() / thread.af.getFrameRate());
     }
 
     @Override
     public int getLengthSecond() {
-        // TODO 自動生成されたメソッド・スタブ
-        return 0;
+        if (isValid() == false) {
+            return 0;
+        }
+        return (int) (getLength() / thread.af.getFrameRate());
     }
 
     @Override
     public void setVolume(float volume) {
-        // TODO 自動生成されたメソッド・スタブ
-
     }
 
     @Override
     public float getVolume() {
-        // TODO 自動生成されたメソッド・スタブ
         return 0;
     }
 
     @Override
     public boolean loadFile(File file) throws Exception {
-        AudioInputStream ais = AudioSystem.getAudioInputStream(file);
-        AudioFormat af = ais.getFormat();
-        DataLine.Info dataLine = new DataLine.Info(SourceDataLine.class, af);
-        SourceDataLine s = (SourceDataLine)AudioSystem.getLine(dataLine);
+        if (thread != null) {
+            thread.state = PlayThread.EXIT;
+            thread.join();
+        }
 
-
-
-        return false;
+        thread = new PlayThread(file);
+        thread.state = PlayThread.STOP;
+        thread.start();
+        return true;
     }
 
     @Override
     public boolean saveFile(File file) throws Exception {
-        // TODO 自動生成されたメソッド・スタブ
         return false;
     }
 

@@ -15,6 +15,7 @@ import jmp.IFileResultCallback;
 import jmp.JMPFlags;
 import jmp.gui.ui.FileListTableModel;
 import jmp.lang.DefineLanguage.LangID;
+import jmp.plugin.PluginWrapper;
 import jmp.task.ICallbackFunction;
 import jmp.util.JmpUtil;
 
@@ -36,7 +37,6 @@ public class FileManager extends AbstractManager implements IFileManager {
     private static final String[] columnNames = new String[] { "", "Name" };
     private DefaultTableModel fileListModel;
     private JTable fileList;
-    private Map<String, File> midiFileMap = null;
     public DefaultTableModel getFileListModel() {
         return fileListModel;
     }
@@ -134,7 +134,8 @@ public class FileManager extends AbstractManager implements IFileManager {
         }
         else if (system.isEnableStandAlonePlugin() == true) {
             // サポート外(スタンドアロンモード時)
-            if (pm.isSupportExtension(f, JMPCore.getStandAlonePlugin()) == false) {
+            PluginWrapper pw = JMPCore.getStandAlonePluginWrapper();
+            if (PluginWrapper.isSupportExtension(f, pw.getSupportExtensionConstraints()) == false) {
                 beginResult.status = false;
                 beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_2);
             }
@@ -183,40 +184,23 @@ public class FileManager extends AbstractManager implements IFileManager {
         DataManager dm = JMPCore.getDataManager();
         SoundManager sm = JMPCore.getSoundManager();
         LanguageManager lm = JMPCore.getLanguageManager();
-        PluginManager pm = JMPCore.getPluginManager();
-
-        FileResult result = new FileResult();
-        result.status = true;
-        result.statusMsg = "";
 
         // 念のためロード中フラグを立てる
         JMPFlags.NowLoadingFlag = true;
 
         // ファイル名をバックアップ
         String tmpFileName = dm.getLoadedFile();
-        
+
         dm.clearCachedFiles(f);
 
         /* ロード処理 */
-        if (result.status == true) {
-            String subErrorStr = "";
-            try {
-                // ファイルロード実行
-                sm.loadFile(f);
-
-                // プラグインのファイルロード処理
-                try {
-                    pm.loadFile(f);
-                }
-                catch (Exception e) {
-                    subErrorStr = "(" + lm.getLanguageStr(LangID.Plugin_error) + ")";
-                    result.status = false;
-                    result.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_5) + subErrorStr;
-                }
-            }
-            catch (Exception e) {
-                result.status = false;
-                result.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_5);
+        FileResult result = new FileResult();
+        result.status = true;
+        result.statusMsg = "";
+        for (AbstractManager am : getCloneManagerList(true)) {
+            am.loadFileForCore(f, result);
+            if (result.status == false) {
+                break;
             }
         }
 

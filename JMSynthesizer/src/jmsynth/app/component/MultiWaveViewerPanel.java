@@ -15,6 +15,7 @@ import jmsynth.sound.SoundSourceChannel;
 
 public class MultiWaveViewerPanel extends JPanel {
 
+    public static final float WAVE_BOLD = 1.0f;
     public static final int TRACE_VIEW_MODE_DETAIL = 0;
     public static final int TRACE_VIEW_MODE_MERGE = 1;
     public static final int TRACE_VIEW_MODE_SPECT = 2;
@@ -390,7 +391,7 @@ public class MultiWaveViewerPanel extends JPanel {
             }
             if (visibleWave[ch] == true) {
                 g2d.setColor(waveColor);
-                g2d.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.CAP_ROUND));
+                g2d.setStroke(new BasicStroke(WAVE_BOLD, BasicStroke.CAP_ROUND, BasicStroke.CAP_ROUND));
                 g2d.drawPolyline(xPoints, yPoints, length);
                 g2d.setStroke(new BasicStroke());
             }

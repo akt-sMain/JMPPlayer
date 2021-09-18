@@ -1,9 +1,9 @@
 package jmp.core;
 
 import jlib.JMPLIB;
-import jlib.plugin.IPlugin;
 import jmp.JMPFlags;
 import jmp.core.TaskManager.TaskID;
+import jmp.plugin.PluginWrapper;
 import jmp.task.ICallbackFunction;
 import jmp.util.JmpUtil;
 
@@ -19,7 +19,8 @@ public class JMPCore {
     public static final String LIBRALY_VERSION = JMPLIB.BUILD_VERSION;
 
     /** スタンドアロンモードのプラグイン */
-    private static IPlugin StandAlonePlugin = null;
+//    private static IPlugin StandAlonePlugin = null;
+    private static PluginWrapper StandAlonePluginWrapper = null;
 
     /** 初期化・終了実行順位 */
     private static final int MANAGER_PRIORITY_RESOUCE = 0;
@@ -83,14 +84,18 @@ public class JMPCore {
     }
 
     public static boolean isEnableStandAlonePlugin() {
-        if (StandAlonePlugin != null) {
+        if (StandAlonePluginWrapper != null) {
             return true;
         }
         return false;
     }
 
-    public static void setStandAlonePlugin(IPlugin plg) {
-        StandAlonePlugin = plg;
+    public static void setStandAlonePluginWrapper(PluginWrapper plg) {
+        StandAlonePluginWrapper = plg;
+    }
+
+    public static PluginWrapper getStandAlonePluginWrapper() {
+        return StandAlonePluginWrapper;
     }
 
     /** 通知メソッド作成 */
@@ -126,10 +131,6 @@ public class JMPCore {
             }
 
         });
-    }
-
-    public static IPlugin getStandAlonePlugin() {
-        return StandAlonePlugin;
     }
 
     public static SystemManager getSystemManager() {

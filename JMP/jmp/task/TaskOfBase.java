@@ -132,4 +132,9 @@ public abstract class TaskOfBase implements ITask, Runnable {
         isRunnable = false;
     }
 
+    @Override
+    public boolean isRunnable() {
+        return isRunnable;
+    }
+
 }

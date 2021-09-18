@@ -108,6 +108,7 @@ public class DefineLanguage {
         The_application_could_not_be_terminated_successfully,//
         Dont_choose_a_synthesizer,//
         Random_playback,//
+        Allow_window_size_change,//
     }//
     static LangMap langMap = new LangMap() {
         {
@@ -211,6 +212,7 @@ public class DefineLanguage {
             put(LangID.The_application_could_not_be_terminated_successfully, new LanguageWords("The application could not be terminated successfully.","アプリケーションを正常に終了できませんでした。","无法成功终止该应用程序。"));
             put(LangID.Dont_choose_a_synthesizer, new LanguageWords("Don't choose a synthesizer","シンセサイザーを選択しない","不要选择合成器"));
             put(LangID.Random_playback, new LanguageWords("Random playback","ランダム再生","随机播放"));
+            put(LangID.Allow_window_size_change, new LanguageWords("Allow window size change","Windowサイズの変更を許可","允许更改窗口大小"));
         }
     };
 }

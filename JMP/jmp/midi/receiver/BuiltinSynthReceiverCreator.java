@@ -10,7 +10,7 @@ class BuiltinSynthReceiverCreator extends ReceiverCreator {
     @Override
     public Receiver getReciever() {
         // 新しいJMSynthインスタンスを取得する
-        Receiver reciever = (Receiver)JMPCore.getSystemManager().newBuiltinSynthInstance();
+        Receiver reciever = JMPCore.getSystemManager().newBuiltinSynthInstance();
         if (reciever == null) {
             /* 例外処理 */
             JMPCore.getWindowManager().disposeBuiltinSynthFrame();

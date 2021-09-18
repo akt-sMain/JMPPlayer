@@ -35,6 +35,7 @@ import jlib.midi.IMidiUnit;
 import jlib.midi.MidiByte;
 import jlib.player.IPlayer;
 import jlib.player.Player;
+import jmp.FileResult;
 import jmp.JMPFlags;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.midi.MidiByteMessage;
@@ -74,6 +75,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     // プレイヤーインスタンス
     public static MidiPlayer SMidiPlayer = null;
     public static WavPlayer SWavPlayer = null;
+    //public static WavPlayerMin SWavPlayer = null;
     public static MusicXmlPlayer SMusicXmlPlayer = null;
     public static MusicMacroPlayer SMusicMacloPlayer = null;
     public static FFmpegPlayer SFFmpegPlayer = null;
@@ -125,6 +127,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
         // wav
         SWavPlayer = new WavPlayer();
+        //SWavPlayer = new WavPlayerMin();
         SWavPlayer.setSupportExtentions(exWAV);
         PlayerAccessor.register(SWavPlayer);
 
@@ -505,7 +508,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
                 }
 
                 Random random = new Random();
-                
+
                 int newIndex = index;
                 if (playListModel.size() >= 2) {
                     while(true) {
@@ -711,7 +714,10 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         JmpUtil.writeTextFile(path, lst);
     }
 
-    void loadFile(File file) throws Exception {
+    @Override
+    protected void loadFileForCore(File file, FileResult result) {
+        super.loadFileForCore(file, result);
+
         Player tmpPlayer = PlayerAccessor.getCurrent();
 
         boolean loadResult = true;
@@ -728,14 +734,18 @@ public class SoundManager extends AbstractManager implements ISoundManager {
                 e.printStackTrace();
             }
             loadResult = false;
-            throw e;
         }
         finally {
             if (loadResult == false) {
                 // ロードに失敗した場合は、プレイヤーを元に戻す
                 PlayerAccessor.change(tmpPlayer);
-                throw new Exception();
             }
+        }
+
+        result.status = loadResult;
+        if (result.status == false) {
+            LanguageManager lm = JMPCore.getLanguageManager();
+            result.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_5);
         }
     }
 

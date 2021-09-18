@@ -42,7 +42,6 @@ import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
-import jlib.plugin.IPlugin;
 import jmp.ErrorDef;
 import jmp.FileResult;
 import jmp.IFileResultCallback;
@@ -65,6 +64,7 @@ import jmp.gui.ui.IJMPComponentUI;
 import jmp.gui.ui.SequencerSliderUI;
 import jmp.lang.DefineLanguage;
 import jmp.lang.DefineLanguage.LangID;
+import jmp.plugin.PluginWrapper;
 import jmp.task.ICallbackFunction;
 import jmp.util.JmpUtil;
 import lib.MakeJmpConfig;
@@ -383,6 +383,14 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                 JMPCore.getWindowManager().setVisibleAll(false);
             }
         });
+
+        chckbxmntmWindowResizeble = new JCheckBoxMenuItem("Windowサイズの変更を許可");
+        chckbxmntmWindowResizeble.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                JMPPlayerWindow.this.setResizable(chckbxmntmWindowResizeble.isSelected());
+            }
+        });
+        windowMenu.add(chckbxmntmWindowResizeble);
         windowMenu.add(mntmInitLayout);
 
         playerMenu = new JMenu("プレイヤー");
@@ -403,6 +411,30 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             }
         });
         playerMenu.add(mntmPlayInit);
+
+        mntmPlayOrStop = new JMenuItem("Play / Stop");
+        for (ActionListener al : playButton.getActionListeners()) {
+            mntmPlayOrStop.addActionListener(al);
+        }
+        playerMenu.add(mntmPlayOrStop);
+
+        mntmNext = new JMenuItem("Next");
+        for (ActionListener al : next2Button.getActionListeners()) {
+            mntmNext.addActionListener(al);
+        }
+        playerMenu.add(mntmNext);
+
+        mntmPrev = new JMenuItem("Prev");
+        mntmPrev.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JMPCore.getSoundManager().initPosition();
+                JMPCore.getSoundManager().playPrevForList();
+            }
+        });
+        playerMenu.add(mntmPrev);
+
+        separator_1 = new JSeparator();
+        playerMenu.add(separator_1);
         playerMenu.add(loopPlayCheckBoxMenuItem);
 
         autoPlayCheckBox = new JCheckBoxMenuItem("連続再生");
@@ -795,7 +827,22 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                 executeDebugFunc(0);
             }
         });
+
+        mntmOpenCurrentFolder = new JMenuItem("Open current folder");
+        mntmOpenCurrentFolder.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Utility.openExproler(Platform.getCurrentPath());
+                }
+                catch (IOException e1) {
+                }
+            }
+        });
+        configMenu.add(mntmOpenCurrentFolder);
         configMenu.add(mntmDebugDummy);
+        
+        separator_2 = new JSeparator();
+        playerMenu.add(separator_2);
 
         lblVolumeSlider = new JLabel("-- Volume --");
         lblVolumeSlider.setForeground(Color.DARK_GRAY);
@@ -853,6 +900,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         mntmReloadJmzFolder.setVisible(enable);
         mntmMidiExport.setVisible(enable);
         mntmDebugDummy.setVisible(enable);
+        mntmOpenCurrentFolder.setVisible(enable);
     }
 
     @Override
@@ -904,6 +952,10 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         loopPlayCheckBoxMenuItem.setSelected(dm.isLoopPlay());
         chckbxmntmRandomPLayCheckItem.setSelected(dm.isRandomPlay());
         chckbxmntmStartupmidisetup.setSelected(dm.isShowStartupDeviceSetup());
+        chckbxmntmWindowResizeble.setSelected(false);
+
+        JMPPlayerWindow.this.setResizable(chckbxmntmWindowResizeble.isSelected());
+        JMPPlayerWindow.this.setAlwaysOnTop(alwayTopCheckBox.isSelected());
 
         int mntmVolumeSliderValue = (int) (JMPCore.getSoundManager().getLineVolume() * (float) mntmVolumeSlider.getMaximum());
         mntmVolumeSlider.setValue(mntmVolumeSliderValue);
@@ -1097,6 +1149,13 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
     private List<JMenuItem> pluginItemsCache = new ArrayList<JMenuItem>();
     private JMenuItem mntmYoutubeDL;
     private JCheckBoxMenuItem chckbxmntmRandomPLayCheckItem;
+    private JCheckBoxMenuItem chckbxmntmWindowResizeble;
+    private JMenuItem mntmOpenCurrentFolder;
+    private JMenuItem mntmPlayOrStop;
+    private JSeparator separator_1;
+    private JMenuItem mntmNext;
+    private JMenuItem mntmPrev;
+    private JSeparator separator_2;
 
     public void updatePluginMenu() {
         pluginMenu.removeAll();
@@ -1117,7 +1176,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         for (JMenuItem item : pluginItemsCache) {
             if (item != null) {
                 String name = item.getText();
-                IPlugin plg = JMPCore.getPluginManager().getPlugin(name);
+                PluginWrapper plg = JMPCore.getPluginManager().getPluginWrapper(name);
                 if (plg == null) {
                     continue;
                 }
@@ -1331,6 +1390,10 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         prev2Button.setToolTipText(lm.getLanguageStr(LangID.Previous));
         next2Button.setToolTipText(lm.getLanguageStr(LangID.Next));
 
+        mntmPlayOrStop.setText(lm.getLanguageStr(LangID.Playback) + "/" + lm.getLanguageStr(LangID.Stop));
+        mntmPrev.setText(lm.getLanguageStr(LangID.Previous));
+        mntmNext.setText(lm.getLanguageStr(LangID.Next));
+
         fileMenu.setText(lm.getLanguageStr(LangID.File));
         openItem.setText(lm.getLanguageStr(LangID.Open));
         mntmReload.setText(lm.getLanguageStr(LangID.Reload));
@@ -1378,6 +1441,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         chckbxmntmSendSystemSetupBeforePlayback.setText(lm.getLanguageStr(LangID.Send_system_setup_before_playback));
 
         mntmJmSynth.setText(lm.getLanguageStr(LangID.Builtin_synthesizer_settings));
+        chckbxmntmWindowResizeble.setText(lm.getLanguageStr(LangID.Allow_window_size_change));
 
         if (JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_LOADED_FILE).isEmpty() == true) {
             setInitializeStatusText();

@@ -22,4 +22,11 @@ public interface ITask {
      * @param sleepTime
      */
     abstract void waitTask(long sleepTime);
+
+    /**
+     * タスクが実行状態か？
+     *
+     * @return
+     */
+    abstract boolean isRunnable();
 }

@@ -10,7 +10,6 @@ import javax.swing.JOptionPane;
 import jlib.core.IWindowManager;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
-import jlib.plugin.IPlugin;
 import jmp.JMPFlags;
 import jmp.gui.BuiltinSynthSetupDialog;
 import jmp.gui.FFmpegConvertDialog;
@@ -26,6 +25,7 @@ import jmp.gui.WindowDatabase;
 import jmp.gui.YoutubeConvertDialog;
 import jmp.gui.ui.IJMPComponentUI;
 import jmp.lang.DefineLanguage.LangID;
+import jmp.plugin.PluginWrapper;
 import jmp.task.ICallbackFunction;
 import jmp.util.JmpUtil;
 import jmplayer.JMPPlayerWindow;
@@ -210,8 +210,8 @@ public class WindowManager extends AbstractManager implements IWindowManager {
 
         database.clearPluginMenuItem();
         for (String name : pm.getPluginsNameSet()) {
-            IPlugin p = pm.getPlugin(name);
-            database.addPluginMenuItem(name, p);
+            PluginWrapper pw = pm.getPluginWrapper(name);
+            database.addPluginMenuItem(name, pw);
         }
 
         ((JMPPlayerWindow)getMainWindow()).updatePluginMenu();
@@ -247,7 +247,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         // プラグインもすべて閉じる
         PluginManager pm = JMPCore.getPluginManager();
         for (String pname : pm.getPluginsNameSet()) {
-            IPlugin plg = pm.getPlugin(pname);
+            PluginWrapper plg = pm.getPluginWrapper(pname);
             if (plg != null) {
                 plg.close();
             }
