@@ -7,6 +7,7 @@ import java.util.Map;
 
 import function.Utility;
 import jmp.core.JMPCore;
+import jmp.core.SystemManager;
 
 public class Skin {
 
@@ -59,7 +60,7 @@ public class Skin {
     }
 
     private void readLocalConfig() {
-        String skinPath = JMPCore.getSystemManager().getSkinPath();
+        String skinPath = JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_SKIN_DIR);
         String path = Utility.pathCombin(skinPath, globalConfig.getName(), "skinconf.txt");
         try {
             localConfig.read(new File(path));
@@ -70,7 +71,7 @@ public class Skin {
     }
 
     private void createResource(String name) {
-        String skinPath = JMPCore.getSystemManager().getSkinPath();
+        String skinPath = JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_SKIN_DIR);
         String path = Utility.pathCombin(skinPath, globalConfig.getName(), name);
         if (Utility.isExsistFile(path) == true) {
             if (Utility.checkExtension(path, "png") == true) {

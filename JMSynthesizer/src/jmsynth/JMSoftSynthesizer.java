@@ -62,6 +62,10 @@ public class JMSoftSynthesizer implements ISynthController {
         };
     }
 
+    public int getNumberOfChannel() {
+        return channels.length;
+    }
+
     @Override
     public void openDevice() {
         for (int i = 0; i < channels.length; i++) {

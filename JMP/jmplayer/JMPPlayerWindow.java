@@ -547,7 +547,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                 JFileChooser filechooser = new JFileChooser();
                 filechooser.setFileFilter(JmpUtil.createFileFilter("PLUGIN SETUP Files", PluginManager.SETUP_FILE_EX));
 
-                File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
+                File dir = new File(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JMS_DIR));
                 filechooser.setCurrentDirectory(dir);
                 int selected = filechooser.showOpenDialog(getParent());
                 switch (selected) {
@@ -692,7 +692,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                     return;
                 }
 
-                File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
+                File dir = new File(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JMS_DIR));
                 for (File f : dir.listFiles()) {
 
                     if (Utility.checkExtension(f.getPath(), PluginManager.SETUP_FILE_EX) == false) {
@@ -840,7 +840,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         });
         configMenu.add(mntmOpenCurrentFolder);
         configMenu.add(mntmDebugDummy);
-        
+
         separator_2 = new JSeparator();
         playerMenu.add(separator_2);
 
@@ -1226,6 +1226,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
      */
     public void fileOpenFunc() {
         SystemManager system = JMPCore.getSystemManager();
+        WindowManager wm = JMPCore.getWindowManager();
         String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MIDI));
         String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_WAV));
         String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
@@ -1235,6 +1236,9 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         filechooser.addChoosableFileFilter(JmpUtil.createFileFilter("MIDI Files", exMIDI));
         filechooser.addChoosableFileFilter(JmpUtil.createFileFilter("WAV Files", exWAV));
         filechooser.addChoosableFileFilter(JmpUtil.createFileFilter("MusicXML Files", exMUSICXML));
+        if (wm.isValidBuiltinSynthFrame() == true) {
+            filechooser.addChoosableFileFilter(JmpUtil.createFileFilter("Built-in Synth Config Files", SystemManager.JMSYNTH_CONFIG_EX));
+        }
 
         File dir = new File(JMPCore.getDataManager().getPlayListPath());
         filechooser.setCurrentDirectory(dir);
@@ -1245,7 +1249,12 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                 String path = file.getPath();
                 if (file.isDirectory() == false) {
                     // ファイルロード
-                    JMPCore.getFileManager().loadFileToPlay(path);
+                    if (Utility.checkExtension(path, SystemManager.JMSYNTH_CONFIG_EX) == true) {
+                        system.loadJMSynthConfig(file);
+                    }
+                    else {
+                        JMPCore.getFileManager().loadFileToPlay(path);
+                    }
                 }
                 break;
             default:

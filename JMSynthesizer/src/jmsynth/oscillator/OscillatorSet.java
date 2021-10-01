@@ -9,6 +9,7 @@ public class OscillatorSet {
 
     public static enum WaveType {
         SINE,
+        LOW_SINE,
         SAW,
         SAW_REVERSE,
         SQUARE,

@@ -84,24 +84,6 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
         }
     }
 
-    /* ファイルがサポートする拡張子か判定する */
-    public static boolean isSupportExtension(File file, ISupportExtensionConstraints sec) {
-        boolean ret = false;
-        if (sec != null) {
-            String[] allowsEx = sec.allowedExtensionsArray();
-            for (String ae : allowsEx) {
-                if (Utility.checkExtension(file, ae) == true) {
-                    ret = true;
-                    break;
-                }
-            }
-        }
-        else {
-            ret = true;
-        }
-        return ret;
-    }
-
     private IPlugin plugin = null;
     private IPlayerListener playerListener = null;
     private IMidiEventListener midiEventListener = null;
@@ -172,6 +154,10 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
 
     @Override
     public void catchMidiEvent(MidiMessage message, long timeStamp, short senderType) {
+        if (getState() != PluginState.CONNECTED) {
+            return;
+        }
+
         if (midiEventListener != null) {
             midiEventListener.catchMidiEvent(message, timeStamp, senderType);
         }
@@ -237,5 +223,21 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
 
     public final ISupportExtensionConstraints getSupportExtensionConstraints() {
         return this.supportExtensionConstraints;
+    }
+
+    public boolean isSupportExtension(File file) {
+        if (this.supportExtensionConstraints == null) {
+            return true;
+        }
+
+        boolean ret = false;
+        String[] allowsEx = this.supportExtensionConstraints.allowedExtensionsArray();
+        for (String ae : allowsEx) {
+            if (Utility.checkExtension(file, ae) == true) {
+                ret = true;
+                break;
+            }
+        }
+        return ret;
     }
 }

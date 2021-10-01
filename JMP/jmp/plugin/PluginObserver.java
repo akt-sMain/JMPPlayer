@@ -13,7 +13,6 @@ import javax.sound.midi.MidiMessage;
 import jlib.midi.IMidiEventListener;
 import jlib.player.IPlayerListener;
 import jlib.plugin.IPlugin;
-import jmp.plugin.PluginWrapper.PluginState;
 
 public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListener {
 
@@ -153,10 +152,6 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
     @Override
     public void catchMidiEvent(MidiMessage message, long timeStamp, short senderType) {
         for (PluginWrapper pluginWrap : getPlugins()) {
-            if (pluginWrap.getState() != PluginState.CONNECTED) {
-                continue;
-            }
-
             pluginWrap.catchMidiEvent(message, timeStamp, senderType);
         }
     }
@@ -164,7 +159,7 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
     @Override
     public void loadFile(File file) {
         for (PluginWrapper pw : getPlugins()) {
-            if (PluginWrapper.isSupportExtension(file, pw.getSupportExtensionConstraints()) == true) {
+            if (pw.isSupportExtension(file) == true) {
                 pw.loadFile(file);
             }
         }

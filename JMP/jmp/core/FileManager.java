@@ -104,7 +104,6 @@ public class FileManager extends AbstractManager implements IFileManager {
         SystemManager system = JMPCore.getSystemManager();
         LanguageManager lm = JMPCore.getLanguageManager();
         SoundManager sm = JMPCore.getSoundManager();
-        PluginManager pm = JMPCore.getPluginManager();
 
         String ex = JmpUtil.getExtension(f);
 
@@ -135,7 +134,7 @@ public class FileManager extends AbstractManager implements IFileManager {
         else if (system.isEnableStandAlonePlugin() == true) {
             // サポート外(スタンドアロンモード時)
             PluginWrapper pw = JMPCore.getStandAlonePluginWrapper();
-            if (PluginWrapper.isSupportExtension(f, pw.getSupportExtensionConstraints()) == false) {
+            if (pw.isSupportExtension(f) == false) {
                 beginResult.status = false;
                 beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_2);
             }

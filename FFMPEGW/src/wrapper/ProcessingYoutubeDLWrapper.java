@@ -14,6 +14,8 @@ public class ProcessingYoutubeDLWrapper {
     /** 環境変数定義有効 */
     protected boolean isYoutubeDlInstalled = false;
 
+    protected boolean audioOnly = true;
+
     protected String output = "";
 
     protected ProcessInvoker invoker = null;
@@ -58,16 +60,21 @@ public class ProcessingYoutubeDLWrapper {
         return f.exists();
     }
 
-    public void convert(String url, String audioFormat) throws IOException {
+    public void convert(String url, String format) throws IOException {
         ArrayList<String> cmd = new ArrayList<String>();
 //        if (output.isEmpty() == false) {
 //            cmd.add("-o");
 //            cmd.add(output);
 //        }
         cmd.add(url);
-        cmd.add("-x");
-        cmd.add("--audio-format");
-        cmd.add(audioFormat);
+        if (isAudioOnly() == true) {
+            cmd.add("-x");
+            cmd.add("--audio-format");
+        }
+        else {
+            cmd.add("-f");
+        }
+        cmd.add(format);
 
         if (isYoutubeDlInstalled() == true) {
             boolean isExistsCurrent = false;
@@ -96,5 +103,13 @@ public class ProcessingYoutubeDLWrapper {
 
     public void setYoutubeDlInstalled(boolean isYoutubeDlInstalled) {
         this.isYoutubeDlInstalled = isYoutubeDlInstalled;
+    }
+
+    public boolean isAudioOnly() {
+        return audioOnly;
+    }
+
+    public void setAudioOnly(boolean audioOnly) {
+        this.audioOnly = audioOnly;
     }
 }

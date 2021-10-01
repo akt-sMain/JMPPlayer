@@ -17,6 +17,7 @@ import jmsynth.app.component.IWaveRepaintListener;
 import jmsynth.envelope.Envelope;
 import jmsynth.modulate.Modulator;
 import jmsynth.oscillator.IOscillator;
+import jmsynth.oscillator.LowSamplingSinWaveOscillator;
 import jmsynth.oscillator.NoisWaveOscillator;
 import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.oscillator.PulseWaveOscillator;
@@ -90,6 +91,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         Map<WaveType, IOscillator> map = new HashMap<WaveType, IOscillator>(){
             {
                 put(WaveType.SINE, new SinWaveOscillator());
+                put(WaveType.LOW_SINE, new LowSamplingSinWaveOscillator());
                 put(WaveType.SAW, new SawWaveOscillator(false));
                 put(WaveType.SAW_REVERSE, new SawWaveOscillator(true));
                 put(WaveType.SQUARE, new SquareWaveOscillator());

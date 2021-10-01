@@ -3,6 +3,13 @@ package jmsynth.oscillator;
 public class WaveGenerater {
     private WaveGenerater() {}
 
+    private static double trimF(double f) {
+        return trimF(f, 100.0);
+    }
+    private static double trimF(double f, double r) {
+        return Math.round(f*r) / r;
+    }
+
     /**
      * サイン波生成
      *
@@ -12,7 +19,12 @@ public class WaveGenerater {
      * @return
      */
     public static byte makeSinWave(double f, int overallLeval, boolean reverse) {
-        double ff = (reverse == false) ? (1.0 - f) : f;
+        double ff = (reverse == false) ? (1.0 - trimF(f)) : trimF(f);
+        return (byte) ((Math.sin(2.0 * Math.PI * ff) * overallLeval));
+    }
+
+    public static byte makeSinWaveForLowSampling(double f, int overallLeval, boolean reverse) {
+        double ff = (reverse == false) ? (1.0 - trimF(f, 10.0)) : trimF(f, 10.0);
         return (byte) ((Math.sin(2.0 * Math.PI * ff) * overallLeval));
     }
 
@@ -42,7 +54,7 @@ public class WaveGenerater {
      * @return
      */
     public static byte makePulseWave(double f, int overallLevel, double duty, boolean reverse) {
-        double ff = (reverse == true) ? (1.0 - f) : f;
+        double ff = (reverse == true) ? (1.0 - trimF(f)) : trimF(f);
 
         byte y = 0;
         /* 矩形波を少しゆがませる */
@@ -74,7 +86,7 @@ public class WaveGenerater {
      * @return
      */
     public static byte makeSawWave(double f, int overallLeval, boolean reverse) {
-        double ff = (reverse == true) ? (1.0 - f) : f;
+        double ff = (reverse == true) ? (1.0 - trimF(f)) : trimF(f);
         return (byte)(((2.0 * ff) * overallLeval) - (overallLeval));
     }
 
@@ -87,7 +99,7 @@ public class WaveGenerater {
      * @return
      */
     public static byte makeTriangleWave(double f, int overallLevel, boolean reverse) {
-        double ff = (reverse == true) ? (1.0 - f) : f;
+        double ff = (reverse == true) ? (1.0 - trimF(f)) : trimF(f);
 
         byte y = 0;
         int slope = (int)((ff / 0.25) + 1) % 2; // 0=上り, 1=下り

@@ -19,11 +19,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import function.Platform;
 import function.Platform.KindOfPlatform;
 import function.Utility;
+import jlib.util.IUtilityToolkit;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
@@ -37,7 +37,8 @@ import process.IProcessingCallback;
 
 public class YoutubeConvertDialog extends JMPDialog {
 
-    public static final String DEFAULT_DST_EXT = "mp3";
+    public static final String DEFAULT_DST_EXT_AUDIO = "mp3";
+    public static final String DEFAULT_DST_EXT_VIDEO = "mp4";
 
     private final JPanel contentPanel = new JPanel();
     private JTextField textFieldExePath;
@@ -51,6 +52,7 @@ public class YoutubeConvertDialog extends JMPDialog {
     private JButton btnOpenExe;
     private JPanel buttonPane;
     private JCheckBox chckbxInstalled;
+    private JCheckBox chckbxAudioOnly;
 
     /**
      * Create the dialog.
@@ -136,7 +138,8 @@ public class YoutubeConvertDialog extends JMPDialog {
             public void actionPerformed(ActionEvent e) {
                 // ファイルフィルター
                 JFileChooser filechooser = new JFileChooser();
-                filechooser.setFileFilter(createFileFilter("EXE Files", "exe"));
+                IUtilityToolkit toolkit = JMPCore.getSystemManager().getUtilityToolkit();
+                filechooser.setFileFilter(toolkit.createFileFilter("EXE Files", "exe"));
 
                 File dir = null;
                 String exePath = textFieldExePath.getText();
@@ -177,6 +180,22 @@ public class YoutubeConvertDialog extends JMPDialog {
         dstExtTextField.setBounds(362, 83, 70, 19);
         contentPanel.add(dstExtTextField);
         dstExtTextField.setColumns(10);
+
+        chckbxAudioOnly = new JCheckBox();
+        chckbxAudioOnly.setText("AudioOnly");
+        chckbxAudioOnly.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                boolean isSelected = chckbxAudioOnly.isSelected();
+                if (isSelected == true) {
+                    dstExtTextField.setText(DEFAULT_DST_EXT_AUDIO);
+                }
+                else {
+                    dstExtTextField.setText(DEFAULT_DST_EXT_VIDEO);
+                }
+            }
+        });
+        chckbxAudioOnly.setBounds(250, 83, 100, 19);
+        contentPanel.add(chckbxAudioOnly);
 
         JButton buttonPaste = new JButton("Paste");
         buttonPaste.addActionListener(new ActionListener() {
@@ -222,10 +241,48 @@ public class YoutubeConvertDialog extends JMPDialog {
             }
         }
 
-        dstExtTextField.setText(DEFAULT_DST_EXT);
+        chckbxAudioOnly.setSelected(true);
+        dstExtTextField.setText(DEFAULT_DST_EXT_AUDIO);
 
         updateGuiState();
         updateBackColor();
+        _init();
+    }
+
+    private void _init() {
+        SystemManager system = JMPCore.getSystemManager();
+        system.setYoutubeDlCallback(new IProcessingCallback() {
+
+            @Override
+            public void end(int result) {
+                LanguageManager lm = JMPCore.getLanguageManager();
+                convertButton.setEnabled(true);
+
+                if (result != 0) {
+                    lblStatus.setForeground(Color.RED);
+                    lblStatus.setText(lm.getLanguageStr(LangID.Conversion_failed));
+                    repaint();
+                    return;
+                }
+
+                lblStatus.setForeground(Color.GREEN);
+
+                lblStatus.setText(lm.getLanguageStr(LangID.Conversion_completed));
+                repaint();
+
+                openOutputFolder();
+            }
+
+            @Override
+            public void begin() {
+                LanguageManager lm = JMPCore.getLanguageManager();
+                lblStatus.setForeground(Color.LIGHT_GRAY);
+                lblStatus.setText(lm.getLanguageStr(LangID.Now_converting));
+                repaint();
+
+                convertButton.setEnabled(false);
+            }
+        });
     }
 
     private void updateGuiState() {
@@ -237,19 +294,6 @@ public class YoutubeConvertDialog extends JMPDialog {
         else {
             textFieldExePath.setText(JMPCore.getDataManager().getYoutubeDlPath());
         }
-    }
-
-    private FileNameExtensionFilter createFileFilter(String exName, String... ex) {
-        String exs = "";
-        for (int i = 0; i < ex.length; i++) {
-            if (i > 0) {
-                exs += ", ";
-            }
-            exs += String.format("*.%s", ex[i]);
-        }
-
-        String description = String.format("%s (%s)", exName, exs);
-        return new FileNameExtensionFilter(description, ex);
     }
 
     public void setExePath(String path) {
@@ -314,45 +358,13 @@ public class YoutubeConvertDialog extends JMPDialog {
         File outdir = new File(JMPCore.getSystemManager().getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_FFMPEG_OUTPUT));
         String dstExt = dstExtTextField.getText();
         if (dstExt.isEmpty() == true) {
-            dstExt = DEFAULT_DST_EXT;
+            dstExt = DEFAULT_DST_EXT_AUDIO;
+            chckbxAudioOnly.setSelected(true);
         }
 
-        IProcessingCallback callback = new IProcessingCallback() {
-
-            @Override
-            public void end(int result) {
-                convertButton.setEnabled(true);
-
-                if (result != 0) {
-                    lblStatus.setForeground(Color.RED);
-                    lblStatus.setText(lm.getLanguageStr(LangID.Conversion_failed));
-                    repaint();
-                    return;
-                }
-
-                lblStatus.setForeground(Color.GREEN);
-
-                lblStatus.setText(lm.getLanguageStr(LangID.Conversion_completed));
-                repaint();
-
-                openOutputFolder();
-            }
-
-            @Override
-            public void begin() {
-                lblStatus.setForeground(Color.LIGHT_GRAY);
-                lblStatus.setText(lm.getLanguageStr(LangID.Now_converting));
-                repaint();
-
-                convertButton.setEnabled(false);
-            }
-        };
-
-        system.getYoutubeDlWrapper().setCallback(callback);
-
         try {
-            system.getYoutubeDlWrapper().setOutput(outdir.getPath());
-            system.getYoutubeDlWrapper().convert(url, dstExt);
+            // ダウンロード実行
+            system.executeYoutubeDownload(url, outdir, dstExt, chckbxAudioOnly.isSelected());
             dm.setYoutubeDlPath(textFieldExePath.getText());
         }
         catch (IOException e1) {
@@ -402,5 +414,7 @@ public class YoutubeConvertDialog extends JMPDialog {
         buttonPane.setBackground(getJmpBackColor());
         chckbxInstalled.setBackground(getJmpBackColor());
         chckbxInstalled.setForeground(Utility.getForegroundColor(getJmpBackColor()));
+        chckbxAudioOnly.setBackground(getJmpBackColor());
+        chckbxAudioOnly.setForeground(Utility.getForegroundColor(getJmpBackColor()));
     }
 }

@@ -105,7 +105,7 @@ public class PluginManager extends AbstractManager {
     }
 
     private void loadPluginState() {
-        String path = Utility.pathCombin(JMPCore.getSystemManager().getPluginsDirPath(), PLUGIN_STATE_FILE_NAME);
+        String path = Utility.pathCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_PLUGINS_DIR), PLUGIN_STATE_FILE_NAME);
         plginStateMem = ConfigDatabase.create(path);
     }
 
@@ -122,7 +122,7 @@ public class PluginManager extends AbstractManager {
             String state = PluginWrapper.toString(observers.getPluginWrapper(plgKey).getState());
             plginStateMem.setConfigParam(plgKey, state);
         }
-        plginStateMem.output(Utility.pathCombin(JMPCore.getSystemManager().getPluginsDirPath(), PLUGIN_STATE_FILE_NAME));
+        plginStateMem.output(Utility.pathCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_PLUGINS_DIR), PLUGIN_STATE_FILE_NAME));
     }
 
     public void startupPluginInstance(IPlugin stdPlugin) {
@@ -171,7 +171,7 @@ public class PluginManager extends AbstractManager {
         }
 
         /* プラグインディレクトリの存在を確認 */
-        File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
+        File dir = new File(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JMS_DIR));
         if (dir.exists() == false) {
             return true;
         }
@@ -215,7 +215,7 @@ public class PluginManager extends AbstractManager {
             return true;
         }
 
-        File zipDir = new File(JMPCore.getSystemManager().getZipDirPath());
+        File zipDir = new File(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_ZIP_DIR));
         if (zipDir.exists() == false) {
             return true;
         }
@@ -290,7 +290,7 @@ public class PluginManager extends AbstractManager {
     }
 
     public void readingJmzDirectory() {
-        File zipDir = new File(JMPCore.getSystemManager().getZipDirPath());
+        File zipDir = new File(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_ZIP_DIR));
         if (zipDir.exists() == false) {
             return;
         }
@@ -368,7 +368,7 @@ public class PluginManager extends AbstractManager {
     }
 
     public void generatePluginZipPackage(String dirPath) {
-        File pluginDir = new File(JMPCore.getSystemManager().getJmsDirPath());
+        File pluginDir = new File(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JMS_DIR));
         for (File f : pluginDir.listFiles()) {
             if (Utility.checkExtension(f, SETUP_FILE_EX) == true) {
                 JmsProperty jms = JmsProperty.getJmsProparty(f);
@@ -444,7 +444,7 @@ public class PluginManager extends AbstractManager {
                     String param = sLine[1].trim();
                     if (key.equalsIgnoreCase(SETUP_KEYNAME_PLUGIN) == true) {
                         String src = Utility.stringsCombin(file.getParent(), Platform.getSeparator(), param);
-                        String dst = Utility.stringsCombin(JMPCore.getSystemManager().getJarDirPath(), Platform.getSeparator(), param);
+                        String dst = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JAR_DIR), Platform.getSeparator(), param);
                         Utility.copyFile(src, dst);
 
                         // Jar名を保持（jar名をパス名にする）
@@ -457,7 +457,7 @@ public class PluginManager extends AbstractManager {
                     else if (key.equalsIgnoreCase(SETUP_KEYNAME_DATA) == true) {
                         if (param.equalsIgnoreCase("TRUE") == true) {
                             String src = Utility.stringsCombin(file.getParent(), Platform.getSeparator(), SETUP_KEYNAME_DATA);
-                            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getDataFileLocationPath(), Platform.getSeparator(), jarName);
+                            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_DATA_DIR), Platform.getSeparator(), jarName);
                             File df = new File(dst);
                             if (df.exists() == false) {
                                 df.mkdir();
@@ -471,7 +471,7 @@ public class PluginManager extends AbstractManager {
                     else if (key.equalsIgnoreCase(SETUP_KEYNAME_RES) == true) {
                         if (param.equalsIgnoreCase("TRUE") == true) {
                             String src = Utility.stringsCombin(file.getParent(), Platform.getSeparator(), SETUP_KEYNAME_RES);
-                            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getResFileLocationPath(), Platform.getSeparator(), jarName);
+                            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_RES_DIR), Platform.getSeparator(), jarName);
                             File df = new File(dst);
                             if (df.exists() == false) {
                                 df.mkdir();
@@ -489,7 +489,7 @@ public class PluginManager extends AbstractManager {
             String src = file.getPath();
 
             String jmsName = Utility.getFileNameNotExtension(file) + "." + SETUP_FILE_EX;
-            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getJmsDirPath(), Platform.getSeparator(), jmsName);
+            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JMS_DIR), Platform.getSeparator(), jmsName);
             Utility.copyFile(src, dst);
 
             // 最後にプラグインを追加
@@ -547,7 +547,7 @@ public class PluginManager extends AbstractManager {
 
     private void readingPlugin() {
         /* プラグインディレクトリの存在を確認 */
-        File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
+        File dir = new File(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JMS_DIR));
         if (dir.exists() == false) {
             return;
         }
@@ -597,7 +597,7 @@ public class PluginManager extends AbstractManager {
         }
 
         /* プラグインディレクトリの存在を確認 */
-        File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
+        File dir = new File(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JMS_DIR));
         if (dir.exists() == false) {
             return;
         }
@@ -664,7 +664,7 @@ public class PluginManager extends AbstractManager {
 
     public void removePlugin() {
         /* プラグインディレクトリの存在を確認 */
-        File dir = new File(JMPCore.getSystemManager().getJmsDirPath());
+        File dir = new File(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JMS_DIR));
         if (dir.exists() == false) {
             return;
         }

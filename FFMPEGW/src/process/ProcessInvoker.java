@@ -5,6 +5,12 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * 並列処理でプロセスを実行する機能を提供するクラス
+ *
+ * @author akkut
+ *
+ */
 public class ProcessInvoker {
 
     private boolean isConsoleOut = true;

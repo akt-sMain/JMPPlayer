@@ -9,6 +9,7 @@ import function.Platform;
 import function.Utility;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
+import jmp.core.SystemManager;
 
 /**
  * JMSファイルのプロパティクラス
@@ -61,7 +62,7 @@ public class JmsProperty {
                     String key = sLine[0].trim();
                     String param = sLine[1].trim();
                     if (key.equalsIgnoreCase(PluginManager.SETUP_KEYNAME_PLUGIN) == true) {
-                        String plgPath = Utility.stringsCombin(JMPCore.getSystemManager().getJarDirPath(), Platform.getSeparator(), param);
+                        String plgPath = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JAR_DIR), Platform.getSeparator(), param);
 
                         // プラグインファイルを保持
                         pluginFile = new File(plgPath);
@@ -83,13 +84,13 @@ public class JmsProperty {
             }
 
             if (isData == true) {
-                String dataPath = Utility.stringsCombin(JMPCore.getSystemManager().getDataFileLocationPath(), Platform.getSeparator(),
+                String dataPath = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_DATA_DIR), Platform.getSeparator(),
                         Utility.getFileNameNotExtension(pluginFile));
 
                 dataFile = new File(dataPath);
             }
             if (isRes == true) {
-                String resPath = Utility.stringsCombin(JMPCore.getSystemManager().getResFileLocationPath(), Platform.getSeparator(),
+                String resPath = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_RES_DIR), Platform.getSeparator(),
                         Utility.getFileNameNotExtension(pluginFile));
 
                 resFile = new File(resPath);

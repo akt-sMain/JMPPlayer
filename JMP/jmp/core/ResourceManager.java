@@ -42,12 +42,14 @@ public class ResourceManager extends AbstractManager implements IManager {
         if (JMPLoader.UseSkinFile == true) {
             boolean readFlag = true;
             try {
-                String confPath = Utility.pathCombin(JMPCore.getSystemManager().getSkinPath(), GROBAL_SKIN_FILE_NAME);
+                String skinPath = JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_SKIN_DIR);
+
+                String confPath = Utility.pathCombin(skinPath, GROBAL_SKIN_FILE_NAME);
                 outputSkinConfig(confPath);
 
                 gConfig.read(new File(confPath));
 
-                String path = Utility.pathCombin(JMPCore.getSystemManager().getSkinPath(), gConfig.getName());
+                String path = Utility.pathCombin(skinPath, gConfig.getName());
                 if (Utility.isExsistFile(path) == false) {
                     readFlag = false;
                 }

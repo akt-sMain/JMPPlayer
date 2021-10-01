@@ -204,7 +204,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         syncLineVolume();
 
         /* プレイリストの復元 */
-        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), BACKUP_PLAYLIST_FILE_NAME);
+        String path = Utility.pathCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_SAVE_DIR), BACKUP_PLAYLIST_FILE_NAME);
         if (Utility.isExsistFile(path) == true) {
             try {
                 loadPlayList(path);
@@ -225,7 +225,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         }
 
         /* プレイリストの保存 */
-        String path = Utility.pathCombin(JMPCore.getSystemManager().getSavePath(), BACKUP_PLAYLIST_FILE_NAME);
+        String path = Utility.pathCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_SAVE_DIR), BACKUP_PLAYLIST_FILE_NAME);
         try {
             savePlayList(path);
         }

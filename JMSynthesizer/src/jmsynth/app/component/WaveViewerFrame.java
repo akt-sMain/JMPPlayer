@@ -3,16 +3,19 @@ package jmsynth.app.component;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.EmptyBorder;
 
 import jmsynth.JMSoftSynthesizer;
+import jmsynth.JMSynthFile;
 import jmsynth.midi.MidiInterface;
 
 public class WaveViewerFrame extends JFrame implements ActionListener{
@@ -47,6 +50,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
     private JRadioButton rdbtnModeDetail;
     private JRadioButton rdbtnModeSpectrum;
     private JCheckBox chckbxAutoWaveVisible;
+    private JRadioButton rdbtnModeMerge;
 
     /**
      * Create the frame.
@@ -56,7 +60,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         setTitle("Synthesizer setting");
         setResizable(false);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        setBounds(100, 100, 853, 662);
+        setBounds(100, 100, 853, 667);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
@@ -231,8 +235,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         });
         buttonGroup.add(rdbtnModeDetail);
         rdbtnModeDetail.setSelected(true);
-        rdbtnModeDetail.setVisible(false);
-        rdbtnModeDetail.setBounds(97, 26, 91, 21);
+        rdbtnModeDetail.setBounds(97, 26, 113, 21);
         contentPane.add(rdbtnModeDetail);
 
         rdbtnModeSpectrum = new JRadioButton("Spectrum");
@@ -241,10 +244,19 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
                 updateLabel();
             }
         });
-        rdbtnModeSpectrum.setVisible(false);
         buttonGroup.add(rdbtnModeSpectrum);
-        rdbtnModeSpectrum.setBounds(192, 26, 113, 21);
+        rdbtnModeSpectrum.setBounds(348, 26, 113, 21);
         contentPane.add(rdbtnModeSpectrum);
+
+        rdbtnModeMerge = new JRadioButton("Merge");
+        rdbtnModeMerge.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateLabel();
+            }
+        });
+        buttonGroup.add(rdbtnModeMerge);
+        rdbtnModeMerge.setBounds(214, 26, 113, 21);
+        contentPane.add(rdbtnModeMerge);
 
         chckbxAutoWaveVisible = new JCheckBox("Auto");
         chckbxAutoWaveVisible.addActionListener(new ActionListener() {
@@ -300,6 +312,55 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         chckbxWave15.setSelected(bb);
         chckbxWave16.setSelected(bb);
         chckbxAutoWaveVisible.setSelected(true);
+
+        JButton btnSaveButton = new JButton("Save");
+        btnSaveButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                File ret = null;
+
+                JFileChooser filechooser = new JFileChooser();
+                File f = new File(new File("config." + JMSynthFile.EXTENSION_CONFIG).getAbsolutePath());
+                filechooser.setSelectedFile(f);
+
+                int selected = filechooser.showSaveDialog(WaveViewerFrame.this);
+                if (selected == JFileChooser.APPROVE_OPTION) {
+                    ret = filechooser.getSelectedFile();
+                }
+                if (ret != null) {
+                    JMSynthFile.saveSynthConfig(ret, synth);
+                }
+            }
+        });
+        btnSaveButton.setBounds(734, 610, 91, 21);
+        contentPane.add(btnSaveButton);
+
+        JButton btnLoad = new JButton("Load");
+        btnLoad.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                File ret = null;
+
+                // 確認ダイアログ
+                JFileChooser filechooser = new JFileChooser();
+                int selected = filechooser.showOpenDialog(WaveViewerFrame.this);
+                switch (selected) {
+                    case JFileChooser.APPROVE_OPTION:
+                        ret = filechooser.getSelectedFile();
+                        break;
+                    default:
+                        break;
+                }
+                if (ret != null) {
+                    JMSynthFile.loadSynthConfig(ret, synth);
+                }
+            }
+        });
+        btnLoad.setBounds(635, 610, 91, 21);
+        contentPane.add(btnLoad);
+
+        rdbtnModeDetail.setVisible(true);
+        rdbtnModeSpectrum.setVisible(false);
+        rdbtnModeMerge.setVisible(true);
+
         updateLabel();
     }
 
@@ -331,6 +392,9 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
     private void updateLabel() {
         if (rdbtnModeDetail.isSelected() == true) {
             panel.traceViewMode = MultiWaveViewerPanel.TRACE_VIEW_MODE_DETAIL;
+        }
+        else if (rdbtnModeMerge.isSelected() == true) {
+            panel.traceViewMode = MultiWaveViewerPanel.TRACE_VIEW_MODE_MERGE;
         }
         else {
             panel.traceViewMode = MultiWaveViewerPanel.TRACE_VIEW_MODE_SPECT;

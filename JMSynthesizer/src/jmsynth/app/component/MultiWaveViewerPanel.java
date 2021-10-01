@@ -205,20 +205,21 @@ public class MultiWaveViewerPanel extends JPanel {
                     while (hispeedSpectrumRunnable) {
 
                         if (hWaveBuf == null) {
-                            //System.out.println("a");
+                            // System.out.println("a");
                             continue;
                         }
                         try {
                             hSpetrumBuf = DFT(hWaveBuf);
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                         }
 
-//                        try {
-//                            Thread.sleep(100);
-//                        }
-//                        catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
+                        // try {
+                        // Thread.sleep(100);
+                        // }
+                        // catch (InterruptedException e) {
+                        // e.printStackTrace();
+                        // }
                     }
                 }
             });
@@ -230,6 +231,45 @@ public class MultiWaveViewerPanel extends JPanel {
         paint(g);
     }
 
+    private byte[] getDataArray(int ch) {
+        switch (ch) {
+            case 0:
+                return d1;//
+            case 1:
+                return d2;//
+            case 2:
+                return d3;//
+            case 3:
+                return d4;//
+            case 4:
+                return d5;//
+            case 5:
+                return d6;//
+            case 6:
+                return d7;//
+            case 7:
+                return d8;//
+            case 8:
+                return d9;//
+            case 9:
+                return d10;//
+            case 10:
+                return d11;//
+            case 11:
+                return d12;//
+            case 12:
+                return d13;//
+            case 13:
+                return d14;//
+            case 14:
+                return d15;//
+            case 15:
+                return d16;//
+            default:
+                return null;
+        }
+    }
+
     public void paint(Graphics g) {
         super.paint(g);
 
@@ -238,26 +278,69 @@ public class MultiWaveViewerPanel extends JPanel {
         // g.drawString(panelName, 10, 20);
 
         if (traceViewMode == TRACE_VIEW_MODE_DETAIL) {
-            paintWave(g, d1, 0);
-            paintWave(g, d2, 1);
-            paintWave(g, d3, 2);
-            paintWave(g, d4, 3);
-            paintWave(g, d5, 4);
-            paintWave(g, d6, 5);
-            paintWave(g, d7, 6);
-            paintWave(g, d8, 7);
-            paintWave(g, d9, 8);
-            paintWave(g, d10, 9);
-            paintWave(g, d11, 10);
-            paintWave(g, d12, 11);
-            paintWave(g, d13, 12);
-            paintWave(g, d14, 13);
-            paintWave(g, d15, 14);
-            paintWave(g, d16, 15);
+            for (int i=0; i<16; i++) {
+                paintWave(g, getDataArray(i), i);
+            }
+        }
+        else if (traceViewMode == TRACE_VIEW_MODE_MERGE) {
+            paintMergeWave(g);
         }
         else {
             paintSpectrum(g2d);
         }
+    }
+
+    public void paintMergeWave(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        if (d1 == null) {
+            return;
+        }
+        if (d1.length <= 2) {
+            return;
+        }
+
+        int[] dispData = new int[d1.length];
+        Arrays.fill(dispData, 0);
+        for (int j = 0; j < visibleWave.length; j++) {
+            for (int i = 0; i < d1.length; i++) {
+                dispData[i] += getDataArray(j)[i];
+            }
+        }
+
+        int x = 0;
+        // int y = 0;
+        int xoffset = 0;
+        int yCenter = this.getHeight() / 2;
+        int vWidth = this.getWidth();
+        int vHeight = this.getHeight();
+
+        g2d.setColor(CENTER_COLOR);
+        g2d.drawLine(x, yCenter, vWidth - 1, yCenter);
+
+        int length = dispData.length / 2;
+        double xDelta = (double) vWidth / (double) (length);
+        double yDelta = vHeight / 300.0;
+        int j = 0;
+
+        int CLIPPING_PX = (vHeight / 2);
+        int xPoints[] = new int[length];
+        int yPoints[] = new int[length];
+        for (int i = 0; i < dispData.length; i += 2) {
+            int dPx = (int) (dispData[i]);
+            xPoints[j] = xoffset + (int) (xDelta * j);
+            yPoints[j] = (int) (yDelta * dPx) + yCenter;
+            if (yPoints[j] > (yCenter + CLIPPING_PX)) {
+                yPoints[j] = (yCenter + CLIPPING_PX);
+            }
+            else if (yPoints[j] < (yCenter - CLIPPING_PX)) {
+                yPoints[j] = (yCenter - CLIPPING_PX);
+            }
+            j++;
+        }
+        g2d.setColor(Color.WHITE);
+        g2d.setStroke(new BasicStroke(WAVE_BOLD, BasicStroke.CAP_ROUND, BasicStroke.CAP_ROUND));
+        g2d.drawPolyline(xPoints, yPoints, length);
+        g2d.setStroke(new BasicStroke());
     }
 
     public void paintWave(Graphics g, byte[] d, int ch) {
@@ -291,7 +374,7 @@ public class MultiWaveViewerPanel extends JPanel {
         int col = 4;
         int row = 4;
         int cnt = 0;
-        for (int i=0; i<visibleWave.length; i++) {
+        for (int i = 0; i < visibleWave.length; i++) {
             if (i == ch) {
                 visibleIndex = cnt;
             }
@@ -306,7 +389,7 @@ public class MultiWaveViewerPanel extends JPanel {
             return;
         }
 
-        switch(cnt) {
+        switch (cnt) {
             case 1:
                 row = 1;
                 col = 1;
@@ -391,6 +474,11 @@ public class MultiWaveViewerPanel extends JPanel {
             }
             if (visibleWave[ch] == true) {
                 g2d.setColor(waveColor);
+                g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.CAP_ROUND));
+                for (int i=0; i<length; i+=2) {
+                    g2d.drawLine(xPoints[i], yCenter, xPoints[i], yPoints[i]);
+                }
+                g2d.setColor(waveColor);
                 g2d.setStroke(new BasicStroke(WAVE_BOLD, BasicStroke.CAP_ROUND, BasicStroke.CAP_ROUND));
                 g2d.drawPolyline(xPoints, yPoints, length);
                 g2d.setStroke(new BasicStroke());
@@ -431,17 +519,31 @@ public class MultiWaveViewerPanel extends JPanel {
         }
     }
 
-    int width, height;              // グラフ描画領域の幅と高さ
+    int width, height; // グラフ描画領域の幅と高さ
     Insets margin = new Insets(17, 40, 20, 30); // 上, 左, 下, 右
-    int nx(double x){ return (int)Math.round(margin.left + x*width); }
-    int ny(double y){ return (int)Math.round(margin.top + (1-y)*height); }
-    int yVal(double v){ return ny((v - vMin)/ (vMax - vMin)); }
+
+    int nx(double x) {
+        return (int) Math.round(margin.left + x * width);
+    }
+
+    int ny(double y) {
+        return (int) Math.round(margin.top + (1 - y) * height);
+    }
+
+    int yVal(double v) {
+        return ny((v - vMin) / (vMax - vMin));
+    }
+
     double vMax = 0.0, vMin = 0.0;
     static double[] spectrumBuf;
 
     class Complex {
         double r, i;
-        public Complex(double re, double im) { r = re; i = im; }
+
+        public Complex(double re, double im) {
+            r = re;
+            i = im;
+        }
     }
 
     private double[] DFT(byte[] data) {
@@ -471,30 +573,31 @@ public class MultiWaveViewerPanel extends JPanel {
         double freq1 = SoundSourceChannel.SAMPLE_RATE / spectrumBuf.length / 2;
         g.setColor(Color.WHITE);
         for (int d = 0; d <= nX; d++) {
-            double x = (double)d / nX;
+            double x = (double) d / nX;
             double freq = freq1 * x * spectrumBuf.length;
-            //double time = x * data.length / af.getSampleRate();
-            g.drawLine(nx(x), ny(0), nx(x), ny(0)+3);
+            // double time = x * data.length / af.getSampleRate();
+            g.drawLine(nx(x), ny(0), nx(x), ny(0) + 3);
             String str = String.format("%.2f", freq / 1000);
-            if (d == nX) str += "KHz";
+            if (d == nX)
+                str += "KHz";
             int w = fm.stringWidth(str);
-            g.drawString(str, nx(x)-w/2, ny(0)+h+2);
+            g.drawString(str, nx(x) - w / 2, ny(0) + h + 2);
         }
         for (int n = 0; n <= nY; n++) {
-            double y = (double)n / nY;
+            double y = (double) n / nY;
             g.setColor(Color.lightGray);
             g.drawLine(nx(0), ny(y), nx(1.0), ny(y));
-            String str = String.format("%.0f", vMin + (vMax-vMin)*y);
+            String str = String.format("%.0f", vMin + (vMax - vMin) * y);
             int w = fm.stringWidth(str);
             g.setColor(Color.WHITE);
-            g.drawString(str, nx(0)-w-5, ny(y)+h/2);
+            g.drawString(str, nx(0) - w - 5, ny(y) + h / 2);
         }
     }
 
     public void paintSpectrum(Graphics g) {
-        width  = getWidth() - margin.left - margin.right;
+        width = getWidth() - margin.left - margin.right;
         height = getHeight() - margin.top - margin.bottom;
-        g.drawRect(margin.left, margin.top, width-1, height-1); // 座標軸描画
+        g.drawRect(margin.left, margin.top, width - 1, height - 1); // 座標軸描画
         if (d1 == null) {
             return;
         }
@@ -515,7 +618,7 @@ public class MultiWaveViewerPanel extends JPanel {
         tick(g, 10, 5);
         g.setColor(Color.red);
         for (int n = 0; n < spectrumBuf.length; n++) {
-            double x = (double)n / spectrumBuf.length;
+            double x = (double) n / spectrumBuf.length;
             g.drawLine(nx(x), ny(0), nx(x), yVal(spectrumBuf[n]));
         }
     }

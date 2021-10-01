@@ -5,6 +5,35 @@ import jlib.util.IUtilityToolkit;
 
 public interface ISystemManager {
 
+    // パスのID
+
+    /** "DATA"ディレクトリ */
+    public static final int PATH_DATA_DIR = 0;
+    /** "RES"ディレクトリ */
+    public static final int PATH_RES_DIR = (PATH_DATA_DIR + 1);
+    /** "PLUGINS"ディレクトリ */
+    public static final int PATH_PLUGINS_DIR = (PATH_RES_DIR + 1);
+    /** "JMS"ディレクトリ */
+    public static final int PATH_JMS_DIR = (PATH_PLUGINS_DIR + 1);
+    /** "JAR"ディレクトリ */
+    public static final int PATH_JAR_DIR = (PATH_JMS_DIR + 1);
+    /** "JMZ"ディレクトリ */
+    public static final int PATH_ZIP_DIR = (PATH_JAR_DIR + 1);
+    /** "OUTPUT"ディレクトリ */
+    public static final int PATH_OUTPUT_DIR = (PATH_ZIP_DIR + 1);
+    /** "SAVE"ディレクトリ */
+    public static final int PATH_SAVE_DIR = (PATH_OUTPUT_DIR + 1);
+    /** "activate"ファイル */
+    public static final int PATH_ACTIVATE_FILE = (PATH_SAVE_DIR + 1);
+    /** "syscommon"ファイル */
+    public static final int PATH_SYSCOMMON_FILE = (PATH_ACTIVATE_FILE + 1);
+    /** "SKIN"ディレクトリ */
+    public static final int PATH_SKIN_DIR = (PATH_SYSCOMMON_FILE + 1);
+    /** システムパス総数 */
+    public static final int NUM_OF_PATH = (PATH_SKIN_DIR + 1);
+
+    // 設定値取得ID
+
     /** MIDIファイル拡張子 */
     public static final int COMMON_REGKEY_NO_EXTENSION_MIDI = 0;
     /** WAVファイル拡張子 */
@@ -81,24 +110,21 @@ public interface ISystemManager {
     abstract boolean isEnableStandAlonePlugin();
 
     /**
-     * データファイル格納ディレクトリパス
+     * ファイルパス取得
      *
-     * @return パス
+     * @param id
+     *            取得したいパスのID
+     * @param plugin
+     *            自身のプラグインインスタンス
+     * @return パス文字列
      */
-    abstract String getDataFileLocationPath(IPlugin plugin);
-
-    /**
-     * データファイル格納ディレクトリパス
-     *
-     * @return パス
-     */
-    abstract String getResFileLocationPath(IPlugin plugin);
+    abstract String getSystemPath(int id, IPlugin plugin);
 
     /**
      * プラグイン名取得
      *
      * @param plugin
-     *            プラグイン
+     *            自身のプラグインインスタンス
      * @return プラグイン名
      */
     abstract String getPluginName(IPlugin plugin);

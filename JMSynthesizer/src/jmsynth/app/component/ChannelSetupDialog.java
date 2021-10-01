@@ -28,10 +28,10 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import jmsynth.JMSoftSynthesizer;
+import jmsynth.JMSynthFile;
 import jmsynth.envelope.Envelope;
 import jmsynth.modulate.Modulator;
 import jmsynth.oscillator.OscillatorSet.WaveType;
-import jmsynth.oscillator.WaveGenerater;
 
 public class ChannelSetupDialog extends JDialog {
 
@@ -47,26 +47,17 @@ public class ChannelSetupDialog extends JDialog {
     private JSlider sliderR;
     private JButton btnTest;
 
-    // "SAW", "TRIANGLE", "SQUARE", "PULSE", "SINE", "NOIS"
-    private static final String WAVE_STR_SAW = "SAW";
-    private static final String WAVE_STR_REVERSE_SAW = "REVERSE_SAW";
-    private static final String WAVE_STR_TRIANGLE = "TRIANGLE";
-    private static final String WAVE_STR_SQUARE = "SQUARE";
-    private static final String WAVE_STR_PULSE_25 = "PULSE_25";
-    private static final String WAVE_STR_PULSE_12_5 = "PULSE_12_5";
-    private static final String WAVE_STR_SINE = "SINE";
-    private static final String WAVE_STR_NOIS = "NOIS";
+    private static final String[] WAVE_STR_ITEMS = JMSynthFile.WAVE_STR_ITEMS;
+    private static WaveType toWaveType(String sWave) {
+        return JMSynthFile.toWaveType(sWave);
+    }
+    private static String getWaveStr(WaveType type) {
+        return JMSynthFile.toWaveStr(type);
+    }
+    private static int toYCord(WaveType type, double f, int overallLeval) {
+        return JMSynthFile.toYCord(type, f, overallLeval);
+    }
 
-    private static final String[] WAVE_STR_ITEMS = new String[] { //
-            WAVE_STR_SINE, //
-            WAVE_STR_SAW, //
-            WAVE_STR_REVERSE_SAW, //
-            WAVE_STR_TRIANGLE, //
-            WAVE_STR_SQUARE, //
-            WAVE_STR_PULSE_25, //
-            WAVE_STR_PULSE_12_5, //
-            WAVE_STR_NOIS //
-    };//
     private JSlider sliderMod;
     private JCheckBox chckbxRealTime;
 
@@ -173,31 +164,12 @@ public class ChannelSetupDialog extends JDialog {
                     xPoint[i] = i;
 
                     double f = (double)(i - mergin) / (double)(length - (mergin * 2));
-                    switch (type) {
-                        case SAW:
-                            yPoint[i] = WaveGenerater.makeSawWave(f, overallLeval, false) + cy;
-                            break;
-                        case SAW_REVERSE:
-                            yPoint[i] = WaveGenerater.makeSawWave(f, overallLeval, true) + cy;
-                            break;
-                        case SINE:
-                            yPoint[i] = WaveGenerater.makeSinWave(f, overallLeval, false) + cy;
-                            break;
-                        case SQUARE:
-                            yPoint[i] = WaveGenerater.makeSquareWave(f, overallLeval, false) + cy;
-                            break;
-                        case PULSE_25:
-                            yPoint[i] = WaveGenerater.makePulseWave(f, overallLeval, 0.25, false) + cy;
-                            break;
-                        case PULSE_12_5:
-                            yPoint[i] = WaveGenerater.makePulseWave(f, overallLeval, 0.125, false) + cy;
-                            break;
-                        case TRIANGLE:
-                            yPoint[i] = WaveGenerater.makeTriangleWave(f, overallLeval, false) + cy;
-                            break;
-                        default:
-                            yPoint[i] = ((under - top) / 2);
-                            break;
+                    int mwy = toYCord(type, f, overallLeval);
+                    if (mwy != -1) {
+                        yPoint[i] = mwy + cy;
+                    }
+                    else {
+                        yPoint[i] = ((under - top) / 2);
                     }
                 }
             }
@@ -500,35 +472,6 @@ public class ChannelSetupDialog extends JDialog {
         return ch;
     }
 
-    public WaveType toWaveType(String sWave) {
-        WaveType type = WaveType.SINE;
-        if (sWave.equalsIgnoreCase(WAVE_STR_SAW) == true) {
-            type = WaveType.SAW;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_REVERSE_SAW) == true) {
-            type = WaveType.SAW_REVERSE;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_TRIANGLE) == true) {
-            type = WaveType.TRIANGLE;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_SQUARE) == true) {
-            type = WaveType.SQUARE;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_PULSE_25) == true) {
-            type = WaveType.PULSE_25;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_PULSE_12_5) == true) {
-            type = WaveType.PULSE_12_5;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_SINE) == true) {
-            type = WaveType.SINE;
-        }
-        else {
-            type = WaveType.NOISE;
-        }
-        return type;
-    }
-
     public void sync() {
         int ch = getChannel();
         Envelope e = synth.getEnvelope(ch);
@@ -572,39 +515,6 @@ public class ChannelSetupDialog extends JDialog {
         if (mod != null) {
             setModSli();
         }
-    }
-
-    private String getWaveStr(WaveType type) {
-        String sWave = WAVE_STR_NOIS;
-        switch (type) {
-            case NOISE:
-                sWave = WAVE_STR_NOIS;
-                break;
-            case PULSE_25:
-                sWave = WAVE_STR_PULSE_25;
-                break;
-            case PULSE_12_5:
-                sWave = WAVE_STR_PULSE_12_5;
-                break;
-            case SAW:
-                sWave = WAVE_STR_SAW;
-                break;
-            case SAW_REVERSE:
-                sWave = WAVE_STR_REVERSE_SAW;
-                break;
-            case SINE:
-                sWave = WAVE_STR_SINE;
-                break;
-            case SQUARE:
-                sWave = WAVE_STR_SQUARE;
-                break;
-            case TRIANGLE:
-                sWave = WAVE_STR_TRIANGLE;
-                break;
-            default:
-                break;
-        }
-        return sWave;
     }
 
     private void setSliderInt(JSlider sl, int val) {

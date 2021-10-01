@@ -86,7 +86,7 @@ public class JMPLoader {
     }
 
     private static void printPlglst() {
-        String path = JMPCore.getSystemManager().getJmsDirPath();
+        String path = JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JMS_DIR);
         File jmsDir = new File(path);
         int cnt = 0;
         if (jmsDir.exists() == true && jmsDir.isDirectory() == true) {
@@ -104,7 +104,7 @@ public class JMPLoader {
     }
 
     private static IPlugin getStdPlugin(String jmsName) {
-        String path = JMPCore.getSystemManager().getJmsDirPath();
+        String path = JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JMS_DIR);
         if (jmsName.endsWith("." + PluginManager.SETUP_FILE_EX) == false) {
             jmsName += "." + PluginManager.SETUP_FILE_EX;
         }

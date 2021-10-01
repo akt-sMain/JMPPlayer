@@ -27,6 +27,7 @@ import jmp.util.JmpUtil;
 import jmp.util.toolkit.UtilityToolkitManager;
 import jmsynth.JMSoftSynthesizer;
 import jmsynth.JMSynthEngine;
+import jmsynth.JMSynthFile;
 import jmsynth.midi.MidiInterface;
 import process.IProcessingCallback;
 import wffmpeg.FFmpegWrapper;
@@ -84,6 +85,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     /** JMSynthライブラリ名 */
     public static final String JMSYNTH_LIB_NAME = JMSoftSynthesizer.INFO_NAME;
+    public static final String JMSYNTH_CONFIG_EX = JMSynthFile.EXTENSION_CONFIG;
 
     /** 共通レジスタ */
     private CommonRegister cReg = null;
@@ -99,17 +101,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     private IUtilityToolkit utilToolkit = null;
 
     // システムパス変数
-    private String dataFileLocationPath = "";
-    private String resFileLocationPath = "";
-    private String pluginsDirPath = "";
-    private String jmsDirPath = "";
-    private String jarDirPath = "";
-    private String zipDirPath = "";
-    private String outputPath = "";
-    private String savePath = "";
-    private String activateFileLocationPath = "";
-    private String syscommonPath = "";
-    private String skinPath = "";
+    private String[] aPath = null;
 
     public void showSystemErrorMessage(int errorID) {
         String errorMsg = ErrorDef.getTotalMsg(errorID);
@@ -241,7 +233,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         cReg.add(cRegKeys[COMMON_REGKEY_NO_AUTOPLAY_FUNC], "DIR", true);
 
         // syscommon読み込み
-        cReg.read(getSyscommonPath());
+        cReg.read(aPath[PATH_SYSCOMMON_FILE]);
 
         if (getCommonRegisterValue(COMMON_REGKEY_NO_AUTOPLAY_FUNC).equalsIgnoreCase("PLT")) {
             JMPFlags.PlayListExtention = true;
@@ -279,7 +271,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         setupLookAndFeel();
 
         if (JMPLoader.UsePluginDirectory == true) {
-            File pluginsDir = new File(getPluginsDirPath());
+            File pluginsDir = new File(aPath[PATH_PLUGINS_DIR]);
             if (pluginsDir.exists() == false) {
                 // プラグインフォルダ作成
                 if (!pluginsDir.mkdir()) {
@@ -287,14 +279,14 @@ public class SystemManager extends AbstractManager implements ISystemManager {
                 }
             }
         }
-        File dataDir = new File(getDataFileLocationPath());
+        File dataDir = new File(aPath[PATH_DATA_DIR]);
         if (dataDir.exists() == false) {
             // データフォルダ作成
             if (!dataDir.mkdir()) {
                 return false;
             }
         }
-        File resDir = new File(getResFileLocationPath());
+        File resDir = new File(aPath[PATH_RES_DIR]);
         if (resDir.exists() == false) {
             // resフォルダ作成
             if (!resDir.mkdir()) {
@@ -302,7 +294,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             }
         }
         if (JMPLoader.UseHistoryFile == true || JMPLoader.UseConfigFile == true) {
-            File saveDir = new File(getSavePath());
+            File saveDir = new File(aPath[PATH_SAVE_DIR]);
             if (saveDir.exists() == false) {
                 // saveフォルダ作成
                 if (!saveDir.mkdir()) {
@@ -311,28 +303,28 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             }
         }
         if (JMPLoader.UsePluginDirectory == true) {
-            File jarDir = new File(getJarDirPath());
+            File jarDir = new File(aPath[PATH_JAR_DIR]);
             if (jarDir.exists() == false) {
                 // Jarフォルダ作成
                 if (!jarDir.mkdir()) {
                     return false;
                 }
             }
-            File jmsDir = new File(getJmsDirPath());
+            File jmsDir = new File(aPath[PATH_JMS_DIR]);
             if (jmsDir.exists() == false) {
                 // jmsフォルダ作成
                 if (!jmsDir.mkdir()) {
                     return false;
                 }
             }
-            File outDir = new File(getOutputPath());
+            File outDir = new File(aPath[PATH_OUTPUT_DIR]);
             if (outDir.exists() == false) {
                 // outputフォルダ作成
                 if (!outDir.mkdir()) {
                     return false;
                 }
             }
-            File zipDir = new File(getZipDirPath());
+            File zipDir = new File(aPath[PATH_ZIP_DIR]);
             if (zipDir.exists() == false) {
                 if (!zipDir.mkdir()) {
                     return false;
@@ -353,8 +345,8 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         postActivate();
 
         // syscommon dump
-        if (Utility.isExsistFile(getSavePath()) == true) {
-            cReg.write(getSyscommonPath());
+        if (Utility.isExsistFile(getSystemPath(SystemManager.PATH_SAVE_DIR)) == true) {
+            cReg.write(getSystemPath(PATH_SYSCOMMON_FILE));
         }
         return true;
     }
@@ -392,7 +384,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     /** アクティベート前処理 */
     private void preActivate() {
         /* アクティベート状況の確認 */
-        if (Utility.isExsistFile(getActivateFileLocationPath()) == true) {
+        if (Utility.isExsistFile(getSystemPath(PATH_ACTIVATE_FILE)) == true) {
             JMPFlags.ActivateFlag = true;
         }
         else {
@@ -418,7 +410,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
         // ライセンス発行
         if (activateOutFlag == true) {
-            if (Utility.isExsistFile(getActivateFileLocationPath()) == false) {
+            if (Utility.isExsistFile(getSystemPath(PATH_ACTIVATE_FILE)) == false) {
                 try {
                     String text = "ライセンス認証のためのファイルです。" + Platform.getNewLine()//
                             + "このファイルを削除してもソフトウェアの動作には影響ありません。" + Platform.getNewLine()//
@@ -426,7 +418,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
                             + "File for license authentication." + Platform.getNewLine()//
                             + "Deleting this file does not affect the operation of the software.";
 
-                    Utility.outputTextFile(getActivateFileLocationPath(), text);
+                    Utility.outputTextFile(getSystemPath(PATH_ACTIVATE_FILE), text);
                 }
                 catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -485,139 +477,87 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
         makeSystemPathFlag = true;
 
+        aPath = new String[NUM_OF_PATH];
+
         String currentPath = Platform.getCurrentPath(false);
 
         // プラグイン格納ディレクトリパス
-        pluginsDirPath = Utility.pathCombin(currentPath, PLUGINS_DIR_NAME);
+        aPath[PATH_PLUGINS_DIR] = Utility.pathCombin(currentPath, PLUGINS_DIR_NAME);
 
         // データファイル格納ディレクトリパス
         if (JMPLoader.UsePluginDirectory == true) {
-            dataFileLocationPath = Utility.pathCombin(pluginsDirPath, DATA_DIR_NAME);
+            aPath[PATH_DATA_DIR] = Utility.pathCombin(aPath[PATH_PLUGINS_DIR], DATA_DIR_NAME);
         }
         else {
-            dataFileLocationPath = Utility.pathCombin(currentPath, DATA_DIR_NAME);
+            aPath[PATH_DATA_DIR] = Utility.pathCombin(currentPath, DATA_DIR_NAME);
         }
 
         // リソースファイル格納ディレクトリパス
         if (JMPLoader.UsePluginDirectory == true) {
-            resFileLocationPath = Utility.pathCombin(pluginsDirPath, RES_DIR_NAME);
+            aPath[PATH_RES_DIR] = Utility.pathCombin(aPath[PATH_PLUGINS_DIR], RES_DIR_NAME);
         }
         else {
-            resFileLocationPath = Utility.pathCombin(currentPath, RES_DIR_NAME);
+            aPath[PATH_RES_DIR] = Utility.pathCombin(currentPath, RES_DIR_NAME);
         }
 
         // プラグインjms格納ディレクトリパス
-        jmsDirPath = Utility.pathCombin(pluginsDirPath, JMS_DIR_NAME);
+        aPath[PATH_JMS_DIR] = Utility.pathCombin(aPath[PATH_PLUGINS_DIR], JMS_DIR_NAME);
 
         // プラグインjar格納ディレクトリパス
-        jarDirPath = Utility.pathCombin(pluginsDirPath, JAR_DIR_NAME);
+        aPath[PATH_JAR_DIR] = Utility.pathCombin(aPath[PATH_PLUGINS_DIR], JAR_DIR_NAME);
 
         // zip格納ディレクトリパス
-        zipDirPath = Utility.pathCombin(currentPath, ZIP_DIR_NAME);
+        aPath[PATH_ZIP_DIR] = Utility.pathCombin(currentPath, ZIP_DIR_NAME);
 
         // 出力ファイル格納ディレクトリパス
-        outputPath = Utility.pathCombin(currentPath, OUTPUT_DIR_NAME);
+        aPath[PATH_OUTPUT_DIR] = Utility.pathCombin(currentPath, OUTPUT_DIR_NAME);
 
         // セーブデータ格納ディレクトリパス
-        savePath = Utility.pathCombin(currentPath, SAVE_DIR_NAME);
+        aPath[PATH_SAVE_DIR] = Utility.pathCombin(currentPath, SAVE_DIR_NAME);
 
         // アクティベートファイルパス
-        activateFileLocationPath = Utility.pathCombin(savePath, "activate");
+        aPath[PATH_ACTIVATE_FILE] = Utility.pathCombin(aPath[PATH_SAVE_DIR], "activate");
 
         // syscommon
-        syscommonPath = Utility.pathCombin(savePath, COMMON_SYS_FILENAME);
+        aPath[PATH_SYSCOMMON_FILE] = Utility.pathCombin(aPath[PATH_SAVE_DIR], COMMON_SYS_FILENAME);
 
         // skin
-        skinPath = Utility.pathCombin(currentPath, SKIN_FOLDER_NAME);
+        aPath[PATH_SKIN_DIR] = Utility.pathCombin(currentPath, SKIN_FOLDER_NAME);
 
         JMPFlags.Log.cprintln("###");
         JMPFlags.Log.cprintln("## Directory list");
         JMPFlags.Log.cprintln("##");
-        JMPFlags.Log.cprintln(pluginsDirPath);
-        JMPFlags.Log.cprintln(dataFileLocationPath);
-        JMPFlags.Log.cprintln(resFileLocationPath);
-        JMPFlags.Log.cprintln(jmsDirPath);
-        JMPFlags.Log.cprintln(jarDirPath);
-        JMPFlags.Log.cprintln(zipDirPath);
-        JMPFlags.Log.cprintln(outputPath);
-        JMPFlags.Log.cprintln(savePath);
-        JMPFlags.Log.cprintln(activateFileLocationPath);
-        JMPFlags.Log.cprintln(syscommonPath);
+        for (int i=0; i<NUM_OF_PATH; i++) {
+            JMPFlags.Log.cprintln("[" + i + "]" + aPath[i]);
+        }
         JMPFlags.Log.cprintln("##");
         JMPFlags.Log.cprintln();
     }
 
-    /**
-     * データファイル格納ディレクトリパス
-     *
-     * @return パス
-     */
-    public String getDataFileLocationPath() {
-        return dataFileLocationPath;
+    public String getSystemPath(int id) {
+        if (0 <= id && id < NUM_OF_PATH) {
+            return new String(aPath[id]);
+        }
+        else {
+            return "";
+        }
     }
 
     @Override
-    public String getDataFileLocationPath(IPlugin plugin) {
-        String path = getDataFileLocationPath();
-        if (JMPLoader.UsePluginDirectory == true) {
-            path += (Platform.getSeparator() + getPluginName(plugin));
+    public String getSystemPath(int id, IPlugin plugin) {
+        String path = getSystemPath(id);
+        switch (id) {
+            case PATH_DATA_DIR:
+            case PATH_RES_DIR:
+                // プラグイン名の付与
+                if (JMPLoader.UsePluginDirectory == true) {
+                    path += (Platform.getSeparator() + getPluginName(plugin));
+                }
+                break;
+            default:
+                break;
         }
         return path;
-    }
-
-    /**
-     * リソースファイル格納ディレクトリパス
-     *
-     * @return
-     */
-    public String getResFileLocationPath() {
-        return resFileLocationPath;
-    }
-
-    @Override
-    public String getResFileLocationPath(IPlugin plugin) {
-        String path = getResFileLocationPath();
-        if (JMPLoader.UsePluginDirectory == true) {
-            path += (Platform.getSeparator() + getPluginName(plugin));
-        }
-        return path;
-    }
-
-    public String getPluginsDirPath() {
-        return pluginsDirPath;
-    }
-
-    public String getJmsDirPath() {
-        return jmsDirPath;
-    }
-
-    public String getJarDirPath() {
-        return jarDirPath;
-    }
-
-    public String getZipDirPath() {
-        return zipDirPath;
-    }
-
-    public String getOutputPath() {
-        return outputPath;
-    }
-
-    /**
-     * アクティベート状態ファイル
-     *
-     * @return
-     */
-    public String getActivateFileLocationPath() {
-        return activateFileLocationPath;
-    }
-
-    public String getSavePath() {
-        return savePath;
-    }
-
-    public String getSyscommonPath() {
-        return syscommonPath;
     }
 
     /**
@@ -795,10 +735,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         return cRegKeys[keyNo];
     }
 
-    public String getSkinPath() {
-        return skinPath;
-    }
-
     @Override
     public String getCurrentLanguageCode() {
         LanguageManager lm = JMPCore.getLanguageManager();
@@ -817,8 +753,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     }
 
     // 新しいJMSynthインスタンスを取得する
+    MidiInterface miface;
     public MidiInterface newBuiltinSynthInstance() {
-        MidiInterface miface = JMSynthEngine.getMidiInterface(true);
+        miface = JMSynthEngine.getMidiInterface(true);
 
         // Window登録
         BuiltinSynthSetupDialog wvf = new BuiltinSynthSetupDialog(miface);
@@ -832,8 +769,22 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         return miface;
     }
 
-    public ProcessingYoutubeDLWrapper getYoutubeDlWrapper() {
-        return youtubeDlWrapper;
+    public void loadJMSynthConfig(File file) {
+        if (JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT).equals(JMSYNTH_LIB_NAME) == true) {
+            if (miface != null) {
+                JMSynthFile.loadSynthConfig(file, (JMSoftSynthesizer)miface.getSynthController());
+            }
+        }
+    }
+
+    public void setYoutubeDlCallback(IProcessingCallback cb) {
+        youtubeDlWrapper.setCallback(cb);
+    }
+
+    public void executeYoutubeDownload(String url, File outputDir, String extension, boolean isAudioOnly) throws IOException {
+        youtubeDlWrapper.setAudioOnly(isAudioOnly);
+        youtubeDlWrapper.setOutput(outputDir.getPath());
+        youtubeDlWrapper.convert(url, extension);
     }
 
     public void setYoutubeDlWrapperPath(String path) {

@@ -165,13 +165,13 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
     }
 
     private boolean readingConfigFile() {
-        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSavePath(), CONFIG_FILE);
+        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_SAVE_DIR), CONFIG_FILE);
         return database.reading(path);
     }
 
     private boolean readingHistoryFile() {
         boolean ret = true;
-        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSavePath(), HISTORY_FILE);
+        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_SAVE_DIR), HISTORY_FILE);
         File file = new File(path);
         if (file.exists() == false) {
             return false;
@@ -193,7 +193,7 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
     private boolean readingConvertedFile() {
         boolean ret = true;
-        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSavePath(), "cached");
+        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_SAVE_DIR), "cached");
         File file = new File(path);
         if (file.exists() == false) {
             return false;
@@ -218,13 +218,13 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
     }
 
     private boolean outputConfigFile() {
-        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSavePath(), CONFIG_FILE);
+        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_SAVE_DIR), CONFIG_FILE);
         return database.output(path);
     }
 
     private boolean outputHistoryFile() {
         boolean ret = true;
-        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSavePath(), HISTORY_FILE);
+        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_SAVE_DIR), HISTORY_FILE);
 
         try {
             JmpUtil.writeTextFile(path, historyData);
@@ -237,8 +237,9 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
 
     private boolean outputConvertedFile() {
         boolean ret = true;
-        String path = JmpUtil.pathCombin(JMPCore.getSystemManager().getSavePath(), "cached");
-        if (JmpUtil.isExsistFile(JMPCore.getSystemManager().getSavePath()) == false) {
+        String saveDir = JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_SAVE_DIR);
+        String path = JmpUtil.pathCombin(saveDir, "cached");
+        if (JmpUtil.isExsistFile(saveDir) == false) {
             return false;
         }
 
