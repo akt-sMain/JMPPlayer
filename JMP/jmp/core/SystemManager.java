@@ -21,6 +21,7 @@ import jmp.ErrorDef;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
 import jmp.gui.BuiltinSynthSetupDialog;
+import jmp.gui.DebugLogConsole;
 import jmp.lang.DefineLanguage;
 import jmp.midi.toolkit.MidiToolkitManager;
 import jmp.util.JmpUtil;
@@ -29,6 +30,7 @@ import jmsynth.JMSoftSynthesizer;
 import jmsynth.JMSynthEngine;
 import jmsynth.JMSynthFile;
 import jmsynth.midi.MidiInterface;
+import process.IConsoleOutCallback;
 import process.IProcessingCallback;
 import wffmpeg.FFmpegWrapper;
 import wrapper.ProcessingFFmpegWrapper;
@@ -102,6 +104,34 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     // システムパス変数
     private String[] aPath = null;
+
+    private DebugLogConsole console = null;
+    public void showConsole() {
+        if (console != null) {
+            console.setVisible(true);
+        }
+    }
+    public void showConsoleForClear() {
+        if (console != null) {
+            console.clearText();
+            console.setVisible(true);
+        }
+    }
+    public void closeConsole() {
+        if (console != null) {
+            console.setVisible(false);
+        }
+    }
+    public void consoleOutln(String s) {
+        if (console != null) {
+            console.println(s);
+        }
+    }
+    public void consoleOut(String s) {
+        if (console != null) {
+            console.print(s);
+        }
+    }
 
     public void showSystemErrorMessage(int errorID) {
         String errorMsg = ErrorDef.getTotalMsg(errorID);
@@ -270,6 +300,28 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         // ルックアンドフィールの設定
         setupLookAndFeel();
 
+        // コンソール画面(デバッグ画面)
+        if (JMPFlags.DebugMode == true) {
+            console = new DebugLogConsole();
+            if (JMPFlags.InvokeToConsole == true) {
+                showConsole();
+            }
+        }
+        IConsoleOutCallback cOutCb = new IConsoleOutCallback() {
+
+            @Override
+            public void println(String s) {
+                JMPFlags.Log.cprintln(s);
+            }
+
+            @Override
+            public void print(String s) {
+                JMPFlags.Log.cprint(s);
+            }
+        };
+        youtubeDlWrapper.setConsoleOut(cOutCb);
+        ((ProcessingFFmpegWrapper)ffmpegWrapper).setConsoleOut(cOutCb);
+
         if (JMPLoader.UsePluginDirectory == true) {
             File pluginsDir = new File(aPath[PATH_PLUGINS_DIR]);
             if (pluginsDir.exists() == false) {
@@ -340,6 +392,8 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     protected boolean endFunc() {
         super.endFunc();
+
+        closeConsole();
 
         /* アクティベート処理 */
         postActivate();
@@ -600,8 +654,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     }
 
     public void executeConvert(String inPath, String outPath) throws IOException {
-        ffmpegWrapper.convert(inPath, outPath);
-
         boolean deleteWav = true;
         if (JMPCore.getDataManager().isFFmpegLeaveOutputFile() == true) {
             deleteWav = false;

@@ -1,10 +1,12 @@
 package jmp.gui;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
@@ -15,14 +17,19 @@ import jmp.core.JMPCore;
 import jmp.core.WindowManager;
 import jmp.gui.ui.IJMPComponentUI;
 
-public class JmpPlayerLaunch extends JPanel implements MouseListener, IJMPComponentUI {
+public class JmpPlayerLaunch extends JPanel implements MouseListener, MouseMotionListener, IJMPComponentUI {
 
     public static final Color BORDER_COLOR = Color.WHITE;
     public static final Color BACK_COLOR = Color.BLACK;
     public static final Color BACK_COLOR2 = Utility.convertCodeToHtmlColor("#c71585");
     public static final int SIZE = 16;
     public static final int MERGIN = 2;
-    public static final int TOTAL_WIDTH = ((SIZE + (MERGIN * 2))) * 3;
+    public static final int TOTAL_WIDTH = 250;//((SIZE + (MERGIN * 2))) * 8;
+
+    public static final int VOLUME_STARTX = 80;
+    public static final int VOLUME_STARTY = 2;
+    public static final int VOLUME_W = 100;
+    public static final int VOLUME_H = SIZE;
 
     /**
      * Create the panel.
@@ -33,6 +40,7 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, IJMPCompon
         setBackground(getJmpBackColor());
 
         addMouseListener(this);
+        addMouseMotionListener(this);
     }
 
     @Override
@@ -67,6 +75,27 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, IJMPCompon
         paintPlaylistMark(g, x, y, SIZE, SIZE);
         g.setColor(BORDER_COLOR);
         g.drawRect(x, y, SIZE, SIZE);
+
+        x += (SIZE + (MERGIN * 2));
+        float volume = JMPCore.getSoundManager().getLineVolume();
+        int volumeW = (int)((float)VOLUME_W * volume);
+        for (int vx=0; vx<VOLUME_W; vx++) {
+            float vp = ((float)(vx+1) / (float)80);
+            if (1.0f < vp) {
+                vp = 1.0f;
+            }
+            int vy = (int)((float)VOLUME_H * vp);
+            g.setColor(Color.BLACK);
+            g.drawLine(VOLUME_STARTX + vx, VOLUME_STARTY+VOLUME_H-vy, VOLUME_STARTX + vx, VOLUME_STARTY+VOLUME_H);
+            if (vx < volumeW) {
+                g.setColor(Color.CYAN);
+                g.drawLine(VOLUME_STARTX + vx, VOLUME_STARTY+VOLUME_H-vy, VOLUME_STARTX + vx, VOLUME_STARTY+VOLUME_H);
+            }
+        }
+        Font vFont = new Font(Font.DIALOG_INPUT, Font.PLAIN, 12);
+        g.setFont(vFont);
+        g.setColor(Color.RED);
+        g.drawString("" + (int)(100.0f * volume), VOLUME_STARTX+VOLUME_W-20, VOLUME_STARTY+15);
     }
 
     @Override
@@ -131,12 +160,24 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, IJMPCompon
         return MERGIN;
     }
 
+    public void volumeSlide(MouseEvent e) {
+        WindowManager wm = JMPCore.getWindowManager();
+        if ((VOLUME_STARTX < e.getX()) && (e.getX() < VOLUME_STARTX + VOLUME_W + 1) && (VOLUME_STARTY < e.getY()) && (e.getY() < VOLUME_STARTY + VOLUME_H)) {
+            int vx = e.getX() - VOLUME_STARTX;
+            float volume = (float)vx / (float)VOLUME_W;
+            JMPCore.getSoundManager().setLineVolume(volume);
+            wm.repaint(WindowManager.WINDOW_NAME_MAIN);
+            return;
+        }
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
+        volumeSlide(e);
     }
 
     @Override
@@ -185,5 +226,14 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, IJMPCompon
     @Override
     public void updateBackColor() {
         setBackground(getJmpBackColor());
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        volumeSlide(e);
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
     }
 }

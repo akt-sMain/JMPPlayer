@@ -1,6 +1,10 @@
 package process;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,17 +21,67 @@ public class ProcessInvoker {
 
     private void pPrintln() {
         if (isConsoleOut() == true) {
-            System.out.println();
+            consoleOutCallback.println();
         }
     }
+
     private void pPrintln(String str) {
         if (isConsoleOut() == true) {
-            System.out.println(str);
+            consoleOutCallback.println(str);
         }
     }
+
     private void pPrint(String str) {
         if (isConsoleOut() == true) {
-            System.out.print(str);
+            consoleOutCallback.print(str);
+        }
+    }
+
+    public class InputStreamThread extends Thread {
+        private BufferedReader br;
+        private boolean isExit = false;
+
+        /** コンストラクター */
+        public InputStreamThread(InputStream is) {
+            br = new BufferedReader(new InputStreamReader(is));
+        }
+
+        /** コンストラクター */
+        public InputStreamThread(InputStream is, String charset) {
+            try {
+                br = new BufferedReader(new InputStreamReader(is, charset));
+            }
+            catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (!isExit) {
+                    String line = br.readLine();
+                    if (line != null) {
+                        pPrintln(line);
+                    }
+
+                }
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            finally {
+                try {
+                    br.close();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public void exit() {
+            isExit = true;
         }
     }
 
@@ -46,7 +100,19 @@ public class ProcessInvoker {
             notifyBegin();
 
             try {
+                InputStreamThread ist = new InputStreamThread(proc.getInputStream());
+                InputStreamThread est = new InputStreamThread(proc.getErrorStream());
+                ist.start();
+                est.start();
+
                 proc.waitFor();
+
+                ist.exit();
+                est.exit();
+                ist.join();
+                est.join();
+
+                Thread.sleep(500);
             }
             catch (InterruptedException e) {
                 e.printStackTrace();
@@ -81,6 +147,7 @@ public class ProcessInvoker {
     protected boolean waitFor = false;
 
     private IProcessingCallback callback = null;
+    private IConsoleOutCallback consoleOutCallback = null;
 
     public ProcessInvoker() {
         waitFor = false;
@@ -114,7 +181,7 @@ public class ProcessInvoker {
         pPrintln();
 
         ProcessBuilder pb = new ProcessBuilder();
-        pb.inheritIO();
+        //pb.inheritIO();
 
         pb.command(cmd);
         Process p = pb.start();
@@ -142,10 +209,17 @@ public class ProcessInvoker {
     }
 
     public boolean isConsoleOut() {
+        if (consoleOutCallback == null) {
+            return false;
+        }
         return isConsoleOut;
     }
 
     public void setConsoleOut(boolean isConsoleOut) {
         this.isConsoleOut = isConsoleOut;
+    }
+
+    public void setConsoleOutCallback(IConsoleOutCallback consoleOutCallback) {
+        this.consoleOutCallback = consoleOutCallback;
     }
 }

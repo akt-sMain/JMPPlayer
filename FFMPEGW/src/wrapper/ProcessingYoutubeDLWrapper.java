@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import process.IConsoleOutCallback;
 import process.IProcessingCallback;
 import process.ProcessInvoker;
 
@@ -111,5 +112,9 @@ public class ProcessingYoutubeDLWrapper {
 
     public void setAudioOnly(boolean audioOnly) {
         this.audioOnly = audioOnly;
+    }
+
+    public void setConsoleOut(IConsoleOutCallback cb) {
+        invoker.setConsoleOutCallback(cb);
     }
 }

@@ -327,7 +327,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
                     ret = filechooser.getSelectedFile();
                 }
                 if (ret != null) {
-                    JMSynthFile.saveSynthConfig(ret, synth);
+                    JMSynthFile.saveSynthConfig(ret, softSynth);
                 }
             }
         });
@@ -350,7 +350,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
                         break;
                 }
                 if (ret != null) {
-                    JMSynthFile.loadSynthConfig(ret, synth);
+                    JMSynthFile.loadSynthConfig(ret, softSynth);
                 }
             }
         });

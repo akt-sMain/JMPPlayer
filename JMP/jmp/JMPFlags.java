@@ -1,5 +1,7 @@
 package jmp;
 
+import jmp.core.JMPCore;
+
 /**
  * アプリケーション全体で管理するフラグ
  *
@@ -16,6 +18,14 @@ public class JMPFlags {
                 }
                 else {
                     System.out.print(msg);
+                }
+            }
+            if (JMPFlags.DebugMode == true) {
+                if (ln == true) {
+                    JMPCore.getSystemManager().consoleOutln(msg);
+                }
+                else {
+                    JMPCore.getSystemManager().consoleOut(msg);
                 }
             }
         }
@@ -40,6 +50,9 @@ public class JMPFlags {
 
     /** デバッグモード */
     public static boolean DebugMode = false;
+
+    /** 起動時デバッグコンソール表示 */
+    public static boolean InvokeToConsole = false;
 
     /** アクティベートフラグ */
     public static boolean ActivateFlag = false;

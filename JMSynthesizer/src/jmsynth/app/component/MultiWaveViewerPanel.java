@@ -474,11 +474,6 @@ public class MultiWaveViewerPanel extends JPanel {
             }
             if (visibleWave[ch] == true) {
                 g2d.setColor(waveColor);
-                g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.CAP_ROUND));
-                for (int i=0; i<length; i+=2) {
-                    g2d.drawLine(xPoints[i], yCenter, xPoints[i], yPoints[i]);
-                }
-                g2d.setColor(waveColor);
                 g2d.setStroke(new BasicStroke(WAVE_BOLD, BasicStroke.CAP_ROUND, BasicStroke.CAP_ROUND));
                 g2d.drawPolyline(xPoints, yPoints, length);
                 g2d.setStroke(new BasicStroke());

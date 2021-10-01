@@ -372,6 +372,7 @@ public class FFmpegConvertDialog extends JMPDialog {
                     JMPCore.getFileManager().loadFile(out.getPath());
                 }
                 openOutputFolder();
+
             }
 
             @Override

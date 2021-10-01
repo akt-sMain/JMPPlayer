@@ -32,6 +32,7 @@ public class JMPLoader {
     /* コマンド文字列 */
     public static final String CMD_MANUAL = "-man";
     public static final String CMD_DEBUG = "-debug";
+    public static final String CMD_DEBUGC = "-debugc";
     public static final String CMD_STDPLG = "-stdplg";
     public static final String CMD_NONPLG = "-nonplg";
     public static final String CMD_PLGLST = "-plglst";
@@ -175,6 +176,11 @@ public class JMPLoader {
                 }
                 else if (args[i].equalsIgnoreCase(CMD_DEBUG) == true) {
                     JMPFlags.DebugMode = true;
+                }
+                else if (args[i].equalsIgnoreCase(CMD_DEBUGC) == true) {
+                    JMPFlags.DebugMode = true;
+                    JMPFlags.CoreConsoleOut = true;
+                    JMPFlags.InvokeToConsole = true;
                 }
                 else if (args[i].equalsIgnoreCase(CMD_UNSYNC) == true) {
                     JMPFlags.UseUnsynchronizedMidiPacket = true;

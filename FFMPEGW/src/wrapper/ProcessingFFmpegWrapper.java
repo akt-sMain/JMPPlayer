@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import process.IConsoleOutCallback;
 import process.IProcessingCallback;
 import process.ProcessInvoker;
 import wffmpeg.FFmpegWrapper;
@@ -126,5 +127,9 @@ public class ProcessingFFmpegWrapper extends FFmpegWrapper {
 
     public void setFFmpegCommand(String ffmpegCommand) {
         this.ffmpegCommand = ffmpegCommand;
+    }
+
+    public void setConsoleOut(IConsoleOutCallback cb) {
+        invoker.setConsoleOutCallback(cb);
     }
 }

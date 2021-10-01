@@ -702,6 +702,14 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                 }
             }
         });
+
+        mntmShowConsole = new JMenuItem("Show debug log");
+        mntmShowConsole.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JMPCore.getSystemManager().showConsole();
+            }
+        });
+        configMenu.add(mntmShowConsole);
         configMenu.add(removeAllPluginMenuItem);
 
         mntmCallMakeJMP = new JMenuItem("Invoke \"mkJMP\"");
@@ -860,6 +868,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                 int value = mntmVolumeSlider.getValue();
                 float vol = (float) value / (float) mntmVolumeSlider.getMaximum();
                 JMPCore.getSoundManager().setLineVolume(vol);
+                JMPCore.getWindowManager().repaint(WindowManager.WINDOW_NAME_MAIN);
             }
         });
         mntmVolumeSlider.addMouseMotionListener(new MouseMotionAdapter() {
@@ -868,6 +877,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                 int value = mntmVolumeSlider.getValue();
                 float vol = (float) value / (float) mntmVolumeSlider.getMaximum();
                 JMPCore.getSoundManager().setLineVolume(vol);
+                JMPCore.getWindowManager().repaint(WindowManager.WINDOW_NAME_MAIN);
             }
         });
         playerMenu.add(mntmVolumeSlider);
@@ -893,6 +903,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         }
 
         lblDebugMenu.setVisible(enable);
+        mntmShowConsole.setVisible(enable);
         zipGenerateMenuItem.setVisible(enable);
         removeAllPluginMenuItem.setVisible(enable);
         mnExecuteBatFile.setVisible(enable);
@@ -1156,6 +1167,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
     private JMenuItem mntmNext;
     private JMenuItem mntmPrev;
     private JSeparator separator_2;
+    private JMenuItem mntmShowConsole;
 
     public void updatePluginMenu() {
         pluginMenu.removeAll();
