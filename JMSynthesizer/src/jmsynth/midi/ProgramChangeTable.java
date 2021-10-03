@@ -134,7 +134,7 @@ public class ProgramChangeTable {
     protected static final int PC_127 = 126;
     protected static final int PC_128 = 127;
 
-    private static final int PC_MAX = 128;
+    public static final int PC_MAX = 128;
 
     protected OscillatorSet[] sets = null;
 

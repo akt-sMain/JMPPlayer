@@ -238,29 +238,30 @@ public class JMSynthFile {
             channelElement.setAttribute(XML_ATTR_CHANNEL, String.valueOf(ch));
             rootElement.appendChild(channelElement);
 
-            // wave
-            Element waveElement = document.createElement(XML_NODE_WAVE);
-            waveElement.setAttribute(XML_ATTR_TYPE, String.valueOf(toWaveStr(synth.getWaveType(ch))));
-            channelElement.appendChild(waveElement);
-
-            // envelope
-            Envelope env = synth.getEnvelope(ch);
-            Element envElement = document.createElement(XML_NODE_ENVELOPE);
-            envElement.setAttribute(XML_ATTR_A, String.valueOf(env.getAttackTime()));
-            envElement.setAttribute(XML_ATTR_MAX_A, String.valueOf(env.getMaxAttackMills()));
-            envElement.setAttribute(XML_ATTR_D, String.valueOf(env.getDecayTime()));
-            envElement.setAttribute(XML_ATTR_MAX_D, String.valueOf(env.getMaxDecayMills()));
-            envElement.setAttribute(XML_ATTR_S, String.valueOf(env.getSustainLevel()));
-            envElement.setAttribute(XML_ATTR_R, String.valueOf(env.getReleaseTime()));
-            envElement.setAttribute(XML_ATTR_MAX_R, String.valueOf(env.getMaxReleaseMills()));
-            channelElement.appendChild(envElement);
-
-            // mod
-            Modulator mod = synth.getModulator(ch);
-            Element modElement = document.createElement(XML_NODE_MOD);
-            modElement.setAttribute(XML_ATTR_DEPTH, String.valueOf(mod.getDepth()));
-            channelElement.appendChild(modElement);
+            apendSynthElement(document, channelElement, synth.getWaveType(ch), synth.getEnvelope(ch), synth.getModulator(ch));
         }
+    }
+    private static void apendSynthElement(Document document, Element rootElement, WaveType waveType, Envelope env, Modulator mod) {
+        // wave
+        Element waveElement = document.createElement(XML_NODE_WAVE);
+        waveElement.setAttribute(XML_ATTR_TYPE, String.valueOf(toWaveStr(waveType)));
+        rootElement.appendChild(waveElement);
+
+        // envelope
+        Element envElement = document.createElement(XML_NODE_ENVELOPE);
+        envElement.setAttribute(XML_ATTR_A, String.valueOf(env.getAttackTime()));
+        envElement.setAttribute(XML_ATTR_MAX_A, String.valueOf(env.getMaxAttackMills()));
+        envElement.setAttribute(XML_ATTR_D, String.valueOf(env.getDecayTime()));
+        envElement.setAttribute(XML_ATTR_MAX_D, String.valueOf(env.getMaxDecayMills()));
+        envElement.setAttribute(XML_ATTR_S, String.valueOf(env.getSustainLevel()));
+        envElement.setAttribute(XML_ATTR_R, String.valueOf(env.getReleaseTime()));
+        envElement.setAttribute(XML_ATTR_MAX_R, String.valueOf(env.getMaxReleaseMills()));
+        rootElement.appendChild(envElement);
+
+        // mod
+        Element modElement = document.createElement(XML_NODE_MOD);
+        modElement.setAttribute(XML_ATTR_DEPTH, String.valueOf(mod.getDepth()));
+        rootElement.appendChild(modElement);
     }
 
     public static boolean loadSynthConfig(File file, JMSoftSynthesizer synth) {
@@ -386,5 +387,4 @@ public class JMSynthFile {
             }
         }
     }
-
 }

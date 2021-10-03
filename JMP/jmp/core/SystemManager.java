@@ -306,21 +306,21 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             if (JMPFlags.InvokeToConsole == true) {
                 showConsole();
             }
+            IConsoleOutCallback cOutCb = new IConsoleOutCallback() {
+
+                @Override
+                public void println(String s) {
+                    JMPFlags.Log.cprintln(s);
+                }
+
+                @Override
+                public void print(String s) {
+                    JMPFlags.Log.cprint(s);
+                }
+            };
+            youtubeDlWrapper.setConsoleOut(cOutCb);
+            ((ProcessingFFmpegWrapper)ffmpegWrapper).setConsoleOut(cOutCb);
         }
-        IConsoleOutCallback cOutCb = new IConsoleOutCallback() {
-
-            @Override
-            public void println(String s) {
-                JMPFlags.Log.cprintln(s);
-            }
-
-            @Override
-            public void print(String s) {
-                JMPFlags.Log.cprint(s);
-            }
-        };
-        youtubeDlWrapper.setConsoleOut(cOutCb);
-        ((ProcessingFFmpegWrapper)ffmpegWrapper).setConsoleOut(cOutCb);
 
         if (JMPLoader.UsePluginDirectory == true) {
             File pluginsDir = new File(aPath[PATH_PLUGINS_DIR]);

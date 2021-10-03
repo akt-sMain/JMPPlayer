@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 
 import function.Utility;
 import jlib.gui.IJmpWindow;
+import jmp.JMPFlags;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.WindowManager;
@@ -26,10 +27,17 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, MouseMotio
     public static final int MERGIN = 2;
     public static final int TOTAL_WIDTH = 250;//((SIZE + (MERGIN * 2))) * 8;
 
-    public static final int VOLUME_STARTX = 80;
+    public static final int VOLUME_STARTX = 70;
     public static final int VOLUME_STARTY = 2;
-    public static final int VOLUME_W = 100;
+    public static final int VOLUME_W = 60;
     public static final int VOLUME_H = SIZE;
+
+    public static final int MAX_VOLUME_STARTX = VOLUME_STARTX + VOLUME_W + 10;
+    public static final int MAX_VOLUME_STARTY = 2;
+    public static final int MAX_VOLUME_W = 60;
+    public static final int MAX_VOLUME_H = SIZE;
+
+    private float volumeMax = 1.0f;
 
     /**
      * Create the panel.
@@ -76,15 +84,15 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, MouseMotio
         g.setColor(BORDER_COLOR);
         g.drawRect(x, y, SIZE, SIZE);
 
-        x += (SIZE + (MERGIN * 2));
         float volume = JMPCore.getSoundManager().getLineVolume();
-        int volumeW = (int)((float)VOLUME_W * volume);
+        int volumeW = (int)(((float)VOLUME_W * volume) / volumeMax);
+        int volumeH = 10;
         for (int vx=0; vx<VOLUME_W; vx++) {
-            float vp = ((float)(vx+1) / (float)80);
+            float vp = ((float)(vx+1) / (float)VOLUME_W);
             if (1.0f < vp) {
                 vp = 1.0f;
             }
-            int vy = (int)((float)VOLUME_H * vp);
+            int vy = (int)((float)volumeH * vp);
             g.setColor(Color.BLACK);
             g.drawLine(VOLUME_STARTX + vx, VOLUME_STARTY+VOLUME_H-vy, VOLUME_STARTX + vx, VOLUME_STARTY+VOLUME_H);
             if (vx < volumeW) {
@@ -92,10 +100,42 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, MouseMotio
                 g.drawLine(VOLUME_STARTX + vx, VOLUME_STARTY+VOLUME_H-vy, VOLUME_STARTX + vx, VOLUME_STARTY+VOLUME_H);
             }
         }
-        Font vFont = new Font(Font.DIALOG_INPUT, Font.PLAIN, 12);
-        g.setFont(vFont);
-        g.setColor(Color.RED);
-        g.drawString("" + (int)(100.0f * volume), VOLUME_STARTX+VOLUME_W-20, VOLUME_STARTY+15);
+        if (JMPFlags.DebugMode == true) {
+            Font vFont = new Font(Font.DIALOG_INPUT, Font.PLAIN, 12);
+            g.setFont(vFont);
+            g.setColor(Color.RED);
+            g.drawString("" + (int)(100.0f * volume), VOLUME_STARTX+VOLUME_W-20, VOLUME_STARTY+15);
+        }
+
+        int volumeMaxW = (int)((float)MAX_VOLUME_W * volumeMax);
+        g.setColor(Color.BLACK);
+        g.drawLine(MAX_VOLUME_STARTX, MAX_VOLUME_STARTY+(VOLUME_H / 2), MAX_VOLUME_STARTX + MAX_VOLUME_W - 1, MAX_VOLUME_STARTY+(VOLUME_H / 2));
+        g.setColor(Color.CYAN);
+        g.drawLine(MAX_VOLUME_STARTX, MAX_VOLUME_STARTY+(VOLUME_H / 2), MAX_VOLUME_STARTX + volumeMaxW - 1, MAX_VOLUME_STARTY+(VOLUME_H / 2));
+        g.drawLine(MAX_VOLUME_STARTX + volumeMaxW - 1, MAX_VOLUME_STARTY+5, MAX_VOLUME_STARTX + volumeMaxW - 1, MAX_VOLUME_STARTY+VOLUME_H-5);
+        g.setColor(Color.WHITE);
+        g.drawLine(MAX_VOLUME_STARTX, MAX_VOLUME_STARTY+2, MAX_VOLUME_STARTX, MAX_VOLUME_STARTY+VOLUME_H-2);
+        g.drawLine(MAX_VOLUME_STARTX+MAX_VOLUME_W-1, MAX_VOLUME_STARTY+2, MAX_VOLUME_STARTX+MAX_VOLUME_W-1, MAX_VOLUME_STARTY+VOLUME_H-2);
+
+//        for (int vx=0; vx<MAX_VOLUME_W; vx++) {
+//            float vp = ((float)(vx+1) / (float)MAX_VOLUME_W);
+//            if (1.0f < vp) {
+//                vp = 1.0f;
+//            }
+//            int vy = (int)((float)volumeH * vp);
+//            g.setColor(Color.BLACK);
+//            g.drawLine(MAX_VOLUME_STARTX + vx, MAX_VOLUME_STARTY+VOLUME_H-vy, MAX_VOLUME_STARTX + vx, MAX_VOLUME_STARTY+VOLUME_H);
+//            if (vx < volumeMaxW) {
+//                g.setColor(Color.CYAN);
+//                g.drawLine(MAX_VOLUME_STARTX + vx, MAX_VOLUME_STARTY+VOLUME_H-vy, MAX_VOLUME_STARTX + vx, MAX_VOLUME_STARTY+VOLUME_H);
+//            }
+//        }
+        if (JMPFlags.DebugMode == true) {
+            Font vFont = new Font(Font.DIALOG_INPUT, Font.PLAIN, 12);
+            g.setFont(vFont);
+            g.setColor(Color.RED);
+            g.drawString("" + (int)(100.0f * volumeMax), MAX_VOLUME_STARTX+MAX_VOLUME_W-20, MAX_VOLUME_STARTY+15);
+        }
     }
 
     @Override
@@ -164,8 +204,16 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, MouseMotio
         WindowManager wm = JMPCore.getWindowManager();
         if ((VOLUME_STARTX < e.getX()) && (e.getX() < VOLUME_STARTX + VOLUME_W + 1) && (VOLUME_STARTY < e.getY()) && (e.getY() < VOLUME_STARTY + VOLUME_H)) {
             int vx = e.getX() - VOLUME_STARTX;
-            float volume = (float)vx / (float)VOLUME_W;
+            float volume = ((float)vx * volumeMax) / (float)VOLUME_W;
             JMPCore.getSoundManager().setLineVolume(volume);
+            wm.repaint(WindowManager.WINDOW_NAME_MAIN);
+            return;
+        }
+
+        if ((MAX_VOLUME_STARTX < e.getX()) && (e.getX() < MAX_VOLUME_STARTX + MAX_VOLUME_W + 1) && (MAX_VOLUME_STARTY < e.getY()) && (e.getY() < MAX_VOLUME_STARTY + MAX_VOLUME_H)) {
+            int vx = e.getX() - MAX_VOLUME_STARTX;
+            float val = (float)vx / (float)MAX_VOLUME_W;
+            volumeMax = val;
             wm.repaint(WindowManager.WINDOW_NAME_MAIN);
             return;
         }

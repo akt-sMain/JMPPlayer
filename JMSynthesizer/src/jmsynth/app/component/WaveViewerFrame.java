@@ -52,6 +52,8 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
     private JCheckBox chckbxAutoWaveVisible;
     private JRadioButton rdbtnModeMerge;
 
+    private ProgramChangeTableEditDialog tableEditer;
+
     /**
      * Create the frame.
      * @wbp.parser.constructor
@@ -224,7 +226,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
                 }
             }
         });
-        chckbxAutoOscChange.setBounds(585, 26, 141, 21);
+        chckbxAutoOscChange.setBounds(463, 26, 141, 21);
         contentPane.add(chckbxAutoOscChange);
 
         rdbtnModeDetail = new JRadioButton("Detail");
@@ -245,7 +247,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
             }
         });
         buttonGroup.add(rdbtnModeSpectrum);
-        rdbtnModeSpectrum.setBounds(348, 26, 113, 21);
+        rdbtnModeSpectrum.setBounds(348, 26, 91, 21);
         contentPane.add(rdbtnModeSpectrum);
 
         rdbtnModeMerge = new JRadioButton("Merge");
@@ -357,9 +359,20 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         btnLoad.setBounds(635, 610, 91, 21);
         contentPane.add(btnLoad);
 
+        JButton btnTable = new JButton("Table");
+        btnTable.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tableEditer.openDlg(midiInterface.getProgramChangeTable(), softSynth);
+            }
+        });
+        btnTable.setBounds(631, 26, 91, 21);
+        contentPane.add(btnTable);
+
         rdbtnModeDetail.setVisible(true);
         rdbtnModeSpectrum.setVisible(false);
         rdbtnModeMerge.setVisible(true);
+
+        tableEditer = new ProgramChangeTableEditDialog();
 
         updateLabel();
     }
@@ -459,6 +472,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
     public void setVisible(boolean b) {
         if (b == false) {
             setupDialog.setVisible(false);
+            tableEditer.setVisible(false);
         }
         super.setVisible(b);
     }

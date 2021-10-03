@@ -175,6 +175,10 @@ public class MidiInterface implements Receiver {
         controller.systemReset();
     }
 
+    public ProgramChangeTable getProgramChangeTable() {
+        return table;
+    }
+
     private OscillatorSet getProgramChangeOscillator(int ch, int pc) {
         if (ch == 9) {
             // 10chはノイズ固定

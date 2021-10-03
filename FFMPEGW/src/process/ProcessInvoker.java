@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -41,19 +40,8 @@ public class ProcessInvoker {
         private BufferedReader br;
         private boolean isExit = false;
 
-        /** コンストラクター */
         public InputStreamThread(InputStream is) {
             br = new BufferedReader(new InputStreamReader(is));
-        }
-
-        /** コンストラクター */
-        public InputStreamThread(InputStream is, String charset) {
-            try {
-                br = new BufferedReader(new InputStreamReader(is, charset));
-            }
-            catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
         }
 
         @Override
@@ -100,17 +88,23 @@ public class ProcessInvoker {
             notifyBegin();
 
             try {
-                InputStreamThread ist = new InputStreamThread(proc.getInputStream());
-                InputStreamThread est = new InputStreamThread(proc.getErrorStream());
-                ist.start();
-                est.start();
+                InputStreamThread ist = null;
+                InputStreamThread est = null;
+                if (isConsoleOut() == true) {
+                    ist = new InputStreamThread(proc.getInputStream());
+                    est = new InputStreamThread(proc.getErrorStream());
+                    ist.start();
+                    est.start();
+                }
 
                 proc.waitFor();
 
-                ist.exit();
-                est.exit();
-                ist.join();
-                est.join();
+                if (isConsoleOut() == true) {
+                    ist.exit();
+                    est.exit();
+                    ist.join();
+                    est.join();
+                }
 
                 Thread.sleep(500);
             }
