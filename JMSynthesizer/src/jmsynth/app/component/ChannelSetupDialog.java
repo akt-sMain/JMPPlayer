@@ -24,6 +24,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
@@ -48,14 +49,17 @@ public class ChannelSetupDialog extends JDialog {
     private JButton btnTest;
 
     private static final String[] WAVE_STR_ITEMS = JMSynthFile.WAVE_STR_ITEMS;
+
     private static WaveType toWaveType(String sWave) {
         return JMSynthFile.toWaveType(sWave);
     }
+
     private static String getWaveStr(WaveType type) {
         return JMSynthFile.toWaveStr(type);
     }
-    private static int toYCord(WaveType type, double f, int overallLeval) {
-        return JMSynthFile.toYCord(type, f, overallLeval);
+
+    private static int toYCord(WaveType type, double f, int overallLeval, boolean isReverse) {
+        return JMSynthFile.toYCord(type, f, overallLeval, isReverse);
     }
 
     private JSlider sliderMod;
@@ -90,24 +94,27 @@ public class ChannelSetupDialog extends JDialog {
             mr = env.getMaxReleaseMills();
 
             String wave = "";
+            boolean isWaveReverse = false;
             double a, d, s, r;
             if (chckbxRealTime.isSelected() == false) {
                 wave = getWaveStr(synth.getWaveType(ch));
+                isWaveReverse = synth.isWaveReverse(ch);
                 a = env.getAttackTime();
                 d = env.getDecayTime();
                 s = env.getSustainLevel();
                 r = env.getReleaseTime();
-                paintWave(g, synth.getWaveType(ch), Color.GRAY);
+                paintWave(g, synth.getWaveType(ch), isWaveReverse, Color.GRAY);
                 paintCurve(g, a, d, s, r, ma, md, mr, Color.GRAY);
                 paintInfo(g, w - 90, 90, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), wave, Color.GRAY);
             }
 
             wave = comboBoxWaveType.getSelectedItem().toString();
+            isWaveReverse = chckbxWaveReverse.isSelected();
             a = getAttackSli();
             d = getDecaySli();
             s = getSustainSli();
             r = getReleaseSli();
-            paintWave(g, toWaveType(wave), Color.YELLOW);
+            paintWave(g, toWaveType(wave), isWaveReverse, Color.YELLOW);
             paintCurve(g, a, d, s, r, ma, md, mr, Color.GREEN);
             paintInfo(g, w - 90 + 1, 16, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), wave, Color.DARK_GRAY);
             paintInfo(g, w - 90, 15, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), wave, Color.GREEN);
@@ -130,11 +137,11 @@ public class ChannelSetupDialog extends JDialog {
             g2d.drawString("R: " + rInt + " ms", fx, fy);
             fy += fspan;
             g2d.drawString("MOD: " + getModSli() + " ", fx, fy);
-//            fy += fspan;
-//            g2d.drawString("osc = " + wave, fx, fy);
+            // fy += fspan;
+            // g2d.drawString("osc = " + wave, fx, fy);
         }
 
-        private void paintWave(Graphics g, WaveType type, Color lineColor) {
+        private void paintWave(Graphics g, WaveType type, boolean isReverse, Color lineColor) {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setColor(lineColor);
 
@@ -149,13 +156,13 @@ public class ChannelSetupDialog extends JDialog {
 
             int length = right - left + (mergin * 2);
             byte[] data = new byte[100];
-            Arrays.fill(data, (byte)0x00);
+            Arrays.fill(data, (byte) 0x00);
             int[] xPoint = new int[length];
             int[] yPoint = new int[length];
 
             int cy = (under - top) / 2;
 
-            for (int i=0; i<length; i++) {
+            for (int i = 0; i < length; i++) {
                 if ((i < mergin) || (i >= length - mergin)) {
                     xPoint[i] = i;
                     yPoint[i] = cy;
@@ -163,8 +170,8 @@ public class ChannelSetupDialog extends JDialog {
                 else {
                     xPoint[i] = i;
 
-                    double f = (double)(i - mergin) / (double)(length - (mergin * 2));
-                    int mwy = toYCord(type, f, overallLeval);
+                    double f = (double) (i - mergin) / (double) (length - (mergin * 2));
+                    int mwy = toYCord(type, f, overallLeval, isReverse);
                     if (mwy != -1) {
                         yPoint[i] = mwy + cy;
                     }
@@ -231,9 +238,9 @@ public class ChannelSetupDialog extends JDialog {
             yPoint[index] = under;
             index++;
 
-            //g2d.setStroke(new BasicStroke(2.0f));
+            // g2d.setStroke(new BasicStroke(2.0f));
             g2d.drawPolyline(xPoint, yPoint, 5);
-            //g2d.setStroke(new BasicStroke());
+            // g2d.setStroke(new BasicStroke());
         }
     }
 
@@ -243,7 +250,7 @@ public class ChannelSetupDialog extends JDialog {
     public ChannelSetupDialog(JMSoftSynthesizer synth) {
         this.synth = synth;
         setTitle("Channel setting");
-        setBounds(100, 100, 450, 449);
+        setBounds(100, 100, 485, 518);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -256,8 +263,7 @@ public class ChannelSetupDialog extends JDialog {
                 repaint();
             }
         });
-        comboBoxWaveType.setModel(
-                new DefaultComboBoxModel(WAVE_STR_ITEMS));
+        comboBoxWaveType.setModel(new DefaultComboBoxModel(WAVE_STR_ITEMS));
         comboBoxWaveType.setBounds(12, 10, 136, 21);
         contentPanel.add(comboBoxWaveType);
 
@@ -284,75 +290,118 @@ public class ChannelSetupDialog extends JDialog {
         panelEnvelopeView.setBounds(12, 41, 410, 149);
         contentPanel.add(panelEnvelopeView);
 
-        sliderA = new JSlider();
-        sliderA.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                updateValue();
-                repaint();
-            }
-        });
-        sliderA.setBounds(49, 200, 373, 26);
-        contentPanel.add(sliderA);
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        tabbedPane.setBounds(12, 203, 445, 235);
+        contentPanel.add(tabbedPane);
 
-        sliderD = new JSlider();
-        sliderD.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                updateValue();
-                repaint();
-            }
-        });
-        sliderD.setBounds(49, 236, 373, 26);
-        contentPanel.add(sliderD);
-
-        sliderS = new JSlider();
-        sliderS.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                updateValue();
-                repaint();
-            }
-        });
-        sliderS.setBounds(49, 272, 373, 26);
-        contentPanel.add(sliderS);
+        JPanel panel = new JPanel();
+        tabbedPane.addTab("Envelope", null, panel, null);
+        panel.setLayout(null);
 
         sliderR = new JSlider();
-        sliderR.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
+        sliderR.setBounds(49, 90, 373, 26);
+        panel.add(sliderR);
+
+        JLabel lblR = new JLabel("R");
+        lblR.setBounds(12, 90, 25, 26);
+        panel.add(lblR);
+        lblR.setHorizontalAlignment(SwingConstants.CENTER);
+        lblR.setFont(new Font("Dialog", Font.BOLD, 12));
+
+        sliderS = new JSlider();
+        sliderS.setBounds(49, 61, 373, 26);
+        panel.add(sliderS);
+
+        JLabel lblS = new JLabel("S");
+        lblS.setBounds(12, 61, 25, 26);
+        panel.add(lblS);
+        lblS.setHorizontalAlignment(SwingConstants.CENTER);
+        lblS.setFont(new Font("Dialog", Font.BOLD, 12));
+
+        sliderD = new JSlider();
+        sliderD.setBounds(49, 32, 373, 26);
+        panel.add(sliderD);
+
+        JLabel lblD = new JLabel("D");
+        lblD.setBounds(12, 32, 25, 26);
+        panel.add(lblD);
+        lblD.setHorizontalAlignment(SwingConstants.CENTER);
+        lblD.setFont(new Font("Dialog", Font.BOLD, 12));
+
+        sliderA = new JSlider();
+        sliderA.setBounds(49, 3, 373, 26);
+        panel.add(sliderA);
+
+        JLabel lblNewLabel = new JLabel("A");
+        lblNewLabel.setBounds(12, 3, 25, 26);
+        panel.add(lblNewLabel);
+        lblNewLabel.setFont(new Font("Dialog", Font.BOLD, 12));
+        lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        sliderMA = new JSlider();
+        sliderMA.setMinimum(Envelope.MIN_MILLS);
+        sliderMA.setMaximum(Envelope.MAX_MILLS);
+        sliderMA.setBounds(49, 119, 373, 26);
+        panel.add(sliderMA);
+
+        JLabel lblMa = new JLabel("MA");
+        lblMa.setHorizontalAlignment(SwingConstants.CENTER);
+        lblMa.setFont(new Font("Dialog", Font.BOLD, 12));
+        lblMa.setBounds(12, 119, 25, 26);
+        panel.add(lblMa);
+
+        sliderMD = new JSlider();
+        sliderMD.setMinimum(Envelope.MIN_MILLS);
+        sliderMD.setMaximum(Envelope.MAX_MILLS);
+        sliderMD.setBounds(49, 148, 373, 26);
+        panel.add(sliderMD);
+
+        JLabel lblMd = new JLabel("MD");
+        lblMd.setHorizontalAlignment(SwingConstants.CENTER);
+        lblMd.setFont(new Font("Dialog", Font.BOLD, 12));
+        lblMd.setBounds(12, 148, 25, 26);
+        panel.add(lblMd);
+
+        sliderMR = new JSlider();
+        sliderMR.setMinimum(Envelope.MIN_MILLS);
+        sliderMR.setMaximum(Envelope.MAX_MILLS);
+        sliderMR.setBounds(49, 177, 373, 26);
+        panel.add(sliderMR);
+
+        JLabel lblMr = new JLabel("MR");
+        lblMr.setHorizontalAlignment(SwingConstants.CENTER);
+        lblMr.setFont(new Font("Dialog", Font.BOLD, 12));
+        lblMr.setBounds(12, 177, 25, 26);
+        panel.add(lblMr);
+
+        JPanel panel_1 = new JPanel();
+        tabbedPane.addTab("Modulator", null, panel_1, null);
+        panel_1.setLayout(null);
+
+        sliderMod = new JSlider();
+        sliderMod.setBounds(58, 10, 373, 26);
+        panel_1.add(sliderMod);
+
+        JLabel lblMod = new JLabel("MOD");
+        lblMod.setBounds(12, 10, 44, 26);
+        panel_1.add(lblMod);
+        lblMod.setHorizontalAlignment(SwingConstants.CENTER);
+        lblMod.setFont(new Font("Dialog", Font.BOLD, 12));
+
+        JPanel panel_2 = new JPanel();
+        tabbedPane.addTab("Other", null, panel_2, null);
+        panel_2.setLayout(null);
+
+        chckbxWaveReverse = new JCheckBox("Wave reverse");
+        chckbxWaveReverse.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 updateValue();
                 repaint();
             }
         });
-        sliderR.setBounds(49, 308, 373, 26);
-        contentPanel.add(sliderR);
-
-        JLabel lblNewLabel = new JLabel("A");
-        lblNewLabel.setFont(new Font("Dialog", Font.BOLD, 12));
-        lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        lblNewLabel.setBounds(12, 200, 25, 26);
-        contentPanel.add(lblNewLabel);
-
-        JLabel lblD = new JLabel("D");
-        lblD.setHorizontalAlignment(SwingConstants.CENTER);
-        lblD.setFont(new Font("Dialog", Font.BOLD, 12));
-        lblD.setBounds(12, 236, 25, 26);
-        contentPanel.add(lblD);
-
-        JLabel lblS = new JLabel("S");
-        lblS.setHorizontalAlignment(SwingConstants.CENTER);
-        lblS.setFont(new Font("Dialog", Font.BOLD, 12));
-        lblS.setBounds(12, 272, 25, 26);
-        contentPanel.add(lblS);
-
-        JLabel lblR = new JLabel("R");
-        lblR.setHorizontalAlignment(SwingConstants.CENTER);
-        lblR.setFont(new Font("Dialog", Font.BOLD, 12));
-        lblR.setBounds(12, 308, 25, 26);
-        contentPanel.add(lblR);
-
-        sliderMod = new JSlider();
+        chckbxWaveReverse.setBounds(8, 6, 103, 21);
+        panel_2.add(chckbxWaveReverse);
+        lblMod.setVisible(true);
         sliderMod.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -360,14 +409,56 @@ public class ChannelSetupDialog extends JDialog {
                 repaint();
             }
         });
-        sliderMod.setBounds(49, 344, 373, 26);
-        contentPanel.add(sliderMod);
-
-        JLabel lblMod = new JLabel("MOD");
-        lblMod.setHorizontalAlignment(SwingConstants.CENTER);
-        lblMod.setFont(new Font("Dialog", Font.BOLD, 12));
-        lblMod.setBounds(3, 344, 44, 26);
-        contentPanel.add(lblMod);
+        sliderMod.setVisible(true);
+        sliderA.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                updateValue();
+                repaint();
+            }
+        });
+        sliderD.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                updateValue();
+                repaint();
+            }
+        });
+        sliderS.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                updateValue();
+                repaint();
+            }
+        });
+        sliderR.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                updateValue();
+                repaint();
+            }
+        });
+        sliderMA.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                updateValue();
+                repaint();
+            }
+        });
+        sliderMD.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                updateValue();
+                repaint();
+            }
+        });
+        sliderMR.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                updateValue();
+                repaint();
+            }
+        });
         {
             JPanel buttonPane = new JPanel();
             buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -381,26 +472,26 @@ public class ChannelSetupDialog extends JDialog {
                 }
             });
 
-                    chckbxRealTime = new JCheckBox("Real time");
-                    chckbxRealTime.setSelected(false);
-                    buttonPane.add(chckbxRealTime);
+            chckbxRealTime = new JCheckBox("Real time");
+            chckbxRealTime.setSelected(false);
+            buttonPane.add(chckbxRealTime);
 
-                    btnTest = new JButton("Test");
-                    buttonPane.add(btnTest);
-                    btnTest.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mousePressed(MouseEvent e) {
-                        }
+            btnTest = new JButton("Test");
+            buttonPane.add(btnTest);
+            btnTest.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                }
 
-                        @Override
-                        public void mouseReleased(MouseEvent e) {
-                            testSoundAction();
-                        }
-                    });
-                    btnTest.addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                        }
-                    });
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    testSoundAction();
+                }
+            });
+            btnTest.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                }
+            });
             {
                 JButton okButton = new JButton("Sync");
                 okButton.addActionListener(new ActionListener() {
@@ -427,13 +518,16 @@ public class ChannelSetupDialog extends JDialog {
         }
 
         /* ※MODはノイズが起きるため現状非表示 */
-        sliderMod.setVisible(true);
-        lblMod.setVisible(true);
     }
 
     private final static int TEST_MIDINUM = 60;
     private int cacheTestChannel = 0;
     private boolean testOn = false;
+    private JSlider sliderMA;
+    private JSlider sliderMD;
+    private JSlider sliderMR;
+    private JCheckBox chckbxWaveReverse;
+
     private void testSoundAction() {
         if (testOn == false) {
             testSoundOn();
@@ -443,10 +537,12 @@ public class ChannelSetupDialog extends JDialog {
         }
         testOn = !testOn;
     }
+
     private void testSoundOn() {
         cacheTestChannel = getChannel();
         synth.noteOn(cacheTestChannel, TEST_MIDINUM, 100);
     }
+
     private void testSoundOff() {
         synth.noteOff(cacheTestChannel, TEST_MIDINUM);
     }
@@ -483,15 +579,22 @@ public class ChannelSetupDialog extends JDialog {
         String sWave = comboBoxWaveType.getSelectedItem().toString();
         synth.setOscillator(ch, toWaveType(sWave));
 
+        boolean waveReverse = chckbxWaveReverse.isSelected();
+        synth.setWaveReverse(ch, waveReverse);
+
         if (e != null) {
             e.setAttackTime(getAttackSli());
             e.setDecayTime(getDecaySli());
             e.setSustainLevel(getSustainSli());
             e.setReleaseTime(getReleaseSli());
+            e.setMaxAttackMills(getMaxAttackSli());
+            e.setMaxDecayMills(getMaxDecaySli());
+            e.setMaxReleaseMills(getMaxReleaseSli());
         }
         if (mod != null) {
             mod.setDepth(getModSli());
         }
+        reset();
     }
 
     public void reset() {
@@ -505,12 +608,17 @@ public class ChannelSetupDialog extends JDialog {
         String sWave = getWaveStr(synth.getWaveType(ch));
         comboBoxWaveType.setSelectedItem(sWave);
 
+        chckbxWaveReverse.setSelected(synth.isWaveReverse(ch));
+
         if (e != null) {
             setAttackSli();
             setDecaySli();
             setSustainSli();
             setReleaseSli();
             setModSli();
+            setMaxAttackSli();
+            setMaxDecaySli();
+            setMaxReleaseSli();
         }
         if (mod != null) {
             setModSli();
@@ -528,6 +636,20 @@ public class ChannelSetupDialog extends JDialog {
 
     private int getSliderInt(JSlider sl) {
         int val = sl.getValue();
+        return val;
+    }
+
+    private void setSliderLong(JSlider sl, long val) {
+        int max = sl.getMaximum();
+        if (max < val) {
+            val = max;
+        }
+        sl.setValue((int)val);
+        return;
+    }
+
+    private long getSliderLong(JSlider sl) {
+        long val = sl.getValue();
         return val;
     }
 
@@ -601,6 +723,48 @@ public class ChannelSetupDialog extends JDialog {
 
     public double getReleaseSli() {
         return getSliderDouble(sliderR);
+    }
+
+    public void setMaxAttackSli() {
+        int ch = getChannel();
+        Envelope e = synth.getEnvelope(ch);
+        if (e == null) {
+            return;
+        }
+        setSliderLong(sliderMA, e.getMaxAttackMills());
+        return;
+    }
+
+    public long getMaxAttackSli() {
+        return getSliderLong(sliderMA);
+    }
+
+    public void setMaxDecaySli() {
+        int ch = getChannel();
+        Envelope e = synth.getEnvelope(ch);
+        if (e == null) {
+            return;
+        }
+        setSliderLong(sliderMD, e.getMaxDecayMills());
+        return;
+    }
+
+    public long getMaxDecaySli() {
+        return getSliderLong(sliderMD);
+    }
+
+    public void setMaxReleaseSli() {
+        int ch = getChannel();
+        Envelope e = synth.getEnvelope(ch);
+        if (e == null) {
+            return;
+        }
+        setSliderLong(sliderMR, e.getMaxReleaseMills());
+        return;
+    }
+
+    public long getMaxReleaseSli() {
+        return getSliderLong(sliderMR);
     }
 
     public void setModSli() {

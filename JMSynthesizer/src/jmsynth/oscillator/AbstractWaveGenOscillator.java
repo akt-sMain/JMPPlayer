@@ -5,6 +5,9 @@ import jmsynth.sound.Tone;
 public abstract class AbstractWaveGenOscillator implements IOscillator {
 
     private final static double LEVEL_OFFSET = COMMON_LEVEL_OFFSET;
+
+    private boolean isWaveReverse = false;
+
     public AbstractWaveGenOscillator() {
     }
 
@@ -49,6 +52,16 @@ public abstract class AbstractWaveGenOscillator implements IOscillator {
     @Override
     public int toneEndPoint() {
         return -1;
+    }
+
+    @Override
+    public void setWaveReverse(boolean isReverse) {
+        isWaveReverse = isReverse;
+    }
+
+    @Override
+    public boolean isWaveReverse() {
+        return isWaveReverse;
     }
 
 }

@@ -41,7 +41,6 @@ public class JMSynthFile {
             WAVE_STR_SINE, //
             WAVE_STR_LOW_SINE, //
             WAVE_STR_SAW, //
-            WAVE_STR_REVERSE_SAW, //
             WAVE_STR_TRIANGLE, //
             WAVE_STR_SQUARE, //
             WAVE_STR_PULSE_25, //
@@ -52,9 +51,6 @@ public class JMSynthFile {
         WaveType type = WaveType.SINE;
         if (sWave.equalsIgnoreCase(WAVE_STR_SAW) == true) {
             type = WaveType.SAW;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_REVERSE_SAW) == true) {
-            type = WaveType.SAW_REVERSE;
         }
         else if (sWave.equalsIgnoreCase(WAVE_STR_TRIANGLE) == true) {
             type = WaveType.TRIANGLE;
@@ -94,9 +90,6 @@ public class JMSynthFile {
             case SAW:
                 sWave = WAVE_STR_SAW;
                 break;
-            case SAW_REVERSE:
-                sWave = WAVE_STR_REVERSE_SAW;
-                break;
             case SINE:
                 sWave = WAVE_STR_SINE;
                 break;
@@ -115,32 +108,29 @@ public class JMSynthFile {
         return sWave;
     }
     // グラフィック用
-    public static int toYCord(WaveType type, double f, int overallLeval) {
+    public static int toYCord(WaveType type, double f, int overallLeval, boolean isReverse) {
         int y = -1;
         switch (type) {
             case SAW:
-                y = WaveGenerater.makeSawWave(f, overallLeval, false);
-                break;
-            case SAW_REVERSE:
-                y = WaveGenerater.makeSawWave(f, overallLeval, true);
+                y = WaveGenerater.makeSawWave(f, overallLeval, isReverse);
                 break;
             case SINE:
-                y = WaveGenerater.makeSinWave(f, overallLeval, false);
+                y = WaveGenerater.makeSinWave(f, overallLeval, isReverse);
                 break;
             case LOW_SINE:
-                y = WaveGenerater.makeSinWaveForLowSampling(f, overallLeval, false);
+                y = WaveGenerater.makeSinWaveForLowSampling(f, overallLeval, isReverse);
                 break;
             case SQUARE:
-                y = WaveGenerater.makeSquareWave(f, overallLeval, false);
+                y = WaveGenerater.makeSquareWave(f, overallLeval, isReverse);
                 break;
             case PULSE_25:
-                y = WaveGenerater.makePulseWave(f, overallLeval, 0.25, false);
+                y = WaveGenerater.makePulseWave(f, overallLeval, 0.25, isReverse);
                 break;
             case PULSE_12_5:
-                y = WaveGenerater.makePulseWave(f, overallLeval, 0.125, false);
+                y = WaveGenerater.makePulseWave(f, overallLeval, 0.125, isReverse);
                 break;
             case TRIANGLE:
-                y = WaveGenerater.makeTriangleWave(f, overallLeval, false);
+                y = WaveGenerater.makeTriangleWave(f, overallLeval, isReverse);
                 break;
             default:
                 break;
@@ -148,15 +138,20 @@ public class JMSynthFile {
         return y;
     }
 
+    private static final String S_TRUE = "TRUE";
+    private static final String S_FALSE = "FALSE";
+
     public static final String XML_NODE_ROOT = "jmsynth";
     public static final String XML_NODE_INFO = "info";
     public static final String XML_NODE_INFO_NAME = "name";
     public static final String XML_NODE_INFO_VERSION = "version";
+    public static final String XML_NODE_INFO_NUMOFCHANNEL = "num_of_channel";
     public static final String XML_NODE_SOUNDSOURCE = "sound_source";
     public static final String XML_NODE_CHANNEL = "channel";
     public static final String XML_ATTR_CHANNEL = "no";
     public static final String XML_NODE_WAVE = "wave";
     public static final String XML_ATTR_TYPE = "type";
+    public static final String XML_ATTR_REVERSE = "reverse";
     public static final String XML_NODE_ENVELOPE = "envelope";
     public static final String XML_ATTR_A = "a";
     public static final String XML_ATTR_MAX_A = "ma";
@@ -230,6 +225,10 @@ public class JMSynthFile {
         Element infoNameVersionElement = document.createElement(XML_NODE_INFO_VERSION);
         infoNameVersionElement.setTextContent(String.valueOf(JMSoftSynthesizer.INFO_VERSION));
         rootElement.appendChild(infoNameVersionElement);
+        // チャンネル数
+        Element infoNumOfChannelElement = document.createElement(XML_NODE_INFO_NUMOFCHANNEL);
+        infoNumOfChannelElement.setTextContent(String.valueOf(synth.getNumberOfChannel()));
+        rootElement.appendChild(infoNumOfChannelElement);
     }
     private static void apendSoundSourceElement(Document document, Element rootElement, JMSoftSynthesizer synth) {
         // channel
@@ -238,13 +237,14 @@ public class JMSynthFile {
             channelElement.setAttribute(XML_ATTR_CHANNEL, String.valueOf(ch));
             rootElement.appendChild(channelElement);
 
-            apendSynthElement(document, channelElement, synth.getWaveType(ch), synth.getEnvelope(ch), synth.getModulator(ch));
+            apendSynthElement(document, channelElement, synth.getWaveType(ch), synth.isWaveReverse(ch), synth.getEnvelope(ch), synth.getModulator(ch));
         }
     }
-    private static void apendSynthElement(Document document, Element rootElement, WaveType waveType, Envelope env, Modulator mod) {
+    private static void apendSynthElement(Document document, Element rootElement, WaveType waveType, boolean waveReverse, Envelope env, Modulator mod) {
         // wave
         Element waveElement = document.createElement(XML_NODE_WAVE);
         waveElement.setAttribute(XML_ATTR_TYPE, String.valueOf(toWaveStr(waveType)));
+        waveElement.setAttribute(XML_ATTR_REVERSE, waveReverse ? S_TRUE : S_FALSE);
         rootElement.appendChild(waveElement);
 
         // envelope
@@ -315,6 +315,14 @@ public class JMSynthFile {
                 Element el = (Element) lst.item(i);
                 System.out.println("info_version " + el.getTextContent());
             }
+            else if (lst.item(i).getNodeName().equals(XML_NODE_INFO_NUMOFCHANNEL) == true) {
+                if (!(lst.item(i) instanceof Element)) {
+                    continue;
+                }
+
+                Element el = (Element) lst.item(i);
+                System.out.println("num_of_channel " + el.getTextContent());
+            }
         }
     }
     private static void readNodeSoundSource(Node node, JMSoftSynthesizer synth) {
@@ -351,6 +359,9 @@ public class JMSynthFile {
                 Element waveElement = (Element) chChild;
                 if (waveElement.hasAttribute(XML_ATTR_TYPE) == true) {
                     synth.setOscillator(ch, toWaveType(waveElement.getAttribute(XML_ATTR_TYPE)));
+                }
+                if (waveElement.hasAttribute(XML_ATTR_REVERSE) == true) {
+                    synth.setWaveReverse(ch, waveElement.getAttribute(XML_ATTR_REVERSE).equalsIgnoreCase(S_TRUE) ? true : false);
                 }
             }
             else if (chChild.getNodeName().equals(XML_NODE_ENVELOPE)) {

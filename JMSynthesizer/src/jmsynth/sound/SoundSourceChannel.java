@@ -92,8 +92,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
             {
                 put(WaveType.SINE, new SinWaveOscillator());
                 put(WaveType.LOW_SINE, new LowSamplingSinWaveOscillator());
-                put(WaveType.SAW, new SawWaveOscillator(false));
-                put(WaveType.SAW_REVERSE, new SawWaveOscillator(true));
+                put(WaveType.SAW, new SawWaveOscillator());
                 put(WaveType.SQUARE, new SquareWaveOscillator());
                 put(WaveType.TRIANGLE, new TriWaveOscillator());
                 put(WaveType.PULSE_25, new PulseWaveOscillator(0.25));
@@ -629,6 +628,16 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     @Override
     public Modulator getModulator(int ch) {
         return modulator;
+    }
+
+    @Override
+    public void setWaveReverse(int ch, boolean isReverse) {
+        this.oscillator.setWaveReverse(isReverse);
+    }
+
+    @Override
+    public boolean isWaveReverse(int ch) {
+        return this.oscillator.isWaveReverse();
     }
 
 }

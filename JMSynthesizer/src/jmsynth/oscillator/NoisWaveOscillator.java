@@ -101,4 +101,13 @@ public class NoisWaveOscillator implements IOscillator {
         return -1;
     }
 
+    @Override
+    public void setWaveReverse(boolean isReverse) {
+    }
+
+    @Override
+    public boolean isWaveReverse() {
+        return false;
+    }
+
 }

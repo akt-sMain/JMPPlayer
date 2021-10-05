@@ -8,6 +8,6 @@ public class PulseWaveOscillator extends AbstractWaveGenOscillator {
 
     @Override
     byte makeWave(double f, int overallLevel) {
-        return WaveGenerater.makePulseWave(f, overallLevel, this.duty, false);
+        return WaveGenerater.makePulseWave(f, overallLevel, this.duty, isWaveReverse());
     }
 }

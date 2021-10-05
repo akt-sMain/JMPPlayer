@@ -11,7 +11,6 @@ public class OscillatorSet {
         SINE,
         LOW_SINE,
         SAW,
-        SAW_REVERSE,
         SQUARE,
         TRIANGLE,
         PULSE_25,

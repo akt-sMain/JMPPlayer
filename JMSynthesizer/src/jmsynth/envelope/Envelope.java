@@ -6,6 +6,9 @@ import jmsynth.sound.Tone;
 
 public class Envelope {
 
+    public static final int MAX_MILLS = 5000;
+    public static final int MIN_MILLS = 500;
+
     private long maxAttackMills = 1000;
     private long maxDecayMills = 1000;
     private long maxReleaseMills = 1000;
@@ -123,6 +126,9 @@ public class Envelope {
     }
 
     public void setMaxAttackMills(long maxAttackMills) {
+        if (MAX_MILLS < maxAttackMills) {
+            maxAttackMills = MAX_MILLS;
+        }
         this.maxAttackMills = maxAttackMills;
     }
 
@@ -131,6 +137,9 @@ public class Envelope {
     }
 
     public void setMaxDecayMills(long maxDecayMills) {
+        if (MAX_MILLS < maxAttackMills) {
+            maxDecayMills = MAX_MILLS;
+        }
         this.maxDecayMills = maxDecayMills;
     }
 
@@ -139,6 +148,9 @@ public class Envelope {
     }
 
     public void setMaxReleaseMills(long maxReleaseMills) {
+        if (MAX_MILLS < maxAttackMills) {
+            maxReleaseMills = MAX_MILLS;
+        }
         this.maxReleaseMills = maxReleaseMills;
     }
 }

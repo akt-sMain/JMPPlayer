@@ -65,4 +65,8 @@ public interface ISynthController {
     abstract Modulator getModulator(int ch);
 
     abstract void systemReset();
+
+    abstract void setWaveReverse(int ch, boolean isReverse);
+
+    abstract boolean isWaveReverse(int ch);
 }

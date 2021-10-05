@@ -42,4 +42,18 @@ public interface IOscillator {
      * （未設定の場合は音源データのサイズを返す）
      */
     public int toneEndPoint();
+
+    /**
+     * 逆波形
+     *
+     * @param isReverse
+     */
+    public void setWaveReverse(boolean isReverse);
+
+    /**
+     * 逆波形
+     *
+     * @return
+     */
+    public boolean isWaveReverse();
 }

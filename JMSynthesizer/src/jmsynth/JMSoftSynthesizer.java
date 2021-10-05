@@ -208,4 +208,14 @@ public class JMSoftSynthesizer implements ISynthController {
     public Modulator getModulator(int ch) {
         return channels[ch].getModulator(ch);
     }
+
+    @Override
+    public void setWaveReverse(int ch, boolean isReverse) {
+        channels[ch].setWaveReverse(ch, isReverse);
+    }
+
+    @Override
+    public boolean isWaveReverse(int ch) {
+        return channels[ch].isWaveReverse(ch);
+    }
 }

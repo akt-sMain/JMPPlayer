@@ -7,7 +7,7 @@ public class LowSamplingSinWaveOscillator extends AbstractWaveGenOscillator {
 
     @Override
     byte makeWave(double f, int overallLevel) {
-        return WaveGenerater.makeSinWaveForLowSampling(f, overallLevel, false);
+        return WaveGenerater.makeSinWaveForLowSampling(f, overallLevel, isWaveReverse());
     }
 
 }
