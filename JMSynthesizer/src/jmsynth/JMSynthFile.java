@@ -35,17 +35,19 @@ public class JMSynthFile {
     public static final String WAVE_STR_PULSE_12_5 = "PULSE_12_5";
     public static final String WAVE_STR_SINE = "SINE";
     public static final String WAVE_STR_LOW_SINE = "LOW_SINE";
-    public static final String WAVE_STR_NOIS = "NOIS";
+    public static final String WAVE_STR_LONG_NOIS = "LONG_NOIS";
+    public static final String WAVE_STR_SHORT_NOIS = "SHORT_NOIS";
 
     public static final String[] WAVE_STR_ITEMS = new String[] { //
             WAVE_STR_SINE, //
-            WAVE_STR_LOW_SINE, //
+//            WAVE_STR_LOW_SINE, //
             WAVE_STR_SAW, //
             WAVE_STR_TRIANGLE, //
             WAVE_STR_SQUARE, //
             WAVE_STR_PULSE_25, //
             WAVE_STR_PULSE_12_5, //
-            WAVE_STR_NOIS //
+            WAVE_STR_LONG_NOIS, //
+            WAVE_STR_SHORT_NOIS //
     };//
     public static WaveType toWaveType(String sWave) {
         WaveType type = WaveType.SINE;
@@ -70,16 +72,22 @@ public class JMSynthFile {
         else if (sWave.equalsIgnoreCase(WAVE_STR_LOW_SINE) == true) {
             type = WaveType.LOW_SINE;
         }
+        else if (sWave.equalsIgnoreCase(WAVE_STR_LONG_NOIS) == true) {
+            type = WaveType.LONG_NOISE;
+        }
         else {
-            type = WaveType.NOISE;
+            type = WaveType.SHORT_NOISE;
         }
         return type;
     }
     public static String toWaveStr(WaveType type) {
-        String sWave = WAVE_STR_NOIS;
+        String sWave = WAVE_STR_LONG_NOIS;
         switch (type) {
-            case NOISE:
-                sWave = WAVE_STR_NOIS;
+            case LONG_NOISE:
+                sWave = WAVE_STR_LONG_NOIS;
+                break;
+            case SHORT_NOISE:
+                sWave = WAVE_STR_SHORT_NOIS;
                 break;
             case PULSE_25:
                 sWave = WAVE_STR_PULSE_25;

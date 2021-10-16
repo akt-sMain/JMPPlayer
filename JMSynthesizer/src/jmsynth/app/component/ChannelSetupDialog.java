@@ -474,6 +474,7 @@ public class ChannelSetupDialog extends JDialog {
 
             chckbxRealTime = new JCheckBox("Real time");
             chckbxRealTime.setSelected(false);
+            chckbxRealTime.setVisible(false);
             buttonPane.add(chckbxRealTime);
 
             btnTest = new JButton("Test");

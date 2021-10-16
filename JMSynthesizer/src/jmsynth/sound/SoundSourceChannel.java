@@ -39,7 +39,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public static final boolean BIG_ENDIAN = true;
 
     // 1フレームで再生するバイト数
-    public static int BUF_SIZE = ((int) SAMPLE_RATE / 50 * FRAME_SIZE);
+    public final static int BUF_SIZE = ((int) SAMPLE_RATE / 50 * FRAME_SIZE);
 
     // 再生フォーマット
     private AudioFormat audioFormat;
@@ -88,6 +88,14 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
     /* オシレータリスト生成 */
     public static Map<WaveType, IOscillator> makeOscillatorMap() {
+
+//        WaveTableOscillator squOsc = new WaveTableOscillator(
+//                new WaveValuePoint(0.005, 1.0),
+//                new WaveValuePoint(0.495, 0.9),
+//                new WaveValuePoint(0.505, -1.0),
+//                new WaveValuePoint(0.995, -0.9)
+//                );
+
         Map<WaveType, IOscillator> map = new HashMap<WaveType, IOscillator>(){
             {
                 put(WaveType.SINE, new SinWaveOscillator());
@@ -97,7 +105,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                 put(WaveType.TRIANGLE, new TriWaveOscillator());
                 put(WaveType.PULSE_25, new PulseWaveOscillator(0.25));
                 put(WaveType.PULSE_12_5, new PulseWaveOscillator(0.125));
-                put(WaveType.NOISE, new NoisWaveOscillator());
+                put(WaveType.LONG_NOISE, new NoisWaveOscillator(false));
+                put(WaveType.SHORT_NOISE, new NoisWaveOscillator(true));
             }
         };
         return map;

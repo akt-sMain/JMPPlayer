@@ -5,7 +5,7 @@ import java.util.List;
 
 public class OscillatorSet {
 
-    public static final OscillatorSet DRUM_OSCILLATOR_SET = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
+    public static final OscillatorSet DRUM_OSCILLATOR_SET = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
 
     public static enum WaveType {
         SINE,
@@ -15,7 +15,8 @@ public class OscillatorSet {
         TRIANGLE,
         PULSE_25,
         PULSE_12_5,
-        NOISE
+        LONG_NOISE,
+        SHORT_NOISE,
     }
 
     // 複数のオシレータ設計を考慮（出力側は未実装）
@@ -76,7 +77,7 @@ public class OscillatorSet {
     public WaveType getOscillator(int index) {
         if (size() <= 0) {
             // 例外
-            return WaveType.NOISE;
+            return WaveType.LONG_NOISE;
         }
         return oscs.get(index);
     }

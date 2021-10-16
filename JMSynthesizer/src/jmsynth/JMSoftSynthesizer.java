@@ -52,7 +52,7 @@ public class JMSoftSynthesizer implements ISynthController {
                 new SoundSourceChannel(6, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 7ch
                 new SoundSourceChannel(7, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 8ch
                 new SoundSourceChannel(8, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 9ch
-                new DrumSoundSourceChannel(9, WaveType.NOISE, polyphony, envelopeFactory.newEnvelopeInstance(0.0, 0.25, 0.0, 0.0), modulatorFactory.newModulatorInstance()), // 10ch
+                new DrumSoundSourceChannel(9, WaveType.LONG_NOISE, polyphony, envelopeFactory.newEnvelopeInstance(0.0, 0.25, 0.0, 0.0), modulatorFactory.newModulatorInstance()), // 10ch
                 new SoundSourceChannel(10, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 11ch
                 new SoundSourceChannel(11, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 12ch
                 new SoundSourceChannel(12, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 13ch

@@ -173,14 +173,14 @@ public class DefaultProgramChangeTable extends ProgramChangeTable {
         /*
          * Synth Effects
          */
-        this.sets[PC_97] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-        this.sets[PC_98] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-        this.sets[PC_99] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-        this.sets[PC_100] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-        this.sets[PC_101] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-        this.sets[PC_102] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-        this.sets[PC_103] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-        this.sets[PC_104] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
+        this.sets[PC_97] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
+        this.sets[PC_98] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
+        this.sets[PC_99] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
+        this.sets[PC_100] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
+        this.sets[PC_101] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
+        this.sets[PC_102] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
+        this.sets[PC_103] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
+        this.sets[PC_104] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
 
         /*
          * ethnic
@@ -209,14 +209,14 @@ public class DefaultProgramChangeTable extends ProgramChangeTable {
         /*
          * Sound effects
          */
-        this.sets[PC_121] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-        this.sets[PC_122] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-        this.sets[PC_123] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-        this.sets[PC_124] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-        this.sets[PC_125] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-        this.sets[PC_126] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-        this.sets[PC_127] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
-        this.sets[PC_128] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.NOISE);
+        this.sets[PC_121] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
+        this.sets[PC_122] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
+        this.sets[PC_123] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
+        this.sets[PC_124] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
+        this.sets[PC_125] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
+        this.sets[PC_126] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
+        this.sets[PC_127] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
+        this.sets[PC_128] = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
     }
 
 }
