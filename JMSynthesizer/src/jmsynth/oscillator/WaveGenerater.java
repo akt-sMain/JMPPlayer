@@ -36,8 +36,8 @@ public class WaveGenerater {
      * @param reverse
      * @return
      */
-    public static byte makeSquareWave(double f, int overallLevel, boolean reverse) {
-        return makePulseWave(f, overallLevel, 0.5, reverse);
+    public static byte makeSquareWave(double f, int overallLevel, boolean reverse, boolean lowRes) {
+        return makePulseWave(f, overallLevel, 0.5, reverse, lowRes);
     }
 
     //private static final double DUTY_THRESHOLD = 0.05;
@@ -53,7 +53,7 @@ public class WaveGenerater {
      * @param reverse
      * @return
      */
-    public static byte makePulseWave(double f, int overallLevel, double duty, boolean reverse) {
+    public static byte makePulseWave(double f, int overallLevel, double duty, boolean reverse, boolean lowRes) {
         double ff = (reverse == true) ? (1.0 - trimF(f)) : trimF(f);
 
         byte y = 0;
@@ -63,7 +63,12 @@ public class WaveGenerater {
                 y = (byte) (overallLevel * DUTY_OFFSET);
             }
             else {
-                y = (byte) (overallLevel);
+                if (lowRes == true) {
+                    y = (byte) (overallLevel - ((ff - (duty + DUTY_THRESHOLD)) * 4.0));
+                }
+                else {
+                    y = (byte) (overallLevel);
+                }
             }
         }
         else {
@@ -71,7 +76,12 @@ public class WaveGenerater {
                 y = (byte) (-overallLevel * DUTY_OFFSET);
             }
             else {
-                y = (byte) (-overallLevel);
+                if (lowRes == true) {
+                    y = (byte) (-(overallLevel - ((ff - DUTY_THRESHOLD) * 4.0) ));
+                }
+                else {
+                    y = (byte) (-(overallLevel));
+                }
             }
         }
         return y;
@@ -98,8 +108,12 @@ public class WaveGenerater {
      * @param reverse
      * @return
      */
-    public static byte makeTriangleWave(double f, int overallLevel, boolean reverse) {
-        double ff = (reverse == true) ? (1.0 - trimF(f)) : trimF(f);
+    public static byte makeTriangleWave(double f, int overallLevel, boolean reverse, boolean lowRes) {
+        double r = 100.0;
+        if (lowRes == true) {
+            r = 25.0;
+        }
+        double ff = (reverse == true) ? (1.0 - trimF(f, r)) : trimF(f, r);
 
         byte y = 0;
         int slope = (int)((ff / 0.25) + 1) % 2; // 0=上り, 1=下り
@@ -115,5 +129,4 @@ public class WaveGenerater {
         }
         return y;
     }
-
 }

@@ -129,16 +129,51 @@ public class JMSynthFile {
                 y = WaveGenerater.makeSinWaveForLowSampling(f, overallLeval, isReverse);
                 break;
             case SQUARE:
-                y = WaveGenerater.makeSquareWave(f, overallLeval, isReverse);
+                y = WaveGenerater.makeSquareWave(f, overallLeval, isReverse, true);
                 break;
             case PULSE_25:
-                y = WaveGenerater.makePulseWave(f, overallLeval, 0.25, isReverse);
+                y = WaveGenerater.makePulseWave(f, overallLeval, 0.25, isReverse, true);
                 break;
             case PULSE_12_5:
-                y = WaveGenerater.makePulseWave(f, overallLeval, 0.125, isReverse);
+                y = WaveGenerater.makePulseWave(f, overallLeval, 0.125, isReverse, true);
                 break;
             case TRIANGLE:
-                y = WaveGenerater.makeTriangleWave(f, overallLeval, isReverse);
+                y = WaveGenerater.makeTriangleWave(f, overallLeval, isReverse, true);
+                break;
+            case LONG_NOISE:
+            {
+                double[] ft = {0.00, 0.05, 0.10, 0.15, 0.25, 0.35, 0.50, 0.55, 0.70, 0.85, 0.95, 1.00};
+                double[] lt = {0.20, 0.30, 0.40, 1.00, 0.95, 0.85, 1.00, 0.50, 0.70, 0.40, 0.30, 0.20};
+                int sign = 1;
+                for (int i=0; i<ft.length; i++) {
+                    if (f > ft[i]) {
+                        y = (int)((double)overallLeval * lt[i]) * sign;
+                    }
+                    sign *= -1;
+                }
+            }
+                break;
+            case SHORT_NOISE:
+            {
+                double[] lt = {0.20, 1.00, 0.40};
+                int ilt = 0;
+                double cf = 0.0;
+                int sign = 1;
+                while (cf <= 1.00) {
+                    if (f <= cf) {
+                        y = (int)((double)overallLeval * lt[ilt]) * sign;
+                        break;
+                    }
+                    else {
+                        sign *= -1;
+                        cf += 0.05;
+                        ilt++;
+                        if (ilt >= lt.length) {
+                            ilt = 0;
+                        }
+                    }
+                }
+            }
                 break;
             default:
                 break;
