@@ -28,7 +28,6 @@ public class JMSynthFile {
     public static final String EXTENSION_CONFIG = "jst";
 
     public static final String WAVE_STR_SAW = "SAW";
-    public static final String WAVE_STR_REVERSE_SAW = "REVERSE_SAW";
     public static final String WAVE_STR_TRIANGLE = "TRIANGLE";
     public static final String WAVE_STR_SQUARE = "SQUARE";
     public static final String WAVE_STR_PULSE_25 = "PULSE_25";
@@ -372,7 +371,8 @@ public class JMSynthFile {
         NodeList lst = node.getChildNodes();
         for (int i = 0; i < lst.getLength(); i++) {
             if (lst.item(i).getNodeName().equals(XML_NODE_CHANNEL) == true) {
-                readNodeChannel(node, synth);
+                Node chNode = lst.item(i);
+                readNodeChannel(chNode, synth);
             }
         }
     }
