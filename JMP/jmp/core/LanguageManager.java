@@ -13,8 +13,8 @@ public class LanguageManager extends AbstractManager {
     /**
      * コンストラクタ
      */
-    LanguageManager(int pri) {
-        super(pri, "language");
+    LanguageManager() {
+        super("language");
     }
 
     /**

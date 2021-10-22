@@ -42,8 +42,8 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     /* JMsynth用のフレーム(WindowDatabaseに含まない) */
     private BuiltinSynthSetupDialog builtinSynthFrame = null;
 
-    WindowManager(int pri) {
-        super(pri, "window");
+    WindowManager() {
+        super("window");
 
         database = new WindowDatabase();
     }

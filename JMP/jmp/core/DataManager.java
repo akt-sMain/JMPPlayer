@@ -58,8 +58,8 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
     /**
      * コンストラクタ
      */
-    DataManager(int pri) {
-        super(pri, "data");
+    DataManager() {
+        super("data");
     }
 
     protected boolean initFunc() {

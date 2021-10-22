@@ -101,8 +101,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         isCommitDeviceSelectAction = b;
     }
 
-    SoundManager(int pri) {
-        super(pri, "sound");
+    SoundManager() {
+        super("sound");
     }
 
     @Override
@@ -987,12 +987,12 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         super.notifyUpdateConfig(key);
 
         if (key.equals(DataManager.CFG_KEY_MIDIIN) == true) {
-            if (isFinishedAllInitialize() == true) {
+            if (JMPCore.isFinishedInitialize() == true) {
                 reloadMidiDevice(false, true);
             }
         }
         else if (key.equals(DataManager.CFG_KEY_MIDIOUT) == true) {
-            if (isFinishedAllInitialize() == true) {
+            if (JMPCore.isFinishedInitialize() == true) {
                 reloadMidiDevice(true, false);
             }
         }

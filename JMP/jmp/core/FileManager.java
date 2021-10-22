@@ -44,8 +44,8 @@ public class FileManager extends AbstractManager implements IFileManager {
         return fileList;
     }
 
-    FileManager(int pri) {
-        super(pri, "file");
+    FileManager() {
+        super("file");
     }
 
     @Override
@@ -196,7 +196,7 @@ public class FileManager extends AbstractManager implements IFileManager {
         FileResult result = new FileResult();
         result.status = true;
         result.statusMsg = "";
-        for (AbstractManager am : getCloneManagerList(true)) {
+        for (AbstractManager am : ManagerInstances.getManagersOfAsc()) {
             am.loadFileForCore(f, result);
             if (result.status == false) {
                 break;

@@ -22,31 +22,10 @@ public class JMPCore {
 //    private static IPlugin StandAlonePlugin = null;
     private static PluginWrapper StandAlonePluginWrapper = null;
 
-    /** 初期化・終了実行順位 */
-    private static final int MANAGER_PRIORITY_RESOUCE = 0;
-    private static final int MANAGER_PRIORITY_LANG = 10;
-    private static final int MANAGER_PRIORITY_SYSTEM = 20;
-    private static final int MANAGER_PRIORITY_TASK = 30;
-    private static final int MANAGER_PRIORITY_DATA = 40;
-    private static final int MANAGER_PRIORITY_FILE = 50;
-    private static final int MANAGER_PRIORITY_WINDOW = 60;
-    private static final int MANAGER_PRIORITY_SOUND = 70;
-    private static final int MANAGER_PRIORITY_PLUGIN = 80;
-
-    private static SystemManager systemManager = new SystemManager(MANAGER_PRIORITY_SYSTEM);
-    private static DataManager dataManager = new DataManager(MANAGER_PRIORITY_DATA);
-    private static SoundManager soundManager = new SoundManager(MANAGER_PRIORITY_SOUND);
-    private static PluginManager pluginManager = new PluginManager(MANAGER_PRIORITY_PLUGIN);
-    private static WindowManager windowManager = new WindowManager(MANAGER_PRIORITY_WINDOW);
-    private static LanguageManager languageManager = new LanguageManager(MANAGER_PRIORITY_LANG);
-    private static TaskManager taskManager = new TaskManager(MANAGER_PRIORITY_TASK);
-    private static ResourceManager resourceManager = new ResourceManager(MANAGER_PRIORITY_RESOUCE);
-    private static FileManager fileManager = new FileManager(MANAGER_PRIORITY_FILE);
-
     public static boolean initFunc() {
         boolean result = true;
         try {
-            result = AbstractManager.callInitFunc();
+            result = ManagerInstances.callInitFunc();
         }
         catch (Exception e) {
             try {
@@ -64,7 +43,7 @@ public class JMPCore {
     public static boolean endFunc() {
         boolean result = true;
         try {
-            result = AbstractManager.callEndFunc();
+            result = ManagerInstances.callEndFunc();
         }
         catch (Exception e) {
             try {
@@ -80,7 +59,7 @@ public class JMPCore {
     }
 
     public static boolean isFinishedInitialize() {
-        return AbstractManager.isFinishedAllInitialize();
+        return ManagerInstances.isFinishedAllInitialize();
     }
 
     public static boolean isEnableStandAlonePlugin() {
@@ -110,7 +89,7 @@ public class JMPCore {
         createNotifyFunc(new ICallbackFunction() {
             @Override
             public void callback() {
-                for (AbstractManager am : AbstractManager.asc) {
+                for (AbstractManager am : ManagerInstances.getManagersOfAsc()) {
                     if (am.isFinishedInitialize() == true) {
                         am.notifyUpdateConfig(key);
                     }
@@ -123,7 +102,7 @@ public class JMPCore {
         createNotifyFunc(new ICallbackFunction() {
             @Override
             public void callback() {
-                for (AbstractManager am : AbstractManager.asc) {
+                for (AbstractManager am : ManagerInstances.getManagersOfAsc()) {
                     if (am.isFinishedInitialize() == true) {
                         am.notifyUpdateCommonRegister(key);
                     }
@@ -134,38 +113,38 @@ public class JMPCore {
     }
 
     public static SystemManager getSystemManager() {
-        return systemManager;
+        return ManagerInstances.systemManager;
     }
 
     public static DataManager getDataManager() {
-        return dataManager;
+        return ManagerInstances.dataManager;
     }
 
     public static SoundManager getSoundManager() {
-        return soundManager;
+        return ManagerInstances.soundManager;
     }
 
     public static PluginManager getPluginManager() {
-        return pluginManager;
+        return ManagerInstances.pluginManager;
     }
 
     public static WindowManager getWindowManager() {
-        return windowManager;
+        return ManagerInstances.windowManager;
     }
 
     public static LanguageManager getLanguageManager() {
-        return languageManager;
+        return ManagerInstances.languageManager;
     }
 
     public static TaskManager getTaskManager() {
-        return taskManager;
+        return ManagerInstances.taskManager;
     }
 
     public static ResourceManager getResourceManager() {
-        return resourceManager;
+        return ManagerInstances.resourceManager;
     }
 
     public static FileManager getFileManager() {
-        return fileManager;
+        return ManagerInstances.fileManager;
     }
 }

@@ -79,8 +79,8 @@ public class PluginManager extends AbstractManager {
     // ---------------------------------------------
     // メソッド群
     // ---------------------------------------------
-    PluginManager(int pri) {
-        super(pri, "plugin");
+    PluginManager() {
+        super("plugin");
         observers = new PluginObserver();
     }
 

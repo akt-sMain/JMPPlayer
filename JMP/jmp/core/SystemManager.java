@@ -162,8 +162,8 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         JMPFlags.Log.cprintln();
     }
 
-    SystemManager(int pri) {
-        super(pri, "system");
+    SystemManager() {
+        super("system");
     }
 
     protected boolean initFunc() {

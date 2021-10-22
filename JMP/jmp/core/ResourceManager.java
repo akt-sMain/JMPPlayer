@@ -25,8 +25,8 @@ public class ResourceManager extends AbstractManager implements IManager {
     private Skin skin = null;
     private Image jmpImageIcon = null;
 
-    ResourceManager(int pri) {
-        super(pri, "resource");
+    ResourceManager() {
+        super("resource");
     }
 
     @Override

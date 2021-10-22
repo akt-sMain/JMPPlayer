@@ -30,8 +30,8 @@ public class TaskManager extends AbstractManager {
     /** タスクデータベース */
     private Map<TaskID, TaskOfBase> taskMap = null;
 
-    TaskManager(int pri) {
-        super(pri, "task");
+    TaskManager() {
+        super("task");
     }
 
     @Override
