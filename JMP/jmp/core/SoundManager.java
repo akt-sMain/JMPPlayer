@@ -1016,7 +1016,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         Utility.threadSleep(50);
         // GSリセット
         controller.sendMidiMessage(MidiByte.GS_RESET, 0);
-        Utility.threadSleep(50);
+        Utility.threadSleep(100);
     }
 
     @Override

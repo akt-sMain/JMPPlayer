@@ -50,8 +50,8 @@ public abstract class AbstractManager implements IManager {
 
     static boolean callInitFunc() {
         boolean result = true;
-        asc = getCloneManagerList(true);
-        desc = getCloneManagerList(false);
+        asc = getCloneManagerList(true, true);
+        desc = getCloneManagerList(false, true);
         JMPFlags.Log.cprintln("###");
         JMPFlags.Log.cprintln("## CORE initializing");
         JMPFlags.Log.cprintln("##");
@@ -94,6 +94,18 @@ public abstract class AbstractManager implements IManager {
     }
 
     static List<AbstractManager> getCloneManagerList(boolean order) {
+        return getCloneManagerList(order, false);
+    }
+    static List<AbstractManager> getCloneManagerList(boolean order, boolean remake) {
+        if (remake == false) {
+            if (order == true) {
+                return asc;
+            }
+            else {
+                return desc;
+            }
+        }
+
         // マネージャーリストをコピー
         List<AbstractManager> cloneMng = new ArrayList<AbstractManager>();
         for (AbstractManager am : managers) {
