@@ -346,6 +346,9 @@ public class MidiPlayer extends Player {
             cachedMidiOutName = new String(name);
         }
         catch (MidiUnavailableException e) {
+            System.out.println("Midi out err");
+            e.printStackTrace();
+
             JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
             cachedMidiOutName = NO_CACHE;
         }
@@ -391,6 +394,9 @@ public class MidiPlayer extends Player {
             cachedMidiInName = new String(name);
         }
         catch (MidiUnavailableException e) {
+            System.out.println("Midi in err");
+            e.printStackTrace();
+
             JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIIN, "");
             cachedMidiInName = NO_CACHE;
         }

@@ -33,6 +33,7 @@ import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.JMPDialog;
 import jmp.gui.ui.MultiKeyActionTextField;
 import jmp.lang.DefineLanguage.LangID;
+import jmp.task.ICallbackFunction;
 import process.IProcessingCallback;
 
 public class YoutubeConvertDialog extends JMPDialog {
@@ -250,39 +251,6 @@ public class YoutubeConvertDialog extends JMPDialog {
     }
 
     private void _init() {
-        SystemManager system = JMPCore.getSystemManager();
-        system.setYoutubeDlCallback(new IProcessingCallback() {
-
-            @Override
-            public void end(int result) {
-                LanguageManager lm = JMPCore.getLanguageManager();
-                convertButton.setEnabled(true);
-
-                if (result != 0) {
-                    lblStatus.setForeground(Color.RED);
-                    lblStatus.setText(lm.getLanguageStr(LangID.Conversion_failed));
-                    repaint();
-                    return;
-                }
-
-                lblStatus.setForeground(Color.GREEN);
-
-                lblStatus.setText(lm.getLanguageStr(LangID.Conversion_completed));
-                repaint();
-
-                openOutputFolder();
-            }
-
-            @Override
-            public void begin() {
-                LanguageManager lm = JMPCore.getLanguageManager();
-                lblStatus.setForeground(Color.LIGHT_GRAY);
-                lblStatus.setText(lm.getLanguageStr(LangID.Now_converting));
-                repaint();
-
-                convertButton.setEnabled(false);
-            }
-        });
     }
 
     private void updateGuiState() {
@@ -361,6 +329,70 @@ public class YoutubeConvertDialog extends JMPDialog {
             dstExt = DEFAULT_DST_EXT_AUDIO;
             chckbxAudioOnly.setSelected(true);
         }
+
+        system.setYoutubeDlCallback(new IProcessingCallback() {
+
+            boolean isConverting = true;
+
+            @Override
+            public void end(int result) {
+                isConverting = false;
+                LanguageManager lm = JMPCore.getLanguageManager();
+                convertButton.setEnabled(true);
+
+                if (result != 0) {
+                    lblStatus.setForeground(Color.RED);
+                    lblStatus.setText(lm.getLanguageStr(LangID.Conversion_failed));
+                    repaint();
+                    return;
+                }
+
+                lblStatus.setForeground(Color.GREEN);
+
+                lblStatus.setText(lm.getLanguageStr(LangID.Conversion_completed));
+                repaint();
+
+                openOutputFolder();
+            }
+
+            @Override
+            public void begin() {
+                LanguageManager lm = JMPCore.getLanguageManager();
+                lblStatus.setForeground(Color.LIGHT_GRAY);
+                lblStatus.setText(lm.getLanguageStr(LangID.Now_converting));
+                repaint();
+
+                convertButton.setEnabled(false);
+
+                JMPCore.getTaskManager().addCallbackPackage(1000, new ICallbackFunction() {
+
+                    int ite = 0;
+
+                    String[] ites = {">--", "->-", "-->"};
+
+                    @Override
+                    public void callback() {
+                        if (isConverting == false) {
+                            return;
+                        }
+                        lblStatus.setText(lm.getLanguageStr(LangID.Now_converting) + ites[ite]);
+                        ite++;
+                        if (ite >= ites.length) {
+                            ite = 0;
+                        }
+                        repaint();
+                    }
+
+                    @Override
+                    public boolean isDeleteConditions(int count) {
+                        if (isConverting == false) {
+                            return true;
+                        }
+                        return ICallbackFunction.super.isDeleteConditions(count);
+                    }
+                });
+            }
+        });
 
         try {
             // ダウンロード実行

@@ -113,38 +113,38 @@ public class JMPCore {
     }
 
     public static SystemManager getSystemManager() {
-        return ManagerInstances.systemManager;
+        return ManagerInstances.SSystemManager;
     }
 
     public static DataManager getDataManager() {
-        return ManagerInstances.dataManager;
+        return ManagerInstances.SDataManager;
     }
 
     public static SoundManager getSoundManager() {
-        return ManagerInstances.soundManager;
+        return ManagerInstances.SSoundManager;
     }
 
     public static PluginManager getPluginManager() {
-        return ManagerInstances.pluginManager;
+        return ManagerInstances.SPluginManager;
     }
 
     public static WindowManager getWindowManager() {
-        return ManagerInstances.windowManager;
+        return ManagerInstances.SWindowManager;
     }
 
     public static LanguageManager getLanguageManager() {
-        return ManagerInstances.languageManager;
+        return ManagerInstances.SLanguageManager;
     }
 
     public static TaskManager getTaskManager() {
-        return ManagerInstances.taskManager;
+        return ManagerInstances.STaskManager;
     }
 
     public static ResourceManager getResourceManager() {
-        return ManagerInstances.resourceManager;
+        return ManagerInstances.SResourceManager;
     }
 
     public static FileManager getFileManager() {
-        return ManagerInstances.fileManager;
+        return ManagerInstances.SFileManager;
     }
 }

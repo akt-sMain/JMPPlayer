@@ -52,7 +52,7 @@ public class JMPLoader {
                 "プラグインのスタンドアロン起動モード"//
         );//
         printManualLine(//
-                CMD_NONPLG, //
+                CMD_NONPLG, //11
                 "プラグインをロードせず起動"//
         );//
         printManualLine(//

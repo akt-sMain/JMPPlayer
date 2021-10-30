@@ -32,6 +32,7 @@ import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.JMPDialog;
 import jmp.gui.ui.MultiKeyActionTextField;
 import jmp.lang.DefineLanguage.LangID;
+import jmp.task.ICallbackFunction;
 import process.IProcessingCallback;
 
 public class FFmpegConvertDialog extends JMPDialog {
@@ -350,8 +351,11 @@ public class FFmpegConvertDialog extends JMPDialog {
 
         IProcessingCallback callback = new IProcessingCallback() {
 
+            boolean isConverting = true;
+
             @Override
             public void end(int result) {
+                isConverting = false;
                 convertButton.setEnabled(true);
 
                 if (result != 0) {
@@ -382,6 +386,34 @@ public class FFmpegConvertDialog extends JMPDialog {
                 repaint();
 
                 convertButton.setEnabled(false);
+
+                JMPCore.getTaskManager().addCallbackPackage(1000, new ICallbackFunction() {
+
+                    int ite = 0;
+
+                    String[] ites = {">--", "->-", "-->"};
+
+                    @Override
+                    public void callback() {
+                        if (isConverting == false) {
+                            return;
+                        }
+                        lblStatus.setText(lm.getLanguageStr(LangID.Now_converting) + ites[ite]);
+                        ite++;
+                        if (ite >= ites.length) {
+                            ite = 0;
+                        }
+                        repaint();
+                    }
+
+                    @Override
+                    public boolean isDeleteConditions(int count) {
+                        if (isConverting == false) {
+                            return true;
+                        }
+                        return ICallbackFunction.super.isDeleteConditions(count);
+                    }
+                });
             }
         };
 

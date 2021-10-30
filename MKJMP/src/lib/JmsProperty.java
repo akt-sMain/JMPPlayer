@@ -1,4 +1,4 @@
-package jmp.plugin;
+package lib;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,9 +7,6 @@ import java.io.InputStreamReader;
 
 import function.Platform;
 import function.Utility;
-import jmp.core.JMPCore;
-import jmp.core.PluginManager;
-import jmp.core.SystemManager;
 
 /**
  * JMSファイルのプロパティクラス
@@ -24,7 +21,14 @@ public class JmsProperty {
     private String version = "";
     private boolean isDeleteRequest = false;
 
-    public JmsProperty(File jar, File data, File res, String version) {
+    private String pluginDir = "";
+    private String dataDir = "";
+    private String resDir = "";
+
+    public JmsProperty(String pluginDir, String dataDir, String resDir, File jar, File data, File res, String version) {
+        setPluginDir(pluginDir);
+        setDataDir(dataDir);
+        setResDir(resDir);
         setRes(res);
         setData(data);
         setJar(jar);
@@ -32,7 +36,7 @@ public class JmsProperty {
         this.isDeleteRequest = false;
     }
 
-    public static JmsProperty getJmsProparty(File jmsFile) {
+    public static JmsProperty getJmsProparty(String pluginDir, String dataDir, String resDir, File jmsFile) {
         JmsProperty jms = null;
 
         BufferedReader reader;
@@ -61,45 +65,45 @@ public class JmsProperty {
                 if (sLine.length >= 2) {
                     String key = sLine[0].trim();
                     String param = sLine[1].trim();
-                    if (key.equalsIgnoreCase(PluginManager.SETUP_KEYNAME_PLUGIN) == true) {
-                        String plgPath = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JAR_DIR), Platform.getSeparator(), param);
+                    if (key.equalsIgnoreCase(MakeJmpLib.JMS_KEY_PLUGIN) == true) {
+                        String plgPath = Utility.stringsCombin(pluginDir, Platform.getSeparator(), param);
 
                         // プラグインファイルを保持
                         pluginFile = new File(plgPath);
                     }
-                    else if (key.equalsIgnoreCase(PluginManager.SETUP_KEYNAME_DATA) == true) {
+                    else if (key.equalsIgnoreCase(MakeJmpLib.JMS_KEY_DATA) == true) {
                         if (param.equalsIgnoreCase("TRUE") == true) {
                             isData = true;
                         }
                     }
-                    else if (key.equalsIgnoreCase(PluginManager.SETUP_KEYNAME_RES) == true) {
+                    else if (key.equalsIgnoreCase(MakeJmpLib.JMS_KEY_RES) == true) {
                         if (param.equalsIgnoreCase("TRUE") == true) {
                             isRes = true;
                         }
                     }
-                    else if (key.equalsIgnoreCase(PluginManager.SETUP_KEYNAME_VERSION) == true) {
+                    else if (key.equalsIgnoreCase(MakeJmpLib.JMS_KEY_VERSION) == true) {
                         version = param;
                     }
                 }
             }
 
             if (isData == true) {
-                String dataPath = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_DATA_DIR), Platform.getSeparator(),
+                String dataPath = Utility.stringsCombin(dataDir, Platform.getSeparator(),
                         Utility.getFileNameNotExtension(pluginFile));
 
                 dataFile = new File(dataPath);
             }
             if (isRes == true) {
-                String resPath = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_RES_DIR), Platform.getSeparator(),
+                String resPath = Utility.stringsCombin(resDir, Platform.getSeparator(),
                         Utility.getFileNameNotExtension(pluginFile));
 
                 resFile = new File(resPath);
             }
 
-            jms = new JmsProperty(pluginFile, dataFile, resFile, version);
+            jms = new JmsProperty(pluginDir, dataDir, resDir, pluginFile, dataFile, resFile, version);
 
             String fileName = Utility.getFileNameAndExtension(jmsFile);
-            if (fileName.startsWith(PluginManager.SETUP_REMOVE_TAG) == true) {
+            if (fileName.startsWith(MakeJmpLib.JMS_REMOVE_TAG) == true) {
                 jms.setDeleteRequest(true);
             }
             reader.close();
@@ -151,5 +155,29 @@ public class JmsProperty {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getDataDir() {
+        return dataDir;
+    }
+
+    public void setDataDir(String dataDir) {
+        this.dataDir = dataDir;
+    }
+
+    public String getPluginDir() {
+        return pluginDir;
+    }
+
+    public void setPluginDir(String pluginDir) {
+        this.pluginDir = pluginDir;
+    }
+
+    public String getResDir() {
+        return resDir;
+    }
+
+    public void setResDir(String resDir) {
+        this.resDir = resDir;
     }
 }

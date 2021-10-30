@@ -18,12 +18,12 @@ import jmp.FileResult;
 import jmp.JMPFlags;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.plugin.JMPPluginLoader;
-import jmp.plugin.JmsProperty;
 import jmp.plugin.PluginObserver;
 import jmp.plugin.PluginWrapper;
 import jmp.plugin.PluginWrapper.PluginState;
 import jmp.task.TaskOfMidiEvent.JmpMidiPacket;
 import jmp.util.JmpUtil;
+import lib.JmsProperty;
 import lib.MakeJmpLib;
 
 /**
@@ -60,10 +60,10 @@ public class PluginManager extends AbstractManager {
     public static final String SETUP_KEYNAME_RES = MakeJmpLib.JMS_KEY_RES;
 
     /** リムーブタグ */
-    public static final String SETUP_REMOVE_TAG = "~";
+    public static final String SETUP_REMOVE_TAG = MakeJmpLib.JMS_REMOVE_TAG;
 
     /** スキップタグ */
-    public static final String SETUP_SKIP_TAG = "_";
+    public static final String SETUP_SKIP_TAG = MakeJmpLib.JMS_SKIP_TAG;
 
     public static final String PLUGIN_STATE_FILE_NAME = "plgstate";
 
@@ -202,7 +202,7 @@ public class PluginManager extends AbstractManager {
             return true;
         }
 
-        JmsProperty jms = JmsProperty.getJmsProparty(f);
+        JmsProperty jms = getJmsProparty(f);
         if (JMPCore.LIBRALY_VERSION.equals(jms.getVersion()) == true) {
             return true;
         }
@@ -261,7 +261,7 @@ public class PluginManager extends AbstractManager {
                 }
             }
 
-            JmsProperty jms = JmsProperty.getJmsProparty(jmsFile);
+            JmsProperty jms = getJmsProparty(jmsFile);
             if (JMPCore.LIBRALY_VERSION.equals(jms.getVersion()) == true) {
                 ret = true;
             }
@@ -371,7 +371,7 @@ public class PluginManager extends AbstractManager {
         File pluginDir = new File(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JMS_DIR));
         for (File f : pluginDir.listFiles()) {
             if (Utility.checkExtension(f, SETUP_FILE_EX) == true) {
-                JmsProperty jms = JmsProperty.getJmsProparty(f);
+                JmsProperty jms = getJmsProparty(f);
                 String jar = "";
                 if (jms.getJar() != null) {
                     jar = jms.getJar().getPath();
@@ -538,7 +538,7 @@ public class PluginManager extends AbstractManager {
             return null;
         }
 
-        JmsProperty jms = JmsProperty.getJmsProparty(file);
+        JmsProperty jms = getJmsProparty(file);
 
         // プラグインをインポート
         String name = importPlugin(jms.getJar());
@@ -562,7 +562,7 @@ public class PluginManager extends AbstractManager {
                 continue;
             }
 
-            JmsProperty jms = JmsProperty.getJmsProparty(f);
+            JmsProperty jms = getJmsProparty(f);
 
             // プラグインをインポート
             boolean isValid = true;
@@ -615,7 +615,7 @@ public class PluginManager extends AbstractManager {
                 continue;
             }
 
-            JmsProperty jms = JmsProperty.getJmsProparty(f);
+            JmsProperty jms = getJmsProparty(f);
             if (jms == null) {
                 continue;
             }
@@ -682,7 +682,7 @@ public class PluginManager extends AbstractManager {
     }
 
     public void removePlugin(File jmsFile) {
-        JmsProperty jms = JmsProperty.getJmsProparty(jmsFile);
+        JmsProperty jms = getJmsProparty(jmsFile);
 
         File jar = jms.getJar();
         if (jar != null) {
@@ -843,6 +843,13 @@ public class PluginManager extends AbstractManager {
                 }
             }
         }
+    }
+
+    public JmsProperty getJmsProparty(File jmsFile) {
+        String pluginDir = JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JAR_DIR);
+        String dataDir = JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_DATA_DIR);
+        String resDir = JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_RES_DIR);
+        return JmsProperty.getJmsProparty(pluginDir, dataDir, resDir, jmsFile);
     }
 
     @Override

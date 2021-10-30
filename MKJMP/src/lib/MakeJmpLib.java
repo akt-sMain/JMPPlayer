@@ -22,6 +22,12 @@ public class MakeJmpLib {
     public static final String JMS_KEY_DATA = "DATA";
     public static final String JMS_KEY_RES = "RES";
 
+    /** リムーブタグ */
+    public static final String JMS_REMOVE_TAG = "~";
+
+    /** スキップタグ */
+    public static final String JMS_SKIP_TAG = "_";
+
     /* コマンド文字列 */
     public static final String CMD_CONSOLE = "-cmd";
     public static final String CMD_NAME = "-name";
