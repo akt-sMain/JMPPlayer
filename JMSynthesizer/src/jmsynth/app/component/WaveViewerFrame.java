@@ -368,6 +368,20 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         btnTable.setBounds(631, 26, 91, 21);
         contentPane.add(btnTable);
 
+        JButton btnResetAllChannel = new JButton("Reset all channel");
+        btnResetAllChannel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                softSynth.initializeAllChannel();
+
+                if (setupDialog.isVisible() == true) {
+                    setupDialog.reset();
+                    setupDialog.repaint();
+                }
+            }
+        });
+        btnResetAllChannel.setBounds(97, 610, 141, 21);
+        contentPane.add(btnResetAllChannel);
+
         rdbtnModeDetail.setVisible(true);
         rdbtnModeSpectrum.setVisible(false);
         rdbtnModeMerge.setVisible(true);

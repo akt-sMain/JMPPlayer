@@ -3,6 +3,9 @@ package jmsynth.modulate;
 import java.util.Vector;
 
 public class ModulatorFactory  implements Runnable {
+
+    public static final int DEFAULT_DEPTH = 0;
+
     private boolean isRunnable = true;
     private Thread timerThread = null;
     private Vector<Modulator> targets = null;
@@ -15,6 +18,7 @@ public class ModulatorFactory  implements Runnable {
 
     public Modulator newModulatorInstance() {
         Modulator m = new Modulator();
+        m.setDepth(DEFAULT_DEPTH);
         targets.add(m);
         return m;
     }

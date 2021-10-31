@@ -21,6 +21,29 @@ public class JMSoftSynthesizer implements ISynthController {
     private EnvelopeFactory envelopeFactory = null;
     private ModulatorFactory modulatorFactory = null;
 
+    private static final short CHANNEL_TYPE_SOUND = 0;
+    private static final short CHANNEL_TYPE_DRUM = 1;
+
+    // チャンネル構成
+    private static final short[] CHANNEL_TYPE_LIST = { //
+            CHANNEL_TYPE_SOUND, // 1ch
+            CHANNEL_TYPE_SOUND, // 2ch
+            CHANNEL_TYPE_SOUND, // 3ch
+            CHANNEL_TYPE_SOUND, // 4ch
+            CHANNEL_TYPE_SOUND, // 5ch
+            CHANNEL_TYPE_SOUND, // 6ch
+            CHANNEL_TYPE_SOUND, // 7ch
+            CHANNEL_TYPE_SOUND, // 8ch
+            CHANNEL_TYPE_SOUND, // 9ch
+            CHANNEL_TYPE_DRUM, // 10ch
+            CHANNEL_TYPE_SOUND, // 11ch
+            CHANNEL_TYPE_SOUND, // 12ch
+            CHANNEL_TYPE_SOUND, // 13ch
+            CHANNEL_TYPE_SOUND, // 14ch
+            CHANNEL_TYPE_SOUND, // 15ch
+            CHANNEL_TYPE_SOUND, // 16ch
+    };
+
     /**
      *
      * @param polyphony
@@ -42,24 +65,87 @@ public class JMSoftSynthesizer implements ISynthController {
         envelopeFactory = new EnvelopeFactory();
         modulatorFactory = new ModulatorFactory();
 
-        channels = new SoundSourceChannel[] { // Midiチャンネル分
-                new SoundSourceChannel(0, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 1ch
-                new SoundSourceChannel(1, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 2ch
-                new SoundSourceChannel(2, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 3ch
-                new SoundSourceChannel(3, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 4ch
-                new SoundSourceChannel(4, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 5ch
-                new SoundSourceChannel(5, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 6ch
-                new SoundSourceChannel(6, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 7ch
-                new SoundSourceChannel(7, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 8ch
-                new SoundSourceChannel(8, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 9ch
-                new DrumSoundSourceChannel(9, WaveType.LONG_NOISE, polyphony, envelopeFactory.newEnvelopeInstance(0.0, 0.25, 0.0, 0.0), modulatorFactory.newModulatorInstance()), // 10ch
-                new SoundSourceChannel(10, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 11ch
-                new SoundSourceChannel(11, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 12ch
-                new SoundSourceChannel(12, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 13ch
-                new SoundSourceChannel(13, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 14ch
-                new SoundSourceChannel(14, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 15ch
-                new SoundSourceChannel(15, WaveType.SINE, polyphony, envelopeFactory.newEnvelopeInstance(), modulatorFactory.newModulatorInstance()), // 16ch
-        };
+        // チャンネル生成
+        channels = new SoundSourceChannel[CHANNEL_TYPE_LIST.length];
+        for (int ch=0; ch<channels.length; ch++) {
+            channels[ch] = createChannel(ch, polyphony);
+        }
+
+        // 全てのチャンネルを初期設定にする
+        initializeAllChannel();
+    }
+
+    private SoundSourceChannel createChannel(int ch, int polyphony) {
+        SoundSourceChannel ret = null;
+        Envelope env = envelopeFactory.newEnvelopeInstance();
+        Modulator mod = modulatorFactory.newModulatorInstance();
+
+        switch (CHANNEL_TYPE_LIST[ch]) {
+            case CHANNEL_TYPE_DRUM:
+                /* ドラム音源 */
+                ret = new DrumSoundSourceChannel(ch, WaveType.SINE, polyphony, env, mod);
+                break;
+
+            case CHANNEL_TYPE_SOUND:
+            default:
+                /* 通常音源 */
+                ret = new SoundSourceChannel(ch, WaveType.SINE, polyphony, env, mod);
+                break;
+        }
+        return ret;
+    }
+
+    public void initializeAllChannel() {
+        for (int i = 0; i < getNumberOfChannel(); i++) {
+            initializeChannel(i);
+        }
+    }
+
+    public void initializeChannel(int ch) {
+        if (ch < 0 || ch >= getNumberOfChannel()) {
+            return;
+        }
+
+        SoundSourceChannel target = channels[ch];
+        WaveType type = WaveType.SINE;
+        boolean waveReverse = false;
+        double a = EnvelopeFactory.DEFAULT_A;
+        double d = EnvelopeFactory.DEFAULT_D;
+        double s = EnvelopeFactory.DEFAULT_S;
+        double r = EnvelopeFactory.DEFAULT_R;
+        long ma = EnvelopeFactory.DEFAULT_MAX_A;
+        long md = EnvelopeFactory.DEFAULT_MAX_D;
+        long mr = EnvelopeFactory.DEFAULT_MAX_R;
+        int modDepth = ModulatorFactory.DEFAULT_DEPTH;
+
+        switch (CHANNEL_TYPE_LIST[ch]) {
+            case CHANNEL_TYPE_DRUM:
+                /* ドラム音源 */
+                type = WaveType.LONG_NOISE;
+                a = 0.0;
+                d = 0.25;
+                s = 0.0;
+                r = 0.0;
+                break;
+
+            case CHANNEL_TYPE_SOUND:
+            default:
+                /* 通常音源 */
+                break;
+        }
+
+        if (target != null) {
+            target.setOscillator(type);
+            target.setWaveReverse(waveReverse);
+            target.getEnvelope().setAttackTime(a);
+            target.getEnvelope().setDecayTime(d);
+            target.getEnvelope().setSustainLevel(s);
+            target.getEnvelope().setReleaseTime(r);
+            target.getEnvelope().setMaxAttackMills(ma);
+            target.getEnvelope().setMaxDecayMills(md);
+            target.getEnvelope().setMaxReleaseMills(mr);
+            target.getModulator().setDepth(modDepth);
+        }
     }
 
     public int getNumberOfChannel() {
@@ -194,7 +280,7 @@ public class JMSoftSynthesizer implements ISynthController {
 
     @Override
     public void systemReset() {
-        for (int i=0; i<16; i++) {
+        for (int i = 0; i < 16; i++) {
             channels[i].systemReset();
         }
     }

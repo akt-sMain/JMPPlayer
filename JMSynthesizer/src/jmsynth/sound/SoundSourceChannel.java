@@ -634,14 +634,31 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         }
     }
 
+    public Modulator getModulator() {
+        return getModulator(0);
+    }
+
     @Override
     public Modulator getModulator(int ch) {
         return modulator;
     }
 
+    public void setWaveReverse(boolean isReverse) {
+        setWaveReverse(0, isReverse);
+    }
+
     @Override
     public void setWaveReverse(int ch, boolean isReverse) {
         this.oscillator.setWaveReverse(isReverse);
+
+        /* 全てのオシレータに設定を同期 */
+        for (IOscillator osc : oscMap.values()) {
+            osc.setWaveReverse(isReverse);
+        }
+    }
+
+    public boolean isWaveReverse() {
+        return isWaveReverse(0);
     }
 
     @Override

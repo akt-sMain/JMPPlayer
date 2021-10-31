@@ -46,10 +46,10 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
             }
         }
         if (plugin != null) {
-            aPlugins.put(name, new PluginWrapper(plugin));
+            aPlugins.put(name, new PluginWrapper(plugin, name));
         }
         else {
-            aPlugins.put(name, new PluginWrapper());
+            aPlugins.put(name, new PluginWrapper(name));
         }
 
         accessor.clear();

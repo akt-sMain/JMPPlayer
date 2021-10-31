@@ -89,15 +89,18 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
     private IMidiEventListener midiEventListener = null;
     private ISupportExtensionConstraints supportExtensionConstraints = null;
     private PluginState state = PluginState.CONNECTED;
+    private String name = "";
 
-    public PluginWrapper() {
+    public PluginWrapper(String name) {
         toInvalidPlugin();
         this.state = PluginState.INVALID;
+        this.name = name;
     }
 
-    public PluginWrapper(IPlugin plg) {
+    public PluginWrapper(IPlugin plg, String name) {
         setInterface(plg);
         this.state = PluginState.CONNECTED;
+        this.name = name;
     }
 
     public void setInterface(IPlugin plg) {
@@ -125,6 +128,14 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public PluginState getState() {
         return state;
     }
@@ -143,6 +154,14 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof IPlugin) {
+            return equalsPlugin((IPlugin)obj);
+        }
+        return super.equals(obj);
     }
 
     public void toInvalidPlugin() {
