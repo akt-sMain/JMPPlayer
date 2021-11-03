@@ -98,7 +98,6 @@ public interface ISystemManager {
     public static final int COMMON_REGKEY_NO_EXTENSION_MML = 30;
     /** 連続再生の動作(DIR=ディレクトリ内、PLT=プレイリスト) */
     public static final int COMMON_REGKEY_NO_AUTOPLAY_FUNC = 31;
-
     /** cregキー数 */
     public static final int NUMBER_OF_COMMON_REGKEY = 32;
 
