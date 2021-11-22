@@ -36,14 +36,14 @@ public interface IWindowManager {
     /**
      * Window識別名の一覧表示
      *
-     * @return Window識別名一覧(","区切りで表示)
+     * @return Window識別名一覧配列
      */
     abstract String[] getWindowNameList();
 
     /**
      * Window識別名の一覧表示
      *
-     * @return Window識別名一覧配列
+     * @return Window識別名一覧(","区切りで表示)
      */
     default String getWindowNames() {
         String ret = "";

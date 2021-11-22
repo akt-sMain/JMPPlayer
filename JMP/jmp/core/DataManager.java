@@ -41,7 +41,7 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
             put(CFG_KEY_AUTOPLAY, "FALSE");
             put(CFG_KEY_LOOPPLAY, "FALSE");
             put(CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, "TRUE");
-            put(CFG_KEY_LANGUAGE, "0");
+            put(CFG_KEY_LANGUAGE, "en");
             put(CFG_KEY_LOADED_FILE, "");
             put(CFG_KEY_LYRIC_VIEW, "TRUE");
             put(CFG_KEY_FFMPEG_PATH, "ffmpeg.exe");

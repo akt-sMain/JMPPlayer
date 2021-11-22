@@ -34,8 +34,19 @@ public class WindowManager extends AbstractManager implements IWindowManager {
 
     public static final Rectangle DEFAULT_PLAYER_WINDOW_SIZE = new Rectangle(20, 20, 480, 210);
 
-    public static final String[] WINDOW_NAMELIST = { WINDOW_NAME_MAIN, WINDOW_NAME_FILE_LIST, WINDOW_NAME_HISTORY, WINDOW_NAME_MIDI_SETUP,
-            WINDOW_NAME_MIDI_MONITOR, WINDOW_NAME_MIDI_SENDER, WINDOW_NAME_LANGUAGE, WINDOW_NAME_LICENSE, WINDOW_NAME_FFMPEG, WINDOW_NAME_PLUGIN_MANAGER };
+    public static final String[] WINDOW_NAMELIST = { //
+            WINDOW_NAME_MAIN, //
+            WINDOW_NAME_FILE_LIST, //
+            WINDOW_NAME_HISTORY, //
+            WINDOW_NAME_MIDI_SETUP, //
+            WINDOW_NAME_MIDI_MONITOR, //
+            WINDOW_NAME_MIDI_SENDER, //
+            WINDOW_NAME_LANGUAGE, //
+            WINDOW_NAME_LICENSE, //
+            WINDOW_NAME_FFMPEG, //
+            WINDOW_NAME_PLUGIN_MANAGER, //
+            WINDOW_NAME_YOUTUBEDL, //
+    };
 
     private WindowDatabase database = null;
 
@@ -97,6 +108,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         }
         else if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_DEBUGMODE)) == true) {
             updateDebugMenu();
+            repaintAll();
         }
         super.notifyUpdateCommonRegister(key);
     }
@@ -214,7 +226,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
             database.addPluginMenuItem(name, pw);
         }
 
-        ((JMPPlayerWindow)getMainWindow()).updatePluginMenu();
+        ((JMPPlayerWindow) getMainWindow()).updatePluginMenu();
     }
 
     public List<JMenuItem> getPluginMenuItems() {

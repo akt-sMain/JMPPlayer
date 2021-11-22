@@ -1,6 +1,9 @@
 package jmp.lang;
 
+import java.nio.charset.CharacterCodingException;
+
 import jmp.lang.DefineLanguage.LangID;
+import jmp.util.JmpUtil;
 
 public class LanguageTable {
 
@@ -10,8 +13,8 @@ public class LanguageTable {
      * @param index
      * @return
      */
-    public static String getTitle(int langIndex) {
-        return getLanguageStr(DefineLanguage.titles[langIndex], langIndex);
+    public static String getTitle(int langIndex, String charset) {
+        return getLanguageStr(DefineLanguage.titles[langIndex], langIndex, charset);
     }
 
     /**
@@ -36,7 +39,7 @@ public class LanguageTable {
      * @param langIndex
      * @return
      */
-    public static String getLanguageStr(LangID id, int langIndex) {
+    public static String getLanguageStr(LangID id, int langIndex, String charset) {
         String ret = LanguageWords.BLANK_TEXT;
         if (DefineLanguage.langMap.containsKey(id) == true) {
             LanguageWords words = DefineLanguage.langMap.get(id);
@@ -44,7 +47,7 @@ public class LanguageTable {
                 // 存在しない翻訳が指定された場合は、英語を参照する
                 langIndex = DefineLanguage.INDEX_LANG_ENGLISH;
             }
-            ret = words.getWord(langIndex);
+            ret = words.getWord(langIndex, charset);
         }
         return ret;
     }
@@ -78,6 +81,29 @@ public class LanguageTable {
         if (0 > langIndex || langIndex >= DefineLanguage.NUMBER_OF_INDEX_LANG) {
             langIndex = 0;
         }
-        return DefineLanguage.langCodes[langIndex];
+
+        String s = "";
+        try {
+            s = JmpUtil.convertCharset(DefineLanguage.langCodes[langIndex], VBA.SRC_CHARSET);
+        }
+        catch (CharacterCodingException e) {
+            s = new String(DefineLanguage.langCodes[langIndex]);
+        }
+        return s;
+    }
+
+    /**
+     * 言語コードインデックス取得
+     *
+     * @param code
+     * @return
+     */
+    public static int getLangCodeIndex(String code) {
+        for (int i = 0; i < DefineLanguage.langCodes.length; i++) {
+            if (DefineLanguage.langCodes[i].equalsIgnoreCase(code) == true) {
+                return i;
+            }
+        }
+        return 0;
     }
 }

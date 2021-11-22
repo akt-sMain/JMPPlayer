@@ -72,12 +72,26 @@ public class DebugLogConsole extends JDialog {
         }
     }
 
+    @Override
+    public void setVisible(boolean b) {
+        super.setVisible(b);
+        if (b == false) {
+            clearText();
+        }
+    }
+
     public void print(String str) {
+        if (isVisible() == false) {
+            return;
+        }
         cacheText = Utility.stringsCombin(cacheText, str);
         updateText();
     }
 
     public void println(String str) {
+        if (isVisible() == false) {
+            return;
+        }
         cacheText = Utility.stringsCombin(cacheText, str, Platform.getNewLine());
         updateText();
     }

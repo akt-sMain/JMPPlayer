@@ -53,6 +53,13 @@ public class FFmpegConvertDialog extends JMPDialog {
     private JButton buttonOpenInput;
     private JButton btnOpenExe;
 
+    private void syncConrolEnable(boolean b) {
+        buttonOpenInput.setEnabled(b);
+        textFieldInputFile.setEnabled(b);
+        dstExtTextField.setEnabled(b);
+        convertButton.setEnabled(b);
+    }
+
     /**
      * Create the dialog.
      */
@@ -82,6 +89,9 @@ public class FFmpegConvertDialog extends JMPDialog {
 
             @Override
             public void catchDropFile(File file) {
+                if (textFieldFFmpegExePath.isEnabled() == false) {
+                    return;
+                }
                 setExePath(file.getPath());
             }
         }));
@@ -106,6 +116,9 @@ public class FFmpegConvertDialog extends JMPDialog {
 
             @Override
             public void catchDropFile(File file) {
+                if (textFieldInputFile.isEnabled() == false) {
+                    return;
+                }
                 setInputPath(file.getPath());
             }
         }));
@@ -356,7 +369,8 @@ public class FFmpegConvertDialog extends JMPDialog {
             @Override
             public void end(int result) {
                 isConverting = false;
-                convertButton.setEnabled(true);
+
+                syncConrolEnable(true);
 
                 if (result != 0) {
                     lblStatus.setForeground(Color.RED);
@@ -385,20 +399,20 @@ public class FFmpegConvertDialog extends JMPDialog {
                 lblStatus.setText(lm.getLanguageStr(LangID.Now_converting));
                 repaint();
 
-                convertButton.setEnabled(false);
+                syncConrolEnable(false);
 
                 JMPCore.getTaskManager().addCallbackPackage(1000, new ICallbackFunction() {
 
                     int ite = 0;
 
-                    String[] ites = {">--", "->-", "-->"};
+                    String[] ites = {">-- ", "->- ", "--> "};
 
                     @Override
                     public void callback() {
                         if (isConverting == false) {
                             return;
                         }
-                        lblStatus.setText(lm.getLanguageStr(LangID.Now_converting) + ites[ite]);
+                        lblStatus.setText(ites[ite] + dstExtTextField.getText());
                         ite++;
                         if (ite >= ites.length) {
                             ite = 0;

@@ -154,12 +154,12 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     }
 
     public static void consoleOutSystemInfo() {
-        JMPFlags.Log.cprintln("Date : " + Utility.getCurrentTimeStr());
-        JMPFlags.Log.cprintln("Java : " + Platform.getJavaVersion());
-        JMPFlags.Log.cprintln("OS   : " + Platform.getOSName());
+        JMPFlags.Log.cprintln("Date : " + Utility.getCurrentTimeStr(), true);
+        JMPFlags.Log.cprintln("Java : " + Platform.getJavaVersion(), true);
+        JMPFlags.Log.cprintln("OS   : " + Platform.getOSName(), true);
         JMPFlags.Log.cprintln("SLaF : " + UIManager.getSystemLookAndFeelClassName());
         JMPFlags.Log.cprintln("CLaF : " + UIManager.getCrossPlatformLookAndFeelClassName());
-        JMPFlags.Log.cprintln();
+        JMPFlags.Log.cprintln(true);
     }
 
     SystemManager() {
@@ -167,6 +167,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     }
 
     protected boolean initFunc() {
+        // 念のためシングルトン呼び出し
+        UtilityToolkitManager.getInstance();
+        MidiToolkitManager.getInstance();
 
         utilToolkit = UtilityToolkitManager.getInstance().getUtilityToolkit(UtilityToolkitManager.DEFAULT_UTIL_TOOLKIT_NAME);
 
@@ -306,26 +309,24 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         setupLookAndFeel();
 
         // コンソール画面(デバッグ画面)
-        if (JMPFlags.DebugMode == true) {
-            console = new DebugLogConsole();
-            if (JMPFlags.InvokeToConsole == true) {
-                showConsole();
-            }
-            IConsoleOutCallback cOutCb = new IConsoleOutCallback() {
-
-                @Override
-                public void println(String s) {
-                    JMPFlags.Log.cprintln(s);
-                }
-
-                @Override
-                public void print(String s) {
-                    JMPFlags.Log.cprint(s);
-                }
-            };
-            youtubeDlWrapper.setConsoleOut(cOutCb);
-            ((ProcessingFFmpegWrapper)ffmpegWrapper).setConsoleOut(cOutCb);
+        console = new DebugLogConsole();
+        if (JMPFlags.InvokeToConsole == true) {
+            showConsole();
         }
+        IConsoleOutCallback cOutCb = new IConsoleOutCallback() {
+
+            @Override
+            public void println(String s) {
+                JMPFlags.Log.cprintln(s, true);
+            }
+
+            @Override
+            public void print(String s) {
+                JMPFlags.Log.cprint(s, true);
+            }
+        };
+        youtubeDlWrapper.setConsoleOut(cOutCb);
+        ((ProcessingFFmpegWrapper)ffmpegWrapper).setConsoleOut(cOutCb);
 
         if (JMPLoader.UsePluginDirectory == true) {
             File pluginsDir = new File(aPath[PATH_PLUGINS_DIR]);
@@ -516,6 +517,18 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         return setCommonRegisterValueAdmin(key, value);
     }
 
+    public float getCommonRegisterValueToFloat(String key, float def) {
+        String s = getCommonRegisterValue(key);
+        return JmpUtil.toFloat(s, def);
+    }
+    public boolean getCommonRegisterValueToBoolean(String key, boolean def) {
+        String s = getCommonRegisterValue(key);
+        return JmpUtil.toBoolean(s, def);
+    }
+    public int getCommonRegisterValueToInt(String key, int def) {
+        String s = getCommonRegisterValue(key);
+        return JmpUtil.toInt(s, def);
+    }
     public String getCommonRegisterValue(String key) {
         if (cReg == null) {
             return "";

@@ -7,6 +7,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -16,6 +22,7 @@ import function.Platform;
 import function.Platform.SystemProperty;
 import function.Utility;
 import jmp.core.DataManager;
+import jmp.lang.VBA;
 
 public class JmpUtil {
     private JmpUtil() {
@@ -82,7 +89,6 @@ public class JmpUtil {
     public static boolean toBoolean(String str) {
         return toBoolean(str, false);
     }
-
     public static boolean toBoolean(String str, boolean def) {
         return Utility.tryParseBoolean(str, def);
     }
@@ -90,7 +96,6 @@ public class JmpUtil {
     public static int toInt(String str) {
         return toInt(str, 0);
     }
-
     public static int toInt(String str, int def) {
         return Utility.tryParseInt(str, def);
     }
@@ -98,7 +103,6 @@ public class JmpUtil {
     public static long toLong(String str) {
         return toLong(str, 0L);
     }
-
     public static long toLong(String str, long def) {
         return Utility.tryParseLong(str, def);
     }
@@ -106,9 +110,15 @@ public class JmpUtil {
     public static float toFloat(String str) {
         return toFloat(str, 0.0f);
     }
-
     public static float toFloat(String str, float def) {
         return Utility.tryParseFloat(str, def);
+    }
+
+    public static Double toDouble(String str) {
+        return toDouble(str, 0.0);
+    }
+    public static Double toDouble(String str, double def) {
+        return Utility.tryParseDouble(str, def);
     }
 
     public static List<String> readTextFile(File file) throws IOException {
@@ -178,5 +188,18 @@ public class JmpUtil {
 
     public static Image transformImageToTransparency(BufferedImage image, Color color) {
         return Utility.transformImageToTransparency(image, color);
+    }
+
+    public static String convertCharset(String src, String charset) throws CharacterCodingException {
+        Charset ccs = Charset.forName(VBA.SRC_CHARSET);
+        CharsetEncoder encoder = ccs.newEncoder();
+        ByteBuffer bytebuf = encoder.encode(CharBuffer.wrap(src));
+        byte[] bytes = new byte[bytebuf.limit()];
+        bytebuf.get(bytes);
+
+        Charset dcs = Charset.forName(charset);
+        CharsetDecoder coder = dcs.newDecoder();
+        CharBuffer charbuf = coder.decode(ByteBuffer.wrap(bytes));
+        return charbuf.toString();
     }
 }

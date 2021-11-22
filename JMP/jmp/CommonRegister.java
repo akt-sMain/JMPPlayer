@@ -84,7 +84,7 @@ public class CommonRegister {
 
     public String getValue(String key) {
         if (containsKey(key) == true) {
-            return getIni(key).value;
+            return new String(getIni(key).value);
         }
         return "";
     }

@@ -9,18 +9,23 @@ public class MidiToolkitManager {
 
     public static final String DEFAULT_MIDI_TOOLKIT_NAME = DefaultMidiToolkit.class.getSimpleName();
 
-    private static DefaultMidiToolkit DefaultMidiToolkit = new DefaultMidiToolkit();
+    private static DefaultMidiToolkit DefaultMidiToolkit = null;
     private List<IMidiToolkit> lst = null;
 
-    private static MidiToolkitManager instance = new MidiToolkitManager();
+    private static MidiToolkitManager singleton = null;
 
     public static MidiToolkitManager getInstance() {
-        return instance;
+        if (singleton == null) {
+            DefaultMidiToolkit = new DefaultMidiToolkit();
+
+            singleton = new MidiToolkitManager();
+            singleton.addMidiToolkit(DefaultMidiToolkit);
+        }
+        return singleton;
     }
 
     private MidiToolkitManager() {
         lst = new ArrayList<IMidiToolkit>();
-        addMidiToolkit(DefaultMidiToolkit);
     }
 
     public void addMidiToolkit(IMidiToolkit kit) {

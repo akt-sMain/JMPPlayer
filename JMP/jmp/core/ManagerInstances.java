@@ -21,8 +21,8 @@ public class ManagerInstances {
     /** 初期化・終了実行順位 */
     private static AbstractManager[] aManager = {
             SResourceManager,
-            SLanguageManager,
             SSystemManager,
+            SLanguageManager,
             STaskManager,
             SDataManager,
             SFileManager,

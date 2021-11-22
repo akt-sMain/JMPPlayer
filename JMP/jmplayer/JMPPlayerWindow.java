@@ -627,6 +627,14 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         });
         configMenu.add(mntmInitializeConfig);
 
+                mntmShowConsole = new JMenuItem("Show debug log");
+                mntmShowConsole.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        JMPCore.getSystemManager().showConsole();
+                    }
+                });
+                configMenu.add(mntmShowConsole);
+
         lblMidi = new JLabel("-- MIDI設定 --");
         lblMidi.setForeground(Color.DARK_GRAY);
         lblMidi.setFont(new Font("Dialog", Font.BOLD, 12));
@@ -703,13 +711,14 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             }
         });
 
-        mntmShowConsole = new JMenuItem("Show debug log");
-        mntmShowConsole.addActionListener(new ActionListener() {
+        chckbxDebugModeEnable = new JCheckBoxMenuItem("Debug mode enable");
+        chckbxDebugModeEnable.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JMPCore.getSystemManager().showConsole();
+                String mode = chckbxDebugModeEnable.isSelected() ? "TRUE" : "FALSE";
+                JMPCore.getSystemManager().setCommonRegisterValueAdmin(SystemManager.COMMON_REGKEY_NO_DEBUGMODE, mode);
             }
         });
-        configMenu.add(mntmShowConsole);
+        configMenu.add(chckbxDebugModeEnable);
         configMenu.add(removeAllPluginMenuItem);
 
         mntmCallMakeJMP = new JMenuItem("Invoke \"mkJMP\"");
@@ -901,9 +910,10 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         else {
             enable = false;
         }
+        chckbxDebugModeEnable.setSelected(enable);
+        chckbxDebugModeEnable.setVisible(enable);
 
         lblDebugMenu.setVisible(enable);
-        mntmShowConsole.setVisible(enable);
         zipGenerateMenuItem.setVisible(enable);
         removeAllPluginMenuItem.setVisible(enable);
         mnExecuteBatFile.setVisible(enable);
@@ -1168,6 +1178,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
     private JMenuItem mntmPrev;
     private JSeparator separator_2;
     private JMenuItem mntmShowConsole;
+    private JCheckBoxMenuItem chckbxDebugModeEnable;
 
     public void updatePluginMenu() {
         pluginMenu.removeAll();

@@ -30,9 +30,8 @@ import jmp.core.JMPCore;
 import jmp.core.SystemManager;
 import jmp.core.WindowManager;
 import jmp.midi.JMPSequencer;
-import jmp.midi.MIReceiver;
-import jmp.midi.MITransmitter;
-import jmp.midi.MOReceiver;
+import jmp.midi.ReceiverWrapper;
+import jmp.midi.TransmitterWrapper;
 import jmp.midi.receiver.ReceiverCreator;
 import jmp.midi.receiver.ReceiverFactory;
 import jmp.midi.transmitter.TransmitterCreator;
@@ -218,6 +217,9 @@ public class MidiPlayer extends Player {
 
     private Receiver currentReceiver = null;
 
+    private TransmitterWrapper transmitterWrapper = null;
+    private ReceiverWrapper receiverWrapper = null;
+
     public Receiver getCurrentReciver() {
         return currentReceiver;
     };
@@ -274,6 +276,17 @@ public class MidiPlayer extends Player {
                 sequencer.close();
             }
 
+            /* MIDIOUT用ReceiverオブジェクトをSequencerに設定 */
+            receiverWrapper = new ReceiverWrapper();
+            getSequencer().getTransmitter().setReceiver(receiverWrapper);
+
+            /* MIDIIN用TransmitterオブジェクトをSequencerに設定 */
+            transmitterWrapper = new TransmitterWrapper();
+            transmitterWrapper.setConnectedReceiver(receiverWrapper);
+
+            currentReceiver = receiverWrapper;
+            currentTransmitter = transmitterWrapper;
+
             sequencer.addMetaEventListener(new MetaEventListener() {
 
                 @Override
@@ -311,95 +324,72 @@ public class MidiPlayer extends Player {
     private String cachedMidiOutName = NO_CACHE;
     private String cachedMidiInName = NO_CACHE;
 
-    private static MOReceiver s_MOReceiver = null;
-
-    public void updateMidiOut(String name) {
+    public boolean updateMidiOut(String name) {
         if (cachedMidiOutName.equals(NO_CACHE) == false && cachedMidiOutName.equals(name) == true) {
             // 同名は処理しない
-            return;
+            return false;
         }
+
+        boolean state = false;
 
         Receiver receiver = null;
         try {
+            receiverWrapper.close();
+
             /* Receiverインスタンス生成 */
             ReceiverFactory factory = new ReceiverFactory();
             ReceiverCreator creator = factory.create(name);
             receiver = creator.getReciever();
 
-            /* Sequencerに設定 */
-            if (s_MOReceiver != null) {
-                s_MOReceiver.close();
-            }
-            if (s_MOReceiver == null) {
-                s_MOReceiver = new MOReceiver(receiver);
-                getSequencer().getTransmitter().setReceiver(s_MOReceiver);
-            }
-            else {
-                s_MOReceiver.changeAbsReceiver(receiver);
-            }
-            currentReceiver = s_MOReceiver;
-
-            if (s_MIReceiver != null) {
-                s_MIReceiver.changeAbsReceiver(currentReceiver);
-            }
+            receiverWrapper.changeAbsReceiver(receiver);
+            currentReceiver = receiverWrapper;
 
             cachedMidiOutName = new String(name);
+
+            state = true;
         }
         catch (MidiUnavailableException e) {
-            System.out.println("Midi out err");
-            e.printStackTrace();
+            JMPFlags.Log.cprintln("## Midi OUT err", true);
+            JMPFlags.Log.cprintln(function.Error.getPrintStackTrace(e), true);
 
             JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIOUT, "");
             cachedMidiOutName = NO_CACHE;
         }
+        return state;
     }
 
-    private static MITransmitter s_MITransmitter = null;
-    private static MIReceiver s_MIReceiver = null;
-
-    public void updateMidiIn(String name) {
+    public boolean updateMidiIn(String name) {
         if (cachedMidiInName.equals(NO_CACHE) == false && cachedMidiInName.equals(name) == true) {
             // 同名は処理しない
-            return;
+            return false;
         }
+
+        boolean state = false;
 
         Transmitter transmitter = null;
         try {
+            transmitterWrapper.close();
+
             /* Transmitterインスタンス生成 */
             TransmitterFactory factory = new TransmitterFactory();
             TransmitterCreator creator = factory.create(name);
             transmitter = creator.getTransmitter();
 
-            /* Sequencerに設定 */
-            if (s_MITransmitter != null) {
-                s_MITransmitter.close();
-            }
-
-            if (s_MITransmitter == null) {
-                s_MITransmitter = new MITransmitter(transmitter);
-            }
-            else {
-                s_MITransmitter.changeAbsTransmitter(transmitter);
-            }
-            currentTransmitter = s_MITransmitter;
-
-            if (s_MIReceiver == null) {
-                s_MIReceiver = new MIReceiver(currentReceiver);
-            }
-            else {
-                s_MIReceiver.changeAbsReceiver(currentReceiver);
-            }
-            currentTransmitter.setReceiver(s_MIReceiver);
+            transmitterWrapper.changeAbsTransmitter(transmitter);
+            currentTransmitter = transmitterWrapper;
 
             cachedMidiInName = new String(name);
+
+            state = true;
         }
         catch (MidiUnavailableException e) {
-            System.out.println("Midi in err");
-            e.printStackTrace();
+            JMPFlags.Log.cprintln("## Midi IN err", true);
+            JMPFlags.Log.cprintln(function.Error.getPrintStackTrace(e), true);
 
             JMPCore.getDataManager().setConfigParam(DataManager.CFG_KEY_MIDIIN, "");
             cachedMidiInName = NO_CACHE;
         }
+        return state;
     }
 
     @Override

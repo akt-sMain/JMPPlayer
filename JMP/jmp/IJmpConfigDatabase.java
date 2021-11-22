@@ -3,9 +3,42 @@ package jmp;
 import function.Platform;
 import function.Platform.KindOfPlatform;
 import jmp.core.DataManager;
+import jmp.core.JMPCore;
+import jmp.core.LanguageManager;
 import jmp.util.JmpUtil;
 
 public interface IJmpConfigDatabase {
+
+    //
+    // util
+    //
+    default void setConfigParamToInt(String key, int val) {
+        setConfigParam(key, String.valueOf(val));
+    }
+    default int getConfigParamToInt(String key, int def) {
+        return JmpUtil.toInt(getConfigParam(key), def);
+    }
+    default void setConfigParamToBoolean(String key, boolean val) {
+        setConfigParam(key, val ? "TRUE" : "FALSE");
+    }
+    default boolean getConfigParamToBoolean(String key, boolean def) {
+        return JmpUtil.toBoolean(getConfigParam(key), def);
+    }
+    default void setConfigParamToFloat(String key, float val) {
+        setConfigParam(key, String.valueOf(val));
+    }
+    default float getConfigParamToFloat(String key, float def) {
+        return JmpUtil.toFloat(getConfigParam(key), def);
+    }
+    default void setConfigParamToLanguage(String key, int val) {
+        LanguageManager lm = JMPCore.getLanguageManager();
+        setConfigParam(key, lm.getLanguageCode(val));
+    }
+    default int getConfigParamToLanguage(String key, int def) {
+        LanguageManager lm = JMPCore.getLanguageManager();
+        String code = getConfigParam(key);
+        return lm.getLanguageCodeIndex(code);
+    }
 
     //
     // abstract
@@ -18,23 +51,23 @@ public interface IJmpConfigDatabase {
     // getter setter
     //
     default boolean isAutoPlay() {
-        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_AUTOPLAY));
+        return getConfigParamToBoolean(DataManager.CFG_KEY_AUTOPLAY, false);
     }
 
     default void setAutoPlay(boolean isAutoPlay) {
-        setConfigParam(DataManager.CFG_KEY_AUTOPLAY, isAutoPlay ? "TRUE" : "FALSE");
+        setConfigParamToBoolean(DataManager.CFG_KEY_AUTOPLAY, isAutoPlay);
     }
 
     default boolean isLoopPlay() {
-        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_LOOPPLAY));
+        return getConfigParamToBoolean(DataManager.CFG_KEY_LOOPPLAY, false);
     }
 
     default void setLoopPlay(boolean isLoopPlay) {
-        setConfigParam(DataManager.CFG_KEY_LOOPPLAY, isLoopPlay ? "TRUE" : "FALSE");
+        setConfigParamToBoolean(DataManager.CFG_KEY_LOOPPLAY, isLoopPlay);
     }
 
     default boolean isShowStartupDeviceSetup() {
-        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_SHOW_STARTUP_DEVICE_SETUP));
+        return getConfigParamToBoolean(DataManager.CFG_KEY_SHOW_STARTUP_DEVICE_SETUP, false);
     }
 
     default void setShowStartupDeviceSetup(boolean isShow) {
@@ -42,11 +75,11 @@ public interface IJmpConfigDatabase {
     }
 
     default int getLanguage() {
-        return JmpUtil.toInt(getConfigParam(DataManager.CFG_KEY_LANGUAGE));
+        return getConfigParamToLanguage(DataManager.CFG_KEY_LANGUAGE, 0);
     }
 
     default void setLanguage(int language) {
-        setConfigParam(DataManager.CFG_KEY_LANGUAGE, String.valueOf(language));
+        setConfigParamToLanguage(DataManager.CFG_KEY_LANGUAGE, language);
     }
 
     default String getPlayListPath() {
@@ -66,11 +99,11 @@ public interface IJmpConfigDatabase {
     }
 
     default boolean isLyricView() {
-        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_LYRIC_VIEW));
+        return getConfigParamToBoolean(DataManager.CFG_KEY_LYRIC_VIEW, false);
     }
 
     default void setLyricView(boolean isLyricView) {
-        setConfigParam(DataManager.CFG_KEY_LYRIC_VIEW, isLyricView ? "TRUE" : "FALSE");
+        setConfigParamToBoolean(DataManager.CFG_KEY_LYRIC_VIEW, isLyricView);
     }
 
     default String getFFmpegPath() {
@@ -82,38 +115,38 @@ public interface IJmpConfigDatabase {
     }
 
     default boolean isFFmpegLeaveOutputFile() {
-        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE));
+        return getConfigParamToBoolean(DataManager.CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, false);
     }
 
     default void setFFmpegLeaveOutputFile(boolean isLeave) {
-        setConfigParam(DataManager.CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, isLeave ? "TRUE" : "FALSE");
+        setConfigParamToBoolean(DataManager.CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, isLeave);
     }
 
     default boolean isUseFFmpegPlayer() {
-        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_USE_FFMPEG_PLAYER));
+        return getConfigParamToBoolean(DataManager.CFG_KEY_USE_FFMPEG_PLAYER, false);
     }
 
     default void setUseFFmpegPlayer(boolean isUse) {
-        setConfigParam(DataManager.CFG_KEY_USE_FFMPEG_PLAYER, isUse ? "TRUE" : "FALSE");
+        setConfigParamToBoolean(DataManager.CFG_KEY_USE_FFMPEG_PLAYER, isUse);
     }
 
     default boolean isFFmpegInstalled() {
         if (Platform.getRunPlatform() != KindOfPlatform.WINDOWS) {
             return true;
         }
-        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_FFMPEG_INSTALLED));
+        return getConfigParamToBoolean(DataManager.CFG_KEY_FFMPEG_INSTALLED, false);
     }
 
     default void setFFmpegInstalled(boolean isEnableEnvironmentVariable) {
-        setConfigParam(DataManager.CFG_KEY_FFMPEG_INSTALLED, isEnableEnvironmentVariable ? "TRUE" : "FALSE");
+        setConfigParamToBoolean(DataManager.CFG_KEY_FFMPEG_INSTALLED, isEnableEnvironmentVariable);
     }
 
     default boolean isSendMidiSystemSetup() {
-        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_SEND_MIDI_SYSTEMSETUP));
+        return getConfigParamToBoolean(DataManager.CFG_KEY_SEND_MIDI_SYSTEMSETUP, false);
     }
 
     default void setSendMidiSystemSetup(boolean isSendMidiSystemSetup) {
-        setConfigParam(DataManager.CFG_KEY_SEND_MIDI_SYSTEMSETUP, isSendMidiSystemSetup ? "TRUE" : "FALSE");
+        setConfigParamToBoolean(DataManager.CFG_KEY_SEND_MIDI_SYSTEMSETUP, isSendMidiSystemSetup);
     }
 
     default String getYoutubeDlPath() {
@@ -128,18 +161,18 @@ public interface IJmpConfigDatabase {
         if (Platform.getRunPlatform() != KindOfPlatform.WINDOWS) {
             return true;
         }
-        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_YOUTUBEDL_INSTALLED));
+        return getConfigParamToBoolean(DataManager.CFG_KEY_YOUTUBEDL_INSTALLED, false);
     }
 
     default void setYoutubeDlInstalled(boolean isEnableEnvironmentVariable) {
-        setConfigParam(DataManager.CFG_KEY_YOUTUBEDL_INSTALLED, isEnableEnvironmentVariable ? "TRUE" : "FALSE");
+        setConfigParamToBoolean(DataManager.CFG_KEY_YOUTUBEDL_INSTALLED, isEnableEnvironmentVariable);
     }
 
     default boolean isRandomPlay() {
-        return JmpUtil.toBoolean(getConfigParam(DataManager.CFG_KEY_RANDOMPLAY));
+        return getConfigParamToBoolean(DataManager.CFG_KEY_RANDOMPLAY, false);
     }
 
     default void setRandomPlay(boolean isRandomPlay) {
-        setConfigParam(DataManager.CFG_KEY_RANDOMPLAY, isRandomPlay ? "TRUE" : "FALSE");
+        setConfigParamToBoolean(DataManager.CFG_KEY_RANDOMPLAY, isRandomPlay);
     }
 }

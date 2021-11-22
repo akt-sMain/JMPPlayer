@@ -54,6 +54,15 @@ public class YoutubeConvertDialog extends JMPDialog {
     private JPanel buttonPane;
     private JCheckBox chckbxInstalled;
     private JCheckBox chckbxAudioOnly;
+    private JButton buttonPaste;
+
+    private void syncConrolEnable(boolean b) {
+        textFieldURL.setEnabled(b);
+        dstExtTextField.setEnabled(b);
+        convertButton.setEnabled(b);
+        chckbxAudioOnly.setEnabled(b);
+        buttonPaste.setEnabled(b);
+    }
 
     /**
      * Create the dialog.
@@ -82,6 +91,9 @@ public class YoutubeConvertDialog extends JMPDialog {
 
             @Override
             public void catchDropFile(File file) {
+                if (textFieldExePath.isEnabled() == false) {
+                    return;
+                }
                 setExePath(file.getPath());
             }
         }));
@@ -106,6 +118,10 @@ public class YoutubeConvertDialog extends JMPDialog {
 
             @Override
             public void catchDropFile(File file) {
+                if (textFieldURL.isEnabled() == false) {
+                    return;
+                }
+
                 if (Utility.checkExtension(file, "url") == true) {
                     /* .urlファイルは開いてURL記述部分を抜粋する */
                     String str = "";
@@ -198,7 +214,7 @@ public class YoutubeConvertDialog extends JMPDialog {
         chckbxAudioOnly.setBounds(250, 83, 100, 19);
         contentPanel.add(chckbxAudioOnly);
 
-        JButton buttonPaste = new JButton("Paste");
+        buttonPaste = new JButton("Paste");
         buttonPaste.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textFieldURL.setText(Utility.getClipboardString());
@@ -324,11 +340,13 @@ public class YoutubeConvertDialog extends JMPDialog {
         }
 
         File outdir = new File(JMPCore.getSystemManager().getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_FFMPEG_OUTPUT));
+
         String dstExt = dstExtTextField.getText();
         if (dstExt.isEmpty() == true) {
             dstExt = DEFAULT_DST_EXT_AUDIO;
             chckbxAudioOnly.setSelected(true);
         }
+        dstExtTextField.setText(dstExt);
 
         system.setYoutubeDlCallback(new IProcessingCallback() {
 
@@ -338,7 +356,9 @@ public class YoutubeConvertDialog extends JMPDialog {
             public void end(int result) {
                 isConverting = false;
                 LanguageManager lm = JMPCore.getLanguageManager();
-                convertButton.setEnabled(true);
+
+                // コントロール有効化
+                syncConrolEnable(true);
 
                 if (result != 0) {
                     lblStatus.setForeground(Color.RED);
@@ -362,20 +382,21 @@ public class YoutubeConvertDialog extends JMPDialog {
                 lblStatus.setText(lm.getLanguageStr(LangID.Now_converting));
                 repaint();
 
-                convertButton.setEnabled(false);
+                // コントロール無効化
+                syncConrolEnable(false);
 
                 JMPCore.getTaskManager().addCallbackPackage(1000, new ICallbackFunction() {
 
                     int ite = 0;
 
-                    String[] ites = {">--", "->-", "-->"};
+                    String[] ites = {">-- ", "->- ", "--> "};
 
                     @Override
                     public void callback() {
                         if (isConverting == false) {
                             return;
                         }
-                        lblStatus.setText(lm.getLanguageStr(LangID.Now_converting) + ites[ite]);
+                        lblStatus.setText(ites[ite] + dstExtTextField.getText());
                         ite++;
                         if (ite >= ites.length) {
                             ite = 0;

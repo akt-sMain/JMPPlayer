@@ -80,6 +80,7 @@ public class JMPCore {
     /** 通知メソッド作成 */
     private static void createNotifyFunc(ICallbackFunction func) {
         if (JMPFlags.EnableNotifyFlag == false) {
+            //func.callback();
             return;
         }
         getTaskManager().queuing(TaskID.SEQUENCE, func);

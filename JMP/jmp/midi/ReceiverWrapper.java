@@ -7,16 +7,18 @@ import jlib.midi.IMidiEventListener;
 import jmp.core.JMPCore;
 
 /**
- * MIDI_IN用Receiverのラッパークラス
+ * MIDI_OUT用Receiverのラッパークラス
  *
  * @author akkut
  *
  */
-public class MIReceiver implements Receiver {
+public class ReceiverWrapper implements Receiver {
 
     private Receiver abstractReciever = null;
 
-    public MIReceiver(Receiver abstractReciever) {
+    public ReceiverWrapper() {
+    };
+    public ReceiverWrapper(Receiver abstractReciever) {
         this.abstractReciever = abstractReciever;
     };
 
@@ -26,7 +28,7 @@ public class MIReceiver implements Receiver {
 
     @Override
     public void send(MidiMessage message, long timeStamp) {
-        if (JMPCore.getSoundManager().filter(message, IMidiEventListener.SENDER_MIDI_IN) == false) {
+        if (JMPCore.getSoundManager().filter(message, IMidiEventListener.SENDER_MIDI_OUT) == false) {
             return;
         }
 
@@ -34,7 +36,7 @@ public class MIReceiver implements Receiver {
             abstractReciever.send(message, timeStamp);
         }
 
-        JMPCore.getPluginManager().catchMidiEvent(message, timeStamp, IMidiEventListener.SENDER_MIDI_IN);
+        JMPCore.getPluginManager().catchMidiEvent(message, timeStamp, IMidiEventListener.SENDER_MIDI_OUT);
     }
 
     @Override

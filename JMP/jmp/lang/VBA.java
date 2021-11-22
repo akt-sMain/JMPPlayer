@@ -9,6 +9,9 @@ import jmp.lang.DefineLanguage.LangID;
  *
  */
 public class VBA {
+    // 出力ソース文字コード
+    public static final String SRC_CHARSET = "UTF-16";
+
     // 改行コード
     static final String NL = function.Platform.getNewLine();
 }

@@ -85,15 +85,26 @@ public class SelectLanguageDialog extends JMPDialog {
     @Override
     public void setVisible(boolean b) {
         if (b == true) {
+            LanguageManager lm = JMPCore.getLanguageManager();
             comboBoxLang.removeAllItems();
             for (int i = 0; i < DefineLanguage.NUMBER_OF_INDEX_LANG; i++) {
+
+                // 無効な言語
+                if (lm.isValidLanguageIndex(i) == false) {
+                    continue;
+                }
+
                 comboBoxLang.addItem(JMPCore.getLanguageManager().getTitle(i));
             }
 
             int selected = JMPCore.getDataManager().getLanguage();
+            if (lm.isValidLanguageIndex(selected) == false) {
+                selected = 0;
+            }
+
             comboBoxLang.setSelectedIndex(selected);
 
-            updateLanguage();
+            updateLanguage(selected);
         }
         super.setVisible(b);
     }

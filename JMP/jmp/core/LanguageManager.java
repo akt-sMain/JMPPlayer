@@ -1,5 +1,8 @@
 package jmp.core;
 
+import java.util.HashMap;
+
+import jmp.lang.DefineLanguage;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.lang.LanguageTable;
 
@@ -10,6 +13,29 @@ import jmp.lang.LanguageTable;
  */
 public class LanguageManager extends AbstractManager {
 
+    public static final String CHARSET_UTF8 = "UTF-8";
+    public static final String CHARSET_UTF16 = "UTF-16";
+    public static final String CHARSET_SJIS = "SJIS";
+    public static final String CHARSET_EUCKR = "EUC_KR";//韓国語
+
+    /** 変換する文字コードリスト(該当しないものはデフォルト文字コードにする) */
+    private static HashMap<Integer, String> chasets = new HashMap<Integer, String>() {
+        {
+            put(DefineLanguage.INDEX_LANG_ENGLISH, CHARSET_UTF8);
+            put(DefineLanguage.INDEX_LANG_JAPANESE, CHARSET_SJIS);
+            put(DefineLanguage.INDEX_LANG_CHINESE, CHARSET_SJIS);
+            put(DefineLanguage.INDEX_LANG_KOREAN, CHARSET_EUCKR);
+        }
+    };
+
+    /** デフォルト文字コード */
+    public static final String CHARSET_DEFAULT = CHARSET_UTF16;
+
+    /** 正式版に追加しない言語設定 */
+    private static int[] DisableLanguageList = {
+        DefineLanguage.INDEX_LANG_KOREAN,
+    };
+
     /**
      * コンストラクタ
      */
@@ -18,13 +44,37 @@ public class LanguageManager extends AbstractManager {
     }
 
     /**
+     * 対応している言語か
+     *
+     * @param index
+     * @return
+     */
+    public boolean isValidLanguageIndex(int index) {
+        for (int j = 0; j < LanguageManager.DisableLanguageList.length; j++) {
+            if (LanguageManager.DisableLanguageList[j] == index) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String getCode(int index) {
+        String code = CHARSET_DEFAULT;
+        if (chasets.containsKey(index) == true) {
+            code = chasets.get(index);
+        }
+        return code;
+    }
+
+
+    /**
      * 言語タイトル取得
      *
      * @param index
      * @return
      */
     public String getTitle(int index) {
-        return LanguageTable.getTitle(index);
+        return LanguageTable.getTitle(index, getCode(index));
     }
 
     /**
@@ -57,7 +107,7 @@ public class LanguageManager extends AbstractManager {
      * @return
      */
     public String getLanguageStr(LangID id, int langIndex) {
-        return LanguageTable.getLanguageStr(id, langIndex);
+        return LanguageTable.getLanguageStr(id, langIndex, getCode(langIndex));
     }
 
     /**
@@ -82,5 +132,15 @@ public class LanguageManager extends AbstractManager {
      */
     public String getLanguageCode(int langIndex) {
         return LanguageTable.getLangCode(langIndex);
+    }
+
+    /**
+     * 言語コードインデックス取得
+     *
+     * @param code
+     * @return
+     */
+    public int getLanguageCodeIndex(String code) {
+        return LanguageTable.getLangCodeIndex(code);
     }
 }

@@ -9,15 +9,25 @@ import javax.sound.midi.Transmitter;
  * @author akkut
  *
  */
-public class MITransmitter implements Transmitter {
+public class TransmitterWrapper implements Transmitter {
 
     private Transmitter abstractTransmitter = null;
+    private Receiver connectedReceiver = null;
 
-    public MITransmitter(Transmitter abstractTransmitter) {
+    public TransmitterWrapper() {
+    }
+    public TransmitterWrapper(Transmitter abstractTransmitter) {
         this.abstractTransmitter = abstractTransmitter;
     }
 
+    public void setConnectedReceiver(Receiver connectedReceiver) {
+        this.connectedReceiver = connectedReceiver;
+    }
+
     public void changeAbsTransmitter(Transmitter transmitter) {
+        if (transmitter != null) {
+            transmitter.setReceiver(this.connectedReceiver);
+        }
         this.abstractTransmitter = transmitter;
     }
 

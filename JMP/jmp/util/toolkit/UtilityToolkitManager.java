@@ -9,18 +9,23 @@ public class UtilityToolkitManager {
 
     public static final String DEFAULT_UTIL_TOOLKIT_NAME = DefaultUtilityToolkit.class.getSimpleName();
 
-    private static DefaultUtilityToolkit DefaultUtilToolkit = new DefaultUtilityToolkit();
+    private static DefaultUtilityToolkit DefaultUtilToolkit = null;
     private List<IUtilityToolkit> lst = null;
 
-    private static UtilityToolkitManager instance = new UtilityToolkitManager();
+    private static UtilityToolkitManager instance = null;
 
     public static UtilityToolkitManager getInstance() {
+        if (instance == null) {
+            DefaultUtilToolkit = new DefaultUtilityToolkit();
+
+            instance = new UtilityToolkitManager();
+            instance.addUtilityToolkit(DefaultUtilToolkit);
+        }
         return instance;
     }
 
     private UtilityToolkitManager() {
         lst = new ArrayList<IUtilityToolkit>();
-        addUtilityToolkit(DefaultUtilToolkit);
     }
 
     public void addUtilityToolkit(IUtilityToolkit kit) {
