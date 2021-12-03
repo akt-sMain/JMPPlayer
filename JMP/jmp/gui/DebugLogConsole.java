@@ -22,8 +22,7 @@ public class DebugLogConsole extends JDialog {
 
     private final JPanel contentPanel = new JPanel();
     private JTextPane textPane;
-    private String cacheText = "";
-
+    private JScrollPane scrollPane;
 
     /**
      * Create the dialog.
@@ -44,7 +43,7 @@ public class DebugLogConsole extends JDialog {
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(new BorderLayout(0, 0));
         {
-            JScrollPane scrollPane = new JScrollPane();
+            scrollPane = new JScrollPane();
             contentPanel.add(scrollPane, BorderLayout.CENTER);
             {
                 textPane = new JTextPane();
@@ -80,35 +79,59 @@ public class DebugLogConsole extends JDialog {
         }
     }
 
+    private static final boolean REVERSE = true;
+    private static String LN = Platform.getNewLine();
+
     public void print(String str) {
         if (isVisible() == false) {
             return;
         }
-        cacheText = Utility.stringsCombin(cacheText, str);
-        updateText();
+        addText(str, false, REVERSE);
     }
 
     public void println(String str) {
         if (isVisible() == false) {
             return;
         }
-        cacheText = Utility.stringsCombin(cacheText, str, Platform.getNewLine());
+        addText(str, true, REVERSE);
+    }
+
+    private void addText(String str, boolean ln, boolean reverse) {
+        String text = textPane.getText();
+
+        String s1, s2, s3;
+        if (reverse == true) {
+            s1 = str;
+            s2 = ln ? LN : "";
+            s3 = text;
+        }
+        else {
+            s1 = text;
+            s2 = str;
+            s3 = ln ? LN : "";
+        }
+        String newText = Utility.stringsCombin(s1, s2, s3);
+        textPane.setText(newText);
+        updateText();
+    }
+
+    public void clearText() {
+        textPane.setText("");
         updateText();
     }
 
     public void updateText() {
-        textPane.setText(cacheText);
-        if (cacheText.isEmpty() != false && isVisible() == true) {
-            textPane.setCaretPosition(textPane.getDocument().getLength());
+        if (textPane.getText().isEmpty() == false && isVisible() == true) {
+            //textPane.setCaretPosition(textPane.getText().length());
+//            try {
+//                scrollPane.getViewport().scrollRectToVisible(new Rectangle(0, Integer.MAX_VALUE - 1, 1, 1));
+//            }
+//            catch (Exception e) {
+//            }
         }
 //        if (isVisible() == true) {
 //            repaint();
 //        }
-    }
-
-    public void clearText() {
-        cacheText = "";
-        updateText();
     }
 
 }

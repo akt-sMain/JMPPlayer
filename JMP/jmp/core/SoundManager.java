@@ -81,7 +81,10 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     public static FFmpegPlayer SFFmpegPlayer = null;
 
     // 固有変数
-    private int transpose = 0;
+    private int[] transpose = new int[16];
+
+    public static final int MAX_TRANSPOSE = 12;
+    public static final int MIN_TRANSPOSE = -12;
 
     private IMidiFilter defaultMidiFilter = null;
     private IMidiToolkit midiToolkit = null;
@@ -1025,11 +1028,39 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     public int getTranspose() {
-        return transpose;
+        return transpose[0];
+    }
+
+    @Override
+    public int getTranspose(int channel) {
+        if (channel == 9) {
+            return 0;
+        }
+        return getTranspose();
     }
 
     public void setTranspose(int transpose) {
-        this.transpose = transpose;
+        for (int ch=0; ch<16; ch++) {
+            setTranspose(ch, transpose);
+        }
+    }
+
+    @Override
+    public void setTranspose(int channel, int transpose) {
+        if (MAX_TRANSPOSE < transpose) {
+            transpose = MAX_TRANSPOSE;
+        }
+        else if (MIN_TRANSPOSE > transpose) {
+            transpose = MIN_TRANSPOSE;
+        }
+        this.transpose[channel] = transpose;
+
+        IMidiController controller = getMidiController();
+        try {
+            controller.sendMidiMessage(getMidiToolkit().createAllNoteOffMessage(channel), 0);
+        }
+        catch (InvalidMidiDataException e) {
+        }
     }
 
     public void syncLineVolume() {

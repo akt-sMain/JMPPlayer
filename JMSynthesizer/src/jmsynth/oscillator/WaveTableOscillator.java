@@ -16,12 +16,17 @@ public class WaveTableOscillator extends AbstractWaveGenOscillator {
             points.add(vp);
         }
     }
+
     public WaveTableOscillator(List<WaveValuePoint> points) {
 
     }
 
     @Override
-    byte makeWave(double f, int overallLevel) {
+    byte makeWave(double f, int overallLevel, OscillatorConfig oscConfig) {
+        return designedWave(f, overallLevel);
+    }
+
+    public byte designedWave(double f, int overallLevel) {
         byte data = 0;
         WaveValuePoint currentPoint = null;
         WaveValuePoint nextPoint = null;
@@ -35,23 +40,19 @@ public class WaveTableOscillator extends AbstractWaveGenOscillator {
                 nextPoint = p;
             }
 
-            int d = calc (f, overallLevel, currentPoint, nextPoint);
+            int d = calc(f, overallLevel, currentPoint, nextPoint);
             if (d != -1) {
-                data = (byte)d;
+                data = (byte) d;
                 break;
             }
         }
         currentPoint = nextPoint;
         nextPoint = END_POINT;
-        int d = calc (f, overallLevel, currentPoint, nextPoint);
+        int d = calc(f, overallLevel, currentPoint, nextPoint);
         if (d != -1) {
-            data = (byte)d;
+            data = (byte) d;
         }
         return data;
-    }
-
-    public byte designedWave(double f, int overallLevel) {
-        return makeWave(f, overallLevel);
     }
 
     private int calc(double f, int overallLevel, WaveValuePoint currentPoint, WaveValuePoint nextPoint) {
@@ -61,8 +62,8 @@ public class WaveTableOscillator extends AbstractWaveGenOscillator {
             double fCur = f - currentPoint.f;
 
             double lRen = nextPoint.level - currentPoint.level;
-            double curLevel = currentPoint.level + (lRen * (fCur/ fRen));
-            data = (int)((double)overallLevel * curLevel);
+            double curLevel = currentPoint.level + (lRen * (fCur / fRen));
+            data = (int) ((double) overallLevel * curLevel);
         }
         return data;
     }

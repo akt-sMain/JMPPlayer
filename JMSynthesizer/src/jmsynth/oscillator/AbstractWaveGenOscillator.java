@@ -6,15 +6,13 @@ public abstract class AbstractWaveGenOscillator implements IOscillator {
 
     private final static double LEVEL_OFFSET = COMMON_LEVEL_OFFSET;
 
-    private boolean isWaveReverse = false;
-
     public AbstractWaveGenOscillator() {
     }
 
-    abstract byte makeWave(double f, int overallLevel);
+    abstract byte makeWave(double f, int overallLevel, OscillatorConfig oscConfig);
 
     @Override
-    public int makeTone(byte[] data, int sampleRate, Tone tone) {
+    public int makeTone(byte[] data, int sampleRate, Tone tone, OscillatorConfig oscConfig) {
         int length = sampleRate;// ネイティブに変数ロード
         int toneStep = tone.getToneStep();// ネイティブに変数ロード
         byte overallLevel = (byte) (tone.getOverallLevel());// ネイティブに変数ロード
@@ -28,7 +26,7 @@ public abstract class AbstractWaveGenOscillator implements IOscillator {
         for (int i = 0; i < length; i = i + 2) {
             toneStep++;
             double f = (1.0 * (double)toneStep / (double)amplitude) - (double)(toneStep / amplitude);
-            y = (byte) (makeWave(f, overallLevel) & 0xff);
+            y = (byte) (makeWave(f, (overallLevel & 0xff), oscConfig));
 
             /* Lch 分 */
             data[i] += y;
@@ -53,15 +51,4 @@ public abstract class AbstractWaveGenOscillator implements IOscillator {
     public int toneEndPoint() {
         return -1;
     }
-
-    @Override
-    public void setWaveReverse(boolean isReverse) {
-        isWaveReverse = isReverse;
-    }
-
-    @Override
-    public boolean isWaveReverse() {
-        return isWaveReverse;
-    }
-
 }

@@ -12,6 +12,7 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
 
 import jlib.midi.IMidiToolkit;
 import jlib.midi.MidiByte;
@@ -96,138 +97,32 @@ public class DefaultMidiToolkit implements IMidiToolkit {
     }
 
     @Override
-    public boolean isNoteOn(MidiMessage mes) {
-        if (mes.getLength() < 3) {
-            return false;
-        }
-
-        int command = MidiByte.getCommand(mes.getMessage(), mes.getLength());
-        int data2 = MidiByte.getData2(mes.getMessage(), mes.getLength());
-        if ((command == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON) && (data2 > 0)) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isNoteOff(MidiMessage mes) {
-        if (mes.getLength() < 3) {
-            return false;
-        }
-
-        int command = MidiByte.getCommand(mes.getMessage(), mes.getLength());
-        int data2 = MidiByte.getData2(mes.getMessage(), mes.getLength());
-        if ((command == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_OFF) || (command == MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON && data2 <= 0)) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isProgramChange(MidiMessage mes) {
-        if (mes.getLength() < 3) {
-            return false;
-        }
-
-        int command = MidiByte.getCommand(mes.getMessage(), mes.getLength());
-        if (command == MidiByte.Status.Channel.ChannelVoice.Fst.PROGRAM_CHANGE) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isPitchBend(MidiMessage mes) {
-        if (mes.getLength() < 3) {
-            return false;
-        }
-
-        int command = MidiByte.getCommand(mes.getMessage(), mes.getLength());
-        if (command == MidiByte.Status.Channel.ChannelVoice.Fst.PITCH_BEND) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public MidiMessage createByteMidiMessage(byte[] data) {
         return new MidiByteMessage(data);
     }
 
     @Override
-    public MidiMessage createProgramChangeMessage(int channel, int programNumber) throws InvalidMidiDataException {
-        ShortMessage sMes = new ShortMessage();
-        sMes.setMessage(MidiByte.Status.Channel.ChannelVoice.Fst.PROGRAM_CHANGE, channel, programNumber, 0);
-        return sMes;
+    public MidiMessage createSysexBeginMessage(byte[] data, int length) throws InvalidMidiDataException {
+        return new SysexMessage(MidiByte.Status.System.SystemCommon.Fst.SYSEX_BEGIN, data, length);
     }
 
     @Override
-    public MidiEvent createProgramChangeEvent(long position, int channel, int programNumber) throws InvalidMidiDataException {
-        MidiMessage mes = createProgramChangeMessage(channel, programNumber);
-        MidiEvent event = new MidiEvent(mes, position);
-        return event;
+    public MidiMessage createSysexEndMessage(byte[] data, int length) throws InvalidMidiDataException {
+        return new SysexMessage(MidiByte.Status.System.SystemCommon.Fst.SYSEX_END, data, length);
     }
 
     @Override
-    public MidiMessage createNoteOnMessage(int channel, int midiNumber, int velocity) throws InvalidMidiDataException {
-        ShortMessage sMes = new ShortMessage();
-        sMes.setMessage(MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_ON, channel, midiNumber, velocity);
-        return sMes;
+    public MidiMessage createShortMessage(int command, int channel, int data1, int data2) throws InvalidMidiDataException {
+        return new ShortMessage(command, channel, data1, data2);
     }
 
     @Override
-    public MidiEvent createNoteOnEvent(long position, int channel, int midiNumber, int velocity) throws InvalidMidiDataException {
-        MidiMessage mes = createNoteOnMessage(channel, midiNumber, velocity);
-        MidiEvent event = new MidiEvent(mes, position);
-        return event;
+    public MidiMessage createMetaMessage(int type, byte[] data, int length) throws InvalidMidiDataException {
+        return new MetaMessage(type, data, length);
     }
 
     @Override
-    public MidiMessage createNoteOffMessage(int channel, int midiNumber, int velocity) throws InvalidMidiDataException {
-        ShortMessage sMes = new ShortMessage();
-        sMes.setMessage(MidiByte.Status.Channel.ChannelVoice.Fst.NOTE_OFF, channel, midiNumber, velocity);
-        return sMes;
+    public MidiEvent createMidiEvent(MidiMessage mes, long position) throws InvalidMidiDataException {
+        return new MidiEvent(mes, position);
     }
-
-    @Override
-    public MidiEvent createNoteOffEvent(long position, int channel, int midiNumber, int velocity) throws InvalidMidiDataException {
-        MidiMessage mes = createNoteOffMessage(channel, midiNumber, velocity);
-        MidiEvent event = new MidiEvent(mes, position);
-        return event;
-    }
-
-    @Override
-    public MidiMessage createPitchBendMessage(int channel, int bend) throws InvalidMidiDataException {
-        ShortMessage sMes = new ShortMessage();
-        int msb = bend >> 7;
-        int lsb = bend & 0x00ef;
-        sMes.setMessage(MidiByte.Status.Channel.ChannelVoice.Fst.PITCH_BEND, channel, lsb, msb);
-        return sMes;
-    }
-
-    @Override
-    public MidiEvent createPitchBendEvent(long position, int channel, int bend) throws InvalidMidiDataException {
-        MidiMessage mes = createPitchBendMessage(channel, bend);
-        MidiEvent event = new MidiEvent(mes, position);
-        return event;
-    }
-
-    @Override
-    public MidiMessage createTempoMessage(float bpm) throws InvalidMidiDataException {
-        long mpq = Math.round(60000000f / bpm);
-        byte[] data = new byte[3];
-        data[0] = new Long(mpq / 0x10000).byteValue();
-        data[1] = new Long((mpq / 0x100) % 0x100).byteValue();
-        data[2] = new Long(mpq % 0x100).byteValue();
-        MetaMessage meta = new MetaMessage(MidiByte.SET_TEMPO.type, data, data.length);
-        return meta;
-    }
-
-    @Override
-    public MidiEvent createTempoEvent(long position, float bpm) throws InvalidMidiDataException {
-        MidiMessage mes = createTempoMessage(bpm);
-        MidiEvent event = new MidiEvent(mes, position);
-        return event;
-    }
-
 }

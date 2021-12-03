@@ -9,12 +9,18 @@ import jlib.midi.IMidiEventListener;
 import jlib.player.IPlayerListener;
 import jlib.plugin.IPlugin;
 import jlib.plugin.ISupportExtensionConstraints;
+import jlib.plugin.JMPlugin;
 
 public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListener {
-    private final static IPlugin DUMMY_PLG = new IPlugin() {
+    private final static JMPlugin DUMMY_PLG = new JMPlugin() {
 
         @Override
         public void open() {
+        }
+
+        @Override
+        public boolean isOpen() {
+            return false;
         }
 
         @Override
@@ -28,12 +34,8 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
         @Override
         public void close() {
         }
-
-        @Override
-        public boolean isEnable() {
-            return false;
-        }
     };
+
     private final static IPlayerListener DUMMY_PLAYER_LISTENER = new IPlayerListener() {
 
         @Override
@@ -56,9 +58,7 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
     };
 
     public static enum PluginState {
-        CONNECTED,
-        DISCONNECTED,
-        INVALID;
+        CONNECTED, DISCONNECTED, INVALID;
     }
 
     public static PluginState toPluginState(String str) {
@@ -72,6 +72,7 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
             return PluginState.CONNECTED;
         }
     }
+
     public static String toString(PluginState pStat) {
         switch (pStat) {
             case DISCONNECTED:
@@ -103,29 +104,32 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
         this.name = name;
     }
 
-    public void setInterface(IPlugin plg) {
-        this.plugin = plg;
-
-        if (plg instanceof IPlayerListener) {
-            this.playerListener = (IPlayerListener)plg;
+    public void setInterface() {
+        if (this.plugin instanceof IPlayerListener) {
+            this.playerListener = (IPlayerListener) this.plugin;
         }
         else {
             this.playerListener = null;
         }
 
-        if (plg instanceof IMidiEventListener) {
-            this.midiEventListener = (IMidiEventListener)plg;
+        if (this.plugin instanceof IMidiEventListener) {
+            this.midiEventListener = (IMidiEventListener) this.plugin;
         }
         else {
             this.midiEventListener = null;
         }
 
-        if (plg instanceof ISupportExtensionConstraints) {
-            this.supportExtensionConstraints = (ISupportExtensionConstraints)plg;
+        if (this.plugin instanceof ISupportExtensionConstraints) {
+            this.supportExtensionConstraints = (ISupportExtensionConstraints) this.plugin;
         }
         else {
             this.supportExtensionConstraints = null;
         }
+    }
+
+    public void setInterface(IPlugin plg) {
+        this.plugin = plg;
+        setInterface();
     }
 
     public String getName() {
@@ -159,7 +163,7 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof IPlugin) {
-            return equalsPlugin((IPlugin)obj);
+            return equalsPlugin((IPlugin) obj);
         }
         return super.equals(obj);
     }
@@ -181,60 +185,77 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
             midiEventListener.catchMidiEvent(message, timeStamp, senderType);
         }
     }
+
     @Override
     public void startSequencer() {
         if (playerListener != null) {
             playerListener.startSequencer();
         }
     }
+
     @Override
     public void stopSequencer() {
         if (playerListener != null) {
             playerListener.stopSequencer();
         }
     }
+
     @Override
     public void updateTickPosition(long before, long after) {
         if (playerListener != null) {
             playerListener.updateTickPosition(before, after);
         }
     }
+
     @Override
     public void initialize() {
         plugin.initialize();
     }
+
     @Override
     public void exit() {
         plugin.exit();
     }
+
     @Override
     public void open() {
         plugin.open();
     }
+
     @Override
     public void close() {
         plugin.close();
     }
+
     @Override
     public boolean isEnable() {
+        if (getState() == PluginState.INVALID) {
+            // 無効なプラグイン
+            return false;
+        }
         return plugin.isEnable();
     }
+
     @Override
     public boolean isOpen() {
         return plugin.isOpen();
     }
+
     @Override
     public void loadFile(File file) {
         plugin.loadFile(file);
     }
+
     @Override
     public void notifyUpdateCommonRegister(String key) {
         plugin.notifyUpdateCommonRegister(key);
     }
+
     @Override
     public void notifyUpdateConfig(String key) {
         plugin.notifyUpdateConfig(key);
     }
+
     @Override
     public void update() {
         plugin.update();

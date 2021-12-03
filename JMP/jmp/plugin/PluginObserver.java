@@ -179,4 +179,16 @@ public class PluginObserver implements IPlugin, IPlayerListener, IMidiEventListe
         }
     }
 
+    @Override
+    public boolean isEnable() {
+        /* 未使用 */
+        return true;
+    }
+
+    @Override
+    public boolean isOpen() {
+        /* 未使用 */
+        return false;
+    }
+
 }

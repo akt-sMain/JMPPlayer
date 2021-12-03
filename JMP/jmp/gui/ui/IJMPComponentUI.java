@@ -21,6 +21,10 @@ public interface IJMPComponentUI {
 
     default Color getJmpBackColor() {
         SystemManager sm = JMPCore.getSystemManager();
+        if (sm == null) {
+            return Color.WHITE;
+        }
+
         String colorStr = sm.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_PLAYER_BACK_COLOR);
         if (colorStr.equalsIgnoreCase("") == false) {
             return Utility.convertCodeToHtmlColor(colorStr);

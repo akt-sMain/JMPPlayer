@@ -16,7 +16,7 @@ public class StandAlonePluginInvoker {
     }
 
     public static void exec(String args[], ConfigDatabaseWrapper config, IPlugin plugin) {
-        boolean res = JMPLoader.invoke(config, plugin);
+        boolean res = JMPLoader.invoke(args, config, plugin);
         System.exit(res ? 0 : 1);
     }
 

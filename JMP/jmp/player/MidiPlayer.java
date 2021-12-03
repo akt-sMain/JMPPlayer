@@ -196,17 +196,17 @@ public class MidiPlayer extends Player {
     }
 
     public class MidiInfo extends Player.Info {
-        public static final String PLAYER_MIDI_INFO_KEY_BPM = "BPM";
+        //public static final String PLAYER_MIDI_INFO_KEY_BPM = "BPM";
 
         public MidiInfo() {
             super();
-            put(PLAYER_MIDI_INFO_KEY_BPM, "");
+            //put(PLAYER_MIDI_INFO_KEY_BPM, "");
         }
 
         @Override
         public void update() {
             super.update();
-            put(PLAYER_MIDI_INFO_KEY_BPM, (sequencer != null) ? String.valueOf(sequencer.getTempoInBPM()) : "0.0");
+            //put(PLAYER_MIDI_INFO_KEY_BPM, (sequencer != null) ? String.valueOf(sequencer.getTempoInBPM()) : "0.0");
         }
     }
 

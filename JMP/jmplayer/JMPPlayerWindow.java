@@ -30,6 +30,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
@@ -656,6 +658,30 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                 JMPCore.getDataManager().setLyricView(chckbxmntmLyricView.isSelected());
             }
         });
+
+        mnTranspose = new JMenu("Transpose");
+        configMenu.add(mnTranspose);
+
+        transposeSpinner = new JSpinner();
+        transposeSpinner.setModel(new SpinnerNumberModel(0, SoundManager.MIN_TRANSPOSE, SoundManager.MAX_TRANSPOSE, 1));
+        transposeSpinner.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                SoundManager sm = JMPCore.getSoundManager();
+
+                int value = (int)transposeSpinner.getValue();
+                sm.setTranspose(value);
+            }
+        });
+
+        mntmTransposeReset = new JMenuItem("Reset");
+        mntmTransposeReset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                SoundManager sm = JMPCore.getSoundManager();
+                sm.setTranspose(0);
+            }
+        });
+        mnTranspose.add(mntmTransposeReset);
+        mnTranspose.add(transposeSpinner);
         configMenu.add(chckbxmntmLyricView);
 
         chckbxmntmSendSystemSetupBeforePlayback = new JCheckBoxMenuItem("Send system setup before playback");
@@ -1179,6 +1205,9 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
     private JSeparator separator_2;
     private JMenuItem mntmShowConsole;
     private JCheckBoxMenuItem chckbxDebugModeEnable;
+    private JMenu mnTranspose;
+    private JSpinner transposeSpinner;
+    private JMenuItem mntmTransposeReset;
 
     public void updatePluginMenu() {
         pluginMenu.removeAll();
@@ -1224,6 +1253,9 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
     private void updateMenuState() {
         // 設定値とメニューの同期
         DataManager dm = JMPCore.getDataManager();
+        SoundManager sm = JMPCore.getSoundManager();
+        WindowManager wm = JMPCore.getWindowManager();
+
         chckbxmntmStartupmidisetup.setSelected(dm.isShowStartupDeviceSetup());
         loopPlayCheckBoxMenuItem.setSelected(dm.isLoopPlay());
         autoPlayCheckBox.setSelected(dm.isAutoPlay());
@@ -1231,8 +1263,9 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         alwayTopCheckBox.setSelected(isAlwaysOnTop());
         chckbxmntmLyricView.setSelected(dm.isLyricView());
         chckbxmntmSendSystemSetupBeforePlayback.setSelected(dm.isSendMidiSystemSetup());
-        mntmJmSynth.setEnabled(JMPCore.getWindowManager().isValidBuiltinSynthFrame());
-        mntmInitializeConfig.setEnabled(!JMPCore.getSoundManager().isPlay());
+        mntmJmSynth.setEnabled(wm.isValidBuiltinSynthFrame());
+        mntmInitializeConfig.setEnabled(!sm.isPlay());
+        transposeSpinner.setValue(sm.getTranspose());
 
         // 音量バー同期
         JMPCore.getSoundManager().syncLineVolume();

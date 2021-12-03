@@ -83,15 +83,21 @@ public class ChannelSetupDialog extends JDialog {
 
             int ch = getChannel();
 
+            long ma, md, mr;
+            String wave = "";
+            boolean isWaveReverse = false;
+            double a, d, s, r;
+            int modDepth;
             Envelope env = synth.getEnvelope(ch);
             if (env == null) {
                 return;
             }
 
-            long ma, md, mr;
-            String wave = "";
-            boolean isWaveReverse = false;
-            double a, d, s, r;
+            Modulator mod = synth.getModulator(ch);
+            if (mod == null) {
+                return;
+            }
+
             if (chckbxRealTime.isSelected() == false) {
                 wave = getWaveStr(synth.getWaveType(ch));
                 isWaveReverse = synth.isWaveReverse(ch);
@@ -102,9 +108,10 @@ public class ChannelSetupDialog extends JDialog {
                 ma = env.getMaxAttackMills();
                 md = env.getMaxDecayMills();
                 mr = env.getMaxReleaseMills();
+                modDepth = mod.getDepth();
                 paintWave(g, synth.getWaveType(ch), isWaveReverse, Color.GRAY);
                 paintCurve(g, a, d, s, r, ma, md, mr, Color.GRAY);
-                paintInfo(g, w - 110, 90, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, wave, Color.GRAY);
+                paintInfo(g, w - 110, 90, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, modDepth, wave, Color.GRAY);
             }
 
             wave = comboBoxWaveType.getSelectedItem().toString();
@@ -116,13 +123,14 @@ public class ChannelSetupDialog extends JDialog {
             ma = getMaxAttackSli();
             md = getMaxDecaySli();
             mr = getMaxReleaseSli();
+            modDepth = getModSli();
             paintWave(g, toWaveType(wave), isWaveReverse, Color.YELLOW);
             paintCurve(g, a, d, s, r, ma, md, mr, Color.MAGENTA);
-            paintInfo(g, w - 110 + 1, 16, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, wave, Color.DARK_GRAY);
-            paintInfo(g, w - 110, 15, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, wave, Color.GREEN);
+            paintInfo(g, w - 110 + 1, 16, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, modDepth, wave, Color.DARK_GRAY);
+            paintInfo(g, w - 110, 15, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, modDepth, wave, Color.GREEN);
         }
 
-        private void paintInfo(Graphics g, int x, int y, int fontSize, int aInt, int dInt, double s, int rInt, long maInt, long mdInt, long mrInt, String wave, Color strColor) {
+        private void paintInfo(Graphics g, int x, int y, int fontSize, int aInt, int dInt, double s, int rInt, long maInt, long mdInt, long mrInt, int mod, String wave, Color strColor) {
             int fx, fy;
             fx = x;
             fy = y;
@@ -138,7 +146,7 @@ public class ChannelSetupDialog extends JDialog {
             fy += fspan;
             g2d.drawString("R: " + rInt + " ms / " + mrInt + " ms", fx, fy);
             fy += fspan;
-            g2d.drawString("MOD: " + getModSli() + " ", fx, fy);
+            g2d.drawString("MOD: " + mod + " ", fx, fy);
             // fy += fspan;
             // g2d.drawString("osc = " + wave, fx, fy);
         }

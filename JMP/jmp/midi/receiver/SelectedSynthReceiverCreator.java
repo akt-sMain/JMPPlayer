@@ -26,7 +26,8 @@ class SelectedSynthReceiverCreator extends ReceiverCreator {
             rec = dev.getReceiver();
         }
         catch (Exception e) {
-            AutoSerectSynthReceiverCreator cre = new AutoSerectSynthReceiverCreator();
+            // 指定したレシーバーが開けなかった
+            NoneReceiverCreator cre = new NoneReceiverCreator();
             rec = cre.getReciever();
         }
         return rec;

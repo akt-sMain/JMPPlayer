@@ -56,6 +56,13 @@ class AutoSerectSynthReceiverCreator extends ReceiverCreator {
             BuiltinSynthReceiverCreator builtin = new BuiltinSynthReceiverCreator();
             reciever = builtin.getReciever();
         }
+
+        // 本来ならありえないが、上記の処理でレシーバーがnullの場合は
+        // Nullレシーバーを例外処理として返す
+        if (reciever == null) {
+            NoneReceiverCreator none = new NoneReceiverCreator();
+            reciever = none.getReciever();
+        }
         return reciever;
     }
 

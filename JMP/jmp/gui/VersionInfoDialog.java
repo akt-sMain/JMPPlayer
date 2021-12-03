@@ -101,7 +101,7 @@ public class VersionInfoDialog extends JMPDialog {
         labelBuild.setBounds(99, 61, 94, 13);
         getContentPane().add(labelBuild);
 
-        JLabel lblJava = new JLabel("Java :");
+        JLabel lblJava = new JLabel("Java Runtime :");
         lblJava.setHorizontalAlignment(SwingConstants.RIGHT);
         lblJava.setForeground(Color.WHITE);
         lblJava.setFont(UIManager.getFont("Menu.font"));

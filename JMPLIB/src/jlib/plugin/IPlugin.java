@@ -33,26 +33,21 @@ public interface IPlugin {
     /**
      * 更新処理
      */
-    default void update() {
-    }
+    abstract void update();
 
     /**
      * プラグイン有効状態
      *
      * @return 有効状態
      */
-    default boolean isEnable() {
-        return true;
-    }
+    abstract boolean isEnable();
 
     /**
      * プラグインのオープン状態か判定
      *
      * @return 状態
      */
-    default boolean isOpen() {
-        return true;
-    }
+    abstract boolean isOpen();
 
     /**
      * ファイルロード
@@ -60,8 +55,7 @@ public interface IPlugin {
      * @param file
      *            ファイル
      */
-    default void loadFile(File file) {
-    }
+    abstract void loadFile(File file);
 
     /**
      * CommonRedister更新通知
@@ -69,8 +63,7 @@ public interface IPlugin {
      * @param key
      *            キー名
      */
-    default void notifyUpdateCommonRegister(String key) {
-    }
+    abstract void notifyUpdateCommonRegister(String key);
 
     /**
      * Config更新通知
@@ -78,6 +71,5 @@ public interface IPlugin {
      * @param key
      *            キー名
      */
-    default void notifyUpdateConfig(String key) {
-    }
+    abstract void notifyUpdateConfig(String key);
 }

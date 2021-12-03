@@ -227,8 +227,8 @@ public class FileManager extends AbstractManager implements IFileManager {
             if (sm.getCurrentPlayerInfo() != null) {
                 sm.getCurrentPlayerInfo().update();
 
-                JMPFlags.Log.cprintln(">> PlayerInfo");
-                JMPFlags.Log.cprintln(sm.getCurrentPlayerInfo().getMessage());
+                JMPFlags.Log.cprintln(">> PlayerInfo", true);
+                JMPFlags.Log.cprintln(sm.getCurrentPlayerInfo().getMessage(), true);
             }
         }
         else {

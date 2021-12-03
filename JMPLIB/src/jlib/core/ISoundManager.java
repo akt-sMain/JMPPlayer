@@ -175,4 +175,20 @@ public interface ISoundManager {
      */
     abstract float getLineVolume();
 
+    /**
+     * トランスポーズ取得
+     *
+     * @param channel
+     * @return
+     */
+    abstract int getTranspose(int channel);
+
+    /**
+     * トランスポーズ設定
+     *
+     * @param channel
+     * @param transpose
+     */
+    abstract void setTranspose(int channel, int transpose);
+
 }

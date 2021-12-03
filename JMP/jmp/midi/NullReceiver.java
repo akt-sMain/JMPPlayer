@@ -16,10 +16,12 @@ public class NullReceiver implements Receiver {
 
     @Override
     public void send(MidiMessage message, long timeStamp) {
+        /* 何もしない */
     }
 
     @Override
     public void close() {
+        /* 何もしない */
     }
 
 }

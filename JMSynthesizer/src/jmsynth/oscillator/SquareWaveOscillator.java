@@ -6,8 +6,8 @@ public class SquareWaveOscillator extends AbstractWaveGenOscillator {
     }
 
     @Override
-    byte makeWave(double f, int overallLevel) {
-        return WaveGenerater.makeSquareWave(f, overallLevel, isWaveReverse(), true);
+    byte makeWave(double f, int overallLevel, OscillatorConfig oscConfig) {
+        return WaveGenerater.makeSquareWave(f, overallLevel, oscConfig.isWaveReverse(), true);
     }
 
 }

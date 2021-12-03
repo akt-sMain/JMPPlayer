@@ -6,8 +6,8 @@ public class SinWaveOscillator extends AbstractWaveGenOscillator {
     }
 
     @Override
-    byte makeWave(double f, int overallLevel) {
-        return WaveGenerater.makeSinWave(f, overallLevel, isWaveReverse());
+    byte makeWave(double f, int overallLevel, OscillatorConfig oscConfig) {
+        return WaveGenerater.makeSinWave(f, overallLevel, oscConfig.isWaveReverse());
     }
 
 }

@@ -11,7 +11,7 @@ import jmp.core.JMPCore;
 public class JMPFlags {
     /** ログ出力クラス */
     public static class Log {
-        private static void cprintImpl(String msg, boolean ln, boolean forced_out) {
+        private static void cprintImpl(String msg, boolean ln, boolean console_out) {
             if (JMPFlags.CoreConsoleOut == true) {
                 if (ln == true) {
                     System.out.println(msg);
@@ -20,7 +20,7 @@ public class JMPFlags {
                     System.out.print(msg);
                 }
             }
-            if (JMPFlags.DebugMode == true || forced_out == true) {
+            if (JMPFlags.DebugMode == true || console_out == true) {
                 if (ln == true) {
                     JMPCore.getSystemManager().consoleOutln(msg);
                 }
@@ -31,23 +31,23 @@ public class JMPFlags {
         }
 
         /** コンソール出力 */
-        public static void cprint(String msg, boolean forced_out) {
-            cprintImpl(msg, false, forced_out);
+        public static void cprint(String msg, boolean console_out) {
+            cprintImpl(msg, false, console_out);
         }
         public static void cprint(String msg) {
             cprintImpl(msg, false, false);
         }
 
         /** コンソール出力 */
-        public static void cprintln(String msg, boolean forced_out) {
-            cprintImpl(msg, true, forced_out);
+        public static void cprintln(String msg, boolean console_out) {
+            cprintImpl(msg, true, console_out);
         }
         public static void cprintln(String msg) {
             cprintImpl(msg, true, false);
         }
 
-        public static void cprintln(boolean forced_out) {
-            cprintImpl("", true, forced_out);
+        public static void cprintln(boolean console_out) {
+            cprintImpl("", true, console_out);
         }
         public static void cprintln() {
             cprintImpl("", true, false);

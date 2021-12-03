@@ -9,6 +9,9 @@ import jmp.util.JmpUtil;
 
 public interface IJmpConfigDatabase {
 
+    public static final String IJ_TRUE = "ON";
+    public static final String IJ_FALSE = "OFF";
+
     //
     // util
     //
@@ -19,7 +22,7 @@ public interface IJmpConfigDatabase {
         return JmpUtil.toInt(getConfigParam(key), def);
     }
     default void setConfigParamToBoolean(String key, boolean val) {
-        setConfigParam(key, val ? "TRUE" : "FALSE");
+        setConfigParam(key, val ? IJ_TRUE : IJ_FALSE);
     }
     default boolean getConfigParamToBoolean(String key, boolean def) {
         return JmpUtil.toBoolean(getConfigParam(key), def);

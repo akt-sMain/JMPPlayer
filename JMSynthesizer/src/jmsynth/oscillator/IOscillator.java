@@ -19,7 +19,7 @@ public interface IOscillator {
      *
      *
      */
-    public int makeTone(byte[] _data,int bufSize, Tone tone);
+    public int makeTone(byte[] _data,int bufSize, Tone tone, OscillatorConfig oscConfig);
 
 
     /**
@@ -43,17 +43,4 @@ public interface IOscillator {
      */
     public int toneEndPoint();
 
-    /**
-     * 逆波形
-     *
-     * @param isReverse
-     */
-    public void setWaveReverse(boolean isReverse);
-
-    /**
-     * 逆波形
-     *
-     * @return
-     */
-    public boolean isWaveReverse();
 }

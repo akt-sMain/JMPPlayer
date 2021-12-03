@@ -135,16 +135,20 @@ public class JMSoftSynthesizer implements ISynthController {
         }
 
         if (target != null) {
-            target.setOscillator(type);
-            target.setWaveReverse(waveReverse);
-            target.getEnvelope().setAttackTime(a);
-            target.getEnvelope().setDecayTime(d);
-            target.getEnvelope().setSustainLevel(s);
-            target.getEnvelope().setReleaseTime(r);
-            target.getEnvelope().setMaxAttackMills(ma);
-            target.getEnvelope().setMaxDecayMills(md);
-            target.getEnvelope().setMaxReleaseMills(mr);
-            target.getModulator().setDepth(modDepth);
+            target.setOscillator(ch, type);
+            target.setWaveReverse(ch, waveReverse);
+
+            Envelope env = target.getEnvelope(ch);
+            env.setAttackTime(a);
+            env.setDecayTime(d);
+            env.setSustainLevel(s);
+            env.setReleaseTime(r);
+            env.setMaxAttackMills(ma);
+            env.setMaxDecayMills(md);
+            env.setMaxReleaseMills(mr);
+
+            Modulator mod = target.getModulator(ch);
+            mod.setDepth(modDepth);
         }
     }
 

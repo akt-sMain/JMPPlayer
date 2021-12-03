@@ -19,6 +19,7 @@ import jmsynth.modulate.Modulator;
 import jmsynth.oscillator.IOscillator;
 import jmsynth.oscillator.LowSamplingSinWaveOscillator;
 import jmsynth.oscillator.NoisWaveOscillator;
+import jmsynth.oscillator.OscillatorConfig;
 import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.oscillator.PulseWaveOscillator;
 import jmsynth.oscillator.SawWaveOscillator;
@@ -55,6 +56,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     /* オシレータ */
     private IOscillator oscillator;
 
+    private OscillatorConfig oscConfig;
+
     private int NRPN = 0;
     private float pitch_sc = 2;
 
@@ -71,8 +74,6 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
     private WaveType waveType = WaveType.SINE;
 
-    private Map<WaveType, IOscillator> oscMap = null;
-
     protected Envelope envelope = null;
     protected Modulator modulator = null;
 
@@ -86,31 +87,20 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         init(channel, oscType, polyphony, null, null);
     }
 
-    /* オシレータリスト生成 */
-    public static Map<WaveType, IOscillator> makeOscillatorMap() {
+    private static Map<WaveType, IOscillator> oscMap = new HashMap<WaveType, IOscillator>(){
+        {
+            put(WaveType.SINE, new SinWaveOscillator());
+            put(WaveType.LOW_SINE, new LowSamplingSinWaveOscillator());
+            put(WaveType.SAW, new SawWaveOscillator());
+            put(WaveType.SQUARE, new SquareWaveOscillator());
+            put(WaveType.TRIANGLE, new TriWaveOscillator());
+            put(WaveType.PULSE_25, new PulseWaveOscillator(0.25));
+            put(WaveType.PULSE_12_5, new PulseWaveOscillator(0.125));
+            put(WaveType.LONG_NOISE, new NoisWaveOscillator(false));
+            put(WaveType.SHORT_NOISE, new NoisWaveOscillator(true));
+        }
+    };
 
-//        WaveTableOscillator squOsc = new WaveTableOscillator(
-//                new WaveValuePoint(0.005, 1.0),
-//                new WaveValuePoint(0.495, 0.9),
-//                new WaveValuePoint(0.505, -1.0),
-//                new WaveValuePoint(0.995, -0.9)
-//                );
-
-        Map<WaveType, IOscillator> map = new HashMap<WaveType, IOscillator>(){
-            {
-                put(WaveType.SINE, new SinWaveOscillator());
-                put(WaveType.LOW_SINE, new LowSamplingSinWaveOscillator());
-                put(WaveType.SAW, new SawWaveOscillator());
-                put(WaveType.SQUARE, new SquareWaveOscillator());
-                put(WaveType.TRIANGLE, new TriWaveOscillator());
-                put(WaveType.PULSE_25, new PulseWaveOscillator(0.25));
-                put(WaveType.PULSE_12_5, new PulseWaveOscillator(0.125));
-                put(WaveType.LONG_NOISE, new NoisWaveOscillator(false));
-                put(WaveType.SHORT_NOISE, new NoisWaveOscillator(true));
-            }
-        };
-        return map;
-    }
     private IOscillator toOscillator(WaveType type) {
         if (oscMap.containsKey(type) == false) {
             return oscMap.get(WaveType.SINE);
@@ -123,7 +113,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
         this.channel = channel;
 
-        this.oscMap = makeOscillatorMap();
+        this.oscConfig = new OscillatorConfig();
 
         setOscillator(oscType);
 
@@ -185,7 +175,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         for (int i = 0; i < activeTones.size(); i++) {
             try {
                 Tone tone = (Tone) activeTones.get(i);
-                oscillator.makeTone(data, length, tone);
+                oscillator.makeTone(data, length, tone, this.oscConfig);
 
                 if (envelope.getReleaseTime() > 0.0) {
                     // リリース処理
@@ -649,12 +639,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
     @Override
     public void setWaveReverse(int ch, boolean isReverse) {
-        this.oscillator.setWaveReverse(isReverse);
-
-        /* 全てのオシレータに設定を同期 */
-        for (IOscillator osc : oscMap.values()) {
-            osc.setWaveReverse(isReverse);
-        }
+        this.oscConfig.setWaveReverse(isReverse);
     }
 
     public boolean isWaveReverse() {
@@ -663,7 +648,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
     @Override
     public boolean isWaveReverse(int ch) {
-        return this.oscillator.isWaveReverse();
+        return this.oscConfig.isWaveReverse();
     }
 
 }

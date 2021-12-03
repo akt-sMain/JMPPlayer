@@ -264,6 +264,22 @@ public class JMPLoader {
     }
 
     /**
+     * スタンドアロンプラグイン起動設定
+     *
+     * @param args
+     * @param config
+     * @param standAlonePlugin
+     * @return
+     */
+    public static boolean invoke(String[] args, ConfigDatabaseWrapper config, IPlugin standAlonePlugin) {
+        InvokeArgs rArgs = parseArgs(args);
+        if (rArgs.doReturn == true) {
+            return true;
+        }
+        return invokeImpl(config, standAlonePlugin, null);
+    }
+
+    /**
      * 起動処理本体
      * @param config
      * @param standAlonePlugin
@@ -450,10 +466,10 @@ public class JMPLoader {
             else {
                 result = false;
             }
-        }
 
-        // Notify有効化
-        JMPFlags.EnableNotifyFlag = true;
+            // Notify有効化
+            JMPFlags.EnableNotifyFlag = true;
+        }
         return result;
     }
 

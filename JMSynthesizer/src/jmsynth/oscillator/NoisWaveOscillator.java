@@ -88,7 +88,7 @@ public class NoisWaveOscillator implements IOscillator {
     int ntStep = 0;
 
     @Override
-    public int makeTone(byte[] data, int bufSize, Tone tone) {
+    public int makeTone(byte[] data, int bufSize, Tone tone, OscillatorConfig oscConfig) {
         int length = bufSize;// ネイティブに変数ロード
         int toneStep = tone.getToneStep();// ネイティブに変数ロード
 
@@ -159,15 +159,6 @@ public class NoisWaveOscillator implements IOscillator {
     @Override
     public int toneEndPoint() {
         return -1;
-    }
-
-    @Override
-    public void setWaveReverse(boolean isReverse) {
-    }
-
-    @Override
-    public boolean isWaveReverse() {
-        return false;
     }
 
 }

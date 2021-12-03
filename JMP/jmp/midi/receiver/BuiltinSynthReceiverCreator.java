@@ -3,7 +3,6 @@ package jmp.midi.receiver;
 import javax.sound.midi.Receiver;
 
 import jmp.core.JMPCore;
-import jmp.midi.NullReceiver;
 
 class BuiltinSynthReceiverCreator extends ReceiverCreator {
 
@@ -14,7 +13,10 @@ class BuiltinSynthReceiverCreator extends ReceiverCreator {
         if (reciever == null) {
             /* 例外処理 */
             JMPCore.getWindowManager().disposeBuiltinSynthFrame();
-            reciever = new NullReceiver();
+
+            // Nullレシーバーを返す
+            NoneReceiverCreator none = new NoneReceiverCreator();
+            reciever = none.getReciever();
         }
         return reciever;
     }

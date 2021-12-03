@@ -90,7 +90,16 @@ public class JmpUtil {
         return toBoolean(str, false);
     }
     public static boolean toBoolean(String str, boolean def) {
-        return Utility.tryParseBoolean(str, def);
+        String tStr = str.trim();
+        if (tStr.equalsIgnoreCase("on") == true) {
+            return true;
+        }
+        else if (tStr.equalsIgnoreCase("off") == true) {
+            return false;
+        }
+        else {
+            return Utility.tryParseBoolean(str, def);
+        }
     }
 
     public static int toInt(String str) {

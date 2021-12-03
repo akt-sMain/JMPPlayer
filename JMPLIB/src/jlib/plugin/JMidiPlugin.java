@@ -36,7 +36,8 @@ public abstract class JMidiPlugin extends JMPlugin implements IMidiEventListener
      * @param senderType
      *            MIDIイベントの送信元種別(SENDER_MIDI_OUT, SENDER_MIDI_IN)
      */
-    protected abstract void noteOn(int channel, int midiNumber, int velocity, long timeStamp, short senderType);
+    protected void noteOn(int channel, int midiNumber, int velocity, long timeStamp, short senderType) {
+    };
 
     /**
      * ノートオフイベント受信
@@ -50,7 +51,8 @@ public abstract class JMidiPlugin extends JMPlugin implements IMidiEventListener
      * @param senderType
      *            MIDIイベントの送信元種別(SENDER_MIDI_OUT, SENDER_MIDI_IN)
      */
-    protected abstract void noteOff(int channel, int midiNumber, long timeStamp, short senderType);
+    protected void noteOff(int channel, int midiNumber, long timeStamp, short senderType) {
+    };
 
     /**
      * プログラムチェンジ受信
@@ -64,7 +66,8 @@ public abstract class JMidiPlugin extends JMPlugin implements IMidiEventListener
      * @param senderType
      *            MIDIイベントの送信元種別(SENDER_MIDI_OUT, SENDER_MIDI_IN)
      */
-    protected abstract void programChange(int channel, int programNumber, long timeStamp, short senderType);
+    protected void programChange(int channel, int programNumber, long timeStamp, short senderType) {
+    };
 
     /**
      * ピッチベンド受信
@@ -78,7 +81,28 @@ public abstract class JMidiPlugin extends JMPlugin implements IMidiEventListener
      * @param senderType
      *            MIDIイベントの送信元種別(SENDER_MIDI_OUT, SENDER_MIDI_IN)
      */
-    protected abstract void pitchBend(int channel, int pbValue, long timeStamp, short senderType);
+    protected void pitchBend(int channel, int pbValue, long timeStamp, short senderType) {
+    };
+
+    /**
+     * オールノートオフイベント受信
+     *
+     * @param channel
+     * @param timeStamp
+     * @param senderType
+     */
+    protected void allNoteOff(int channel, long timeStamp, short senderType) {
+    };
+
+    /**
+     * オールサウンドオフイベント受信
+     *
+     * @param channel
+     * @param timeStamp
+     * @param senderType
+     */
+    protected void allSoundOff(int channel, long timeStamp, short senderType) {
+    };
 
     @Override
     public void catchMidiEvent(MidiMessage message, long timeStamp, short senderType) {
@@ -117,6 +141,20 @@ public abstract class JMidiPlugin extends JMPlugin implements IMidiEventListener
                 pitchBend(//
                         MidiByte.getChannel(message.getMessage(), message.getLength()), //
                         MidiUtility.convertPitchBendValue(message), //
+                        timeStamp, //
+                        senderType//
+                );//
+            }
+            else if (toolkit.isAllNoteOff(message) == true) {
+                allNoteOff(//
+                        MidiByte.getChannel(message.getMessage(), message.getLength()), //
+                        timeStamp, //
+                        senderType//
+                );//
+            }
+            else if (toolkit.isAllSoundOff(message) == true) {
+                allSoundOff(//
+                        MidiByte.getChannel(message.getMessage(), message.getLength()), //
                         timeStamp, //
                         senderType//
                 );//

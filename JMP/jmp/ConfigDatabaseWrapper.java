@@ -19,7 +19,8 @@ public class ConfigDatabaseWrapper implements IJmpConfigDatabase {
         for (String key : DataManager.CFG_INIT_TABLE.keySet()) {
             String init = "";
             if (DataManager.CFG_INIT_TABLE.containsKey(key) == true) {
-                init = new String(DataManager.CFG_INIT_TABLE.get(key));
+                JmpConfigValueType valueType = DataManager.CFG_INIT_TABLE.get(key);
+                init = new String(valueType.value);
             }
             database.setConfigParam(key, init);
         }
