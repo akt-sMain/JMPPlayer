@@ -18,13 +18,16 @@ public class LanguageManager extends AbstractManager {
     public static final String CHARSET_SJIS = "SJIS";
     public static final String CHARSET_EUCKR = "EUC_KR";//韓国語
 
-    /** 変換する文字コードリスト(該当しないものはデフォルト文字コードにする) */
+    /**
+     * 変換する文字コードリスト(該当しないものはデフォルト文字コードにする) <br>
+     *  ※ Javaの仕様上常にUTF-16が良い？
+     */
     private static HashMap<Integer, String> chasets = new HashMap<Integer, String>() {
         {
-            put(DefineLanguage.INDEX_LANG_ENGLISH, CHARSET_UTF8);
-            put(DefineLanguage.INDEX_LANG_JAPANESE, CHARSET_SJIS);
-            put(DefineLanguage.INDEX_LANG_CHINESE, CHARSET_SJIS);
-            put(DefineLanguage.INDEX_LANG_KOREAN, CHARSET_EUCKR);
+            put(DefineLanguage.INDEX_LANG_ENGLISH, CHARSET_UTF16/*CHARSET_UTF8*/);
+            put(DefineLanguage.INDEX_LANG_JAPANESE, CHARSET_UTF16/*CHARSET_SJIS*/);
+            put(DefineLanguage.INDEX_LANG_CHINESE, CHARSET_UTF16/*CHARSET_SJIS*/);
+            put(DefineLanguage.INDEX_LANG_KOREAN, CHARSET_UTF16/*CHARSET_EUCKR*/);
         }
     };
 

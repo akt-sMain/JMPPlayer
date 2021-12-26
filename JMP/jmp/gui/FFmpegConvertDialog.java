@@ -389,8 +389,9 @@ public class FFmpegConvertDialog extends JMPDialog {
                     JMPFlags.LoadToPlayFlag = true;
                     JMPCore.getFileManager().loadFile(out.getPath());
                 }
-                openOutputFolder();
-
+                else {
+                    JMPCore.getWindowManager().showFilePickupDialog(outdir, dstExtTextField.getText());
+                }
             }
 
             @Override

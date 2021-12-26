@@ -315,7 +315,7 @@ public class YoutubeConvertDialog extends JMPDialog {
         try {
             Utility.openExproler(Platform.getCurrentPath());
         }
-        catch (IOException e2) {
+        catch (Exception e2) {
         }
     }
 
@@ -372,7 +372,8 @@ public class YoutubeConvertDialog extends JMPDialog {
                 lblStatus.setText(lm.getLanguageStr(LangID.Conversion_completed));
                 repaint();
 
-                openOutputFolder();
+                String dstExt = dstExtTextField.getText();
+                JMPCore.getWindowManager().showFilePickupDialog(new File(Platform.getCurrentPath()), dstExt);
             }
 
             @Override

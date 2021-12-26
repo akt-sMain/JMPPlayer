@@ -9,7 +9,7 @@ public class ReceiverFactory {
 
     public ReceiverCreator create(String name) {
         if (name.equals("") == true || name.isEmpty() == true) {
-            return new AutoSerectSynthReceiverCreator();
+            return new AutoSelectSynthReceiverCreator();
         }
         else if (name.equals(SystemManager.JMSYNTH_LIB_NAME) == true) {
             return new BuiltinSynthReceiverCreator();

@@ -7,7 +7,7 @@ import javax.sound.midi.Receiver;
 
 import jmp.core.JMPCore;
 
-class AutoSerectSynthReceiverCreator extends ReceiverCreator {
+class AutoSelectSynthReceiverCreator extends ReceiverCreator {
 
     public static final String DEFAULT_RECVNAME = "Gervill";
 

@@ -32,6 +32,7 @@ import jmp.core.SoundManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.util.JmpUtil;
+import jmsynth.midi.MidiUtil;
 
 public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener {
 
@@ -328,7 +329,19 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
                 else if (MidiByte.isSystemMessage(status) == true) {
                     // システムメッセージ
                     strChannel = "--";
-                    strCommand = String.format("[%s]", MidiByte.convertByteToChannelCommandString(status));
+                    // システムセットアップの表示
+                    if (MidiUtil.isGmSystemOn(data) == true) {
+                        strCommand = String.format("[%s@%s]", MidiByte.convertByteToChannelCommandString(status), "GM_SYSTEM_ON");
+                    }
+                    else if (MidiUtil.isGsReset(data) == true) {
+                        strCommand = String.format("[%s@%s]", MidiByte.convertByteToChannelCommandString(status), "GS_RESET");
+                    }
+                    else if (MidiUtil.isXgSystemOn(data) == true) {
+                        strCommand = String.format("[%s@%s]", MidiByte.convertByteToChannelCommandString(status), "XG_SYSTEM_ON");
+                    }
+                    else {
+                        strCommand = String.format("[%s]", MidiByte.convertByteToChannelCommandString(status));
+                    }
                     strData1 = sub + "--";
                     strData2 = "--";
                 }

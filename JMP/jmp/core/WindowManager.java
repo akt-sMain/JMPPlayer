@@ -2,6 +2,7 @@ package jmp.core;
 
 import java.awt.Component;
 import java.awt.Rectangle;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.JMenuItem;
@@ -13,6 +14,7 @@ import jlib.gui.IJmpWindow;
 import jmp.JMPFlags;
 import jmp.gui.BuiltinSynthSetupDialog;
 import jmp.gui.FFmpegConvertDialog;
+import jmp.gui.FilePickupDialog;
 import jmp.gui.HistoryDialog;
 import jmp.gui.LicenseReaderDialog;
 import jmp.gui.MidiDataTransportDialog;
@@ -34,6 +36,9 @@ public class WindowManager extends AbstractManager implements IWindowManager {
 
     public static final Rectangle DEFAULT_PLAYER_WINDOW_SIZE = new Rectangle(20, 20, 480, 210);
 
+    /* ライブラリ非公開Window */
+    public static final String WINDOW_NAME_FILE_PICKUP  = "DIRECTORY_VIEWER";
+
     public static final String[] WINDOW_NAMELIST = { //
             WINDOW_NAME_MAIN, //
             WINDOW_NAME_FILE_LIST, //
@@ -46,6 +51,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
             WINDOW_NAME_FFMPEG, //
             WINDOW_NAME_PLUGIN_MANAGER, //
             WINDOW_NAME_YOUTUBEDL, //
+            WINDOW_NAME_FILE_PICKUP, //
     };
 
     private WindowDatabase database = null;
@@ -73,6 +79,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         register(WINDOW_NAME_FFMPEG, new FFmpegConvertDialog());
         register(WINDOW_NAME_MIDI_SETUP, new SelectSynthsizerDialog(true, true));
         register(WINDOW_NAME_YOUTUBEDL, new YoutubeConvertDialog());
+        register(WINDOW_NAME_FILE_PICKUP, new FilePickupDialog());
 
         // メインウィンドウ登録
         registerMainWindow(new JMPPlayerWindow());
@@ -303,6 +310,12 @@ public class WindowManager extends AbstractManager implements IWindowManager {
                 JOptionPane.showMessageDialog(parent, message, title, option);
             }
         });
+    }
+
+    public void showFilePickupDialog(File dir, String ext) {
+        FilePickupDialog dlg = (FilePickupDialog)JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_FILE_PICKUP);
+        dlg.setDirectory(dir, ext);
+        dlg.showWindow();
     }
 
     // 新しいJMsynthインスタンスを登録する
