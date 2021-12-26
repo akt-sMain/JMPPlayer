@@ -128,16 +128,16 @@ public class JMSynthFile {
                 y = WaveGenerater.makeSinWaveForLowSampling(f, overallLeval, isReverse);
                 break;
             case SQUARE:
-                y = WaveGenerater.makeSquareWave(f, overallLeval, isReverse, true);
+                y = WaveGenerater.makeSquareWave(f, overallLeval, isReverse, false);
                 break;
             case PULSE_25:
-                y = WaveGenerater.makePulseWave(f, overallLeval, 0.25, isReverse, true);
+                y = WaveGenerater.makePulseWave(f, overallLeval, 0.25, isReverse, false);
                 break;
             case PULSE_12_5:
-                y = WaveGenerater.makePulseWave(f, overallLeval, 0.125, isReverse, true);
+                y = WaveGenerater.makePulseWave(f, overallLeval, 0.125, isReverse, false);
                 break;
             case TRIANGLE:
-                y = WaveGenerater.makeTriangleWave(f, overallLeval, isReverse, true);
+                y = WaveGenerater.makeTriangleWave(f, overallLeval, isReverse, false);
                 break;
             case LONG_NOISE:
             {

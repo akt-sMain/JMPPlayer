@@ -519,7 +519,7 @@ public class MidiByte {
                      * システムエクスクルーシブ開始<br>
                      * Fst: マニュファクチャID 1バイトまたは3バイト
                      */
-                    public static final int SYSEX_BEGIN = DefineCommand.SYSEX_BEGIN;
+                    public static final int SYSEX_BEGIN = DefineCommand.SYSEX;
 
                     /**
                      * MIDIタイムコード<br>
@@ -550,7 +550,7 @@ public class MidiByte {
                     /**
                      * システムエクスクルーシブ終了
                      */
-                    public static final int SYSEX_END = DefineCommand.SYSEX_END;
+                    public static final int SYSEX_END = DefineCommand.SYSEX_SP;
                 }
 
             }

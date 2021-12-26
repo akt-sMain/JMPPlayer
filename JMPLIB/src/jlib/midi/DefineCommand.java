@@ -8,12 +8,12 @@ public class DefineCommand {
     static final int PROGRAM_CHANGE = 192;
     static final int CHANNEL_PRESSURE = 208;
     static final int PITCH_BEND = 224;
-    static final int SYSEX_BEGIN = 240;
+    static final int SYSEX = 240;
     static final int MIDI_TIME_CODE = 241;
     static final int SONG_POSITION = 242;
     static final int SONG_SELECT = 243;
     static final int TUNE_SELECT = 246;
-    static final int SYSEX_END = 247;
+    static final int SYSEX_SP = 247;
     static final int MIDI_CLOCK = 248;
     static final int START = 250;
     static final int CONTINUE = 251;
@@ -262,14 +262,14 @@ public class DefineCommand {
             "",//237
             "",//238
             "",//239
-            "SYSEX_BEGIN",//240
+            "SYSEX",//240
             "MIDI_TIME_CODE",//241
             "SONG_POSITION",//242
             "SONG_SELECT",//243
             "",//244
             "",//245
             "TUNE_SELECT",//246
-            "SYSEX_END",//247
+            "SYSEX_SP",//247
             "MIDI_CLOCK",//248
             "",//249
             "START",//250

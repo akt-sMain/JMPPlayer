@@ -651,4 +651,22 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         return this.oscConfig.isWaveReverse();
     }
 
+    public void setValidFesSimulate(boolean isValidFesSimulate) {
+        setValidFesSimulate(0, isValidFesSimulate);
+    }
+
+    @Override
+    public void setValidFesSimulate(int ch, boolean isValidFesSimulate) {
+        this.oscConfig.setValidFesSimulate(isValidFesSimulate);
+    }
+
+    public boolean isValidFesSimulate() {
+        return isValidFesSimulate(0);
+    }
+
+    @Override
+    public boolean isValidFesSimulate(int ch) {
+        return this.oscConfig.isValidFesSimulate();
+    }
+
 }

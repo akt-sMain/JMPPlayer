@@ -109,6 +109,7 @@ public class JMSoftSynthesizer implements ISynthController {
         SoundSourceChannel target = channels[ch];
         WaveType type = WaveType.SINE;
         boolean waveReverse = false;
+        boolean validFesSim = true;
         double a = EnvelopeFactory.DEFAULT_A;
         double d = EnvelopeFactory.DEFAULT_D;
         double s = EnvelopeFactory.DEFAULT_S;
@@ -137,6 +138,7 @@ public class JMSoftSynthesizer implements ISynthController {
         if (target != null) {
             target.setOscillator(ch, type);
             target.setWaveReverse(ch, waveReverse);
+            target.setValidFesSimulate(ch, validFesSim);
 
             Envelope env = target.getEnvelope(ch);
             env.setAttackTime(a);
@@ -307,5 +309,15 @@ public class JMSoftSynthesizer implements ISynthController {
     @Override
     public boolean isWaveReverse(int ch) {
         return channels[ch].isWaveReverse(ch);
+    }
+
+    @Override
+    public void setValidFesSimulate(int ch, boolean isValidFesSimulate) {
+        channels[ch].setValidFesSimulate(ch, isValidFesSimulate);
+    }
+
+    @Override
+    public boolean isValidFesSimulate(int ch) {
+        return channels[ch].isValidFesSimulate(ch);
     }
 }

@@ -411,6 +411,16 @@ public class ChannelSetupDialog extends JDialog {
         });
         chckbxWaveReverse.setBounds(8, 6, 103, 21);
         panel_2.add(chckbxWaveReverse);
+
+        checkBoxFESSim = new JCheckBox("FES Simulate");
+        checkBoxFESSim.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateValue();
+                repaint();
+            }
+        });
+        checkBoxFESSim.setBounds(8, 40, 103, 21);
+        panel_2.add(checkBoxFESSim);
         lblMod.setVisible(true);
         sliderMod.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
@@ -538,6 +548,7 @@ public class ChannelSetupDialog extends JDialog {
     private JSlider sliderMD;
     private JSlider sliderMR;
     private JCheckBox chckbxWaveReverse;
+    private JCheckBox checkBoxFESSim;
 
     private void testSoundAction() {
         if (testOn == false) {
@@ -593,6 +604,9 @@ public class ChannelSetupDialog extends JDialog {
         boolean waveReverse = chckbxWaveReverse.isSelected();
         synth.setWaveReverse(ch, waveReverse);
 
+        boolean fesSim = checkBoxFESSim.isSelected();
+        synth.setValidFesSimulate(ch, fesSim);
+
         if (e != null) {
             e.setAttackTime(getAttackSli());
             e.setDecayTime(getDecaySli());
@@ -620,6 +634,8 @@ public class ChannelSetupDialog extends JDialog {
         comboBoxWaveType.setSelectedItem(sWave);
 
         chckbxWaveReverse.setSelected(synth.isWaveReverse(ch));
+
+        checkBoxFESSim.setSelected(synth.isValidFesSimulate(ch));
 
         if (e != null) {
             setAttackSli();
