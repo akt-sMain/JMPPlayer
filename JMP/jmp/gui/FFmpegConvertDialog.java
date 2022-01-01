@@ -27,6 +27,7 @@ import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SystemManager;
+import jmp.core.WindowManager;
 import jmp.gui.ui.DropFileCallbackHandler;
 import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.JMPDialog;
@@ -455,16 +456,19 @@ public class FFmpegConvertDialog extends JMPDialog {
     public void updateLanguage() {
         super.updateLanguage();
 
+        WindowManager wm = JMPCore.getWindowManager();
         LanguageManager lm = JMPCore.getLanguageManager();
 
         setTitle(lm.getLanguageStr(LangID.FFmpeg_converter));
-        lblPath.setText(lm.getLanguageStr(LangID.FFmpeg_path));
-        lblInputFile.setText(lm.getLanguageStr(LangID.Input_file));
-        convertButton.setText(lm.getLanguageStr(LangID.Convert));
-        btnExpButton.setText(lm.getLanguageStr(LangID.Open_with_Explorer));
-        chckbxToPlay.setText(lm.getLanguageStr(LangID.Play_after_convert));
-        chckbxLeave.setText(lm.getLanguageStr(LangID.Leave_output_file));
-        checkBoxUsePlayer.setText(lm.getLanguageStr(LangID.Use_FFmpeg_player));
+        setFont(lm.getFont(getFont()));
+        wm.changeFont(lblPath, LangID.FFmpeg_path);
+        wm.changeFont(lblInputFile, LangID.Input_file);
+        wm.changeFont(convertButton, LangID.Convert);
+        wm.changeFont(btnExpButton, LangID.Open_with_Explorer);
+        wm.changeFont(chckbxToPlay, LangID.Play_after_convert);
+        wm.changeFont(chckbxLeave, LangID.Leave_output_file);
+        wm.changeFont(checkBoxUsePlayer, LangID.Use_FFmpeg_player);
+        
     }
 
     @Override

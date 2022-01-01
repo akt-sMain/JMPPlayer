@@ -18,6 +18,7 @@ import jmp.IFileResultCallback;
 import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
+import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 
@@ -123,10 +124,14 @@ public class HistoryDialog extends JMPDialog implements IFileResultCallback{
         super.updateLanguage();
 
         LanguageManager lm = JMPCore.getLanguageManager();
+        WindowManager wm = JMPCore.getWindowManager();
         setTitle(lm.getLanguageStr(LangID.History));
-        buttonClear.setText(lm.getLanguageStr(LangID.Clear));
-        playButton.setText(lm.getLanguageStr(LangID.Playback));
-        cancelButton.setText(lm.getLanguageStr(LangID.Close));
+        setFont(lm.getFont(getFont()));
+        wm.changeFont(buttonClear, LangID.Clear);
+        wm.changeFont(playButton, LangID.Playback);
+        wm.changeFont(cancelButton, LangID.Close);
+        wm.changeFont(history);
+        
     }
 
     public void updateHistoryData() {

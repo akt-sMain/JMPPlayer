@@ -14,7 +14,7 @@ import javax.swing.border.EmptyBorder;
 import function.Utility;
 import jlib.gui.IJmpWindow;
 import jmp.core.JMPCore;
-import jmp.core.LanguageManager;
+import jmp.core.WindowManager;
 import jmp.gui.ui.IJMPComponentUI;
 import jmp.lang.DefineLanguage.LangID;
 
@@ -28,20 +28,6 @@ public class MusicXMLConfirmDialog extends JDialog implements IJmpWindow, IJMPCo
     private JCheckBox chckbxAutoAssignProgramChange;
     private JPanel buttonPane;
     private JButton okButton;
-
-    /**
-     * Launch the application.
-     */
-    public static void main(String[] args) {
-        try {
-            MusicXMLConfirmDialog dialog = new MusicXMLConfirmDialog();
-            dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            dialog.setVisible(true);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Create the dialog.
@@ -133,9 +119,9 @@ public class MusicXMLConfirmDialog extends JDialog implements IJmpWindow, IJMPCo
 
     @Override
     public void updateLanguage() {
-        LanguageManager lm = JMPCore.getLanguageManager();
-        chckbxAutoAssignChannel.setText(lm.getLanguageStr(LangID.Automatically_assign_MIDI_channel));
-        chckbxAutoAssignProgramChange.setText(lm.getLanguageStr(LangID.Automatically_assign_Program_change_number));
+        WindowManager wm = JMPCore.getWindowManager();
+        wm.changeFont(chckbxAutoAssignChannel, LangID.Automatically_assign_MIDI_channel);
+        wm.changeFont(chckbxAutoAssignProgramChange, LangID.Automatically_assign_Program_change_number);
     }
 
     @Override

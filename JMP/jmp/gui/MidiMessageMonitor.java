@@ -29,6 +29,7 @@ import jlib.midi.MidiByte;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
+import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.util.JmpUtil;
@@ -481,8 +482,10 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
     public void updateLanguage() {
         super.updateLanguage();
 
+        WindowManager wm = JMPCore.getWindowManager();
         LanguageManager lm = JMPCore.getLanguageManager();
         setTitle(lm.getLanguageStr(LangID.MIDI_message_monitor));
-        btnClear.setText(lm.getLanguageStr(LangID.Clear));
+        setFont(lm.getFont(getFont()));
+        wm.changeFont(btnClear, LangID.Clear);
     }
 }

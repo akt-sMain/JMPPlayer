@@ -45,6 +45,7 @@ import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
 import jmp.core.SystemManager;
+import jmp.core.WindowManager;
 import jmp.gui.ui.DropFileCallbackHandler;
 import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.JMPFrame;
@@ -293,7 +294,7 @@ public class MidiFileListDialog extends JMPFrame {
         playList.setBackground(Color.BLACK);
         scrollPane_1.setViewportView(playList);
         btnExproler = new JButton("エクスプローラで開く");
-        btnExproler.setBounds(5, 439, 146, 21);
+        btnExproler.setBounds(5, 439, 180, 21);
         contentPanel.add(btnExproler);
         {
             addButton = new JButton("追加");
@@ -936,17 +937,20 @@ public class MidiFileListDialog extends JMPFrame {
     @Override
     public void updateLanguage() {
         LanguageManager lm = JMPCore.getLanguageManager();
+        WindowManager wm = JMPCore.getWindowManager();
 
         super.updateLanguage();
         setTitle(lm.getLanguageStr(LangID.Playlist));
-        labelContinuePlayback.setText(lm.getLanguageStr(LangID.Continuous_playback));
-        btnDirectLoad.setText(lm.getLanguageStr(LangID.Playback));
-        btnExproler.setText(lm.getLanguageStr(LangID.Open_with_Explorer));
-        addButton.setText(lm.getLanguageStr(LangID.Add));
-
-        buttonClear.setText(lm.getLanguageStr(LangID.Clear));
-        buttonDelete.setText(lm.getLanguageStr(LangID.Remove));
-        btnLoad.setText(lm.getLanguageStr(LangID.Continuous_playback));
+        setFont(lm.getFont(getFont()));
+        wm.changeFont(midiFileList);
+        wm.changeFont(labelContinuePlayback, LangID.Continuous_playback);
+        wm.changeFont(btnDirectLoad, LangID.Playback);
+        wm.changeFont(btnExproler, LangID.Open_with_Explorer);
+        wm.changeFont(addButton, LangID.Add);
+        wm.changeFont(buttonClear, LangID.Clear);
+        wm.changeFont(buttonDelete, LangID.Remove);
+        wm.changeFont(btnLoad, LangID.Continuous_playback);
+        
     }
 
     @Override

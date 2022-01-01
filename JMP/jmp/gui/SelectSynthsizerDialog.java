@@ -26,6 +26,7 @@ import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
 import jmp.core.SystemManager;
+import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 import jmsynth.midi.JMSynthMidiDevice;
@@ -114,7 +115,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
             panel.setLayout(null);
 
             comboRecvMode = new JComboBox<String>();
-            comboRecvMode.setBounds(12, 33, 402, 19);
+            comboRecvMode.setBounds(12, 33, 402, 22);
             comboRecvMode.setMaximumRowCount(MAX_ROW_COUNT);
             panel.add(comboRecvMode);
 
@@ -153,7 +154,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
             panel_1.add(labelMidiOutDevice);
 
             comboTransMode = new JComboBox<String>();
-            comboTransMode.setBounds(12, 33, 402, 19);
+            comboTransMode.setBounds(12, 33, 402, 22);
             comboTransMode.setMaximumRowCount(MAX_ROW_COUNT);
             panel_1.add(comboTransMode);
 
@@ -493,9 +494,13 @@ public class SelectSynthsizerDialog extends JMPDialog {
     public void updateLanguage() {
         super.updateLanguage();
 
+        WindowManager wm = JMPCore.getWindowManager();
         LanguageManager lm = JMPCore.getLanguageManager();
+        setFont(lm.getFont(chckbxStartupShowDialog.getFont()));
         setTitle(lm.getLanguageStr(LangID.MIDI_device_settings));
-        chckbxStartupShowDialog.setText(lm.getLanguageStr(LangID.Whether_to_display_every_time_at_startup));
+        wm.changeFont(chckbxStartupShowDialog, LangID.Whether_to_display_every_time_at_startup);
+        wm.changeFont(comboRecvMode);
+        wm.changeFont(comboTransMode);
     }
 
     @Override

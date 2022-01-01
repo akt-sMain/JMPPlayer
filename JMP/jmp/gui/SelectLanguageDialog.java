@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
+import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage;
 import jmp.lang.DefineLanguage.LangID;
@@ -59,7 +60,7 @@ public class SelectLanguageDialog extends JMPDialog {
         contentPanel.add(comboBoxLang);
         {
             closeButton = new JButton("Apply");
-            closeButton.setBounds(259, 57, 70, 21);
+            closeButton.setBounds(249, 57, 80, 21);
             contentPanel.add(closeButton);
             closeButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -94,7 +95,7 @@ public class SelectLanguageDialog extends JMPDialog {
                     continue;
                 }
 
-                comboBoxLang.addItem(JMPCore.getLanguageManager().getTitle(i));
+                comboBoxLang.addItem(JMPCore.getLanguageManager().getTitle(i, DefineLanguage.INDEX_LANG_ENGLISH));
             }
 
             int selected = JMPCore.getDataManager().getLanguage();
@@ -110,15 +111,18 @@ public class SelectLanguageDialog extends JMPDialog {
     }
 
     public void updateLanguage(int index) {
-        LanguageManager lm = JMPCore.getLanguageManager();
-        setTitle(lm.getLanguageStr(LangID.Language, index));
-        closeButton.setText(lm.getLanguageStr(LangID.Apply, index));
-        lblTest.setText(lm.getLanguageStr(LangID.Setting, index));
+    	WindowManager wm = JMPCore.getWindowManager();
+        wm.changeFont(closeButton, LangID.Apply, index);
+        wm.changeFont(lblTest, JMPCore.getLanguageManager().getTitle(index, index), index);
+        wm.changeFont(comboBoxLang, index);
     }
 
     @Override
     public void updateLanguage() {
         super.updateLanguage();
+        LanguageManager lm = JMPCore.getLanguageManager();
+        setTitle(lm.getLanguageStr(LangID.Language));
+        setFont(lm.getFont(getFont()));
         updateLanguage(JMPCore.getDataManager().getLanguage());
     }
 }

@@ -27,7 +27,9 @@ import function.Utility;
 import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
+import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
+import jmp.lang.DefineLanguage;
 import jmp.lang.DefineLanguage.LangID;
 
 public class LicenseReaderDialog extends JMPDialog implements WindowListener {
@@ -180,15 +182,17 @@ public class LicenseReaderDialog extends JMPDialog implements WindowListener {
     @Override
     public void updateLanguage() {
         super.updateLanguage();
+        WindowManager wm = JMPCore.getWindowManager();
         LanguageManager lm = JMPCore.getLanguageManager();
 
         setTitle(lm.getLanguageStr(LangID.License));
-        labelAccept.setText(lm.getLanguageStr(LangID.Above_conditions));
-        rdbtnReject.setText(lm.getLanguageStr(LangID.Reject));
-        rdbtnAccept.setText(lm.getLanguageStr(LangID.Accept));
-        // labelClipMes.setText(lm.getLanguageStr(LangID.Copied_to_clipboard));
-        labelClipMes.setText("");
-        buttonCopy.setText(lm.getLanguageStr(LangID.Original_copy));
+        setFont(lm.getFont(getFont()));
+        wm.changeFont(textAreaLisence, DefineLanguage.INDEX_LANG_JAPANESE);
+        wm.changeFont(labelAccept, LangID.Above_conditions);
+        wm.changeFont(rdbtnReject, LangID.Reject);
+        wm.changeFont(rdbtnAccept, LangID.Accept);
+        wm.changeFont(labelClipMes, "");
+        wm.changeFont(buttonCopy, LangID.Original_copy);
     }
 
     @Override

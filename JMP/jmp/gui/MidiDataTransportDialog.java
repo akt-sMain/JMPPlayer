@@ -23,6 +23,7 @@ import function.Utility;
 import jlib.midi.MidiByte;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
+import jmp.core.WindowManager;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 
@@ -370,9 +371,11 @@ public class MidiDataTransportDialog extends JMPDialog {
     public void updateLanguage() {
         super.updateLanguage();
 
+        WindowManager wm = JMPCore.getWindowManager();
         LanguageManager lm = JMPCore.getLanguageManager();
         setTitle(lm.getLanguageStr(LangID.MIDI_message_sender));
-        lblMidihex.setText(lm.getLanguageStr(LangID.MIDI_Data_byte));
-        sendButton.setText(lm.getLanguageStr(LangID.Send));
+        setFont(lm.getFont(getFont()));
+        wm.changeFont(lblMidihex, LangID.MIDI_Data_byte);
+        wm.changeFont(sendButton, LangID.Send);
     }
 }

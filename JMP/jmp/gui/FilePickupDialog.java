@@ -20,7 +20,7 @@ import javax.swing.border.EmptyBorder;
 import function.Utility;
 import jlib.gui.IJmpWindow;
 import jmp.core.JMPCore;
-import jmp.core.LanguageManager;
+import jmp.core.WindowManager;
 import jmp.gui.ui.IJMPComponentUI;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.util.JmpUtil;
@@ -178,11 +178,11 @@ public class FilePickupDialog extends JDialog implements IJMPComponentUI, IJmpWi
     @Override
     public void updateLanguage() {
         IJmpWindow.super.updateLanguage();
-        LanguageManager lm = JMPCore.getLanguageManager();
-        cancelButton.setText(lm.getLanguageStr(LangID.Close));
-        btnDelete.setText(lm.getLanguageStr(LangID.Remove));
-        playButton.setText(lm.getLanguageStr(LangID.Playback));
-        btnOpenDir.setText(lm.getLanguageStr(LangID.Open_with_Explorer));
+        WindowManager wm = JMPCore.getWindowManager();
+        wm.changeFont(cancelButton, LangID.Close);
+        wm.changeFont(btnDelete, LangID.Remove);
+        wm.changeFont(playButton, LangID.Playback);
+        wm.changeFont(btnOpenDir, LangID.Open_with_Explorer);
     }
 
     @Override

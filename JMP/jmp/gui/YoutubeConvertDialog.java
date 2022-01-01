@@ -28,6 +28,7 @@ import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SystemManager;
+import jmp.core.WindowManager;
 import jmp.gui.ui.DropFileCallbackHandler;
 import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.JMPDialog;
@@ -439,10 +440,12 @@ public class YoutubeConvertDialog extends JMPDialog {
     public void updateLanguage() {
         super.updateLanguage();
 
+        WindowManager wm = JMPCore.getWindowManager();
         LanguageManager lm = JMPCore.getLanguageManager();
-
-        convertButton.setText(lm.getLanguageStr(LangID.Convert));
-        btnExpButton.setText(lm.getLanguageStr(LangID.Open_with_Explorer));
+        setFont(lm.getFont(getFont()));
+        wm.changeFont(convertButton, LangID.Convert);
+        wm.changeFont(btnExpButton, LangID.Open_with_Explorer);
+        wm.changeFont(lblStatus);
     }
 
     @Override

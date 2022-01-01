@@ -13,6 +13,7 @@ import javax.swing.table.TableColumn;
 
 import function.Utility;
 import jmp.core.JMPCore;
+import jmp.core.LanguageManager;
 import jmp.core.PluginManager;
 import jmp.core.SoundManager;
 import jmp.gui.ui.JMPFrame;
@@ -235,7 +236,9 @@ public class PluginManagerDialog extends JMPFrame {
     @Override
     public void updateLanguage() {
         super.updateLanguage();
-        setTitle(JMPCore.getLanguageManager().getLanguageStr(LangID.Plugin_manager));
+        LanguageManager lm = JMPCore.getLanguageManager();
+        setTitle(lm.getLanguageStr(LangID.Plugin_manager));
+        setFont(lm.getFont(getFont()));
     }
 
     private void updateEnableControll() {

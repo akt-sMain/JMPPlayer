@@ -13,8 +13,8 @@ public class LanguageTable {
      * @param index
      * @return
      */
-    public static String getTitle(int langIndex, String charset) {
-        return getLanguageStr(DefineLanguage.titles[langIndex], langIndex, charset);
+    public static String getTitle(int index, int langIndex, String charset) {
+        return getLanguageStr(DefineLanguage.titles[index], langIndex, charset);
     }
 
     /**

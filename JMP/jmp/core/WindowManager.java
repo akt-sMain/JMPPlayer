@@ -5,6 +5,9 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.AbstractButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
@@ -410,4 +413,37 @@ public class WindowManager extends AbstractManager implements IWindowManager {
             }
         }
     }
+    
+    public void changeFont(Object c) {
+    	DataManager dm = JMPCore.getDataManager();
+    	changeFont(c, dm.getLanguage());
+    }
+    public void changeFont(Object c, int lang) {
+    	if (c instanceof JComponent) {
+	    	LanguageManager lm = JMPCore.getLanguageManager();
+	    	((JComponent)c).setFont(lm.getFont(((JComponent)c).getFont(), lang));
+    	}
+    }
+    public void changeFont(Object c, LangID id) {
+    	DataManager dm = JMPCore.getDataManager();
+    	changeFont(c, id, dm.getLanguage());
+    }
+    public void changeFont(Object c, LangID id, int lang) {
+    	LanguageManager lm = JMPCore.getLanguageManager();
+    	changeFont(c, lm.getLanguageStr(id, lang), lang);
+    }
+    public void changeFont(Object c, String str) {
+    	DataManager dm = JMPCore.getDataManager();
+    	changeFont(c, str, dm.getLanguage());
+    }
+    public void changeFont(Object c, String str, int lang) {
+    	if (c instanceof AbstractButton) {
+    		((AbstractButton)c).setText(str);
+    	}
+    	else if (c instanceof JLabel) {
+    		((JLabel)c).setText(str);
+    	}
+    	changeFont(c, lang);
+    }
+
 }
