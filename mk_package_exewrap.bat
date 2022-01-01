@@ -12,6 +12,7 @@ echo exewrapパッケージ作成
 move %EXE_SRC_PATH% %EXE_DST_PATH%
 
 call mk_package.bat
-java -jar lib/flib.jar -unzip jre.zip JMPPlayer
+REM java -jar lib/flib.jar -unzip jre.zip JMPPlayer
+call powershell -command "Expand-Archive -Force jre.zip JMPPlayer"
 
 pause
