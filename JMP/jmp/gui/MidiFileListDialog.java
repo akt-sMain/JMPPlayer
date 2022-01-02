@@ -941,7 +941,7 @@ public class MidiFileListDialog extends JMPFrame {
 
         super.updateLanguage();
         setTitle(lm.getLanguageStr(LangID.Playlist));
-        setFont(lm.getFont(getFont()));
+        setFont(wm.getCurrentFont(getFont()));
         wm.changeFont(midiFileList);
         wm.changeFont(labelContinuePlayback, LangID.Continuous_playback);
         wm.changeFont(btnDirectLoad, LangID.Playback);

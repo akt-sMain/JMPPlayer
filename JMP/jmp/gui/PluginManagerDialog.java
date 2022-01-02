@@ -16,6 +16,7 @@ import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.PluginManager;
 import jmp.core.SoundManager;
+import jmp.core.WindowManager;
 import jmp.gui.ui.JMPFrame;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.plugin.PluginWrapper;
@@ -237,8 +238,9 @@ public class PluginManagerDialog extends JMPFrame {
     public void updateLanguage() {
         super.updateLanguage();
         LanguageManager lm = JMPCore.getLanguageManager();
+        WindowManager wm = JMPCore.getWindowManager();
         setTitle(lm.getLanguageStr(LangID.Plugin_manager));
-        setFont(lm.getFont(getFont()));
+        setFont(wm.getCurrentFont(getFont()));
     }
 
     private void updateEnableControll() {

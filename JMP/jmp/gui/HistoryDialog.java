@@ -126,7 +126,7 @@ public class HistoryDialog extends JMPDialog implements IFileResultCallback{
         LanguageManager lm = JMPCore.getLanguageManager();
         WindowManager wm = JMPCore.getWindowManager();
         setTitle(lm.getLanguageStr(LangID.History));
-        setFont(lm.getFont(getFont()));
+        setFont(wm.getCurrentFont(getFont()));
         wm.changeFont(buttonClear, LangID.Clear);
         wm.changeFont(playButton, LangID.Playback);
         wm.changeFont(cancelButton, LangID.Close);

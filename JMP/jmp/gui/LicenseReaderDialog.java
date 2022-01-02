@@ -186,7 +186,7 @@ public class LicenseReaderDialog extends JMPDialog implements WindowListener {
         LanguageManager lm = JMPCore.getLanguageManager();
 
         setTitle(lm.getLanguageStr(LangID.License));
-        setFont(lm.getFont(getFont()));
+        setFont(wm.getCurrentFont(getFont()));
         wm.changeFont(textAreaLisence, DefineLanguage.INDEX_LANG_JAPANESE);
         wm.changeFont(labelAccept, LangID.Above_conditions);
         wm.changeFont(rdbtnReject, LangID.Reject);

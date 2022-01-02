@@ -137,7 +137,7 @@ public class VersionInfoDialog extends JMPDialog {
         WindowManager wm = JMPCore.getWindowManager();
 
         setTitle(lm.getLanguageStr(LangID.Version));
-        setFont(lm.getFont(getFont()));
+        setFont(wm.getCurrentFont(getFont()));
         wm.changeFont(btnLicense, LangID.License);
         wm.changeFont(btnClose, LangID.Close);
     }

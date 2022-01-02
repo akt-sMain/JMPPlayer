@@ -374,7 +374,7 @@ public class MidiDataTransportDialog extends JMPDialog {
         WindowManager wm = JMPCore.getWindowManager();
         LanguageManager lm = JMPCore.getLanguageManager();
         setTitle(lm.getLanguageStr(LangID.MIDI_message_sender));
-        setFont(lm.getFont(getFont()));
+        setFont(wm.getCurrentFont(getFont()));
         wm.changeFont(lblMidihex, LangID.MIDI_Data_byte);
         wm.changeFont(sendButton, LangID.Send);
     }

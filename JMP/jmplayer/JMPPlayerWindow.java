@@ -1443,15 +1443,15 @@ public class JMPPlayerWindow extends JFrame
 
 		playButton.setToolTipText(lm.getLanguageStr(LangID.Playback, DefineLanguage.INDEX_LANG_ENGLISH) + "/"
 				+ lm.getLanguageStr(LangID.Stop, DefineLanguage.INDEX_LANG_ENGLISH));
-		playButton.setFont(lm.getFont(playButton.getFont()));
+		playButton.setFont(wm.getCurrentFont(playButton.getFont()));
 		prevButton.setToolTipText(lm.getLanguageStr(LangID.Rewind, DefineLanguage.INDEX_LANG_ENGLISH));
-		prevButton.setFont(lm.getFont(prevButton.getFont()));
+		prevButton.setFont(wm.getCurrentFont(prevButton.getFont()));
 		nextButton.setToolTipText(lm.getLanguageStr(LangID.Fast_forward, DefineLanguage.INDEX_LANG_ENGLISH));
-		nextButton.setFont(lm.getFont(nextButton.getFont()));
+		nextButton.setFont(wm.getCurrentFont(nextButton.getFont()));
 		prev2Button.setToolTipText(lm.getLanguageStr(LangID.Previous, DefineLanguage.INDEX_LANG_ENGLISH));
-		prev2Button.setFont(lm.getFont(prev2Button.getFont()));
+		prev2Button.setFont(wm.getCurrentFont(prev2Button.getFont()));
 		next2Button.setToolTipText(lm.getLanguageStr(LangID.Next, DefineLanguage.INDEX_LANG_ENGLISH));
-		next2Button.setFont(lm.getFont(next2Button.getFont()));
+		next2Button.setFont(wm.getCurrentFont(next2Button.getFont()));
 
 		wm.changeFont(statusLabel);
 

@@ -485,7 +485,7 @@ public class MidiMessageMonitor extends JMPDialog implements IMidiEventListener 
         WindowManager wm = JMPCore.getWindowManager();
         LanguageManager lm = JMPCore.getLanguageManager();
         setTitle(lm.getLanguageStr(LangID.MIDI_message_monitor));
-        setFont(lm.getFont(getFont()));
+        setFont(wm.getCurrentFont(getFont()));
         wm.changeFont(btnClear, LangID.Clear);
     }
 }

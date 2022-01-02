@@ -496,7 +496,7 @@ public class SelectSynthsizerDialog extends JMPDialog {
 
         WindowManager wm = JMPCore.getWindowManager();
         LanguageManager lm = JMPCore.getLanguageManager();
-        setFont(lm.getFont(chckbxStartupShowDialog.getFont()));
+        setFont(wm.getCurrentFont(getFont()));
         setTitle(lm.getLanguageStr(LangID.MIDI_device_settings));
         wm.changeFont(chckbxStartupShowDialog, LangID.Whether_to_display_every_time_at_startup);
         wm.changeFont(comboRecvMode);

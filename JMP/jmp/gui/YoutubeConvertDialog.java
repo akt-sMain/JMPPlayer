@@ -450,10 +450,11 @@ public class YoutubeConvertDialog extends JMPDialog {
     @Override
     public void updateLanguage() {
         super.updateLanguage();
+        
+        lblStatus.setText("");
 
         WindowManager wm = JMPCore.getWindowManager();
-        LanguageManager lm = JMPCore.getLanguageManager();
-        setFont(lm.getFont(getFont()));
+        setFont(wm.getCurrentFont(getFont()));
         wm.changeFont(convertButton, LangID.Convert);
         wm.changeFont(btnExpButton, LangID.Open_with_Explorer);
         wm.changeFont(lblStatus);

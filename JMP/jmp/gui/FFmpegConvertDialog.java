@@ -460,7 +460,7 @@ public class FFmpegConvertDialog extends JMPDialog {
         LanguageManager lm = JMPCore.getLanguageManager();
 
         setTitle(lm.getLanguageStr(LangID.FFmpeg_converter));
-        setFont(lm.getFont(getFont()));
+        setFont(wm.getCurrentFont(getFont()));
         wm.changeFont(lblPath, LangID.FFmpeg_path);
         wm.changeFont(lblInputFile, LangID.Input_file);
         wm.changeFont(convertButton, LangID.Convert);
