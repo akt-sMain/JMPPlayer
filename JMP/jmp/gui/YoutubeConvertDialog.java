@@ -379,9 +379,9 @@ public class YoutubeConvertDialog extends JMPDialog {
 
             @Override
             public void begin() {
-                LanguageManager lm = JMPCore.getLanguageManager();
+                //LanguageManager lm = JMPCore.getLanguageManager();
                 lblStatus.setForeground(Color.LIGHT_GRAY);
-                lblStatus.setText(lm.getLanguageStr(LangID.Now_converting));
+                lblStatus.setText("loading...");
                 repaint();
 
                 // コントロール無効化
@@ -392,16 +392,27 @@ public class YoutubeConvertDialog extends JMPDialog {
                     int ite = 0;
 
                     String[] ites = {">-- ", "->- ", "--> "};
+                    boolean wasDownload = false;
 
                     @Override
                     public void callback() {
                         if (isConverting == false) {
                             return;
                         }
-                        lblStatus.setText(ites[ite] + dstExtTextField.getText());
-                        ite++;
-                        if (ite >= ites.length) {
-                            ite = 0;
+                        String ss = new String(SystemManager.SLineCache);
+                        if (ss.contains("[download]") == true) {
+                        	wasDownload = true;
+                        	lblStatus.setText(ss.substring(11));
+                        }
+                        else if (wasDownload == false) {
+                        	
+                        }
+                        else {
+	                        lblStatus.setText(ites[ite] + dstExtTextField.getText());
+	                        ite++;
+	                        if (ite >= ites.length) {
+	                            ite = 0;
+	                        }
                         }
                         repaint();
                     }

@@ -104,6 +104,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     // システムパス変数
     private String[] aPath = null;
+    
+    // コンソール出力の1行をキャッシュする 
+    public static String SLineCache = "";
 
     private DebugLogConsole console = null;
     public void showConsole() {
@@ -317,6 +320,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
             @Override
             public void println(String s) {
+            	SLineCache = new String(s);
                 JMPFlags.Log.cprintln(s, true);
             }
 
