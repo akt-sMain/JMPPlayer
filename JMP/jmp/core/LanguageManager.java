@@ -36,7 +36,9 @@ public class LanguageManager extends AbstractManager {
             put(DefineLanguage.INDEX_LANG_ENGLISH, CHARSET_DEFAULT);
             put(DefineLanguage.INDEX_LANG_JAPANESE, CHARSET_DEFAULT);
             put(DefineLanguage.INDEX_LANG_CHINESE, CHARSET_DEFAULT);
+            put(DefineLanguage.INDEX_LANG_TRADITIONALCHINESE, CHARSET_DEFAULT);
             put(DefineLanguage.INDEX_LANG_KOREAN, CHARSET_DEFAULT);
+            put(DefineLanguage.INDEX_LANG_RUSSIAN, CHARSET_DEFAULT);
         }
     };
     
@@ -48,7 +50,9 @@ public class LanguageManager extends AbstractManager {
             put(DefineLanguage.INDEX_LANG_ENGLISH, new FontRsrc("Open Sans"));
             put(DefineLanguage.INDEX_LANG_JAPANESE, new FontRsrc("Meiryo"));
             put(DefineLanguage.INDEX_LANG_CHINESE, new FontRsrc("Microsoft YaHei"));
+            put(DefineLanguage.INDEX_LANG_TRADITIONALCHINESE, new FontRsrc("Helvetica"));
             put(DefineLanguage.INDEX_LANG_KOREAN, new FontRsrc("Malgun Gothic"));
+            put(DefineLanguage.INDEX_LANG_RUSSIAN, new FontRsrc("Times New Roman"));
         }
     };
     /** Mac用フォントセット */
@@ -57,7 +61,9 @@ public class LanguageManager extends AbstractManager {
             put(DefineLanguage.INDEX_LANG_ENGLISH, new FontRsrc("Helvetica Neue"));
             put(DefineLanguage.INDEX_LANG_JAPANESE, new FontRsrc("Hiragino Sans"));
             put(DefineLanguage.INDEX_LANG_CHINESE, new FontRsrc("PingFang SC"));
+            put(DefineLanguage.INDEX_LANG_TRADITIONALCHINESE, new FontRsrc("SF Pro TC"));
             put(DefineLanguage.INDEX_LANG_KOREAN, new FontRsrc("Gulim"));
+            put(DefineLanguage.INDEX_LANG_RUSSIAN, new FontRsrc("Times"));
         }
     };
     /** 動作保障外OS用フォントセット */
@@ -66,7 +72,9 @@ public class LanguageManager extends AbstractManager {
             put(DefineLanguage.INDEX_LANG_ENGLISH, DEFAULT_FONT_RSRC);
             put(DefineLanguage.INDEX_LANG_JAPANESE, DEFAULT_FONT_RSRC);
             put(DefineLanguage.INDEX_LANG_CHINESE, DEFAULT_FONT_RSRC);
+            put(DefineLanguage.INDEX_LANG_TRADITIONALCHINESE, DEFAULT_FONT_RSRC);
             put(DefineLanguage.INDEX_LANG_KOREAN, DEFAULT_FONT_RSRC);
+            put(DefineLanguage.INDEX_LANG_RUSSIAN, DEFAULT_FONT_RSRC);
         }
     };
     

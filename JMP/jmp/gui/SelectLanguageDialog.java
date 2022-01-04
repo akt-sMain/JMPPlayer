@@ -114,7 +114,6 @@ public class SelectLanguageDialog extends JMPDialog {
     	WindowManager wm = JMPCore.getWindowManager();
         wm.changeFont(closeButton, LangID.Apply, index);
         wm.changeFont(lblTest, JMPCore.getLanguageManager().getTitle(index, index), index);
-        wm.changeFont(comboBoxLang, index);
     }
 
     @Override
@@ -124,6 +123,7 @@ public class SelectLanguageDialog extends JMPDialog {
         WindowManager wm = JMPCore.getWindowManager();
         setTitle(lm.getLanguageStr(LangID.Language));
         setFont(wm.getCurrentFont(getFont()));
+        wm.changeFont(comboBoxLang);
         updateLanguage(JMPCore.getDataManager().getLanguage());
     }
 }
