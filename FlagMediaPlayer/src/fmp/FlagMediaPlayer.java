@@ -4,15 +4,20 @@ import java.awt.Dimension;
 import java.io.File;
 
 import gui.FMPMainWindow;
+import gui.FlagMediaAccessor;
 import gui.FlagMediaPlayerWindow;
 import gui.MediaPanel;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 public class FlagMediaPlayer {
+	
+	// 終了位置に達するとフリーズするため、終了位置をごまかすことで暫定対応
+	public static final long TRACK_END_OFFSET = 500;
 
 	private static final long TIMEOUT_MILLS = 20 * 1000;
-	private static void waitForChangeState(MediaPlayer player, MediaPlayer.Status state, long maxSleepMills) {
+	private static boolean waitForChangeState(MediaPlayer player, MediaPlayer.Status state, long maxSleepMills) {
+		boolean res = true;
 		final long waitTime = 500;
 		long cnt = maxSleepMills / waitTime;
 		for (int i = 0; player.getStatus() != state; i++) {
@@ -22,9 +27,11 @@ public class FlagMediaPlayer {
             catch (Exception e) {
             }
             if (i > cnt) {
+            	res = false;
             	break;
             }
         }
+		return res;
 	}
 	
     public static FlagMediaPlayerWindow ActiveWindow = null;
@@ -35,7 +42,7 @@ public class FlagMediaPlayer {
     	openSingleWindow(new File("sample.mp4"), true);
     }
     
-    public static FlagMediaPlayerWindow openSingleWindow(File file, boolean playAfterExit) throws Exception {
+    public static FlagMediaAccessor openSingleWindow(File file, boolean playAfterExit) throws Exception {
         MediaPanel panel = new MediaPanel(file, null);
 
         FlagMediaPlayerWindow win = new FlagMediaPlayerWindow(panel);
@@ -44,7 +51,23 @@ public class FlagMediaPlayer {
         MediaPlayer player = panel.getPlayer();
 
         // 読み込み待ち
-        waitForChangeState(player, MediaPlayer.Status.READY, TIMEOUT_MILLS);
+        if (waitForChangeState(player, MediaPlayer.Status.READY, TIMEOUT_MILLS) == false) {
+        	// 失敗
+        	win.exitResource();
+        	return null;
+        }
+        
+        player.setOnEndOfMedia(new Runnable() {
+			
+ 			@Override
+ 			public void run() {
+ 				// 終了位置までシークして一時停止状態にする
+ 				MediaPlayer player = win.getMediaPanel().getPlayer();
+ 				long endSeek = (long) player.getTotalDuration().toMillis();
+ 				win.getMediaPanel().getPlayer().seek(javafx.util.Duration.millis(endSeek - TRACK_END_OFFSET));
+ 				player.pause();
+ 			}
+ 		});
 
         // 動画サイズを取得
         int videoW = media.getWidth();
@@ -79,7 +102,9 @@ public class FlagMediaPlayer {
 	        
 	        System.exit(0);
         }
-        return win;
+        
+        FlagMediaAccessor acc = new FlagMediaAccessor(win);
+        return acc;
     }
     public static void openMainWindow() {
         ActiveWindow = null;

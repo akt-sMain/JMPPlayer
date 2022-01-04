@@ -4,15 +4,16 @@ import java.io.File;
 
 import fmp.FlagMediaPlayer;
 import function.Utility;
-import gui.FlagMediaPlayerWindow;
-import javafx.scene.media.MediaPlayer;
+import gui.FlagMediaAccessor;
+import gui.FlagMediaAccessor.PlayerStatus;
 import jlib.player.Player;
 
 public class MoviePlayer extends Player {
 	
 	private static final long TIMEOUT_MILLS = 15 * 1000;
 
-	FlagMediaPlayerWindow win;
+	//FlagMediaPlayerWindow win;
+	private FlagMediaAccessor mediaAccessor;
 	
 	public MoviePlayer() {
 		super();
@@ -23,30 +24,14 @@ public class MoviePlayer extends Player {
 		if (isValid() == false) {
 			return;
 		}
-		if (win.isVisible() == false) {
-			if(win.getMediaPanel().isAudioOnly() == false) {
-				win.setVisible(true);
+		if (mediaAccessor.isVisibleView() == false) {
+			if(mediaAccessor.isAudioOnly() == false) {
+				mediaAccessor.setVisibleView(true);
 			}
 		}
 		if (isRunnable() == false) {
-			win.getMediaPanel().getPlayer().play();
-			waitForChangeState(MediaPlayer.Status.PLAYING, TIMEOUT_MILLS);
+			mediaAccessor.play(TIMEOUT_MILLS);
 		}
-	}
-	
-	private void waitForChangeState(MediaPlayer.Status state, long maxSleepMills) {
-		final long waitTime = 500;
-		long cnt = maxSleepMills / waitTime;
-		for (int i = 0; win.getMediaPanel().getPlayer().getStatus() != state; i++) {
-            try {
-                Thread.sleep(waitTime);
-            }
-            catch (Exception e) {
-            }
-            if (i > cnt) {
-            	break;
-            }
-        }
 	}
 
 	@Override
@@ -54,8 +39,7 @@ public class MoviePlayer extends Player {
 		if (isValid() == false) {
 			return;
 		}
-		win.getMediaPanel().getPlayer().pause();
-		waitForChangeState(MediaPlayer.Status.PAUSED, TIMEOUT_MILLS);
+		mediaAccessor.pause(TIMEOUT_MILLS);
 	}
 
 	@Override
@@ -63,7 +47,10 @@ public class MoviePlayer extends Player {
 		if (isValid() == false) {
 			return false;
 		}
-		return win.getMediaPanel().getPlayer().getStatus() == MediaPlayer.Status.PLAYING;
+		if (mediaAccessor.getPlayerStatus() == PlayerStatus.PLAYING) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -71,7 +58,7 @@ public class MoviePlayer extends Player {
 		if (isValid() == false) {
 			return;
 		}
-		win.getMediaPanel().getPlayer().seek(javafx.util.Duration.millis(pos));
+		mediaAccessor.seek(pos);
 	}
 
 	@Override
@@ -79,9 +66,7 @@ public class MoviePlayer extends Player {
 		if (isValid() == false) {
 			return 0;
 		}
-        MediaPlayer player = win.getMediaPanel().getPlayer();
-        long curTime = (long) player.getCurrentTime().toMillis();
-		return curTime;
+		return mediaAccessor.getCurrentMills();
 	}
 
 	@Override
@@ -89,19 +74,15 @@ public class MoviePlayer extends Player {
 		if (isValid() == false) {
 			return 0;
 		}
-		MediaPlayer player = win.getMediaPanel().getPlayer();
-		return (long) player.getTotalDuration().toMillis();
+		return mediaAccessor.getTotalMills();
 	}
 
 	@Override
 	public boolean isValid() {
-		if (win == null) {
+		if (mediaAccessor == null) {
 			return false;
 		}
-		if (win.getMediaPanel() == null) {
-			return false;
-		}
-		return true;
+		return mediaAccessor.isValid();
 	}
 
 	@Override
@@ -109,9 +90,7 @@ public class MoviePlayer extends Player {
 		if (isValid() == false) {
 			return 0;
 		}
-		MediaPlayer player = win.getMediaPanel().getPlayer();
-        int curTime = (int) player.getCurrentTime().toSeconds();
-		return curTime;
+		return mediaAccessor.getCurrentSeconds();
 	}
 
 	@Override
@@ -119,8 +98,7 @@ public class MoviePlayer extends Player {
 		if (isValid() == false) {
 			return 0;
 		}
-		MediaPlayer player = win.getMediaPanel().getPlayer();
-		return (int) player.getTotalDuration().toSeconds();
+		return mediaAccessor.getTotalSeconds();
 	}
 
 	@Override
@@ -131,29 +109,31 @@ public class MoviePlayer extends Player {
 	public float getVolume() {
 		return 0;
 	}
+	
+	private void closeResource() {
+		if (mediaAccessor != null) {
+			mediaAccessor.closeResource(5000);
+		}
+	}
 
 	@Override
 	public boolean loadFile(File file) throws Exception {
-		if (win != null) {
+		if (isValid() == true) {
 			// 開いていたビューを破棄する
-			win.setVisible(false);
-			win.getMediaPanel().getPlayer().stop();
-			waitForChangeState(MediaPlayer.Status.STOPPED, TIMEOUT_MILLS);
-			win.exitResource();
+			closeResource();
 		}
 		// 新しく作成
-		win = FlagMediaPlayer.openSingleWindow(file, false);
-		if (win == null) {
+		mediaAccessor = FlagMediaPlayer.openSingleWindow(file, false);
+		if (mediaAccessor == null) {
 			return false;
 		}
 		
-		win.setTitle("Movie - " + Utility.getFileNameAndExtension(file));
+		mediaAccessor.setTitle("Movie - " + Utility.getFileNameAndExtension(file));
 		
 		// 動画ファイルは画面表示する
-		if(win.getMediaPanel().isAudioOnly() == false) {
+		if(mediaAccessor.isAudioOnly() == false) {
 			// 画面中心に表示
-	        win.setLocationRelativeTo(null);
-	        win.setVisible(true);
+			mediaAccessor.setVisibleView(true, true);
 		}
 		return true;
 	}
@@ -165,16 +145,13 @@ public class MoviePlayer extends Player {
 	
 	@Override
 	public boolean close() {
-		changingPlayer();
+		closeResource();
 		return super.close();
 	}
 	
 	@Override
 	public void changingPlayer() {
-		win.setVisible(false);
-		win.getMediaPanel().getPlayer().stop();
-		waitForChangeState(MediaPlayer.Status.STOPPED, 15000);
-		win.exitResource();
+		closeResource();
 		super.changingPlayer();
 	}
 

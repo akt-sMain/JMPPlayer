@@ -56,6 +56,9 @@ public class FlagMediaPlayerWindow extends JFrame {
     }
     
     public void exitResource() {
+    	if (mp == null) {
+    		return;
+    	}
     	mp.exit();
     }
 

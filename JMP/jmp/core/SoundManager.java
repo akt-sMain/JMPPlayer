@@ -124,6 +124,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_WAV));
         String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
         String[] exMML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MML));
+        String[] exMUSIC = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSIC));
 
         // midi
         SMidiPlayer = new MidiPlayer();
@@ -148,7 +149,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         
         // movie
         SMoviePlayer = new MoviePlayer();
-        SMoviePlayer.setSupportExtentions("mp4", "mp3");
+        SMoviePlayer.setSupportExtentions(exMUSIC);
         PlayerAccessor.register(SMoviePlayer);
 
         // ffmpeg

@@ -1283,14 +1283,17 @@ public class JMPPlayerWindow extends JFrame
 				.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MIDI));
 		String[] exWAV = JmpUtil
 				.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_WAV));
-		String[] exMUSICXML = JmpUtil
-				.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
+//		String[] exMUSICXML = JmpUtil
+//				.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
+		String[] exMUSIC = JmpUtil
+				.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSIC));
 
 		// ファイルフィルター
 		JFileChooser filechooser = new JFileChooser();
 		filechooser.addChoosableFileFilter(JmpUtil.createFileFilter("MIDI Files", exMIDI));
 		filechooser.addChoosableFileFilter(JmpUtil.createFileFilter("WAV Files", exWAV));
-		filechooser.addChoosableFileFilter(JmpUtil.createFileFilter("MusicXML Files", exMUSICXML));
+		//filechooser.addChoosableFileFilter(JmpUtil.createFileFilter("MusicXML Files", exMUSICXML));
+		filechooser.addChoosableFileFilter(JmpUtil.createFileFilter("Music Files", exMUSIC));
 		if (wm.isValidBuiltinSynthFrame() == true) {
 			filechooser.addChoosableFileFilter(
 					JmpUtil.createFileFilter("Built-in Synth Config Files", SystemManager.JMSYNTH_CONFIG_EX));
