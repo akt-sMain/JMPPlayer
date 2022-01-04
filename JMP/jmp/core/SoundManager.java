@@ -44,6 +44,7 @@ import jmp.midi.MidiUnit;
 import jmp.midi.toolkit.MidiToolkitManager;
 import jmp.player.FFmpegPlayer;
 import jmp.player.MidiPlayer;
+import jmp.player.MoviePlayer;
 import jmp.player.MusicMacroPlayer;
 import jmp.player.MusicXmlPlayer;
 import jmp.player.PlayerAccessor;
@@ -79,6 +80,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     public static MusicXmlPlayer SMusicXmlPlayer = null;
     public static MusicMacroPlayer SMusicMacloPlayer = null;
     public static FFmpegPlayer SFFmpegPlayer = null;
+    public static MoviePlayer SMoviePlayer = null;
 
     // 固有変数
     private int[] transpose = new int[16];
@@ -143,6 +145,11 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         SMusicMacloPlayer = new MusicMacroPlayer();
         SMusicMacloPlayer.setSupportExtentions(exMML);
         PlayerAccessor.register(SMusicMacloPlayer);
+        
+        // movie
+        SMoviePlayer = new MoviePlayer();
+        SMoviePlayer.setSupportExtentions("mp4", "mp3");
+        PlayerAccessor.register(SMoviePlayer);
 
         // ffmpeg
         SFFmpegPlayer = new FFmpegPlayer();
@@ -727,6 +734,9 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
         try {
             changePlayer(file);
+            if (tmpPlayer != PlayerAccessor.getCurrent()) {
+            	tmpPlayer.changingPlayer();
+            }
 
             if (PlayerAccessor.getCurrent().loadFile(file) == false) {
                 loadResult = false;
@@ -747,6 +757,9 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
         result.status = loadResult;
         if (result.status == false) {
+            /* ファイルオープンに例外が発生した場合、プレーヤーを切り替える */
+            changeMidiPlayer();
+            JMPCore.getWindowManager().getMainWindow().clearStatusMessage();
             LanguageManager lm = JMPCore.getLanguageManager();
             result.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_5);
         }

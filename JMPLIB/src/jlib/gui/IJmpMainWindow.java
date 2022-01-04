@@ -16,6 +16,11 @@ public interface IJmpMainWindow extends IJmpWindow {
      *            ステータス
      */
     abstract void setStatusText(String text, boolean status);
+    
+    /**
+     * ステータスメッセージ初期化
+     */
+    abstract void clearStatusMessage();
 
     /**
      * 更新処理

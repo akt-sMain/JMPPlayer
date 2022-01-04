@@ -1583,4 +1583,9 @@ public class JMPPlayerWindow extends JFrame
 	public void repaintWindow() {
 		repaint();
 	}
+
+	@Override
+	public void clearStatusMessage() {
+		setInitializeStatusText();
+	}
 }
