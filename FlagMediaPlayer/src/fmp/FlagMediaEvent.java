@@ -20,8 +20,12 @@ public abstract class FlagMediaEvent {
     }
 
     abstract public boolean isExecute(MediaPlayer mp);
+
     abstract public void execute(MediaPlayer mp);
+
     abstract public boolean isTrriger(MediaPlayer mp);
+
     abstract public void trrigerEvent(MediaPlayer mp);
+
     abstract public void onMouseEvent(MouseEvent e);
 }

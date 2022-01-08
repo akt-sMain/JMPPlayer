@@ -82,6 +82,7 @@ public class WindowDatabase {
     public void clearPluginMenuItem() {
         pluginMenuItems.clear();
     }
+
     public void addPluginMenuItem(String name, PluginWrapper plugin) {
         for (int i = pluginMenuItems.size() - 1; i >= 0; i--) {
             JMenuItem item = pluginMenuItems.get(i);

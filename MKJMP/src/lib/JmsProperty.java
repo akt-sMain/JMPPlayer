@@ -88,14 +88,12 @@ public class JmsProperty {
             }
 
             if (isData == true) {
-                String dataPath = Utility.stringsCombin(dataDir, Platform.getSeparator(),
-                        Utility.getFileNameNotExtension(pluginFile));
+                String dataPath = Utility.stringsCombin(dataDir, Platform.getSeparator(), Utility.getFileNameNotExtension(pluginFile));
 
                 dataFile = new File(dataPath);
             }
             if (isRes == true) {
-                String resPath = Utility.stringsCombin(resDir, Platform.getSeparator(),
-                        Utility.getFileNameNotExtension(pluginFile));
+                String resPath = Utility.stringsCombin(resDir, Platform.getSeparator(), Utility.getFileNameNotExtension(pluginFile));
 
                 resFile = new File(resPath);
             }

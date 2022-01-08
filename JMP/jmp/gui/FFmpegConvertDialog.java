@@ -407,7 +407,7 @@ public class FFmpegConvertDialog extends JMPDialog {
 
                     int ite = 0;
 
-                    String[] ites = {">-- ", "->- ", "--> "};
+                    String[] ites = { ">-- ", "->- ", "--> " };
 
                     @Override
                     public void callback() {
@@ -468,7 +468,7 @@ public class FFmpegConvertDialog extends JMPDialog {
         wm.changeFont(chckbxToPlay, LangID.Play_after_convert);
         wm.changeFont(chckbxLeave, LangID.Leave_output_file);
         wm.changeFont(checkBoxUsePlayer, LangID.Use_FFmpeg_player);
-        
+
     }
 
     @Override

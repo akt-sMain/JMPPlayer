@@ -67,7 +67,7 @@ public class JMSoftSynthesizer implements ISynthController {
 
         // チャンネル生成
         channels = new SoundSourceChannel[CHANNEL_TYPE_LIST.length];
-        for (int ch=0; ch<channels.length; ch++) {
+        for (int ch = 0; ch < channels.length; ch++) {
             channels[ch] = createChannel(ch, polyphony);
         }
 

@@ -16,6 +16,7 @@ public class TransmitterWrapper implements Transmitter {
 
     public TransmitterWrapper() {
     }
+
     public TransmitterWrapper(Transmitter abstractTransmitter) {
         this.abstractTransmitter = abstractTransmitter;
     }

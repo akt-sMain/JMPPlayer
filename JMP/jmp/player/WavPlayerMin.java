@@ -40,7 +40,7 @@ public class WavPlayerMin extends Player {
             this.ais = AudioSystem.getAudioInputStream(file);
             af = ais.getFormat();
             dataLine = new DataLine.Info(SourceDataLine.class, af);
-            sourceDataLine = (SourceDataLine)AudioSystem.getLine(dataLine);
+            sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLine);
 
             sourceDataLine.open();
             sourceDataLine.start();
@@ -50,7 +50,8 @@ public class WavPlayerMin extends Player {
         public void run() {
             byte[] data = new byte[sourceDataLine.getBufferSize()];
 
-            //ais.skip((int)af.getSampleRate() * af.getSampleSizeInBits() * af.getChannels() / 8 * 3);
+            // ais.skip((int)af.getSampleRate() * af.getSampleSizeInBits() *
+            // af.getChannels() / 8 * 3);
             try {
                 ais.skip(0);
                 frameOffset = 0;
@@ -73,7 +74,7 @@ public class WavPlayerMin extends Player {
 
                             this.ais = AudioSystem.getAudioInputStream(file);
                             dataLine = new DataLine.Info(SourceDataLine.class, af);
-                            sourceDataLine = (SourceDataLine)AudioSystem.getLine(dataLine);
+                            sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLine);
                             thread.ais.skip(skipValue);
 
                             sourceDataLine.open();
@@ -149,8 +150,8 @@ public class WavPlayerMin extends Player {
         backupState = thread.state;
         thread.state = PlayThread.RESET;
 
-        int rate = ((int)thread.af.getSampleRate() * thread.af.getSampleSizeInBits() * thread.af.getChannels() / 8);
-        int sec = (int)(pos / thread.af.getFrameRate());
+        int rate = ((int) thread.af.getSampleRate() * thread.af.getSampleSizeInBits() * thread.af.getChannels() / 8);
+        int sec = (int) (pos / thread.af.getFrameRate());
         skipValue = rate * sec;
         frameOffset = pos;
     }

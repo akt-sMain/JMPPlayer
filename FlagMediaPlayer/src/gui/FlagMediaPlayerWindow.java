@@ -12,7 +12,7 @@ import fmp.FlagMediaPlayer;
 
 public class FlagMediaPlayerWindow extends JFrame {
 
-	private boolean singleMode;
+    private boolean singleMode;
     private MediaPanel mp = null;
     private JPanel contentPane;
 
@@ -20,13 +20,14 @@ public class FlagMediaPlayerWindow extends JFrame {
      * Create the frame.
      */
     public FlagMediaPlayerWindow(MediaPanel mp) {
-    	init(mp, false);
-    	
+        init(mp, false);
+
     }
+
     public FlagMediaPlayerWindow(MediaPanel mp, boolean single) {
         init(mp, single);
     }
-    
+
     private void init(MediaPanel mp, boolean single) {
         addWindowListener(new WindowAdapter() {
             @Override
@@ -54,12 +55,12 @@ public class FlagMediaPlayerWindow extends JFrame {
             FlagMediaPlayer.ActiveWindow = null;
         }
     }
-    
+
     public void exitResource() {
-    	if (mp == null) {
-    		return;
-    	}
-    	mp.exit();
+        if (mp == null) {
+            return;
+        }
+        mp.exit();
     }
 
     public MediaPanel getMediaPanel() {

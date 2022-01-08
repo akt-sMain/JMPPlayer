@@ -5,8 +5,9 @@ package jmsynth;
  * <br>
  * This source code was created with reference to the following design.<br>
  * <br>
- * <br> Copyright© 2018 nojaja
- * <br> https://github.com/nojaja/NES-styleSoftSynth
+ * <br>
+ * Copyright© 2018 nojaja <br>
+ * https://github.com/nojaja/NES-styleSoftSynth
  *
  * @author akkut
  *

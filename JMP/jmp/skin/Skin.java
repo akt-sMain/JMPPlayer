@@ -45,6 +45,7 @@ public class Skin {
         readLocalConfig();
         load();
     }
+
     public Skin() {
         globalConfig = null;
         localConfig = new SkinLocalConfig();

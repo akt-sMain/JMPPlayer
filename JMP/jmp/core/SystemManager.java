@@ -104,32 +104,37 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     // システムパス変数
     private String[] aPath = null;
-    
-    // コンソール出力の1行をキャッシュする 
+
+    // コンソール出力の1行をキャッシュする
     public static String SLineCache = "";
 
     private DebugLogConsole console = null;
+
     public void showConsole() {
         if (console != null) {
             console.setVisible(true);
         }
     }
+
     public void showConsoleForClear() {
         if (console != null) {
             console.clearText();
             console.setVisible(true);
         }
     }
+
     public void closeConsole() {
         if (console != null) {
             console.setVisible(false);
         }
     }
+
     public void consoleOutln(String s) {
         if (console != null) {
             console.println(s);
         }
     }
+
     public void consoleOut(String s) {
         if (console != null) {
             console.print(s);
@@ -245,22 +250,38 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_14], "#ffff29", true);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_15], "#bbff29", true);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_16], "#f98608", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_1], "#00ff00", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_2], "#008000", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_3], "#808000", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_4], "#ffff00", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_5], "#000080", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_6], "#0000ff", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_7], "#008080", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_8], "#00ffff", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_9], "#ff0000", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_10], "#800000", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_11], "#800080", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_12], "#ff00ff", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_13], "#ffb6c1", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_14], "#ffa07a", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_15], "#20b2aa", true);
-//        cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_16], "#deb887", true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_1], "#00ff00",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_2], "#008000",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_3], "#808000",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_4], "#ffff00",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_5], "#000080",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_6], "#0000ff",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_7], "#008080",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_8], "#00ffff",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_9], "#ff0000",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_10], "#800000",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_11], "#800080",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_12], "#ff00ff",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_13], "#ffb6c1",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_14], "#ffa07a",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_15], "#20b2aa",
+        // true);
+        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_16], "#deb887",
+        // true);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_FFMPEG_OUTPUT], "output");
         cReg.add(cRegKeys[COMMON_REGKEY_NO_FFMPEG_WIN], "ffmpeg", true);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_FFMPEG_MAC], "/Usr/local/bin/ffmpeg", true);
@@ -320,7 +341,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
             @Override
             public void println(String s) {
-            	SLineCache = new String(s);
+                SLineCache = new String(s);
                 JMPFlags.Log.cprintln(s, true);
             }
 
@@ -330,7 +351,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             }
         };
         youtubeDlWrapper.setConsoleOut(cOutCb);
-        ((ProcessingFFmpegWrapper)ffmpegWrapper).setConsoleOut(cOutCb);
+        ((ProcessingFFmpegWrapper) ffmpegWrapper).setConsoleOut(cOutCb);
 
         if (JMPLoader.UsePluginDirectory == true) {
             File pluginsDir = new File(aPath[PATH_PLUGINS_DIR]);
@@ -497,6 +518,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     public boolean setCommonRegisterValueAdmin(int keyNo, String value) {
         return setCommonRegisterValueAdmin(getCommonRegisterKeyName(keyNo), value);
     }
+
     public boolean setCommonRegisterValueAdmin(String key, String value) {
         if (cReg == null) {
             return false;
@@ -525,14 +547,17 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         String s = getCommonRegisterValue(key);
         return JmpUtil.toFloat(s, def);
     }
+
     public boolean getCommonRegisterValueToBoolean(String key, boolean def) {
         String s = getCommonRegisterValue(key);
         return JmpUtil.toBoolean(s, def);
     }
+
     public int getCommonRegisterValueToInt(String key, int def) {
         String s = getCommonRegisterValue(key);
         return JmpUtil.toInt(s, def);
     }
+
     public String getCommonRegisterValue(String key) {
         if (cReg == null) {
             return "";
@@ -603,7 +628,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         JMPFlags.Log.cprintln("###");
         JMPFlags.Log.cprintln("## Directory list");
         JMPFlags.Log.cprintln("##");
-        for (int i=0; i<NUM_OF_PATH; i++) {
+        for (int i = 0; i < NUM_OF_PATH; i++) {
             JMPFlags.Log.cprintln("[" + i + "]" + aPath[i]);
         }
         JMPFlags.Log.cprintln("##");
@@ -828,6 +853,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
     // 新しいJMSynthインスタンスを取得する
     MidiInterface miface;
+
     public MidiInterface newBuiltinSynthInstance() {
         miface = JMSynthEngine.getMidiInterface(true);
 
@@ -846,7 +872,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     public void loadJMSynthConfig(File file) {
         if (JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT).equals(JMSYNTH_LIB_NAME) == true) {
             if (miface != null) {
-                JMSynthFile.loadSynthConfig(file, (JMSoftSynthesizer)miface.getSynthController());
+                JMSynthFile.loadSynthConfig(file, (JMSoftSynthesizer) miface.getSynthController());
             }
         }
     }

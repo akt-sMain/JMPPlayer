@@ -19,7 +19,7 @@ public class JMPCore {
     public static final String LIBRALY_VERSION = JMPLIB.BUILD_VERSION;
 
     /** スタンドアロンモードのプラグイン */
-//    private static IPlugin StandAlonePlugin = null;
+    // private static IPlugin StandAlonePlugin = null;
     private static PluginWrapper StandAlonePluginWrapper = null;
 
     public static boolean initFunc() {
@@ -80,7 +80,7 @@ public class JMPCore {
     /** 通知メソッド作成 */
     private static void createNotifyFunc(ICallbackFunction func) {
         if (JMPFlags.EnableNotifyFlag == false) {
-            //func.callback();
+            // func.callback();
             return;
         }
         getTaskManager().queuing(TaskID.SEQUENCE, func);

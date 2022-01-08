@@ -86,7 +86,7 @@ public class Tone {
     }
 
     public void setOverallLevel() {
-        this.overallLevel = (int) (((double)velocity / 8.0) * ((double)expression / 127.0) * (double)envelopeOffset);
+        this.overallLevel = (int) (((double) velocity / 8.0) * ((double) expression / 127.0) * (double) envelopeOffset);
 
     }
 
@@ -138,7 +138,7 @@ public class Tone {
 
     public void setPitch(float pitch) {
         this.pitch = pitch;
-        setFrequency(note2freq((double)((float)note + pitch + modulationValue)));
+        setFrequency(note2freq((double) ((float) note + pitch + modulationValue)));
     }
 
     public float getVibratoDepth() {
@@ -170,6 +170,7 @@ public class Tone {
         this.startMills = startMills;
         setEnvelopeOffset(0.0);
     }
+
     public void setStartMills() {
         setStartMills(System.currentTimeMillis());
     }
@@ -184,7 +185,7 @@ public class Tone {
 
     public void setModulationValue(float modulationValue) {
         this.modulationValue = modulationValue;
-        setPitch(getPitch()); //ピッチの再計算
+        setPitch(getPitch()); // ピッチの再計算
     }
 
 }

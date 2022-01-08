@@ -10,7 +10,7 @@ public class BuiltinSynthSetupDialog extends WaveViewerFrame implements IJmpWind
      */
     public BuiltinSynthSetupDialog(MidiInterface iface) {
         super(iface);
-        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     @Override

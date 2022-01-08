@@ -54,6 +54,7 @@ public interface IMidiUnit {
 
     /**
      * 総秒数取得(usec)
+     * 
      * @return
      */
     abstract long getMicrosecondLength();

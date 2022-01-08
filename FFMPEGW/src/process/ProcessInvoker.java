@@ -175,7 +175,7 @@ public class ProcessInvoker {
         pPrintln();
 
         ProcessBuilder pb = new ProcessBuilder();
-        //pb.inheritIO();
+        // pb.inheritIO();
 
         pb.command(cmd);
         Process p = pb.start();

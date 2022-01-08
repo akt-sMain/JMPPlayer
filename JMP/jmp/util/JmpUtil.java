@@ -89,6 +89,7 @@ public class JmpUtil {
     public static boolean toBoolean(String str) {
         return toBoolean(str, false);
     }
+
     public static boolean toBoolean(String str, boolean def) {
         String tStr = str.trim();
         if (tStr.equalsIgnoreCase("on") == true) {
@@ -105,6 +106,7 @@ public class JmpUtil {
     public static int toInt(String str) {
         return toInt(str, 0);
     }
+
     public static int toInt(String str, int def) {
         return Utility.tryParseInt(str, def);
     }
@@ -112,6 +114,7 @@ public class JmpUtil {
     public static long toLong(String str) {
         return toLong(str, 0L);
     }
+
     public static long toLong(String str, long def) {
         return Utility.tryParseLong(str, def);
     }
@@ -119,6 +122,7 @@ public class JmpUtil {
     public static float toFloat(String str) {
         return toFloat(str, 0.0f);
     }
+
     public static float toFloat(String str, float def) {
         return Utility.tryParseFloat(str, def);
     }
@@ -126,6 +130,7 @@ public class JmpUtil {
     public static Double toDouble(String str) {
         return toDouble(str, 0.0);
     }
+
     public static Double toDouble(String str, double def) {
         return Utility.tryParseDouble(str, def);
     }
@@ -133,6 +138,7 @@ public class JmpUtil {
     public static List<String> readTextFile(File file) throws IOException {
         return readTextFile(file.getPath());
     }
+
     public static List<String> readTextFile(String path) throws IOException {
         List<String> textContents = Utility.getTextFileContents(path);
         return textContents;
@@ -141,9 +147,11 @@ public class JmpUtil {
     public static void writeTextFile(String path, String textContents) throws FileNotFoundException, UnsupportedEncodingException {
         Utility.outputTextFile(path, textContents);
     }
+
     public static void writeTextFile(File file, List<String> textContents) throws FileNotFoundException, UnsupportedEncodingException {
         writeTextFile(file.getPath(), textContents);
     }
+
     public static void writeTextFile(String path, List<String> textContents) throws FileNotFoundException, UnsupportedEncodingException {
         Utility.outputTextFile(path, textContents);
     }
@@ -151,6 +159,7 @@ public class JmpUtil {
     public static boolean isExsistFile(String path) {
         return Utility.isExsistFile(path);
     }
+
     public static boolean isExsistFile(File file) {
         return Utility.isExsistFile(file);
     }
@@ -162,6 +171,7 @@ public class JmpUtil {
     public static boolean checkExtension(File f, String ex) {
         return Utility.checkExtension(f, ex);
     }
+
     public static boolean checkExtension(String path, String ex) {
         return Utility.checkExtension(path, ex);
     }
@@ -173,6 +183,7 @@ public class JmpUtil {
     public static String getFileNameNotExtension(String path) {
         return Utility.getFileNameNotExtension(path);
     }
+
     public static String getFileNameNotExtension(File f) {
         return Utility.getFileNameNotExtension(f);
     }
@@ -180,6 +191,7 @@ public class JmpUtil {
     public static String getFileNameAndExtension(File f) {
         return Utility.getFileNameAndExtension(f);
     }
+
     public static String getFileNameAndExtension(String path) {
         return Utility.getFileNameAndExtension(path);
     }
@@ -191,6 +203,7 @@ public class JmpUtil {
     public static String getExtension(File f) {
         return Utility.getExtension(f);
     }
+
     public static String getExtension(String path) {
         return Utility.getExtension(path);
     }

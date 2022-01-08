@@ -18,18 +18,17 @@ public class LanguageManager extends AbstractManager {
     public static final String CHARSET_UTF8 = "UTF-8";
     public static final String CHARSET_UTF16 = "UTF-16";
     public static final String CHARSET_SJIS = "SJIS";
-    public static final String CHARSET_EUCKR = "EUC_KR";//韓国語
-    
+    public static final String CHARSET_EUCKR = "EUC_KR";// 韓国語
+
     /** デフォルト文字コード */
     public static final String CHARSET_DEFAULT = CHARSET_UTF16;
-    
+
     /** 正式版に追加しない言語設定 */
-    private static int[] DisableLanguageList = {
-    };
+    private static int[] DisableLanguageList = {};
 
     /**
      * 変換する文字コードリスト(該当しないものはデフォルト文字コードにする) <br>
-     *  ※ Javaの仕様上常にUTF-16が良い？
+     * ※ Javaの仕様上常にUTF-16が良い？
      */
     private static HashMap<Integer, String> chasets = new HashMap<Integer, String>() {
         {
@@ -41,9 +40,9 @@ public class LanguageManager extends AbstractManager {
             put(DefineLanguage.INDEX_LANG_RUSSIAN, CHARSET_DEFAULT);
         }
     };
-    
+
     private static FontRsrc DEFAULT_FONT_RSRC = new FontRsrc(WindowManager.DEFAULT_FONT);
-    
+
     /** Windows用フォントセット */
     private static HashMap<Integer, FontRsrc> SFontsForWindows = new HashMap<Integer, FontRsrc>() {
         {
@@ -77,7 +76,7 @@ public class LanguageManager extends AbstractManager {
             put(DefineLanguage.INDEX_LANG_RUSSIAN, DEFAULT_FONT_RSRC);
         }
     };
-    
+
     private HashMap<Integer, FontRsrc> fonts = null;
 
     /**
@@ -86,29 +85,29 @@ public class LanguageManager extends AbstractManager {
     LanguageManager() {
         super("language");
     }
-    
+
     @Override
     protected boolean initFunc() {
-    	super.initFunc();
-    	
-    	/* OSごとのフォントファクシミリを切り替え */
+        super.initFunc();
+
+        /* OSごとのフォントファミリを切り替え */
         switch (Platform.getRunPlatform()) {
-	        case WINDOWS:
-	        	fonts = SFontsForWindows;
-	            break;
-	        case MAC:
-	        	fonts = SFontsForMac;
-	            break;
-	        case LINUX:
-	        case SUN_OS:
-	        case OTHER:
-	        default:
-	        	fonts = SFontsForOther;
-	            break;
-	    }
-    	return true;
+            case WINDOWS:
+                fonts = SFontsForWindows;
+                break;
+            case MAC:
+                fonts = SFontsForMac;
+                break;
+            case LINUX:
+            case SUN_OS:
+            case OTHER:
+            default:
+                fonts = SFontsForOther;
+                break;
+        }
+        return true;
     }
-    
+
     /**
      * フォント名取得
      * 
@@ -117,15 +116,16 @@ public class LanguageManager extends AbstractManager {
      * @return
      */
     public String getFontName(int lang, int type) {
-    	FontRsrc f;
-    	if (fonts.containsKey(lang) == true) {
-    		f = fonts.get(lang);
-    	}
-    	else {
-    		f = DEFAULT_FONT_RSRC;
-    	}
-    	return f.getName(type);
+        FontRsrc f;
+        if (fonts.containsKey(lang) == true) {
+            f = fonts.get(lang);
+        }
+        else {
+            f = DEFAULT_FONT_RSRC;
+        }
+        return f.getName(type);
     }
+
     /**
      * フォント名取得
      * 
@@ -133,7 +133,7 @@ public class LanguageManager extends AbstractManager {
      * @return
      */
     public String getFontName(int lang) {
-    	return getFontName(lang, 0);
+        return getFontName(lang, 0);
     }
 
     /**
@@ -159,7 +159,6 @@ public class LanguageManager extends AbstractManager {
         return code;
     }
 
-
     /**
      * 言語タイトル取得
      *
@@ -169,7 +168,7 @@ public class LanguageManager extends AbstractManager {
     public String getTitle(int index, int lang) {
         return LanguageTable.getTitle(index, lang, getCode(index));
     }
-    
+
     /**
      * 言語タイトルからインデックスを取得
      *

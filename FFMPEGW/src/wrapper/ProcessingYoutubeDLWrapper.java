@@ -63,10 +63,10 @@ public class ProcessingYoutubeDLWrapper {
 
     public void convert(String url, String format) throws IOException {
         ArrayList<String> cmd = new ArrayList<String>();
-//        if (output.isEmpty() == false) {
-//            cmd.add("-o");
-//            cmd.add(output);
-//        }
+        // if (output.isEmpty() == false) {
+        // cmd.add("-o");
+        // cmd.add(output);
+        // }
         cmd.add(url);
         if (isAudioOnly() == true) {
             cmd.add("-x");

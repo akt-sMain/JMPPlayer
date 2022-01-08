@@ -18,7 +18,7 @@ import jmsynth.JMSoftSynthesizer;
 import jmsynth.JMSynthFile;
 import jmsynth.midi.MidiInterface;
 
-public class WaveViewerFrame extends JFrame implements ActionListener{
+public class WaveViewerFrame extends JFrame implements ActionListener {
 
     private JPanel contentPane;
     protected MultiWaveViewerPanel panel;
@@ -56,6 +56,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
 
     /**
      * Create the frame.
+     * 
      * @wbp.parser.constructor
      */
     public WaveViewerFrame(JMSoftSynthesizer synth) {
@@ -295,7 +296,6 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
 
         setupDialog = new ChannelSetupDialog(synth);
 
-
         boolean bb = false;
         chckbxWave1.setSelected(bb);
         chckbxWave2.setSelected(bb);
@@ -392,7 +392,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
     }
 
     public WaveViewerFrame(MidiInterface iface) {
-        this((JMSoftSynthesizer)iface.getSynthController());
+        this((JMSoftSynthesizer) iface.getSynthController());
         midiInterface = iface;
         chckbxAutoOscChange.setVisible(true);
         updateLabel();
@@ -416,6 +416,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener{
         chckbxWave15.setSelected(panel.visibleWave[14]);
         chckbxWave16.setSelected(panel.visibleWave[15]);
     }
+
     private void updateLabel() {
         if (rdbtnModeDetail.isSelected() == true) {
             panel.traceViewMode = MultiWaveViewerPanel.TRACE_VIEW_MODE_DETAIL;

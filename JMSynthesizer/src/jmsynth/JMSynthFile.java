@@ -39,7 +39,7 @@ public class JMSynthFile {
 
     public static final String[] WAVE_STR_ITEMS = new String[] { //
             WAVE_STR_SINE, //
-//            WAVE_STR_LOW_SINE, //
+            // WAVE_STR_LOW_SINE, //
             WAVE_STR_SAW, //
             WAVE_STR_TRIANGLE, //
             WAVE_STR_SQUARE, //
@@ -48,6 +48,7 @@ public class JMSynthFile {
             WAVE_STR_LONG_NOIS, //
             WAVE_STR_SHORT_NOIS //
     };//
+
     public static WaveType toWaveType(String sWave) {
         WaveType type = WaveType.SINE;
         if (sWave.equalsIgnoreCase(WAVE_STR_SAW) == true) {
@@ -79,6 +80,7 @@ public class JMSynthFile {
         }
         return type;
     }
+
     public static String toWaveStr(WaveType type) {
         String sWave = WAVE_STR_LONG_NOIS;
         switch (type) {
@@ -114,6 +116,7 @@ public class JMSynthFile {
         }
         return sWave;
     }
+
     // グラフィック用
     public static int toYCord(WaveType type, double f, int overallLeval, boolean isReverse) {
         int y = -1;
@@ -139,28 +142,26 @@ public class JMSynthFile {
             case TRIANGLE:
                 y = WaveGenerater.makeTriangleWave(f, overallLeval, isReverse, false);
                 break;
-            case LONG_NOISE:
-            {
-                double[] ft = {0.00, 0.05, 0.10, 0.15, 0.25, 0.35, 0.50, 0.55, 0.70, 0.85, 0.95, 1.00};
-                double[] lt = {0.20, 0.30, 0.40, 1.00, 0.95, 0.85, 1.00, 0.50, 0.70, 0.40, 0.30, 0.20};
+            case LONG_NOISE: {
+                double[] ft = { 0.00, 0.05, 0.10, 0.15, 0.25, 0.35, 0.50, 0.55, 0.70, 0.85, 0.95, 1.00 };
+                double[] lt = { 0.20, 0.30, 0.40, 1.00, 0.95, 0.85, 1.00, 0.50, 0.70, 0.40, 0.30, 0.20 };
                 int sign = 1;
-                for (int i=0; i<ft.length; i++) {
+                for (int i = 0; i < ft.length; i++) {
                     if (f > ft[i]) {
-                        y = (int)((double)overallLeval * lt[i]) * sign;
+                        y = (int) ((double) overallLeval * lt[i]) * sign;
                     }
                     sign *= -1;
                 }
             }
                 break;
-            case SHORT_NOISE:
-            {
-                double[] lt = {0.20, 1.00, 0.40};
+            case SHORT_NOISE: {
+                double[] lt = { 0.20, 1.00, 0.40 };
                 int ilt = 0;
                 double cf = 0.0;
                 int sign = 1;
                 while (cf <= 1.00) {
                     if (f <= cf) {
-                        y = (int)((double)overallLeval * lt[ilt]) * sign;
+                        y = (int) ((double) overallLeval * lt[ilt]) * sign;
                         break;
                     }
                     else {
@@ -232,7 +233,6 @@ public class JMSynthFile {
         configElement.appendChild(soundSourceElement);
         apendSoundSourceElement(document, soundSourceElement, synth);
 
-
         // Transformerインスタンスの生成
         Transformer transformer = null;
         try {
@@ -258,6 +258,7 @@ public class JMSynthFile {
         }
         return true;
     }
+
     private static void apendInfoElement(Document document, Element rootElement, JMSoftSynthesizer synth) {
         // シンセ名
         Element infoNameElement = document.createElement(XML_NODE_INFO_NAME);
@@ -272,9 +273,10 @@ public class JMSynthFile {
         infoNumOfChannelElement.setTextContent(String.valueOf(synth.getNumberOfChannel()));
         rootElement.appendChild(infoNumOfChannelElement);
     }
+
     private static void apendSoundSourceElement(Document document, Element rootElement, JMSoftSynthesizer synth) {
         // channel
-        for (int ch=0; ch<synth.getNumberOfChannel(); ch++) {
+        for (int ch = 0; ch < synth.getNumberOfChannel(); ch++) {
             Element channelElement = document.createElement(XML_NODE_CHANNEL);
             channelElement.setAttribute(XML_ATTR_CHANNEL, String.valueOf(ch));
             rootElement.appendChild(channelElement);
@@ -282,6 +284,7 @@ public class JMSynthFile {
             apendSynthElement(document, channelElement, synth.getWaveType(ch), synth.isWaveReverse(ch), synth.getEnvelope(ch), synth.getModulator(ch));
         }
     }
+
     private static void apendSynthElement(Document document, Element rootElement, WaveType waveType, boolean waveReverse, Envelope env, Modulator mod) {
         // wave
         Element waveElement = document.createElement(XML_NODE_WAVE);
@@ -313,7 +316,6 @@ public class JMSynthFile {
             return false;
         }
 
-
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = factory.newDocumentBuilder();
@@ -338,6 +340,7 @@ public class JMSynthFile {
         return ret;
 
     }
+
     private static void readNodeInfo(Node node, JMSoftSynthesizer synth) {
         NodeList lst = node.getChildNodes();
         for (int i = 0; i < lst.getLength(); i++) {
@@ -367,6 +370,7 @@ public class JMSynthFile {
             }
         }
     }
+
     private static void readNodeSoundSource(Node node, JMSoftSynthesizer synth) {
         NodeList lst = node.getChildNodes();
         for (int i = 0; i < lst.getLength(); i++) {
@@ -376,6 +380,7 @@ public class JMSynthFile {
             }
         }
     }
+
     private static void readNodeChannel(Node node, JMSoftSynthesizer synth) {
         if (!(node instanceof Element)) {
             return;

@@ -25,9 +25,9 @@ class NoneTransmitterCreator extends TransmitterCreator {
 
     @Override
     public Transmitter getTransmitter() throws MidiUnavailableException {
-//        Transmitter outTransmitter = null;
-//        outTransmitter = MidiSystem.getTransmitter();
-//        return outTransmitter;
+        // Transmitter outTransmitter = null;
+        // outTransmitter = MidiSystem.getTransmitter();
+        // return outTransmitter;
         return new NoneTransmitter();
     }
 

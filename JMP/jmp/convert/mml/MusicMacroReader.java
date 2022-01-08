@@ -347,7 +347,7 @@ public class MusicMacroReader implements IJMPDocumentReader {
                         int midiNumber = convertToMidiNumber(o.tone, o.alter, octave);
 
                         track.add(toolkit.createNoteOnEvent(position, curCh, midiNumber, FixedVelocity));
-                        track.add(toolkit.createNoteOffEvent(position + (int)((double)duration * 1.0), curCh, midiNumber, 0));
+                        track.add(toolkit.createNoteOffEvent(position + (int) ((double) duration * 1.0), curCh, midiNumber, 0));
                         position += duration;
                     }
                 }
@@ -371,7 +371,7 @@ public class MusicMacroReader implements IJMPDocumentReader {
                         for (MmlNoteObject note : o.tones) {
                             int midiNumber = convertToMidiNumber(note.tone, note.alter, octave);
                             track.add(toolkit.createNoteOnEvent(position, curCh, midiNumber, FixedVelocity));
-                            track.add(toolkit.createNoteOffEvent(position + (int)((double)dDuration * 1.0), curCh, midiNumber, 0));
+                            track.add(toolkit.createNoteOffEvent(position + (int) ((double) dDuration * 1.0), curCh, midiNumber, 0));
                             position += dDuration;
                         }
                         position = nextPosition;

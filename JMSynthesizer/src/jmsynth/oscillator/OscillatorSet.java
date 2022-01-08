@@ -8,15 +8,7 @@ public class OscillatorSet {
     public static final OscillatorSet DRUM_OSCILLATOR_SET = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
 
     public static enum WaveType {
-        SINE,
-        LOW_SINE,
-        SAW,
-        SQUARE,
-        TRIANGLE,
-        PULSE_25,
-        PULSE_12_5,
-        LONG_NOISE,
-        SHORT_NOISE,
+        SINE, LOW_SINE, SAW, SQUARE, TRIANGLE, PULSE_25, PULSE_12_5, LONG_NOISE, SHORT_NOISE,
     }
 
     // 複数のオシレータ設計を考慮（出力側は未実装）
@@ -70,6 +62,7 @@ public class OscillatorSet {
             oscs.add(osc[i]);
         }
     }
+
     public WaveType getOscillator() {
         return getOscillator(0);
     }

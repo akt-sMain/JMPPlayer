@@ -444,7 +444,8 @@ public class PluginManager extends AbstractManager {
                     String param = sLine[1].trim();
                     if (key.equalsIgnoreCase(SETUP_KEYNAME_PLUGIN) == true) {
                         String src = Utility.stringsCombin(file.getParent(), Platform.getSeparator(), param);
-                        String dst = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JAR_DIR), Platform.getSeparator(), param);
+                        String dst = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JAR_DIR), Platform.getSeparator(),
+                                param);
                         Utility.copyFile(src, dst);
 
                         // Jar名を保持（jar名をパス名にする）
@@ -457,7 +458,8 @@ public class PluginManager extends AbstractManager {
                     else if (key.equalsIgnoreCase(SETUP_KEYNAME_DATA) == true) {
                         if (param.equalsIgnoreCase("TRUE") == true) {
                             String src = Utility.stringsCombin(file.getParent(), Platform.getSeparator(), SETUP_KEYNAME_DATA);
-                            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_DATA_DIR), Platform.getSeparator(), jarName);
+                            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_DATA_DIR), Platform.getSeparator(),
+                                    jarName);
                             File df = new File(dst);
                             if (df.exists() == false) {
                                 df.mkdir();
@@ -471,7 +473,8 @@ public class PluginManager extends AbstractManager {
                     else if (key.equalsIgnoreCase(SETUP_KEYNAME_RES) == true) {
                         if (param.equalsIgnoreCase("TRUE") == true) {
                             String src = Utility.stringsCombin(file.getParent(), Platform.getSeparator(), SETUP_KEYNAME_RES);
-                            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_RES_DIR), Platform.getSeparator(), jarName);
+                            String dst = Utility.stringsCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_RES_DIR), Platform.getSeparator(),
+                                    jarName);
                             File df = new File(dst);
                             if (df.exists() == false) {
                                 df.mkdir();

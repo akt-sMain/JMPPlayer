@@ -18,6 +18,7 @@ public class ReceiverWrapper implements Receiver {
 
     public ReceiverWrapper() {
     };
+
     public ReceiverWrapper(Receiver abstractReciever) {
         this.abstractReciever = abstractReciever;
     };

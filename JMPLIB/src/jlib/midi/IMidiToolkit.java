@@ -106,8 +106,6 @@ public interface IMidiToolkit {
      */
     abstract MidiEvent createMidiEvent(MidiMessage mes, long position) throws InvalidMidiDataException;
 
-
-
     ////////////////////////////////////////////////////
     // 以下、よく使うメソッド群をDefault定義で実装
     //

@@ -41,7 +41,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     public static final Rectangle DEFAULT_PLAYER_WINDOW_SIZE = new Rectangle(20, 20, 480, 210);
 
     /* ライブラリ非公開Window */
-    public static final String WINDOW_NAME_FILE_PICKUP  = "DIRECTORY_VIEWER";
+    public static final String WINDOW_NAME_FILE_PICKUP = "DIRECTORY_VIEWER";
 
     public static final String[] WINDOW_NAMELIST = { //
             WINDOW_NAME_MAIN, //
@@ -62,10 +62,10 @@ public class WindowManager extends AbstractManager implements IWindowManager {
 
     /* JMsynth用のフレーム(WindowDatabaseに含まない) */
     private BuiltinSynthSetupDialog builtinSynthFrame = null;
-    
+
     /* デフォルトのフォントファミリ */
     public static final String DEFAULT_FONT = Font.DIALOG;
-    
+
     WindowManager() {
         super("window");
 
@@ -320,7 +320,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     }
 
     public void showFilePickupDialog(File dir, String ext) {
-        FilePickupDialog dlg = (FilePickupDialog)JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_FILE_PICKUP);
+        FilePickupDialog dlg = (FilePickupDialog) JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_FILE_PICKUP);
         dlg.setDirectory(dir, ext);
         dlg.showWindow();
     }
@@ -417,59 +417,64 @@ public class WindowManager extends AbstractManager implements IWindowManager {
             }
         }
     }
-    
+
     private Font getFontImpl(Font oldFont, int lang) {
-    	if (oldFont == null) {
-    		return null;
-    	}
-    	LanguageManager lm = JMPCore.getLanguageManager();
-    	return new Font(lm.getFontName(lang), oldFont.getStyle(), oldFont.getSize());
-    }
-    private void changeFontImpl(Object c, String str, int lang) {
-    	if (str != null) {
-	    	if (c instanceof AbstractButton) {
-	    		((AbstractButton)c).setText(str);
-	    	}
-	    	else if (c instanceof JLabel) {
-	    		((JLabel)c).setText(str);
-	    	}
-    	}
-    	
-    	if (c instanceof JComponent) {
-	    	JComponent cmp = ((JComponent)c);
-	    	Font newFont = getFontImpl(cmp.getFont(), lang);
-	    	cmp.setFont(newFont);
-    	}
+        if (oldFont == null) {
+            return null;
+        }
+        LanguageManager lm = JMPCore.getLanguageManager();
+        return new Font(lm.getFontName(lang), oldFont.getStyle(), oldFont.getSize());
     }
 
-    
+    private void changeFontImpl(Object c, String str, int lang) {
+        if (str != null) {
+            if (c instanceof AbstractButton) {
+                ((AbstractButton) c).setText(str);
+            }
+            else if (c instanceof JLabel) {
+                ((JLabel) c).setText(str);
+            }
+        }
+
+        if (c instanceof JComponent) {
+            JComponent cmp = ((JComponent) c);
+            Font newFont = getFontImpl(cmp.getFont(), lang);
+            cmp.setFont(newFont);
+        }
+    }
+
     public Font getFont(Font oldFont, int lang) {
-    	return getFontImpl(oldFont, lang);
+        return getFontImpl(oldFont, lang);
     }
-    
+
     public Font getCurrentFont(Font oldFont) {
-    	return getFontImpl(oldFont, JMPCore.getDataManager().getLanguage());
+        return getFontImpl(oldFont, JMPCore.getDataManager().getLanguage());
     }
-    
+
     public void changeFont(Object c) {
-    	changeFontImpl(c, null, JMPCore.getDataManager().getLanguage());
+        changeFontImpl(c, null, JMPCore.getDataManager().getLanguage());
     }
+
     public void changeFont(Object c, int lang) {
-    	changeFontImpl(c, null, lang);
+        changeFontImpl(c, null, lang);
     }
+
     public void changeFont(Object c, LangID id) {
-    	LanguageManager lm = JMPCore.getLanguageManager();
-    	DataManager dm = JMPCore.getDataManager();
-    	changeFontImpl(c, lm.getLanguageStr(id), dm.getLanguage());
+        LanguageManager lm = JMPCore.getLanguageManager();
+        DataManager dm = JMPCore.getDataManager();
+        changeFontImpl(c, lm.getLanguageStr(id), dm.getLanguage());
     }
+
     public void changeFont(Object c, LangID id, int lang) {
-    	changeFontImpl(c, JMPCore.getLanguageManager().getLanguageStr(id, lang), lang);
+        changeFontImpl(c, JMPCore.getLanguageManager().getLanguageStr(id, lang), lang);
     }
+
     public void changeFont(Object c, String str) {
-    	changeFontImpl(c, str, JMPCore.getDataManager().getLanguage());
+        changeFontImpl(c, str, JMPCore.getDataManager().getLanguage());
     }
+
     public void changeFont(Object c, String str, int lang) {
-    	changeFontImpl(c, str, lang);
+        changeFontImpl(c, str, lang);
     }
 
 }

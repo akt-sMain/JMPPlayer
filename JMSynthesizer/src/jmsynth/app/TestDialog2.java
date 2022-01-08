@@ -186,9 +186,10 @@ public class TestDialog2 extends WaveViewerFrame {
                 SoftSequencer.open();
 
                 SoftSequencer.getTransmitter().setReceiver(new MidiInterface(SoftSynthesizer));
-//                for (int i=0; i<16; i++) {
-//                    SoftSequencer.getTransmitter().setReceiver(new MidiInterface(SoftSynthesizer.getChannel(i)));
-//                }
+                // for (int i=0; i<16; i++) {
+                // SoftSequencer.getTransmitter().setReceiver(new
+                // MidiInterface(SoftSynthesizer.getChannel(i)));
+                // }
             }
             catch (MidiUnavailableException e) {
                 // TODO 自動生成された catch ブロック

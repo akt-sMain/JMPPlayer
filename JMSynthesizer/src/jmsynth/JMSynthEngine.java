@@ -9,7 +9,8 @@ public class JMSynthEngine {
     /**
      * JMSynthインスタンスを取得
      *
-     * @param isOpen true:open
+     * @param isOpen
+     *            true:open
      * @return
      */
     public static JMSoftSynthesizer getSoftSynthesizer(boolean isOpen) {
@@ -32,7 +33,8 @@ public class JMSynthEngine {
     /**
      * MIDIインターフェースでラップしたJMSynthインスタンスを取得
      *
-     * @param isOpen true:open
+     * @param isOpen
+     *            true:open
      * @return
      */
     public static MidiInterface getMidiInterface(boolean isOpen) {
@@ -52,7 +54,8 @@ public class JMSynthEngine {
     /**
      * JMSynthをアプリケーションとしてパッケージ化されたインスタンスを取得
      *
-     * @param isOpen isOpen true:open
+     * @param isOpen
+     *            isOpen true:open
      * @return
      * @throws MidiUnavailableException
      */

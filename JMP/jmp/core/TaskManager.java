@@ -16,15 +16,11 @@ import jmp.task.TaskOfSequence;
 import jmp.task.TaskOfTimer;
 import jmp.task.TaskOfUpdate;
 
-
 public class TaskManager extends AbstractManager {
 
     /** タスクID */
     public static enum TaskID {
-        UPDATE,
-        TIMER,
-        SEQUENCE,
-        MIDI,
+        UPDATE, TIMER, SEQUENCE, MIDI,
     }
 
     /** タスクデータベース */
@@ -107,12 +103,12 @@ public class TaskManager extends AbstractManager {
     }
 
     public void addMidiEvent(MidiMessage message, long timeStamp, short senderType) {
-        TaskOfMidiEvent task = (TaskOfMidiEvent)taskMap.get(TaskID.MIDI);
+        TaskOfMidiEvent task = (TaskOfMidiEvent) taskMap.get(TaskID.MIDI);
         task.add(message, timeStamp, senderType);
     }
 
     public void addCallbackPackage(long cyclicTime, ICallbackFunction func) {
-        TaskOfTimer task = (TaskOfTimer)taskMap.get(TaskID.TIMER);
+        TaskOfTimer task = (TaskOfTimer) taskMap.get(TaskID.TIMER);
         CallbackPackage pkg = new CallbackPackage(cyclicTime, task.getSleepTime());
         pkg.addCallbackFunction(func);
         task.addCallbackPackage(pkg);

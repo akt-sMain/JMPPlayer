@@ -19,18 +19,19 @@ public class Envelope {
     private double sustainLevel = 1.0;
     private double releaseTime = 0.0;
 
-    Envelope() {}
+    Envelope() {
+    }
 
     public long getAttackMills() {
-        return (long) ((double)maxAttackMills * attackTime);
+        return (long) ((double) maxAttackMills * attackTime);
     }
 
     public long getDecayMills() {
-        return (long) ((double)maxDecayMills * decayTime);
+        return (long) ((double) maxDecayMills * decayTime);
     }
 
     public long getReleaseMills() {
-        return (long) ((double)maxReleaseMills * releaseTime);
+        return (long) ((double) maxReleaseMills * releaseTime);
     }
 
     public void process() {
@@ -52,30 +53,30 @@ public class Envelope {
                     long elapsedTime = current - startTime;
                     if (tone.isReleaseFlag() == true) {
                         if (elapsedTime < r) {
-                            offset = sustainLevel * (1.0 - ((double)elapsedTime / (double)r));
+                            offset = sustainLevel * (1.0 - ((double) elapsedTime / (double) r));
                         }
                         else {
                             offset = 0.0;
                         }
-                        //System.out.println("r : " + offset);
+                        // System.out.println("r : " + offset);
                     }
                     else {
                         if (elapsedTime < a) {
                             offset = (double) ((elapsedTime * 1.0) / a);
-                            //System.out.println("a : " + offset);
+                            // System.out.println("a : " + offset);
                         }
                         else if ((elapsedTime - a) < d) {
                             offset = 1.0 - (double) (((elapsedTime - a) * (1.0 - sustainLevel)) / d);
-                            //System.out.println("d : " + offset);
+                            // System.out.println("d : " + offset);
                         }
                         else {
                             offset = sustainLevel;
-                            //System.out.println("s : " + offset);
+                            // System.out.println("s : " + offset);
                         }
                     }
 
                     if (offset < 0.0) {
-                        //System.out.println("" + elapsedTime);
+                        // System.out.println("" + elapsedTime);
                         offset = 0.0;
                     }
                     tone.setEnvelopeOffset(offset);
@@ -83,7 +84,7 @@ public class Envelope {
                 catch (ArrayIndexOutOfBoundsException aiobe) {
                     // ArrayIndexOutOfBoundsExceptionは起きがち
                     // スレッドのタイミング次第なためとりあえず無視...
-                    //aiobe.printStackTrace();
+                    // aiobe.printStackTrace();
                 }
                 catch (Exception e) {
                     e.printStackTrace();
@@ -99,24 +100,31 @@ public class Envelope {
     public double getAttackTime() {
         return attackTime;
     }
+
     public void setAttackTime(double attackTime) {
         this.attackTime = attackTime;
     }
+
     public double getDecayTime() {
         return decayTime;
     }
+
     public void setDecayTime(double decayTime) {
         this.decayTime = decayTime;
     }
+
     public double getSustainLevel() {
         return sustainLevel;
     }
+
     public void setSustainLevel(double sustainLevel) {
         this.sustainLevel = sustainLevel;
     }
+
     public double getReleaseTime() {
         return releaseTime;
     }
+
     public void setReleaseTime(double releaseTime) {
         this.releaseTime = releaseTime;
     }

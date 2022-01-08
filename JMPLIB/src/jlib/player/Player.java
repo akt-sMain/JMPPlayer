@@ -169,7 +169,7 @@ public abstract class Player implements IPlayer {
     public void setInfo(Info info) {
         this.info = info;
     }
-    
+
     /**
      * ほかのプレイヤーに切り変わる時のコールバック
      */

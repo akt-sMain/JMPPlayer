@@ -80,7 +80,7 @@ public class ProgramChangeTableEditDialog extends JDialog {
         JButton btnToSynth = new JButton("Select to synth→");
         btnToSynth.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int ch = (int)spinner.getValue() - 1;
+                int ch = (int) spinner.getValue() - 1;
                 int no = list.getSelectedIndex();
                 if (no < 0) {
                     return;
@@ -94,7 +94,7 @@ public class ProgramChangeTableEditDialog extends JDialog {
         JButton btnSynthToTable = new JButton("←Synth to select");
         btnSynthToTable.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int ch = (int)spinner.getValue() - 1;
+                int ch = (int) spinner.getValue() - 1;
                 int no = list.getSelectedIndex();
                 if (no < 0) {
                     return;
@@ -181,27 +181,21 @@ public class ProgramChangeTableEditDialog extends JDialog {
     public void resetList() {
         model.clear();
 
-        for (int i=0; i<ProgramChangeTable.PC_MAX; i++) {
+        for (int i = 0; i < ProgramChangeTable.PC_MAX; i++) {
             String row = toOscStr(i, pcTable.getOscillatorSet(i));
             model.addElement(row);
         }
     }
 
-    private void synthToTable (int ch, int no) {
-        OscillatorSet set = new OscillatorSet(
-                synth.getEnvelope(ch).getAttackTime(),
-                synth.getEnvelope(ch).getDecayTime(),
-                synth.getEnvelope(ch).getSustainLevel(),
-                synth.getEnvelope(ch).getReleaseTime(),
-                synth.getEnvelope(ch).getMaxAttackMills(),
-                synth.getEnvelope(ch).getMaxDecayMills(),
-                synth.getEnvelope(ch).getMaxReleaseMills(),
-                synth.getWaveType(ch)
-                );
+    private void synthToTable(int ch, int no) {
+        OscillatorSet set = new OscillatorSet(synth.getEnvelope(ch).getAttackTime(), synth.getEnvelope(ch).getDecayTime(),
+                synth.getEnvelope(ch).getSustainLevel(), synth.getEnvelope(ch).getReleaseTime(), synth.getEnvelope(ch).getMaxAttackMills(),
+                synth.getEnvelope(ch).getMaxDecayMills(), synth.getEnvelope(ch).getMaxReleaseMills(), synth.getWaveType(ch));
         pcTable.setOscillatorSet(no, set);
         resetList();
     }
-    private void tableToSynth (int ch, int no) {
+
+    private void tableToSynth(int ch, int no) {
         OscillatorSet set = pcTable.getOscillatorSet(no);
         synth.getEnvelope(ch).setAttackTime(set.getAttackTime());
         synth.getEnvelope(ch).setDecayTime(set.getDecayTime());
@@ -212,11 +206,12 @@ public class ProgramChangeTableEditDialog extends JDialog {
         synth.getEnvelope(ch).setMaxReleaseMills(set.getMaxReleaseMills());
         synth.setOscillator(ch, set.getOscillator());
     }
+
     private void setTableValue(int no) {
         String row = model.elementAt(no);
         String[] values = row.split(",");
 
-        int i=0;
+        int i = 0;
         OscillatorSet set = pcTable.getOscillatorSet(no);
         i++;
         set.setOscillators(JMSynthFile.toWaveType(values[i]));
@@ -235,6 +230,7 @@ public class ProgramChangeTableEditDialog extends JDialog {
         i++;
         set.setMaxReleaseMills(Long.parseLong(values[i]));
     }
+
     private OscillatorSet toStrOsc(String str) {
         int i = 0;
         String[] values = str.split(",");
@@ -257,6 +253,7 @@ public class ProgramChangeTableEditDialog extends JDialog {
         set.setMaxReleaseMills(Long.parseLong(values[i]));
         return set;
     }
+
     private String toOscStr(int no, OscillatorSet set) {
         String str = "";
         str += no;
@@ -283,7 +280,7 @@ public class ProgramChangeTableEditDialog extends JDialog {
         PrintWriter pw;
         try {
             pw = new PrintWriter(f.getPath(), "UTF-8");
-            for (int i=0; i<model.getSize(); i++) {
+            for (int i = 0; i < model.getSize(); i++) {
                 pw.println(model.getElementAt(i));
             }
             pw.close();
@@ -294,6 +291,7 @@ public class ProgramChangeTableEditDialog extends JDialog {
             pw = null;
         }
     }
+
     private void input(File f) {
 
         BufferedReader reader;

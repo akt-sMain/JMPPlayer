@@ -37,9 +37,11 @@ public class FileManager extends AbstractManager implements IFileManager {
     private static final String[] columnNames = new String[] { "", "Name" };
     private DefaultTableModel fileListModel;
     private JTable fileList;
+
     public DefaultTableModel getFileListModel() {
         return fileListModel;
     }
+
     public JTable getFileList() {
         return fileList;
     }

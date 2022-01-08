@@ -126,6 +126,7 @@ public class FMPMainWindow extends JFrame {
                     player.pause();
                 }
             }
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (FlagMediaPlayer.ActiveWindow != null) {

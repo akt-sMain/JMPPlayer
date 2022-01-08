@@ -2,7 +2,7 @@ package jmsynth.modulate;
 
 import java.util.Vector;
 
-public class ModulatorFactory  implements Runnable {
+public class ModulatorFactory implements Runnable {
 
     public static final int DEFAULT_DEPTH = 0;
 

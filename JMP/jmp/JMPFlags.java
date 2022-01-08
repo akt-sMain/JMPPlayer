@@ -34,6 +34,7 @@ public class JMPFlags {
         public static void cprint(String msg, boolean console_out) {
             cprintImpl(msg, false, console_out);
         }
+
         public static void cprint(String msg) {
             cprintImpl(msg, false, false);
         }
@@ -42,6 +43,7 @@ public class JMPFlags {
         public static void cprintln(String msg, boolean console_out) {
             cprintImpl(msg, true, console_out);
         }
+
         public static void cprintln(String msg) {
             cprintImpl(msg, true, false);
         }
@@ -49,6 +51,7 @@ public class JMPFlags {
         public static void cprintln(boolean console_out) {
             cprintImpl("", true, console_out);
         }
+
         public static void cprintln() {
             cprintImpl("", true, false);
         }

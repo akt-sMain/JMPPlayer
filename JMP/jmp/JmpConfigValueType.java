@@ -11,6 +11,7 @@ public class JmpConfigValueType {
         this.value = value;
         this.type = type;
     }
+
     public JmpConfigValueType(String value) {
         this.value = value;
         this.type = TypeOfKey.STRING;

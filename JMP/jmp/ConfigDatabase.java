@@ -23,6 +23,7 @@ public class ConfigDatabase {
     public ConfigDatabase(String[] keys) {
         setup(keys);
     }
+
     public ConfigDatabase(Set<String> keys) {
         setup(keySetToArray(keys));
     }
@@ -76,12 +77,12 @@ public class ConfigDatabase {
         }
 
         String[] aKeys = new String[keys.size()];
-        for (int i=0; i<aKeys.length; i++) {
+        for (int i = 0; i < aKeys.length; i++) {
             aKeys[i] = keys.get(i);
         }
 
         ConfigDatabase db = new ConfigDatabase(aKeys);
-        for (int i=0; i<aKeys.length; i++) {
+        for (int i = 0; i < aKeys.length; i++) {
             db.setConfigParam(aKeys[i], values.get(i));
         }
         return db;

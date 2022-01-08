@@ -111,7 +111,7 @@ public class SelectLanguageDialog extends JMPDialog {
     }
 
     public void updateLanguage(int index) {
-    	WindowManager wm = JMPCore.getWindowManager();
+        WindowManager wm = JMPCore.getWindowManager();
         wm.changeFont(closeButton, LangID.Apply, index);
         wm.changeFont(lblTest, JMPCore.getLanguageManager().getTitle(index, index), index);
     }

@@ -7,7 +7,9 @@ import jmsynth.oscillator.OscillatorSet.WaveType;
 
 public interface ISynthController {
     abstract void openDevice();
+
     abstract void closeDevice();
+
     abstract boolean checkChannel(int ch);
 
     abstract void noteOn(int ch, int note, int velocity);

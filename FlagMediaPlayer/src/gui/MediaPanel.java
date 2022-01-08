@@ -30,24 +30,24 @@ public class MediaPanel extends JFXPanel {
         this.fmp = fmp;
 
         StackPane root = new StackPane();
-        Background bg = new Background(new BackgroundFill(Color.BLACK,null,null));
+        Background bg = new Background(new BackgroundFill(Color.BLACK, null, null));
         root.setBackground(bg);
 
         media = new Media(file.toURI().toString());
         player = new MediaPlayer(media);
         MediaView mediaView = new MediaView(player);
-        
+
         root.getChildren().add(mediaView);
 
         // シーン作成
         Scene scene = new Scene(root);
-        
+
         DoubleProperty widthProp = mediaView.fitWidthProperty();
         DoubleProperty heightProp = mediaView.fitHeightProperty();
         widthProp.bind(Bindings.selectDouble(mediaView.sceneProperty(), "width"));
         heightProp.bind(Bindings.selectDouble(mediaView.sceneProperty(), "height"));
         mediaView.setPreserveRatio(true);
-        
+
         setScene(scene);
 
         addMouseListener(new MouseAdapter() {
@@ -57,12 +57,14 @@ public class MediaPanel extends JFXPanel {
                     fmp.onMouseEvent(e);
                 }
             }
+
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (fmp != null) {
                     fmp.onMouseEvent(e);
                 }
             }
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (fmp != null) {
@@ -95,12 +97,13 @@ public class MediaPanel extends JFXPanel {
     public MediaPlayer getPlayer() {
         return player;
     }
-    
+
     public void setAudioOnly(boolean b) {
-    	isAudioOnly = b;
+        isAudioOnly = b;
     }
+
     public boolean isAudioOnly() {
-    	return isAudioOnly;
+        return isAudioOnly;
     }
 
     public void exit() {
@@ -114,7 +117,7 @@ public class MediaPanel extends JFXPanel {
             }
         }
         if (player != null) {
-        	player.dispose();
+            player.dispose();
         }
     }
 

@@ -76,7 +76,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     // プレイヤーインスタンス
     public static MidiPlayer SMidiPlayer = null;
     public static WavPlayer SWavPlayer = null;
-    //public static WavPlayerMin SWavPlayer = null;
+    // public static WavPlayerMin SWavPlayer = null;
     public static MusicXmlPlayer SMusicXmlPlayer = null;
     public static MusicMacroPlayer SMusicMacloPlayer = null;
     public static FFmpegPlayer SFFmpegPlayer = null;
@@ -102,6 +102,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     // MIDIデバイス設定をコミットしたか保持する必要がある
     private boolean isCommitDeviceSelectAction = false;
+
     public void setCommitDeviceSelectAction(boolean b) {
         isCommitDeviceSelectAction = b;
     }
@@ -133,7 +134,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
         // wav
         SWavPlayer = new WavPlayer();
-        //SWavPlayer = new WavPlayerMin();
+        // SWavPlayer = new WavPlayerMin();
         SWavPlayer.setSupportExtentions(exWAV);
         PlayerAccessor.register(SWavPlayer);
 
@@ -146,7 +147,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         SMusicMacloPlayer = new MusicMacroPlayer();
         SMusicMacloPlayer.setSupportExtentions(exMML);
         PlayerAccessor.register(SMusicMacloPlayer);
-        
+
         // movie
         SMoviePlayer = new MoviePlayer();
         SMoviePlayer.setSupportExtentions(exMUSIC);
@@ -256,9 +257,9 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             // Midiデバイス選択ダイアログの表示
             JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_MIDI_SETUP).showWindow();
 
-//            SelectSoundFontDIalog dialog = new SelectSoundFontDIalog();
-//            dialog.start();
-//            isCommitDeviceSelectAction = true;
+            // SelectSoundFontDIalog dialog = new SelectSoundFontDIalog();
+            // dialog.start();
+            // isCommitDeviceSelectAction = true;
 
             wasCommit = isCommitDeviceSelectAction;
         }
@@ -397,11 +398,9 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         if (Utility.checkExtensions(file, exts) == true) {
             return true;
         }
-        if (JMPCore.getSystemManager().isValidFFmpegWrapper() == true && JMPCore.getDataManager().isUseFFmpegPlayer() == true) {
-            exts = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSIC));
-            if (Utility.checkExtensions(file, exts) == true) {
-                return true;
-            }
+        exts = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSIC));
+        if (Utility.checkExtensions(file, exts) == true) {
+            return true;
         }
         return false;
     }
@@ -411,37 +410,30 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     public void playForList(int index, boolean isLoadOnly) {
-        LanguageManager lm = JMPCore.getLanguageManager();
-        IJmpMainWindow mainWindow = JMPCore.getWindowManager().getMainWindow();
+        if (JMPFlags.NowLoadingFlag == true) {
+            return;
+        }
 
+        File file = null;
         if (JMPFlags.PlayListExtention == true) {
             if (isValidPlayListIndex(index) == false) {
-                mainWindow.setStatusText(lm.getLanguageStr(LangID.FILE_ERROR_6), false);
-                return;
-            }
+                String path = playListModel.getElementAt(index);
+                file = new File(path);
 
-            String path = playListModel.getElementAt(index);
-            try {
-                IPlayer player = getCurrentPlayer();
-                player.stop();
-                if (isLoadOnly == false) {
-                    // 自動再生フラグ
-                    JMPFlags.LoadToPlayFlag = true;
-                }
-                JMPCore.getFileManager().loadFile(path);
+                getPlayList().setSelectedIndex(index);
             }
-            catch (Exception e) {
-            }
-
-            getPlayList().setSelectedIndex(index);
         }
         else {
-
             String name = JMPCore.getFileManager().getFileListModel().getValueAt(index, 1).toString();
             File dir = new File(JMPCore.getDataManager().getPlayListPath());
             Map<String, File> map = JMPCore.getFileManager().getFileMap(dir);
-            File file = map.get(name);
+            if (map.containsKey(name) == true) {
+                file = map.get(name);
+                JMPCore.getFileManager().getFileList().changeSelection(index, 1, false, false);
+            }
+        }
 
+        if (file != null) {
             try {
                 IPlayer player = getCurrentPlayer();
                 player.stop();
@@ -453,10 +445,12 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             }
             catch (Exception e) {
             }
-
-            JMPCore.getFileManager().getFileList().changeSelection(index, 1, false, false);
         }
-
+        else {
+            LanguageManager lm = JMPCore.getLanguageManager();
+            IJmpMainWindow mainWindow = JMPCore.getWindowManager().getMainWindow();
+            mainWindow.setStatusText(lm.getLanguageStr(LangID.FILE_ERROR_6), false);
+        }
     }
 
     public void playCurrent() {
@@ -478,15 +472,23 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         int index = getCurrentPlayListIndex();
         if (dm.isRandomPlay() == true) {
             if (JMPFlags.PlayListExtention == false) {
-                String selected = JMPCore.getFileManager().getFileListModel().getValueAt(index, 1).toString();
+                String selected = "";
+                if (0 <= index && index < JMPCore.getFileManager().getFileListModel().getRowCount()) {
+                    selected = JMPCore.getFileManager().getFileListModel().getValueAt(index, 1).toString();
+                }
                 File dir = new File(dm.getPlayListPath());
-                Map<String, File> map = JMPCore.getFileManager().getFileMap(dir);
 
+                String curName = Utility.getFileNameAndExtension(JMPCore.getDataManager().getLoadedFile());
                 List<String> pickup = new ArrayList<String>();
-                for (String k : map.keySet()) {
-                    File f = map.get(k);
+                for (int i = 0; i < JMPCore.getFileManager().getFileListModel().getRowCount(); i++) {
+                    String nextName = JMPCore.getFileManager().getFileListModel().getValueAt(i, 1).toString();
+                    if (curName.equals(nextName) == true) {
+                        continue;
+                    }
+
+                    File f = new File(Utility.pathCombin(dir.getAbsolutePath(), nextName));
                     if (f.isDirectory() == false && f.canRead() == true && checkMusicFileExtention(f) == true) {
-                        pickup.add(k);
+                        pickup.add(nextName);
                     }
                 }
 
@@ -497,18 +499,21 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
                 Random random = new Random();
                 String newName = selected;
-                if (JMPCore.getFileManager().getFileList().getRowCount() >= 2) {
-                    while(true) {
+                if (JMPCore.getFileManager().getFileListModel().getRowCount() >= 2) {
+                    while (true) {
                         int ranValue = random.nextInt(pickup.size());
                         newName = pickup.get(ranValue);
-                        if (newName.equals(selected) == false) {
+                        if (newName.equals(curName) == false) {
                             break;
                         }
                     }
                 }
-                for (int i=0; i<JMPCore.getFileManager().getFileList().getRowCount(); i++) {
-                    if (newName.equals(JMPCore.getFileManager().getFileListModel().getValueAt(i, 1).toString()) == true) {
+                for (int i = 0; i < JMPCore.getFileManager().getFileListModel().getRowCount(); i++) {
+                    String s = JMPCore.getFileManager().getFileListModel().getValueAt(i, 1).toString();
+                    String d = newName;
+                    if (s.equals(d) == true) {
                         index = i;
+                        break;
                     }
                 }
             }
@@ -521,8 +526,9 @@ public class SoundManager extends AbstractManager implements ISoundManager {
                 Random random = new Random();
 
                 int newIndex = index;
+
                 if (playListModel.size() >= 2) {
-                    while(true) {
+                    while (true) {
                         newIndex = random.nextInt(playListModel.size());
                         if (newIndex != index) {
                             break;
@@ -553,7 +559,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
                     File file = map.get(name);
 
                     int cnt = 0;
-                    while(true) {
+                    while (true) {
                         if (file.isDirectory() == false && file.canRead() == true && checkMusicFileExtention(file) == true) {
                             break;
                         }
@@ -606,7 +612,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
                 File file = map.get(name);
 
                 int cnt = 0;
-                while(true) {
+                while (true) {
                     if (file.isDirectory() == false && file.canRead() == true && checkMusicFileExtention(file) == true) {
                         break;
                     }
@@ -736,7 +742,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         try {
             changePlayer(file);
             if (tmpPlayer != PlayerAccessor.getCurrent()) {
-            	tmpPlayer.changingPlayer();
+                tmpPlayer.changingPlayer();
             }
 
             if (PlayerAccessor.getCurrent().loadFile(file) == false) {
@@ -1054,7 +1060,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     public void setTranspose(int transpose) {
-        for (int ch=0; ch<16; ch++) {
+        for (int ch = 0; ch < 16; ch++) {
             setTranspose(ch, transpose);
         }
     }

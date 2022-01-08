@@ -292,25 +292,25 @@ public class YoutubeConvertDialog extends JMPDialog {
     }
 
     public void openOutputFolder() {
-//        SystemManager system = JMPCore.getSystemManager();
-//        File outdir = new File(system.getYoutubeDlWrapperPath());
-//        outdir = outdir.getParentFile();
-//        if (outdir != null) {
-//            if (outdir.exists() == true) {
-//                try {
-//                    Utility.openExproler(outdir);
-//                }
-//                catch (IOException e2) {
-//                }
-//            }
-//        }
-//        else {
-//            try {
-//                Utility.openExproler(Platform.getCurrentPath());
-//            }
-//            catch (IOException e2) {
-//            }
-//        }
+        // SystemManager system = JMPCore.getSystemManager();
+        // File outdir = new File(system.getYoutubeDlWrapperPath());
+        // outdir = outdir.getParentFile();
+        // if (outdir != null) {
+        // if (outdir.exists() == true) {
+        // try {
+        // Utility.openExproler(outdir);
+        // }
+        // catch (IOException e2) {
+        // }
+        // }
+        // }
+        // else {
+        // try {
+        // Utility.openExproler(Platform.getCurrentPath());
+        // }
+        // catch (IOException e2) {
+        // }
+        // }
 
         /* 常にカレントを開く */
         try {
@@ -379,7 +379,7 @@ public class YoutubeConvertDialog extends JMPDialog {
 
             @Override
             public void begin() {
-                //LanguageManager lm = JMPCore.getLanguageManager();
+                // LanguageManager lm = JMPCore.getLanguageManager();
                 lblStatus.setForeground(Color.LIGHT_GRAY);
                 lblStatus.setText("loading...");
                 repaint();
@@ -391,7 +391,7 @@ public class YoutubeConvertDialog extends JMPDialog {
 
                     int ite = 0;
 
-                    String[] ites = {">-- ", "->- ", "--> "};
+                    String[] ites = { ">-- ", "->- ", "--> " };
                     boolean wasDownload = false;
 
                     @Override
@@ -401,18 +401,18 @@ public class YoutubeConvertDialog extends JMPDialog {
                         }
                         String ss = new String(SystemManager.SLineCache);
                         if (ss.contains("[download]") == true) {
-                        	wasDownload = true;
-                        	lblStatus.setText(ss.substring(11));
+                            wasDownload = true;
+                            lblStatus.setText(ss.substring(11));
                         }
                         else if (wasDownload == false) {
-                        	
+
                         }
                         else {
-	                        lblStatus.setText(ites[ite] + dstExtTextField.getText());
-	                        ite++;
-	                        if (ite >= ites.length) {
-	                            ite = 0;
-	                        }
+                            lblStatus.setText(ites[ite] + dstExtTextField.getText());
+                            ite++;
+                            if (ite >= ites.length) {
+                                ite = 0;
+                            }
                         }
                         repaint();
                     }
@@ -450,7 +450,7 @@ public class YoutubeConvertDialog extends JMPDialog {
     @Override
     public void updateLanguage() {
         super.updateLanguage();
-        
+
         lblStatus.setText("");
 
         WindowManager wm = JMPCore.getWindowManager();

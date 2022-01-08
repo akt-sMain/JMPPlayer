@@ -164,23 +164,23 @@ public class MidiFileListDialog extends JMPFrame {
         @Override
         public void mouseReleased(MouseEvent e) {
             if (type == FileFilterType.ALL) {
-//                boolean isSelected = true;
-//                for (FileFilterType k : filterDatabase.keySet()) {
-//                    if (filterDatabase.get(k) == false) {
-//                        isSelected = false;
-//                    }
-//                }
-//
-//                if (isSelected == true) {
-//                    for (FileFilterType k : filterDatabase.keySet()) {
-//                        filterDatabase.put(k, false);
-//                    }
-//                }
-//                else {
-//                    for (FileFilterType k : filterDatabase.keySet()) {
-//                        filterDatabase.put(k, true);
-//                    }
-//                }
+                // boolean isSelected = true;
+                // for (FileFilterType k : filterDatabase.keySet()) {
+                // if (filterDatabase.get(k) == false) {
+                // isSelected = false;
+                // }
+                // }
+                //
+                // if (isSelected == true) {
+                // for (FileFilterType k : filterDatabase.keySet()) {
+                // filterDatabase.put(k, false);
+                // }
+                // }
+                // else {
+                // for (FileFilterType k : filterDatabase.keySet()) {
+                // filterDatabase.put(k, true);
+                // }
+                // }
 
                 for (FileFilterType k : filterDatabase.keySet()) {
                     if (k == FileFilterType.OTHER) {
@@ -950,7 +950,7 @@ public class MidiFileListDialog extends JMPFrame {
         wm.changeFont(buttonClear, LangID.Clear);
         wm.changeFont(buttonDelete, LangID.Remove);
         wm.changeFont(btnLoad, LangID.Continuous_playback);
-        
+
     }
 
     @Override

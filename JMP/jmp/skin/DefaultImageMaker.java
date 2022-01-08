@@ -15,6 +15,7 @@ public class DefaultImageMaker {
     public static final int DEFAULT_PLAYER_ICON_SIZE = 30;
 
     private static Image defDummyIcon = null;
+
     public static Image makeDummyIcon() {
         if (defDummyIcon == null) {
             BufferedImage buf = new BufferedImage(20, 20, BufferedImage.TYPE_INT_RGB);

@@ -52,7 +52,7 @@ public class JMPLoader {
                 "プラグインのスタンドアロン起動モード"//
         );//
         printManualLine(//
-                CMD_NONPLG, //11
+                CMD_NONPLG, // 11
                 "プラグインをロードせず起動"//
         );//
         printManualLine(//
@@ -281,6 +281,7 @@ public class JMPLoader {
 
     /**
      * 起動処理本体
+     * 
      * @param config
      * @param standAlonePlugin
      * @return
@@ -404,7 +405,7 @@ public class JMPLoader {
                 /* ライセンス確認 */
                 if (JMPFlags.ActivateFlag == false) {
                     JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LANGUAGE).showWindow();
-                    //Notifyタスクがまだ有効ではないため、ここで言語更新する必要がある
+                    // Notifyタスクがまだ有効ではないため、ここで言語更新する必要がある
                     JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE).updateLanguage();
                     JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE).showWindow();
                 }

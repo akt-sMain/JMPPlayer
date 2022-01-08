@@ -8,6 +8,7 @@ public class DrumSoundSourceChannel extends SoundSourceChannel {
 
     class TimeoutNoteOffThread extends Thread {
         private boolean isRunnable = true;
+
         public TimeoutNoteOffThread() {
             super();
             this.setPriority(Thread.MAX_PRIORITY);
@@ -49,6 +50,7 @@ public class DrumSoundSourceChannel extends SoundSourceChannel {
     }
 
     private TimeoutNoteOffThread thread = null;
+
     public DrumSoundSourceChannel(int channel, WaveType oscType, int polyphony, Envelope envelope, Modulator modulator) {
         super(channel, oscType, polyphony, envelope, modulator);
         thread = new TimeoutNoteOffThread();

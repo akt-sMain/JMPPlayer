@@ -19,17 +19,8 @@ public class ManagerInstances {
     static FileManager SFileManager = new FileManager();
 
     /** 初期化・終了実行順位 */
-    private static AbstractManager[] aManager = {
-            SResourceManager,
-            SSystemManager,
-            SLanguageManager,
-            STaskManager,
-            SDataManager,
-            SFileManager,
-            SWindowManager,
-            SSoundManager,
-            SPluginManager,
-    };
+    private static AbstractManager[] aManager = { SResourceManager, SSystemManager, SLanguageManager, STaskManager, SDataManager, SFileManager, SWindowManager,
+            SSoundManager, SPluginManager, };
 
     private static List<AbstractManager> asc = null;
     private static List<AbstractManager> desc = null;
@@ -90,6 +81,7 @@ public class ManagerInstances {
         }
         copyArray2ManagerList(asc, true);
     }
+
     static void remakeDesc() {
         if (desc == null) {
             desc = new ArrayList<AbstractManager>();
@@ -105,7 +97,7 @@ public class ManagerInstances {
             counter = 1;
         }
         else {
-            startP = aManager.length-1;
+            startP = aManager.length - 1;
             counter = -1;
         }
 
@@ -129,6 +121,7 @@ public class ManagerInstances {
         }
         return asc;
     }
+
     public static List<AbstractManager> getManagersOfDesc() {
         if (desc == null) {
             remakeDesc();

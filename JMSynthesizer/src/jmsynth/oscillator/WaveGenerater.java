@@ -1,13 +1,15 @@
 package jmsynth.oscillator;
 
 public class WaveGenerater {
-    private WaveGenerater() {}
+    private WaveGenerater() {
+    }
 
     private static double trimF(double f) {
         return trimF(f, 100.0);
     }
+
     private static double trimF(double f, double r) {
-        return Math.round(f*r) / r;
+        return Math.round(f * r) / r;
     }
 
     /**
@@ -40,7 +42,7 @@ public class WaveGenerater {
         return makePulseWave(f, overallLevel, 0.5, reverse, lowRes);
     }
 
-    //private static final double DUTY_THRESHOLD = 0.05;
+    // private static final double DUTY_THRESHOLD = 0.05;
     private static final double DUTY_THRESHOLD = 0.04;
     private static final double DUTY_OFFSET = 0.5;
 
@@ -77,7 +79,7 @@ public class WaveGenerater {
             }
             else {
                 if (lowRes == true) {
-                    y = (byte) (-(overallLevel - ((ff - DUTY_THRESHOLD) * 4.0) ));
+                    y = (byte) (-(overallLevel - ((ff - DUTY_THRESHOLD) * 4.0)));
                 }
                 else {
                     y = (byte) (-(overallLevel));
@@ -97,7 +99,7 @@ public class WaveGenerater {
      */
     public static byte makeSawWave(double f, int overallLeval, boolean reverse) {
         double ff = (reverse == true) ? (1.0 - trimF(f)) : trimF(f);
-        return (byte)(((2.0 * ff) * overallLeval) - (overallLeval));
+        return (byte) (((2.0 * ff) * overallLeval) - (overallLeval));
     }
 
     /**
@@ -116,7 +118,7 @@ public class WaveGenerater {
         double ff = (reverse == true) ? (1.0 - trimF(f, r)) : trimF(f, r);
 
         byte y = 0;
-        int slope = (int)((ff / 0.25) + 1) % 2; // 0=上り, 1=下り
+        int slope = (int) ((ff / 0.25) + 1) % 2; // 0=上り, 1=下り
         double quarter = ff % 0.25;
         double sign = (ff < 0.5) ? -1.0 : 1.0;
         if (slope == 0) {

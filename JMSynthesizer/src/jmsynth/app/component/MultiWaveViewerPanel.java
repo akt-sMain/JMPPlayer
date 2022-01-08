@@ -278,7 +278,7 @@ public class MultiWaveViewerPanel extends JPanel {
         // g.drawString(panelName, 10, 20);
 
         if (traceViewMode == TRACE_VIEW_MODE_DETAIL) {
-            for (int i=0; i<16; i++) {
+            for (int i = 0; i < 16; i++) {
                 paintWave(g, getDataArray(i), i);
             }
         }

@@ -111,7 +111,8 @@ public class ChannelSetupDialog extends JDialog {
                 modDepth = mod.getDepth();
                 paintWave(g, synth.getWaveType(ch), isWaveReverse, Color.GRAY);
                 paintCurve(g, a, d, s, r, ma, md, mr, Color.GRAY);
-                paintInfo(g, w - 110, 90, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, modDepth, wave, Color.GRAY);
+                paintInfo(g, w - 110, 90, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, modDepth, wave,
+                        Color.GRAY);
             }
 
             wave = comboBoxWaveType.getSelectedItem().toString();
@@ -126,11 +127,14 @@ public class ChannelSetupDialog extends JDialog {
             modDepth = getModSli();
             paintWave(g, toWaveType(wave), isWaveReverse, Color.YELLOW);
             paintCurve(g, a, d, s, r, ma, md, mr, Color.MAGENTA);
-            paintInfo(g, w - 110 + 1, 16, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, modDepth, wave, Color.DARK_GRAY);
-            paintInfo(g, w - 110, 15, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, modDepth, wave, Color.GREEN);
+            paintInfo(g, w - 110 + 1, 16, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, modDepth, wave,
+                    Color.DARK_GRAY);
+            paintInfo(g, w - 110, 15, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, modDepth, wave,
+                    Color.GREEN);
         }
 
-        private void paintInfo(Graphics g, int x, int y, int fontSize, int aInt, int dInt, double s, int rInt, long maInt, long mdInt, long mrInt, int mod, String wave, Color strColor) {
+        private void paintInfo(Graphics g, int x, int y, int fontSize, int aInt, int dInt, double s, int rInt, long maInt, long mdInt, long mrInt, int mod,
+                String wave, Color strColor) {
             int fx, fy;
             fx = x;
             fy = y;
@@ -671,7 +675,7 @@ public class ChannelSetupDialog extends JDialog {
         if (max < val) {
             val = max;
         }
-        sl.setValue((int)val);
+        sl.setValue((int) val);
         return;
     }
 

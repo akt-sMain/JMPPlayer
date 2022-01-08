@@ -122,16 +122,17 @@ public class DebugLogConsole extends JDialog {
 
     public void updateText() {
         if (textPane.getText().isEmpty() == false && isVisible() == true) {
-            //textPane.setCaretPosition(textPane.getText().length());
-//            try {
-//                scrollPane.getViewport().scrollRectToVisible(new Rectangle(0, Integer.MAX_VALUE - 1, 1, 1));
-//            }
-//            catch (Exception e) {
-//            }
+            // textPane.setCaretPosition(textPane.getText().length());
+            // try {
+            // scrollPane.getViewport().scrollRectToVisible(new Rectangle(0,
+            // Integer.MAX_VALUE - 1, 1, 1));
+            // }
+            // catch (Exception e) {
+            // }
         }
-//        if (isVisible() == true) {
-//            repaint();
-//        }
+        // if (isVisible() == true) {
+        // repaint();
+        // }
     }
 
 }

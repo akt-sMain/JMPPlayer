@@ -16,9 +16,11 @@ public class MidiUtil {
     public static boolean isGmSystemOn(byte[] data) {
         return Arrays.equals(data, MidiUtil.GM_SYSTEM_ON);
     }
+
     public static boolean isXgSystemOn(byte[] data) {
         return Arrays.equals(data, MidiUtil.XG_SYSTEM_ON);
     }
+
     public static boolean isGsReset(byte[] data) {
         return Arrays.equals(data, MidiUtil.GS_RESET);
     }

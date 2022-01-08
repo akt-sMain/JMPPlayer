@@ -29,8 +29,8 @@ import jmsynth.oscillator.TriWaveOscillator;
 
 public class SoundSourceChannel extends Thread implements ISynthController {
     public static final float SAMPLE_RATE = 44100.0f; // サンプルレート
-    //public static final float SAMPLE_RATE = 22050.0f; // サンプルレート
-    //public static final float SAMPLE_RATE = 11025.0f; // サンプルレート
+    // public static final float SAMPLE_RATE = 22050.0f; // サンプルレート
+    // public static final float SAMPLE_RATE = 11025.0f; // サンプルレート
 
     public static final boolean SAMPLE_16BITS = true;
     public static final int SAMPLE_SIZE = SAMPLE_16BITS ? 16 : 8;
@@ -80,14 +80,16 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public SoundSourceChannel(int channel, WaveType oscType, int polyphony, Envelope envelope, Modulator modulator) {
         init(channel, oscType, polyphony, envelope, modulator);
     }
+
     public SoundSourceChannel(int channel, WaveType oscType, int polyphony, Envelope envelope) {
         init(channel, oscType, polyphony, envelope, null);
     }
+
     public SoundSourceChannel(int channel, WaveType oscType, int polyphony) {
         init(channel, oscType, polyphony, null, null);
     }
 
-    private static Map<WaveType, IOscillator> oscMap = new HashMap<WaveType, IOscillator>(){
+    private static Map<WaveType, IOscillator> oscMap = new HashMap<WaveType, IOscillator>() {
         {
             put(WaveType.SINE, new SinWaveOscillator());
             put(WaveType.LOW_SINE, new LowSamplingSinWaveOscillator());
@@ -188,7 +190,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
             catch (ArrayIndexOutOfBoundsException aiobe) {
                 // ArrayIndexOutOfBoundsExceptionは起きがち
                 // スレッドのタイミング次第なためとりあえず無視...
-                //aiobe.printStackTrace();
+                // aiobe.printStackTrace();
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -201,30 +203,30 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         return (int) (milliseconds / 1000 * BUF_SIZE);
     }
 
-//    int[] samples = new int[BUF_SIZE]; // 波形データ
-//    static final int AVERAGE_SAMPLE_COUNT = 10;
-//
-//    public int samplesOfAverage(byte[] data, int length) {
-//        int newLength = length;
-//        for (int i = 0; i < samples.length; i++) {
-//            int avgSample = 0;
-//            int sampleCount = 0;
-//            for (int a = 0; a < AVERAGE_SAMPLE_COUNT; a++) {
-//                if ((i + a) >= data.length) {
-//                    break;
-//                }
-//                avgSample += data[i + a];
-//                sampleCount++;
-//            }
-//            avgSample /= sampleCount;
-//            samples[i] = avgSample;
-//        }
-//
-//        for (int i = 0; i < newLength; i++) {
-//            data[i] = (byte) (samples[i] & 0xff);
-//        }
-//        return newLength;
-//    }
+    // int[] samples = new int[BUF_SIZE]; // 波形データ
+    // static final int AVERAGE_SAMPLE_COUNT = 10;
+    //
+    // public int samplesOfAverage(byte[] data, int length) {
+    // int newLength = length;
+    // for (int i = 0; i < samples.length; i++) {
+    // int avgSample = 0;
+    // int sampleCount = 0;
+    // for (int a = 0; a < AVERAGE_SAMPLE_COUNT; a++) {
+    // if ((i + a) >= data.length) {
+    // break;
+    // }
+    // avgSample += data[i + a];
+    // sampleCount++;
+    // }
+    // avgSample /= sampleCount;
+    // samples[i] = avgSample;
+    // }
+    //
+    // for (int i = 0; i < newLength; i++) {
+    // data[i] = (byte) (samples[i] & 0xff);
+    // }
+    // return newLength;
+    // }
 
     /**
      * バッファ再生処理
@@ -242,7 +244,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         while (isRunnable) {
             try {
                 int length = makeTone(waveData, sampleRate); // 再生するたびに作り直す
-                //samplesOfAverage(waveData, length);
+                // samplesOfAverage(waveData, length);
 
                 if (repWait % REPAINT_CYCLE == 0) {
                     callWaveRepaint(waveData);
@@ -604,6 +606,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public Envelope getEnvelope() {
         return getEnvelope(0);
     }
+
     @Override
     public void systemReset() {
         pitch_sc = 2;

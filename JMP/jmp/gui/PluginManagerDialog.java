@@ -109,26 +109,26 @@ public class PluginManagerDialog extends JMPFrame {
             }
         });
 
-                btnValid = new JButton("Valid");
-                btnValid.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        int[] selected = table.getSelectedRows();
-                        if (selected == null || selected.length <= 0) {
-                            return;
-                        }
+        btnValid = new JButton("Valid");
+        btnValid.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int[] selected = table.getSelectedRows();
+                if (selected == null || selected.length <= 0) {
+                    return;
+                }
 
-                        PluginManager pm = JMPCore.getPluginManager();
-                        for (int i = 0; i < selected.length; i++) {
-                            String name = model.getValueAt(selected[i], 0).toString();
-                            if (pm.getPluginState(name) == PluginState.INVALID) {
-                                pm.toValidPlugin(name);
-                            }
-                        }
-
-                        updateTable();
+                PluginManager pm = JMPCore.getPluginManager();
+                for (int i = 0; i < selected.length; i++) {
+                    String name = model.getValueAt(selected[i], 0).toString();
+                    if (pm.getPluginState(name) == PluginState.INVALID) {
+                        pm.toValidPlugin(name);
                     }
-                });
-                panel.add(btnValid);
+                }
+
+                updateTable();
+            }
+        });
+        panel.add(btnValid);
         panel.add(btnInvalid);
         panel.add(btnEnable);
 

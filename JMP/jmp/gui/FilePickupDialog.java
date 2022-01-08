@@ -93,7 +93,7 @@ public class FilePickupDialog extends JDialog implements IJMPComponentUI, IJmpWi
                             return;
                         }
 
-                        for (int i=0; i<indexs.length; i++) {
+                        for (int i = 0; i < indexs.length; i++) {
                             String name = listModel.getElementAt(indexs[i]);
                             JmpUtil.deleteFileDirectory(map.get(name));
                         }
@@ -136,16 +136,19 @@ public class FilePickupDialog extends JDialog implements IJMPComponentUI, IJmpWi
         String name = listModel.getElementAt(indexs[0]);
         return map.get(name);
     }
+
     public void setDirectory(File f) {
         dir = f;
         extention = "";
         updateList();
     }
+
     public void setDirectory(File f, String ext) {
         dir = f;
         extention = ext;
         updateList();
     }
+
     public void updateList() {
         listModel.removeAllElements();
         if (dir == null) {

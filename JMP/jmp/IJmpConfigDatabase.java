@@ -18,25 +18,32 @@ public interface IJmpConfigDatabase {
     default void setConfigParamToInt(String key, int val) {
         setConfigParam(key, String.valueOf(val));
     }
+
     default int getConfigParamToInt(String key, int def) {
         return JmpUtil.toInt(getConfigParam(key), def);
     }
+
     default void setConfigParamToBoolean(String key, boolean val) {
         setConfigParam(key, val ? IJ_TRUE : IJ_FALSE);
     }
+
     default boolean getConfigParamToBoolean(String key, boolean def) {
         return JmpUtil.toBoolean(getConfigParam(key), def);
     }
+
     default void setConfigParamToFloat(String key, float val) {
         setConfigParam(key, String.valueOf(val));
     }
+
     default float getConfigParamToFloat(String key, float def) {
         return JmpUtil.toFloat(getConfigParam(key), def);
     }
+
     default void setConfigParamToLanguage(String key, int val) {
         LanguageManager lm = JMPCore.getLanguageManager();
         setConfigParam(key, lm.getLanguageCode(val));
     }
+
     default int getConfigParamToLanguage(String key, int def) {
         LanguageManager lm = JMPCore.getLanguageManager();
         String code = getConfigParam(key);

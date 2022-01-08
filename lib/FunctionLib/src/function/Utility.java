@@ -1702,11 +1702,11 @@ public class Utility {
 
         if (src.isDirectory() == false) {
             if (checkExtension(src, ex) == true) {
-                //System.out.println(">>>cp " + src.getAbsolutePath());
+                // System.out.println(">>>cp " + src.getAbsolutePath());
                 String srcPath = src.getPath();
                 String dstPath = Utility.pathCombin(dst.getPath(), Utility.getFileNameAndExtension(srcPath));
                 if (copyFile(srcPath, dstPath) == false) {
-                    //System.out.println("false");
+                    // System.out.println("false");
                 }
             }
             return;
@@ -1714,7 +1714,7 @@ public class Utility {
 
         File[] lists = src.listFiles();
         for (File f : lists) {
-            //System.out.println("lst " + f.getPath());
+            // System.out.println("lst " + f.getPath());
             toExport(ex, f, dst);
         }
     }
@@ -1984,14 +1984,14 @@ public class Utility {
 
     public static File openSaveFileDialog(Component parent, File defaultDirectory, String defaultFileName, FileNameExtensionFilter... filter) {
         JFileChooser filechooser = new JFileChooser();
-        for (int i=0; i<filter.length; i++) {
+        for (int i = 0; i < filter.length; i++) {
             filechooser.addChoosableFileFilter(filter[i]);
         }
         File f = openSaveFileDialog(filechooser, parent, defaultDirectory, defaultFileName);
         if (f != null) {
             javax.swing.filechooser.FileFilter fil = filechooser.getFileFilter();
             if (fil instanceof FileNameExtensionFilter) {
-                FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter)fil;
+                FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fil;
                 if (selectedFilter.accept(f) == false) {
                     String parentPath = f.getParent();
                     String fileName = getFileNameNotExtension(f);
@@ -2083,7 +2083,7 @@ public class Utility {
 
     public static File openLoadFileDialog(Component parent, File defaultDirectory, FileNameExtensionFilter... filter) {
         JFileChooser filechooser = new JFileChooser();
-        for (int i=0; i<filter.length; i++) {
+        for (int i = 0; i < filter.length; i++) {
             filechooser.addChoosableFileFilter(filter[i]);
         }
         return openLoadFileDialog(filechooser, parent, defaultDirectory);
@@ -2121,6 +2121,7 @@ public class Utility {
     public static int openPlainDialog(Component parent, String title, String message) {
         return openPlainDialog(parent, title, message, false);
     }
+
     /**
      * アイコンがない確認ダイアログを開く
      *
@@ -2145,6 +2146,7 @@ public class Utility {
     public static int openErrorDialog(Component parent, String title, String message) {
         return openErrorDialog(parent, title, message, false);
     }
+
     /**
      * エラーダイアログを開く
      *
@@ -2169,6 +2171,7 @@ public class Utility {
     public static int openQuestionDialog(Component parent, String title, String message) {
         return openQuestionDialog(parent, title, message, false);
     }
+
     /**
      * 質問ダイアログを開く
      *
@@ -2193,6 +2196,7 @@ public class Utility {
     public static int openWarningDialog(Component parent, String title, String message) {
         return openWarningDialog(parent, title, message, false);
     }
+
     /**
      * 警告ダイアログを開く
      *
@@ -2217,6 +2221,7 @@ public class Utility {
     public static int openInfomationDialog(Component parent, String title, String message) {
         return openInfomationDialog(parent, title, message, false);
     }
+
     /**
      * 情報ダイアログを開く
      *
