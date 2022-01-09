@@ -1,10 +1,12 @@
 package jmp.task;
 
 import jlib.gui.IJmpMainWindow;
+import jlib.player.IPlayer;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
+import jmp.core.SoundManager;
 import jmp.core.WindowManager;
 import jmp.gui.JmpQuickLaunch;
 import jmp.plugin.PluginWrapper;
@@ -37,16 +39,24 @@ public class TaskOfUpdate extends TaskOfBase {
     void loop() {
         WindowManager wm = JMPCore.getWindowManager();
         PluginManager pm = JMPCore.getPluginManager();
+        SoundManager sm = JMPCore.getSoundManager();
         IJmpMainWindow mainWindow = wm.getMainWindow();
 
         boolean isUpdate = false;
         boolean isRepaint = false;
         boolean isRepaintMain = false;
         boolean isRepaintBuiltin = false;
-
+        
         // 再描画カウント
         if (JMPCore.getSoundManager().isPlay() == true) {
             if ((CYCLIC_REPAINT_MSEC_PLAY / getSleepTime()) <= cyclicRepaintCount) {
+                isRepaintMain = true;
+            }
+            
+            /* 【例外処理】シークが終端まで到達してるのに再生が継続している場合、強制的に停止する */
+            IPlayer player = sm.getCurrentPlayer();
+            if (player.getPosition() >= player.getLength()) {
+                player.stop();
                 isRepaintMain = true;
             }
         }

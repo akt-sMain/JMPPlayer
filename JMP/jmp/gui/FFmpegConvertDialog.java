@@ -273,13 +273,7 @@ public class FFmpegConvertDialog extends JMPDialog {
             }
         }
 
-        if (JMPFlags.DebugMode == true) {
-            dstExtTextField.setVisible(true);
-        }
-        else {
-            dstExtTextField.setVisible(false);
-            dstExtTextField.setText("wav");
-        }
+        dstExtTextField.setText("wav");
 
         updateGuiState();
         updateBackColor();

@@ -40,10 +40,12 @@ public class FlagMediaPlayer {
 
     public static void main(String[] args) throws Exception {
         // openMainWindow();
-        openSingleWindow(new File("sample.mp4"), true);
+        FlagMediaPlayerProrpaty property = new FlagMediaPlayerProrpaty();
+        property.playAfterExit = true;
+        openSingleWindow(new File("S:\\sample.mp4"), property);
     }
 
-    public static FlagMediaAccessor openSingleWindow(File file, boolean playAfterExit) throws Exception {
+    public static FlagMediaAccessor openSingleWindow(File file, FlagMediaPlayerProrpaty property) throws Exception {
         MediaPanel panel = new MediaPanel(file, null);
 
         FlagMediaPlayerWindow win = new FlagMediaPlayerWindow(panel);
@@ -77,17 +79,30 @@ public class FlagMediaPlayer {
             panel.setAudioOnly(true);
         }
 
-        // MoviePanelのサイズを動画に合わせる
-        panel.setPreferredSize(new Dimension(videoW, videoH));
+        // 常に音声のみ
+        if (property.alwaysAudioOnly == true) {
+            panel.setAudioOnly(true);
+        }
+
+        Dimension videoDim = null;
+        if (property.fixScreenSize == null) {
+            // MoviePanelのサイズを動画に合わせる
+            videoDim = new Dimension(videoW, videoH);
+        }
+        else {
+            // MoviePanelのサイズを固定
+            videoDim = property.fixScreenSize;
+        }
+        panel.setPreferredSize(videoDim);
         win.getContentPane().add(panel);
 
         // Frameのサイズ調整
-        win.getContentPane().setPreferredSize(new Dimension(videoW, videoH));
+        win.getContentPane().setPreferredSize(videoDim);
         win.pack();
 
         panel.threadStart();
 
-        if (playAfterExit == true) {
+        if (property.playAfterExit == true) {
             win.setVisible(true);
             panel.getPlayer().play();
 

@@ -49,6 +49,7 @@ import jmp.player.MusicMacroPlayer;
 import jmp.player.MusicXmlPlayer;
 import jmp.player.PlayerAccessor;
 import jmp.player.WavPlayer;
+import jmp.player.WavPlayerMin;
 import jmp.util.JmpUtil;
 
 /**
@@ -76,7 +77,6 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     // プレイヤーインスタンス
     public static MidiPlayer SMidiPlayer = null;
     public static WavPlayer SWavPlayer = null;
-    // public static WavPlayerMin SWavPlayer = null;
     public static MusicXmlPlayer SMusicXmlPlayer = null;
     public static MusicMacroPlayer SMusicMacloPlayer = null;
     public static FFmpegPlayer SFFmpegPlayer = null;
@@ -125,16 +125,21 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_WAV));
         String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
         String[] exMML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MML));
-        String[] exMUSIC = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSIC));
+        String[] exMUSIC = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MEDIA));
 
         // midi
         SMidiPlayer = new MidiPlayer();
         SMidiPlayer.setSupportExtentions(exMIDI);
         PlayerAccessor.register(SMidiPlayer);
+        
+        // movie
+        SMoviePlayer = new MoviePlayer();
+        SMoviePlayer.setSupportExtentions(exMUSIC);
+        PlayerAccessor.register(SMoviePlayer);
 
         // wav
-        SWavPlayer = new WavPlayer();
-        // SWavPlayer = new WavPlayerMin();
+        //SWavPlayer = new WavPlayerClip();
+        SWavPlayer = new WavPlayerMin(SMoviePlayer);
         SWavPlayer.setSupportExtentions(exWAV);
         PlayerAccessor.register(SWavPlayer);
 
@@ -148,13 +153,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         SMusicMacloPlayer.setSupportExtentions(exMML);
         PlayerAccessor.register(SMusicMacloPlayer);
 
-        // movie
-        SMoviePlayer = new MoviePlayer();
-        SMoviePlayer.setSupportExtentions(exMUSIC);
-        PlayerAccessor.register(SMoviePlayer);
-
         // ffmpeg
-        SFFmpegPlayer = new FFmpegPlayer();
+        SFFmpegPlayer = new FFmpegPlayer(SMoviePlayer);
         SFFmpegPlayer.setSupportExtentions("*");
         PlayerAccessor.register(SFFmpegPlayer);
 
@@ -398,7 +398,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         if (Utility.checkExtensions(file, exts) == true) {
             return true;
         }
-        exts = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSIC));
+        exts = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MEDIA));
         if (Utility.checkExtensions(file, exts) == true) {
             return true;
         }
@@ -1000,7 +1000,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             String[] exs = JmpUtil.genStr2Extensions(val);
             SMusicMacloPlayer.setSupportExtentions(exs);
         }
-        else if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSIC)) == true) {
+        else if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_EXTENSION_MEDIA)) == true) {
         }
         super.notifyUpdateCommonRegister(key);
     }
@@ -1138,5 +1138,32 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             SMidiPlayer.updateMidiIn(inName);
             JMPFlags.Log.cprintln("Device update[IN]  : " + (inName.isEmpty() ? "None" : inName));
         }
+    }
+    
+    public boolean isValidMediaView() {
+        IPlayer current = getCurrentPlayer();
+        if (current != SMoviePlayer) {
+            return false;
+        }
+        if (SMoviePlayer.isValid() == false) {
+            return false;
+        }
+        if (SMoviePlayer.isValidView() == false) {
+            return false;
+        }
+        return true;
+    }
+    public boolean isVisibleMediaView() {
+        if (isValidMediaView() == false) {
+            return false;
+        }
+        return SMoviePlayer.isVisibleView();
+    }
+    
+    public void setVisibleMediaView(boolean visible) {
+        if (isValidMediaView() == false) {
+            return;
+        }
+        SMoviePlayer.setVisibleView(visible);
     }
 }

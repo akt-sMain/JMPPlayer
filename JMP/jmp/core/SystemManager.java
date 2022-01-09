@@ -192,7 +192,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         cRegKeys[COMMON_REGKEY_NO_EXTENSION_MIDI] = "extension_midi";
         cRegKeys[COMMON_REGKEY_NO_EXTENSION_WAV] = "extension_wav";
         cRegKeys[COMMON_REGKEY_NO_EXTENSION_MUSICXML] = "extension_musicxml";
-        cRegKeys[COMMON_REGKEY_NO_EXTENSION_MUSIC] = "extension_music";
+        cRegKeys[COMMON_REGKEY_NO_EXTENSION_MEDIA] = "extension_music";
         cRegKeys[COMMON_REGKEY_NO_EXTENSION_MML] = "extension_mml";
         cRegKeys[COMMON_REGKEY_NO_USE_MIDI_TOOLKIT] = "use_midi_toolkit";
         cRegKeys[COMMON_REGKEY_NO_USE_UTIL_TOOLKIT] = "use_util_toolkit";
@@ -227,7 +227,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         cReg.add(cRegKeys[COMMON_REGKEY_NO_EXTENSION_MIDI], JmpUtil.genExtensions2Str("mid", "midi"));
         cReg.add(cRegKeys[COMMON_REGKEY_NO_EXTENSION_WAV], JmpUtil.genExtensions2Str("wav"));
         cReg.add(cRegKeys[COMMON_REGKEY_NO_EXTENSION_MUSICXML], JmpUtil.genExtensions2Str("xml", "musicxml", "mxl"));
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_EXTENSION_MUSIC], JmpUtil.genExtensions2Str("aif", "aiff", "flv", "aac", "mp3", "mp4", "m4a", "m4v"));
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_EXTENSION_MEDIA], JmpUtil.genExtensions2Str("aif", "aiff", "flv", "aac", "mp3", "mp4", "m4a", "m4v"));
         cReg.add(cRegKeys[COMMON_REGKEY_NO_EXTENSION_MML], JmpUtil.genExtensions2Str("mml"));
         cReg.add(cRegKeys[COMMON_REGKEY_NO_USE_MIDI_TOOLKIT], USE_MIDI_TOOLKIT_CLASSNAME);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_USE_UTIL_TOOLKIT], USE_UTIL_TOOLKIT_CLASSNAME);
@@ -250,38 +250,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_14], "#ffff29", true);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_15], "#bbff29", true);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_16], "#f98608", true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_1], "#00ff00",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_2], "#008000",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_3], "#808000",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_4], "#ffff00",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_5], "#000080",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_6], "#0000ff",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_7], "#008080",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_8], "#00ffff",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_9], "#ff0000",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_10], "#800000",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_11], "#800080",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_12], "#ff00ff",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_13], "#ffb6c1",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_14], "#ffa07a",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_15], "#20b2aa",
-        // true);
-        // cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_16], "#deb887",
-        // true);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_FFMPEG_OUTPUT], "output");
         cReg.add(cRegKeys[COMMON_REGKEY_NO_FFMPEG_WIN], "ffmpeg", true);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_FFMPEG_MAC], "/Usr/local/bin/ffmpeg", true);
@@ -446,24 +414,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     @Override
     public boolean isEnableStandAlonePlugin() {
         return JMPCore.isEnableStandAlonePlugin();
-    }
-
-    public void initializeAllSetting() {
-        // 全てのWindowを閉じる
-        JMPCore.getWindowManager().setVisibleAll(false);
-        JMPCore.getPluginManager().closeAllPlugins();
-
-        JMPCore.getDataManager().initializeConfigDatabase();
-        JMPCore.getDataManager().clearHistory();
-        JMPCore.getSoundManager().clearPlayList();
-        JMPCore.getWindowManager().initializeLayout();
-
-        // 言語更新
-        JMPCore.getWindowManager().updateLanguage();
-
-        // 設定ファイルのFFmpegパスを同期
-        setFFmpegWrapperPath(JMPCore.getDataManager().getFFmpegPath());
-        setFFmpegInstalled(JMPCore.getDataManager().isFFmpegInstalled());
     }
 
     /** アクティベート前処理 */

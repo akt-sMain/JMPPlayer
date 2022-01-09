@@ -92,8 +92,8 @@ public interface ISystemManager {
     public static final int COMMON_REGKEY_NO_FFMPEG_OTHER = 27;
     /** 歌詞文字エンコード */
     public static final int COMMON_REGKEY_NO_LYRIC_CHARCODE = 28;
-    /** Musicファイル拡張子 */
-    public static final int COMMON_REGKEY_NO_EXTENSION_MUSIC = 29;
+    /** メディアファイル拡張子 */
+    public static final int COMMON_REGKEY_NO_EXTENSION_MEDIA = 29;
     /** MMLファイル拡張子 */
     public static final int COMMON_REGKEY_NO_EXTENSION_MML = 30;
     /** 連続再生の動作(DIR=ディレクトリ内、PLT=プレイリスト) */

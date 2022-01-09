@@ -623,7 +623,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             public void actionPerformed(ActionEvent e) {
                 int res = Utility.openInfomationDialog(JMPPlayerWindow.this, "", JMPCore.getLanguageManager().getLanguageStr(LangID.Initialize_setting));
                 if (res == Utility.CONFIRM_RESULT_YES) {
-                    JMPCore.getSystemManager().initializeAllSetting();
+                    JMPCore.initializeAllSetting();
                 }
             }
         });
@@ -1287,7 +1287,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_WAV));
         // String[] exMUSICXML = JmpUtil
         // .genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
-        String[] exMUSIC = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSIC));
+        String[] exMUSIC = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MEDIA));
 
         // ファイルフィルター
         JFileChooser filechooser = new JFileChooser();

@@ -1,8 +1,10 @@
 package jmp.player;
 
+import java.awt.Dimension;
 import java.io.File;
 
 import fmp.FlagMediaPlayer;
+import fmp.FlagMediaPlayerProrpaty;
 import function.Utility;
 import gui.FlagMediaAccessor;
 import gui.FlagMediaAccessor.PlayerStatus;
@@ -123,7 +125,14 @@ public class MoviePlayer extends Player {
             closeResource();
         }
         // 新しく作成
-        mediaAccessor = FlagMediaPlayer.openSingleWindow(file, false);
+        FlagMediaPlayerProrpaty prop = new FlagMediaPlayerProrpaty();
+        prop.alwaysAudioOnly = false;
+        prop.playAfterExit = false;
+
+        java.awt.GraphicsEnvironment env = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment();
+        java.awt.Rectangle desktopBounds = env.getMaximumWindowBounds();
+        prop.fixScreenSize = new Dimension((int) (desktopBounds.width * 0.8), (int) (desktopBounds.height * 0.8));
+        mediaAccessor = FlagMediaPlayer.openSingleWindow(file, prop);
         if (mediaAccessor == null) {
             return false;
         }
@@ -155,4 +164,27 @@ public class MoviePlayer extends Player {
         super.changingPlayer();
     }
 
+    public void setVisibleView(boolean visible) {
+        if (isValid() == false) {
+            return;
+        }
+        mediaAccessor.setVisibleView(visible);
+    }
+
+    public boolean isValidView() {
+        if (isValid() == false) {
+            return false;
+        }
+        if (mediaAccessor.isAudioOnly() == true) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isVisibleView() {
+        if (isValid() == false) {
+            return false;
+        }
+        return mediaAccessor.isVisibleView();
+    }
 }

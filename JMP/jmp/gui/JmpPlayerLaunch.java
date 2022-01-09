@@ -27,7 +27,7 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, MouseMotio
     public static final int MERGIN = 2;
     public static final int TOTAL_WIDTH = 250;// ((SIZE + (MERGIN * 2))) * 8;
 
-    public static final int VOLUME_STARTX = 70;
+    public static final int VOLUME_STARTX = 88;
     public static final int VOLUME_STARTY = 2;
     public static final int VOLUME_W = 60;
     public static final int VOLUME_H = SIZE;
@@ -83,6 +83,16 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, MouseMotio
         paintPlaylistMark(g, x, y, SIZE, SIZE);
         g.setColor(BORDER_COLOR);
         g.drawRect(x, y, SIZE, SIZE);
+        
+        x += (SIZE + (MERGIN * 2));
+        if (JMPCore.getSoundManager().isValidMediaView() == true) {
+            checked = checkVisibleMediaViewMark();
+            g.setColor(checked == false ? BACK_COLOR : BACK_COLOR2);
+            g.fillRect(x, y, SIZE, SIZE);
+            paintVisibleMediaViewMark(g, x, y, SIZE, SIZE);
+            g.setColor(BORDER_COLOR);
+            g.drawRect(x, y, SIZE, SIZE);
+        }
 
         float volume = JMPCore.getSoundManager().getLineVolume();
         int volumeW = (int) (((float) VOLUME_W * volume) / volumeMax);
@@ -193,6 +203,21 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, MouseMotio
             g.drawImage(img, imgX, imgY, null);
         }
     }
+    
+    public boolean checkVisibleMediaViewMark() {
+        return JMPCore.getSoundManager().isVisibleMediaView();
+    }
+
+    public void paintVisibleMediaViewMark(Graphics g, int x, int y, int width, int height) {
+        Image img = JMPCore.getResourceManager().getBtnViewIcon();
+        if (img != null) {
+            int imgX = x + (width - img.getWidth(null)) / 2;
+            int imgY = y + (height - img.getHeight(null)) / 2;
+            imgX = (imgX < 0) ? 0 : imgX;
+            imgY = (imgY < 0) ? 0 : imgY;
+            g.drawImage(img, imgX, imgY, null);
+        }
+    }
 
     private int startX() {
         return MERGIN * 2;
@@ -260,6 +285,18 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, MouseMotio
                 else {
                     win.showWindow();
                 }
+            }
+            wm.repaint(WindowManager.WINDOW_NAME_MAIN);
+            return;
+        }
+        
+        x += (SIZE + (MERGIN * 2));
+        if ((x < e.getX()) && (e.getX() < x + SIZE) && (y < e.getY()) && (e.getY() < y + SIZE)) {
+            if (JMPCore.getSoundManager().isVisibleMediaView() == true) {
+                JMPCore.getSoundManager().setVisibleMediaView(false);
+            }
+            else {
+                JMPCore.getSoundManager().setVisibleMediaView(true);
             }
             wm.repaint(WindowManager.WINDOW_NAME_MAIN);
             return;

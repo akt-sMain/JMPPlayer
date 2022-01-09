@@ -482,4 +482,34 @@ public class DefaultImageMaker {
         }
         return defBtnListIcon;
     }
+    
+    private static Image defBtnViewIcon = null;
+
+    public static Image makeDefaultBtnViewIcon() {
+        if (defBtnViewIcon == null) {
+            BufferedImage buf = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = (Graphics2D) buf.getGraphics();
+            int x = 0;
+            int y = 0;
+            int width = buf.getWidth(null);
+            int height = buf.getHeight(null);
+
+            int fx = 3;
+            int fy = 3;
+            int fw = 10;
+            int fh = 10;
+
+            Color transColor = Color.ORANGE;
+            g2d.setColor(transColor);
+            g2d.fillRect(x, y, width, height);
+
+            Color color = Color.WHITE;
+            g2d.setColor(color);
+            g2d.setStroke(new BasicStroke(1.0f));
+            g2d.drawRect(fx, fy, fw, fh);
+            g2d.fillRect(fx, fy, fw, 3);
+            defBtnViewIcon = JmpUtil.transformImageToTransparency(buf, transColor);
+        }
+        return defBtnViewIcon;
+    }
 }

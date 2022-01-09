@@ -112,6 +112,24 @@ public class JMPCore {
 
         });
     }
+    
+    public static void initializeAllSetting() {
+        // 全てのWindowを閉じる
+        getWindowManager().setVisibleAll(false);
+        getPluginManager().closeAllPlugins();
+
+        getDataManager().initializeConfigDatabase();
+        getDataManager().clearHistory();
+        getSoundManager().clearPlayList();
+        getWindowManager().initializeLayout();
+
+        // 言語更新
+        getWindowManager().updateLanguage();
+
+        // 設定ファイルのFFmpegパスを同期
+        getSystemManager().setFFmpegWrapperPath(getDataManager().getFFmpegPath());
+        getSystemManager().setFFmpegInstalled(getDataManager().isFFmpegInstalled());
+    }
 
     public static SystemManager getSystemManager() {
         return ManagerInstances.SSystemManager;

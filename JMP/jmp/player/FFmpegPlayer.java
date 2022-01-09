@@ -6,66 +6,69 @@ import function.Utility;
 import jlib.player.Player;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
-import jmp.core.SoundManager;
 import jmp.core.SystemManager;
 
 public class FFmpegPlayer extends Player {
 
-    private Player wavPlayer = SoundManager.SWavPlayer;
+    private Player mediaPlayer = null;
+    
+    public FFmpegPlayer(Player mediaPlayer) {
+        this.mediaPlayer = mediaPlayer;
+    }
 
     @Override
     public void play() {
-        wavPlayer.play();
+        mediaPlayer.play();
     }
 
     @Override
     public void stop() {
-        wavPlayer.stop();
+        mediaPlayer.stop();
     }
 
     @Override
     public boolean isRunnable() {
-        return wavPlayer.isRunnable();
+        return mediaPlayer.isRunnable();
     }
 
     @Override
     public void setPosition(long pos) {
-        wavPlayer.setPosition(pos);
+        mediaPlayer.setPosition(pos);
     }
 
     @Override
     public long getPosition() {
-        return wavPlayer.getPosition();
+        return mediaPlayer.getPosition();
     }
 
     @Override
     public long getLength() {
-        return wavPlayer.getLength();
+        return mediaPlayer.getLength();
     }
 
     @Override
     public boolean isValid() {
-        return wavPlayer.isValid();
+        return mediaPlayer.isValid();
     }
 
     @Override
     public int getPositionSecond() {
-        return wavPlayer.getPositionSecond();
+        return mediaPlayer.getPositionSecond();
     }
 
     @Override
     public int getLengthSecond() {
-        return wavPlayer.getLengthSecond();
+        return mediaPlayer.getLengthSecond();
     }
 
     @Override
     public void setVolume(float volume) {
-        wavPlayer.setVolume(volume);
+        mediaPlayer.setVolume(volume);
     }
 
     @Override
     public float getVolume() {
-        return wavPlayer.getVolume();
+        return mediaPlayer.getVolume();
     }
 
     @Override
@@ -99,12 +102,12 @@ public class FFmpegPlayer extends Player {
             // 読み込めない場合は変換失敗とする
             return false;
         }
-        return wavPlayer.loadFile(out);
+        return mediaPlayer.loadFile(out);
     }
 
     @Override
     public boolean saveFile(File file) throws Exception {
-        return wavPlayer.saveFile(file);
+        return mediaPlayer.saveFile(file);
     }
 
     @Override
@@ -137,12 +140,12 @@ public class FFmpegPlayer extends Player {
 
     @Override
     public Info getInfo() {
-        return wavPlayer.getInfo();
+        return mediaPlayer.getInfo();
     }
 
     @Override
     public void setInfo(Info info) {
-        wavPlayer.setInfo(info);
+        mediaPlayer.setInfo(info);
     }
 
 }

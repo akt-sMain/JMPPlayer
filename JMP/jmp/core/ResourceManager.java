@@ -233,6 +233,14 @@ public class ResourceManager extends AbstractManager implements IManager {
         }
         return ret;
     }
+    
+    public Image getBtnViewIcon() {
+        Image ret = getResourceImage(Skin.RSRC_BTN_ICON_VIEW);
+        if (ret == null) {
+            ret = DefaultImageMaker.makeDefaultBtnViewIcon();
+        }
+        return ret;
+    }
 
     public Color getBtnBackgroundColor() {
         if (skin == null) {
