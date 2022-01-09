@@ -24,8 +24,6 @@ public interface IDataManager {
     public static final String CFG_KEY_FFMPEG_PATH = "FFMPEG_PATH";
     /** FFmpeg出力パス */
     public static final String CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE = "FFMPEG_LEAVE_OUTPUT_FILE";
-    /** FFmpegプレイヤー使用設定 */
-    public static final String CFG_KEY_USE_FFMPEG_PLAYER = "USE_FFMPEG_PLAYER";
     /** 内蔵FFmpeg使用 */
     public static final String CFG_KEY_FFMPEG_INSTALLED = "FFMPEG_INSTALLED";
     /** 再生前にシステムセットアップを送信するか */

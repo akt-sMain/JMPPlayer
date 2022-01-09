@@ -51,7 +51,6 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
             put(CFG_KEY_LYRIC_VIEW, new JmpConfigValueType(IJ_TRUE, TypeOfKey.BOOL));
             put(CFG_KEY_FFMPEG_PATH, new JmpConfigValueType("ffmpeg.exe"));
             put(CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, new JmpConfigValueType(IJ_FALSE, TypeOfKey.BOOL));
-            put(CFG_KEY_USE_FFMPEG_PLAYER, new JmpConfigValueType(IJ_TRUE, TypeOfKey.BOOL));
             put(CFG_KEY_FFMPEG_INSTALLED, new JmpConfigValueType(IJ_TRUE, TypeOfKey.BOOL));
             put(CFG_KEY_SEND_MIDI_SYSTEMSETUP, new JmpConfigValueType(IJ_TRUE, TypeOfKey.BOOL));
             put(CFG_KEY_YOUTUBEDL_PATH, new JmpConfigValueType("youtube-dl.exe"));

@@ -4,7 +4,6 @@ import java.io.File;
 
 import function.Utility;
 import jlib.player.Player;
-import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.SystemManager;
 
@@ -113,11 +112,7 @@ public class FFmpegPlayer extends Player {
     @Override
     public boolean isAllSupported() {
         SystemManager system = JMPCore.getSystemManager();
-        DataManager dm = JMPCore.getDataManager();
         if (system.isValidFFmpegWrapper() == false) {
-            return false;
-        }
-        if (dm.isUseFFmpegPlayer() == false) {
             return false;
         }
 
@@ -127,11 +122,7 @@ public class FFmpegPlayer extends Player {
     @Override
     public boolean isSupportedExtension(String extension) {
         SystemManager system = JMPCore.getSystemManager();
-        DataManager dm = JMPCore.getDataManager();
         if (system.isValidFFmpegWrapper() == false) {
-            return false;
-        }
-        if (dm.isUseFFmpegPlayer() == false) {
             return false;
         }
 

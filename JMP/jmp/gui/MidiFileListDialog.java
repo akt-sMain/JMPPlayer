@@ -656,7 +656,7 @@ public class MidiFileListDialog extends JMPFrame {
         removeAllRows();
 
         boolean validFFmpegPlayer = false;
-        if (JMPCore.getDataManager().isUseFFmpegPlayer() == true && JMPCore.getSystemManager().isValidFFmpegWrapper() == true) {
+        if (JMPCore.getSystemManager().isValidFFmpegWrapper() == true) {
             validFFmpegPlayer = true;
         }
 

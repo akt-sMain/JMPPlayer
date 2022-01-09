@@ -132,14 +132,6 @@ public interface IJmpConfigDatabase {
         setConfigParamToBoolean(DataManager.CFG_KEY_FFMPEG_LEAVE_OUTPUT_FILE, isLeave);
     }
 
-    default boolean isUseFFmpegPlayer() {
-        return getConfigParamToBoolean(DataManager.CFG_KEY_USE_FFMPEG_PLAYER, false);
-    }
-
-    default void setUseFFmpegPlayer(boolean isUse) {
-        setConfigParamToBoolean(DataManager.CFG_KEY_USE_FFMPEG_PLAYER, isUse);
-    }
-
     default boolean isFFmpegInstalled() {
         if (Platform.getRunPlatform() != KindOfPlatform.WINDOWS) {
             return true;
