@@ -41,7 +41,9 @@ public class MoviePlayer extends Player {
         if (isValid() == false) {
             return;
         }
-        mediaAccessor.pause(TIMEOUT_MILLS);
+        if (isRunnable() == true) {
+            mediaAccessor.pause(TIMEOUT_MILLS);
+        }
     }
 
     @Override

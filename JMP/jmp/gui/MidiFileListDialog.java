@@ -201,6 +201,17 @@ public class MidiFileListDialog extends JMPFrame {
                 }
             }
             updateList();
+            int selected = midiFileList.getSelectedRow();
+            if (0 <= selected && selected < midiFileList.getModel().getRowCount()) {
+                String name = (String) midiFileList.getModel().getValueAt(selected, COLUMN_NAME);
+                if (midiFileMap.containsKey(name) == true) {
+                    File midiFile = midiFileMap.get(name);
+                    JMPCore.getSoundManager().syncNextlist(midiFile);
+                }
+            }
+            else {
+                JMPCore.getSoundManager().remakeNextlist();
+            }
             MidiFileListDialog.this.repaint();
         }
 
@@ -575,6 +586,8 @@ public class MidiFileListDialog extends JMPFrame {
                                 sm.stop();
                             }
                         }
+                        
+                        JMPCore.getSoundManager().syncNextlist(midiFile);
 
                         // 自動再生フラグ
                         JMPFlags.LoadToPlayFlag = true;
@@ -650,7 +663,6 @@ public class MidiFileListDialog extends JMPFrame {
         }
 
         setCurrentPathText(file.getPath());
-        JMPCore.getDataManager().setPlayListPath(file.getPath());
 
         midiFileMap = JMPCore.getFileManager().getFileMap(file);
         removeAllRows();
@@ -839,6 +851,7 @@ public class MidiFileListDialog extends JMPFrame {
                 }
             }
         }
+        JMPCore.getDataManager().setPlayListPath(file.getPath());
     }
 
     private Object[] createFileListRows(ImageIcon icon, String ex, String fileName) {
