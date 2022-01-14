@@ -383,6 +383,9 @@ public class JMPLoader {
 
         // システムパス設定
         JMPCore.getSystemManager().makeSystemPath();
+        
+        // フォントリソース作成
+        JMPCore.getLanguageManager().makeFontRsrc();
 
         // 設定値を先行して登録する
         if (config == null) {

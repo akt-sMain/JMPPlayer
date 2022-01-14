@@ -1,11 +1,13 @@
 package jmp.core;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import function.Platform;
 import jmp.lang.DefineLanguage;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.lang.FontRsrc;
+import jmp.lang.FontSet;
 import jmp.lang.LanguageTable;
 
 /**
@@ -23,61 +25,8 @@ public class LanguageManager extends AbstractManager {
     /** デフォルト文字コード */
     public static final String CHARSET_DEFAULT = CHARSET_UTF16;
 
-    /** 正式版に追加しない言語設定 */
-    private static int[] DisableLanguageList = {};
-
-    /**
-     * 変換する文字コードリスト(該当しないものはデフォルト文字コードにする) <br>
-     * ※ Javaの仕様上常にUTF-16が良い？
-     */
-    private static HashMap<Integer, String> chasets = new HashMap<Integer, String>() {
-        {
-            put(DefineLanguage.INDEX_LANG_ENGLISH, CHARSET_DEFAULT);
-            put(DefineLanguage.INDEX_LANG_JAPANESE, CHARSET_DEFAULT);
-            put(DefineLanguage.INDEX_LANG_CHINESE, CHARSET_DEFAULT);
-            put(DefineLanguage.INDEX_LANG_TRADITIONALCHINESE, CHARSET_DEFAULT);
-            put(DefineLanguage.INDEX_LANG_KOREAN, CHARSET_DEFAULT);
-            put(DefineLanguage.INDEX_LANG_RUSSIAN, CHARSET_DEFAULT);
-        }
-    };
-
-    private static FontRsrc DEFAULT_FONT_RSRC = new FontRsrc(WindowManager.DEFAULT_FONT);
-
-    /** Windows用フォントセット */
-    private static HashMap<Integer, FontRsrc> SFontsForWindows = new HashMap<Integer, FontRsrc>() {
-        {
-            put(DefineLanguage.INDEX_LANG_ENGLISH, new FontRsrc("Open Sans"));
-            put(DefineLanguage.INDEX_LANG_JAPANESE, new FontRsrc("Meiryo"));
-            put(DefineLanguage.INDEX_LANG_CHINESE, new FontRsrc("Microsoft YaHei"));
-            put(DefineLanguage.INDEX_LANG_TRADITIONALCHINESE, new FontRsrc("Helvetica"));
-            put(DefineLanguage.INDEX_LANG_KOREAN, new FontRsrc("Malgun Gothic"));
-            put(DefineLanguage.INDEX_LANG_RUSSIAN, new FontRsrc("Times New Roman"));
-        }
-    };
-    /** Mac用フォントセット */
-    private static HashMap<Integer, FontRsrc> SFontsForMac = new HashMap<Integer, FontRsrc>() {
-        {
-            put(DefineLanguage.INDEX_LANG_ENGLISH, new FontRsrc("Helvetica Neue"));
-            put(DefineLanguage.INDEX_LANG_JAPANESE, new FontRsrc("Hiragino Sans"));
-            put(DefineLanguage.INDEX_LANG_CHINESE, new FontRsrc("PingFang SC"));
-            put(DefineLanguage.INDEX_LANG_TRADITIONALCHINESE, new FontRsrc("SF Pro TC"));
-            put(DefineLanguage.INDEX_LANG_KOREAN, new FontRsrc("Gulim"));
-            put(DefineLanguage.INDEX_LANG_RUSSIAN, new FontRsrc("Times"));
-        }
-    };
-    /** 動作保障外OS用フォントセット */
-    private static HashMap<Integer, FontRsrc> SFontsForOther = new HashMap<Integer, FontRsrc>() {
-        {
-            put(DefineLanguage.INDEX_LANG_ENGLISH, DEFAULT_FONT_RSRC);
-            put(DefineLanguage.INDEX_LANG_JAPANESE, DEFAULT_FONT_RSRC);
-            put(DefineLanguage.INDEX_LANG_CHINESE, DEFAULT_FONT_RSRC);
-            put(DefineLanguage.INDEX_LANG_TRADITIONALCHINESE, DEFAULT_FONT_RSRC);
-            put(DefineLanguage.INDEX_LANG_KOREAN, DEFAULT_FONT_RSRC);
-            put(DefineLanguage.INDEX_LANG_RUSSIAN, DEFAULT_FONT_RSRC);
-        }
-    };
-
-    private HashMap<Integer, FontRsrc> fonts = null;
+    private FontRsrc defaultFontRsrc = null;
+    private Map<Integer, FontSet> fontInfos = null;
 
     /**
      * コンストラクタ
@@ -85,27 +34,84 @@ public class LanguageManager extends AbstractManager {
     LanguageManager() {
         super("language");
     }
-
-    @Override
-    protected boolean initFunc() {
-        super.initFunc();
+    
+    /**
+     * フォントリソース作成
+     */
+    public void makeFontRsrc() {
 
         /* OSごとのフォントファミリを切り替え */
+        int platformFont = 0;
         switch (Platform.getRunPlatform()) {
             case WINDOWS:
-                fonts = SFontsForWindows;
+                platformFont = FontSet.FONT_OF_WIN;
                 break;
             case MAC:
-                fonts = SFontsForMac;
+                platformFont = FontSet.FONT_OF_MAC;
                 break;
             case LINUX:
             case SUN_OS:
             case OTHER:
             default:
-                fonts = SFontsForOther;
+                platformFont = FontSet.FONT_OF_OTHR;
                 break;
         }
-        return true;
+        
+        fontInfos = new HashMap<Integer, FontSet>();
+        
+        defaultFontRsrc = new FontRsrc(WindowManager.DEFAULT_FONT);
+
+        int lang = 0;
+        String charset;
+        FontRsrc win, mac, other;
+        
+        /* フォントファミリ(English) */
+        lang = DefineLanguage.INDEX_LANG_ENGLISH;
+        charset = CHARSET_DEFAULT;
+        win = new FontRsrc("Open Sans");
+        mac = new FontRsrc("Helvetica Neue");
+        other = defaultFontRsrc;
+        fontInfos.put(lang, new FontSet(platformFont, charset, win, mac, other));
+        
+        /* フォントファミリ(Japanese) */
+        lang = DefineLanguage.INDEX_LANG_JAPANESE;
+        charset = CHARSET_DEFAULT;
+        win = new FontRsrc("Meiryo");
+        mac = new FontRsrc("Hiragino Sans");
+        other = defaultFontRsrc;
+        fontInfos.put(lang, new FontSet(platformFont, charset, win, mac, other));
+        
+        /* フォントファミリ(Chinese) */
+        lang = DefineLanguage.INDEX_LANG_CHINESE;
+        charset = CHARSET_DEFAULT;
+        win = new FontRsrc("Microsoft YaHei");
+        mac = new FontRsrc("PingFang SC");
+        other = defaultFontRsrc;
+        fontInfos.put(lang, new FontSet(platformFont, charset, win, mac, other));
+        
+        /* フォントファミリ(Traditional Chinese) */
+        lang = DefineLanguage.INDEX_LANG_TRADITIONALCHINESE;
+        charset = CHARSET_DEFAULT;
+        win = new FontRsrc("Helvetica");
+        mac = new FontRsrc("SF Pro TC");
+        other = defaultFontRsrc;
+        fontInfos.put(lang, new FontSet(platformFont, charset, win, mac, other));
+        
+        /* フォントファミリ(Korean) */
+        lang = DefineLanguage.INDEX_LANG_KOREAN;
+        charset = CHARSET_DEFAULT;
+        win = new FontRsrc("Malgun Gothic");
+        mac = new FontRsrc("Gulim");
+        other = defaultFontRsrc;
+        fontInfos.put(lang, new FontSet(platformFont, charset, win, mac, other));
+        
+        /* フォントファミリ(Russian) */
+        lang = DefineLanguage.INDEX_LANG_RUSSIAN;
+        charset = CHARSET_DEFAULT;
+        win = new FontRsrc("Times New Roman");
+        mac = new FontRsrc("Times");
+        other = defaultFontRsrc;
+        fontInfos.put(lang, new FontSet(platformFont, charset, win, mac, other));
     }
 
     /**
@@ -117,11 +123,11 @@ public class LanguageManager extends AbstractManager {
      */
     public String getFontName(int lang, int type) {
         FontRsrc f;
-        if (fonts.containsKey(lang) == true) {
-            f = fonts.get(lang);
+        if (fontInfos.containsKey(lang) == true) {
+            f = fontInfos.get(lang).getRsrc();
         }
         else {
-            f = DEFAULT_FONT_RSRC;
+            f = defaultFontRsrc;
         }
         return f.getName(type);
     }
@@ -143,18 +149,16 @@ public class LanguageManager extends AbstractManager {
      * @return
      */
     public boolean isValidLanguageIndex(int index) {
-        for (int j = 0; j < LanguageManager.DisableLanguageList.length; j++) {
-            if (LanguageManager.DisableLanguageList[j] == index) {
-                return false;
-            }
+        if (fontInfos.containsKey(index) == true) {
+            return fontInfos.get(index).isValid();
         }
-        return true;
+        return false;
     }
 
     private String getCode(int index) {
         String code = CHARSET_DEFAULT;
-        if (chasets.containsKey(index) == true) {
-            code = chasets.get(index);
+        if (fontInfos.containsKey(index) == true) {
+            code = fontInfos.get(index).getCharset();
         }
         return code;
     }
