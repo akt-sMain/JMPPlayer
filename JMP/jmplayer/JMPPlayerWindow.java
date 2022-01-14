@@ -66,6 +66,7 @@ import jmp.gui.ui.IJMPComponentUI;
 import jmp.gui.ui.SequencerSliderUI;
 import jmp.lang.DefineLanguage;
 import jmp.lang.DefineLanguage.LangID;
+import jmp.midi.MidiUnit;
 import jmp.plugin.PluginWrapper;
 import jmp.task.ICallbackFunction;
 import jmp.util.JmpUtil;
@@ -852,7 +853,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                     File dst = Utility.openSaveFileDialog(null, defaultDir, defaultFileName);
                     if (dst != null) {
                         try {
-                            SoundManager.SMidiPlayer.saveFile(dst);
+                            ((MidiUnit)JMPCore.getSoundManager().getMidiUnit()).exportMidiFile(dst);
                             Utility.openExproler(dst);
                         }
                         catch (Exception e1) {

@@ -22,6 +22,7 @@ import javax.sound.sampled.Port;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
+import function.Platform;
 import function.Utility;
 import jlib.core.ISoundManager;
 import jlib.gui.IJmpMainWindow;
@@ -49,6 +50,7 @@ import jmp.player.MusicMacroPlayer;
 import jmp.player.MusicXmlPlayer;
 import jmp.player.PlayerAccessor;
 import jmp.player.WavPlayer;
+import jmp.player.WavPlayerClip;
 import jmp.player.WavPlayerMin;
 import jmp.util.JmpUtil;
 
@@ -58,7 +60,7 @@ import jmp.util.JmpUtil;
  * @author abs
  *
  */
-public class SoundManager extends AbstractManager implements ISoundManager {
+public class SoundManager extends AbstractManager implements ISoundManager, IMidiFilter {
 
     /** NULLレシーバー */
     public static final String NULL_RECEIVER_NAME = "NULL";
@@ -75,12 +77,12 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     private static PlayerAccessor PlayerAccessor = null;
 
     // プレイヤーインスタンス
-    public static MidiPlayer SMidiPlayer = null;
-    public static WavPlayer SWavPlayer = null;
-    public static MusicXmlPlayer SMusicXmlPlayer = null;
-    public static MusicMacroPlayer SMusicMacloPlayer = null;
-    public static FFmpegPlayer SFFmpegPlayer = null;
-    public static MoviePlayer SMoviePlayer = null;
+    private static MidiPlayer SMidiPlayer = null;
+    private static WavPlayer SWavPlayer = null;
+    private static MusicXmlPlayer SMusicXmlPlayer = null;
+    private static MusicMacroPlayer SMusicMacloPlayer = null;
+    private static FFmpegPlayer SFFmpegPlayer = null;
+    private static MoviePlayer SMoviePlayer = null;
 
     // 固有変数
     private int[] transpose = new int[16];
@@ -88,7 +90,6 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     public static final int MAX_TRANSPOSE = 12;
     public static final int MIN_TRANSPOSE = -12;
 
-    private IMidiFilter defaultMidiFilter = null;
     private IMidiToolkit midiToolkit = null;
     private IMidiController midiInController = null;
     private IMidiController midiOutController = null;
@@ -129,35 +130,49 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
         String[] exMML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MML));
         String[] exMUSIC = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MEDIA));
+        
+        /* MoviePlayerはjava8のみ */
+        String javaVer = Platform.getJavaVersion();
+        boolean isJava8 = false;
+        if (javaVer.startsWith("1.8") == true) {
+            isJava8 = true;
+        }
 
         // midi
         SMidiPlayer = new MidiPlayer();
         SMidiPlayer.setSupportExtentions(exMIDI);
+        SMidiPlayer.addFilter(this);
         PlayerAccessor.register(SMidiPlayer);
         
         // movie
-        SMoviePlayer = new MoviePlayer();
-        SMoviePlayer.setSupportExtentions(exMUSIC);
-        PlayerAccessor.register(SMoviePlayer);
+        if (isJava8 == true) {
+            SMoviePlayer = new MoviePlayer();
+            SMoviePlayer.setSupportExtentions(exMUSIC);
+            PlayerAccessor.register(SMoviePlayer);
+        }
 
         // wav
-        //SWavPlayer = new WavPlayerClip();
-        SWavPlayer = new WavPlayerMin(SMoviePlayer);
+        if (isJava8 == true) {
+            SWavPlayer = new WavPlayerMin(SMoviePlayer);
+        }
+        else {
+            SWavPlayer = new WavPlayerClip();
+        }
         SWavPlayer.setSupportExtentions(exWAV);
         PlayerAccessor.register(SWavPlayer);
 
         // musicxml
-        SMusicXmlPlayer = new MusicXmlPlayer();
+        SMusicXmlPlayer = new MusicXmlPlayer(SMidiPlayer);
         SMusicXmlPlayer.setSupportExtentions(exMUSICXML);
         PlayerAccessor.register(SMusicXmlPlayer);
 
         // mml
-        SMusicMacloPlayer = new MusicMacroPlayer();
+        SMusicMacloPlayer = new MusicMacroPlayer(SMidiPlayer);
         SMusicMacloPlayer.setSupportExtentions(exMML);
         PlayerAccessor.register(SMusicMacloPlayer);
 
         // ffmpeg
-        SFFmpegPlayer = new FFmpegPlayer(SMoviePlayer);
+        SFFmpegPlayer = new FFmpegPlayer(SWavPlayer);
         SFFmpegPlayer.setSupportExtentions("*");
         PlayerAccessor.register(SFFmpegPlayer);
 
@@ -165,51 +180,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         PlayerAccessor.change(SMidiPlayer);
 
         // Midiユニットインスタンス生成
-        midiUnit = new MidiUnit();
-
-        // デフォルトMIDIフィルター
-        defaultMidiFilter = new IMidiFilter() {
-            @Override
-            public boolean filter(MidiMessage message, short senderType) {
-                IMidiToolkit toolkit = getMidiToolkit();
-                int transpose = getTranspose();
-                if (transpose != 0) {
-                    if (toolkit.isNoteOn(message) == true || toolkit.isNoteOff(message) == true) {
-                        byte[] data = message.getMessage();
-                        int length = message.getLength();
-
-                        int channel = MidiByte.getChannel(data, length);
-                        if (channel == 9) {
-                            // ドラムトラックは対象外
-                            return true;
-                        }
-
-                        int status = message.getStatus();
-                        int data1 = MidiByte.getData1(data, length);
-                        int data2 = MidiByte.getData2(data, length);
-
-                        data1 += transpose;
-
-                        /* TODO instanceofを指定して処理を分岐するのはよろしくない 【改善策はないか...】 */
-                        if (message instanceof ShortMessage) {
-                            try {
-                                ((ShortMessage) message).setMessage(status, data1, data2);
-                            }
-                            catch (InvalidMidiDataException e) {
-                            }
-                        }
-                        else if (message instanceof MidiByteMessage) {
-                            MidiByteMessage bMes = (MidiByteMessage) message;
-                            bMes.changeByte(0, status);
-                            bMes.changeByte(1, data1);
-                            bMes.changeByte(2, data2);
-                        }
-                    }
-                }
-                return true;
-            }
-        };
-        addFilter(defaultMidiFilter);
+        midiUnit = new MidiUnit(SMidiPlayer);
 
         // Midiコントローラーの準備
         midiInController = new MidiController(IMidiEventListener.SENDER_MIDI_IN); // INコントローラインターフェース
@@ -276,19 +247,44 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         return wasCommit;
     }
 
+    @Override
     public boolean filter(MidiMessage message, short senderType) {
-        if (SMidiPlayer.filter(message, senderType) == false) {
-            return false;
+        IMidiToolkit toolkit = getMidiToolkit();
+        int transpose = getTranspose();
+        if (transpose != 0) {
+            if (toolkit.isNoteOn(message) == true || toolkit.isNoteOff(message) == true) {
+                byte[] data = message.getMessage();
+                int length = message.getLength();
+
+                int channel = MidiByte.getChannel(data, length);
+                if (channel == 9) {
+                    // ドラムトラックは対象外
+                    return true;
+                }
+
+                int status = message.getStatus();
+                int data1 = MidiByte.getData1(data, length);
+                int data2 = MidiByte.getData2(data, length);
+
+                data1 += transpose;
+
+                /* TODO instanceofを指定して処理を分岐するのはよろしくない 【改善策はないか...】 */
+                if (message instanceof ShortMessage) {
+                    try {
+                        ((ShortMessage) message).setMessage(status, data1, data2);
+                    }
+                    catch (InvalidMidiDataException e) {
+                    }
+                }
+                else if (message instanceof MidiByteMessage) {
+                    MidiByteMessage bMes = (MidiByteMessage) message;
+                    bMes.changeByte(0, status);
+                    bMes.changeByte(1, data1);
+                    bMes.changeByte(2, data2);
+                }
+            }
         }
         return true;
-    }
-
-    public void addFilter(IMidiFilter f) {
-        SMidiPlayer.addFilter(f);
-    }
-
-    public void removeFilter(IMidiFilter f) {
-        SMidiPlayer.removeFilter(f);
     }
 
     @Override
@@ -841,9 +837,9 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     public void changeMidiPlayer() {
         // MidiPlayerに変更する
-        if (PlayerAccessor.getCurrent() != SoundManager.SMidiPlayer) {
+        if (PlayerAccessor.getCurrent() != SMidiPlayer) {
             PlayerAccessor.getCurrent().stop();
-            PlayerAccessor.change(SoundManager.SMidiPlayer);
+            PlayerAccessor.change(SMidiPlayer);
         }
     }
 
@@ -1075,6 +1071,10 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
     
     public boolean isValidMediaView() {
+        if (SMoviePlayer == null) {
+            return false;
+        }
+        
         IPlayer current = getCurrentPlayer();
         if (current != SMoviePlayer) {
             return false;

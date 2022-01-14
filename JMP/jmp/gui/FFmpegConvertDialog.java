@@ -206,7 +206,7 @@ public class FFmpegConvertDialog extends JMPDialog {
         contentPanel.add(buttonOpenInput);
 
         chckbxToPlay = new JCheckBox("Play after convert");
-        chckbxToPlay.setSelected(true);
+        chckbxToPlay.setSelected(false);
         chckbxToPlay.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             }

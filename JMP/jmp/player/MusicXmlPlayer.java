@@ -8,15 +8,15 @@ import function.Platform;
 import function.Utility;
 import jlib.player.Player;
 import jmp.convert.musicxml.MusicXMLReader;
-import jmp.core.SoundManager;
 import jmp.gui.MusicXMLConfirmDialog;
 
 public class MusicXmlPlayer extends Player {
 
     private MusicXMLConfirmDialog confirmDialog = null;
-    private MidiPlayer midiPlayer = SoundManager.SMidiPlayer;
+    private MidiPlayer midiPlayer;
 
-    public MusicXmlPlayer() {
+    public MusicXmlPlayer(MidiPlayer midiPlayer) {
+        this.midiPlayer = midiPlayer;
         confirmDialog = new MusicXMLConfirmDialog();
     }
 

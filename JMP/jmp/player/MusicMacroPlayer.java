@@ -6,13 +6,13 @@ import javax.sound.midi.Sequence;
 
 import jlib.player.Player;
 import jmp.convert.mml.MusicMacroReader;
-import jmp.core.SoundManager;
 
 public class MusicMacroPlayer extends Player {
 
-    private MidiPlayer midiPlayer = SoundManager.SMidiPlayer;
+    private MidiPlayer midiPlayer;
 
-    public MusicMacroPlayer() {
+    public MusicMacroPlayer(MidiPlayer midiPlayer) {
+        this.midiPlayer = midiPlayer;
     }
 
     @Override

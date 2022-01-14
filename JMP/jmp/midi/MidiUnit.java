@@ -1,18 +1,27 @@
 package jmp.midi;
 
+import java.io.File;
+
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 
 import jlib.midi.IMidiUnit;
-import jmp.core.SoundManager;
+import jmp.player.MidiPlayer;
 
 public class MidiUnit implements IMidiUnit {
+    
+    private MidiPlayer midiPlayer;
 
-    public MidiUnit() {
+    public MidiUnit(MidiPlayer midiPlayer) {
+        this.midiPlayer = midiPlayer;
     }
 
     private Sequencer getSequencer() {
-        return SoundManager.SMidiPlayer.getSequencer();
+        return this.midiPlayer.getSequencer();
+    }
+    
+    public void exportMidiFile(File file) throws Exception {
+        midiPlayer.saveFile(file);
     }
 
     @Override
