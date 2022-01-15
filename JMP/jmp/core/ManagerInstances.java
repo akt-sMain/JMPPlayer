@@ -19,8 +19,17 @@ public class ManagerInstances {
     static FileManager SFileManager = new FileManager();
 
     /** 初期化・終了実行順位 */
-    private static AbstractManager[] aManager = { SResourceManager, SSystemManager, SLanguageManager, STaskManager, SDataManager, SFileManager, SWindowManager,
-            SSoundManager, SPluginManager, };
+    private static AbstractManager[] aManager = { //
+            SResourceManager, //
+            SSystemManager, //
+            SLanguageManager, //
+            STaskManager, //
+            SDataManager, //
+            SFileManager, //
+            SWindowManager, //
+            SSoundManager, //
+            SPluginManager,//
+    };//
 
     private static List<AbstractManager> asc = null;
     private static List<AbstractManager> desc = null;

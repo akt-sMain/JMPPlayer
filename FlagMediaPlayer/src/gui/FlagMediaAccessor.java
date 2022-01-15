@@ -1,5 +1,7 @@
 package gui;
 
+import java.awt.event.MouseListener;
+
 import fmp.FlagMediaPlayer;
 import javafx.scene.media.MediaPlayer;
 
@@ -58,6 +60,10 @@ public class FlagMediaAccessor {
 
     public FlagMediaAccessor(FlagMediaPlayerWindow w) {
         win = w;
+    }
+    
+    public void addMouseListener(MouseListener l) {
+        win.getMediaPanel().addMouseListener(l);
     }
 
     public boolean isAudioOnly() {

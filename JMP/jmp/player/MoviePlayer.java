@@ -1,6 +1,8 @@
 package jmp.player;
 
 import java.awt.Dimension;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 
 import fmp.FlagMediaPlayer;
@@ -9,6 +11,7 @@ import function.Utility;
 import gui.FlagMediaAccessor;
 import gui.FlagMediaAccessor.PlayerStatus;
 import jlib.player.Player;
+import jmp.core.JMPCore;
 
 public class MoviePlayer extends Player {
 
@@ -138,11 +141,42 @@ public class MoviePlayer extends Player {
         if (mediaAccessor == null) {
             return false;
         }
-
+        
         mediaAccessor.setTitle("Movie - " + Utility.getFileNameAndExtension(file));
 
         // 動画ファイルは画面表示する
         if (mediaAccessor.isAudioOnly() == false) {
+            // ビューにマウスリスナー登録
+            mediaAccessor.addMouseListener(new MouseListener() {
+                
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    JMPCore.getWindowManager().getMainWindow().showWindow();
+                    if (isRunnable() == false) {
+                        play();
+                    }
+                    else {
+                        stop();
+                    }
+                }
+                
+                @Override
+                public void mousePressed(MouseEvent e) {
+                }
+                
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    
+                }
+                
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                }
+                
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                }
+            });
             // 画面中心に表示
             mediaAccessor.setVisibleView(true, true);
         }
