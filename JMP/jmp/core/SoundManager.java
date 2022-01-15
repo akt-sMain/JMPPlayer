@@ -93,7 +93,7 @@ public class SoundManager extends AbstractManager implements ISoundManager, IMid
     private IMidiToolkit midiToolkit = null;
     private IMidiController midiInController = null;
     private IMidiController midiOutController = null;
-    private IMidiUnit midiUnit = null;
+    private MidiUnit midiUnit = null;
 
     // Line情報
     private static Line.Info[] LineInfos = new Line.Info[] { Port.Info.SPEAKER, Port.Info.LINE_OUT, Port.Info.HEADPHONE };
@@ -828,18 +828,18 @@ public class SoundManager extends AbstractManager implements ISoundManager, IMid
     }
 
     public Receiver getCurrentReciever() {
-        return SMidiPlayer.getCurrentReciver();
+        return midiUnit.getCurrentReciever();
     }
 
     public Transmitter getCurrentTransmitter() {
-        return SMidiPlayer.getCurrentTransmitter();
+        return midiUnit.getCurrentTransmitter();
     }
 
     public void changeMidiPlayer() {
         // MidiPlayerに変更する
-        if (PlayerAccessor.getCurrent() != SMidiPlayer) {
+        if (PlayerAccessor.getCurrent() != midiUnit.getMidiPlayer()){
             PlayerAccessor.getCurrent().stop();
-            PlayerAccessor.change(SMidiPlayer);
+            PlayerAccessor.change(midiUnit.getMidiPlayer());
         }
     }
 
@@ -1061,11 +1061,11 @@ public class SoundManager extends AbstractManager implements ISoundManager, IMid
         String outName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT);
         String inName = JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIIN);
         if (out == true) {
-            SMidiPlayer.updateMidiOut(outName);
+            midiUnit.updateMidiOut(outName);
             JMPFlags.Log.cprintln("Device update[OUT] : " + (outName.isEmpty() ? "Auto selection" : outName));
         }
         if (in == true) {
-            SMidiPlayer.updateMidiIn(inName);
+            midiUnit.updateMidiIn(inName);
             JMPFlags.Log.cprintln("Device update[IN]  : " + (inName.isEmpty() ? "None" : inName));
         }
     }

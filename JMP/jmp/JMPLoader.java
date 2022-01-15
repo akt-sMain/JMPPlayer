@@ -31,8 +31,6 @@ public class JMPLoader {
 
     /* コマンド文字列 */
     public static final String CMD_MANUAL = "-man";
-    public static final String CMD_DEBUG = "-debug";
-    public static final String CMD_DEBUGC = "-debugc";
     public static final String CMD_STDPLG = "-stdplg";
     public static final String CMD_NONPLG = "-nonplg";
     public static final String CMD_PLGLST = "-plglst";
@@ -40,6 +38,8 @@ public class JMPLoader {
     public static final String CMD_SYSOUT = "-c";
     public static final String CMD_MKJMP = "-mkjmp";
     public static final String CMD_UN_LOAD_SKIN = "-nskin";
+    public static final String CMD_COMMON_REG = "-creg";
+    public static final String CMD_TERM = "-term";
 
     /* フォーマット */
     private static final String PLGLST_FORMAT = "<%d> %s";
@@ -48,33 +48,37 @@ public class JMPLoader {
 
     private static void printManual() {
         printManualLine(//
-                CMD_STDPLG + " [プラグイン名]", //
-                "プラグインのスタンドアロン起動モード"//
+                CMD_STDPLG + " [plugin name]", //
+                "Plugin standalone boot mode."//
         );//
         printManualLine(//
                 CMD_NONPLG, // 11
-                "プラグインをロードせず起動"//
+                "Start without loading the plugin."//
         );//
         printManualLine(//
                 CMD_PLGLST, //
-                "プラグイン一覧"//
+                "Display a list of plugins."//
         );//
         printManualLine(//
                 CMD_UNSYNC, //
-                "非同期化オプション"//
+                "Asynchronization option."//
         );//
         printManualLine(//
                 CMD_SYSOUT, //
-                "コンソール出力有効化"//
+                "Enable console output."//
         );//
         printManualLine(//
                 CMD_UN_LOAD_SKIN, //
-                "スキンを読み込まない"//
+                "Do not load skins."//
         );//
         printManualLine(//
                 CMD_MKJMP, //
-                "プラグインパッケージ作成ライブラリを呼び出す。", //
-                "※コマンドの先頭に記述すること"//
+                "Call the plug-in package creation library.", //
+                "※ Write at the beginning of the command."//
+        );//
+        printManualLine(//
+                CMD_COMMON_REG + " [key] [value]", //
+                "syscommon edit." //
         );//
     }
 
@@ -174,14 +178,6 @@ public class JMPLoader {
                     res.doReturn = true;
                     return res;
                 }
-                else if (args[i].equalsIgnoreCase(CMD_DEBUG) == true) {
-                    JMPFlags.DebugMode = true;
-                }
-                else if (args[i].equalsIgnoreCase(CMD_DEBUGC) == true) {
-                    JMPFlags.DebugMode = true;
-                    JMPFlags.CoreConsoleOut = true;
-                    JMPFlags.InvokeToConsole = true;
-                }
                 else if (args[i].equalsIgnoreCase(CMD_UNSYNC) == true) {
                     JMPFlags.UseUnsynchronizedMidiPacket = true;
                 }
@@ -190,6 +186,24 @@ public class JMPLoader {
                 }
                 else if (args[i].equalsIgnoreCase(CMD_UN_LOAD_SKIN) == true) {
                     UseSkinFile = false;
+                }
+                else if (args[i].equalsIgnoreCase(CMD_TERM) == true) {
+                    JMPFlags.CoreConsoleOut = true;
+                    JMPFlags.InvokeToConsole = true;
+                }
+                else if (args[i].equalsIgnoreCase(CMD_COMMON_REG) == true) {
+                    CommonRegisterINI ini = new CommonRegisterINI("", "", false);
+                    i++;
+                    if (i >= args.length) {
+                        break;
+                    }
+                    ini.key = args[i];
+                    i++;
+                    if (i >= args.length) {
+                        break;
+                    }
+                    ini.value = args[i];
+                    res.creg.add(ini);
                 }
                 /* ※コマンドの判定を優先するため、このelseifは最後に挿入すること */
                 else if (JmpUtil.isExsistFile(args[i]) == true) {
@@ -210,7 +224,10 @@ public class JMPLoader {
             // ※nonplgとstdplgコマンドは併用不可
             jmsName = "";
         }
-
+        
+        // cregのコマンドを受け渡し
+        JMPCore.cregStack = res.creg;
+        
         /* スタンドアロンプラグインの特殊処理 */
         if (jmsName.isEmpty() == false) {
             // システムパス設定

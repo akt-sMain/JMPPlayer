@@ -1,6 +1,9 @@
 package jmp.core;
 
+import java.util.List;
+
 import jlib.JMPLIB;
+import jmp.CommonRegisterINI;
 import jmp.JMPFlags;
 import jmp.core.TaskManager.TaskID;
 import jmp.plugin.PluginWrapper;
@@ -21,6 +24,8 @@ public class JMPCore {
     /** スタンドアロンモードのプラグイン */
     // private static IPlugin StandAlonePlugin = null;
     private static PluginWrapper StandAlonePluginWrapper = null;
+    
+    public static List<CommonRegisterINI> cregStack = null;
 
     public static boolean initFunc() {
         boolean result = true;

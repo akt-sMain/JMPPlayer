@@ -17,6 +17,7 @@ import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
 import jlib.util.IUtilityToolkit;
 import jmp.CommonRegister;
+import jmp.CommonRegisterINI;
 import jmp.ErrorDef;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
@@ -232,7 +233,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         cReg.add(cRegKeys[COMMON_REGKEY_NO_USE_MIDI_TOOLKIT], USE_MIDI_TOOLKIT_CLASSNAME);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_USE_UTIL_TOOLKIT], USE_UTIL_TOOLKIT_CLASSNAME);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_PLAYER_BACK_COLOR], Utility.convertHtmlColorToCode(DEFAULT_PLAYER_BACK_COLOR));
-        cReg.add(cRegKeys[COMMON_REGKEY_NO_DEBUGMODE], "FALSE", true);
+        cReg.add(cRegKeys[COMMON_REGKEY_NO_DEBUGMODE], "FALSE");
         cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT], COMMON_REGKEY_CH_COLOR_FORMAT);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_1], "#8ec21f", true);
         cReg.add(cRegKeys[COMMON_REGKEY_NO_CH_COLOR_FORMAT_2], "#3dc21f", true);
@@ -259,7 +260,15 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
         // syscommon読み込み
         cReg.read(aPath[PATH_SYSCOMMON_FILE]);
-
+        
+        /* コマンドラインからのcregパラメータ */
+        if (JMPCore.cregStack != null) {
+            for (int i=0; i<JMPCore.cregStack.size(); i++) {
+                CommonRegisterINI ini = JMPCore.cregStack.get(i);
+                setCommonRegisterValueAdmin(ini.key, ini.value);
+            }
+        }
+        
         // デバッグ設定の復元
         if (getCommonRegisterValue(COMMON_REGKEY_NO_DEBUGMODE).equalsIgnoreCase("TRUE")) {
             JMPFlags.DebugMode = true;

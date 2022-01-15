@@ -10,17 +10,6 @@ import jmp.util.JmpUtil;
 public class CommonRegister {
     private static final String KER_SEPARATOR = "<->";
 
-    public class CommonRegisterINI {
-        public String key, value;
-        public boolean isWrite = false;
-
-        public CommonRegisterINI(String key, String value, boolean isWrite) {
-            this.key = key;
-            this.value = value;
-            this.isWrite = isWrite;
-        }
-    }
-
     private List<CommonRegisterINI> iniList = null;
 
     public CommonRegister() {

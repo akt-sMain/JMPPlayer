@@ -12,7 +12,11 @@ public class JMPFlags {
     /** ログ出力クラス */
     public static class Log {
         private static void cprintImpl(String msg, boolean ln, boolean console_out) {
-            if (JMPFlags.CoreConsoleOut == true) {
+            boolean out = false;
+            if (JMPFlags.CoreConsoleOut == true || JMPFlags.DebugMode == true) {
+                out = true;
+            }
+            if (out == true) {
                 if (ln == true) {
                     System.out.println(msg);
                 }
@@ -20,7 +24,7 @@ public class JMPFlags {
                     System.out.print(msg);
                 }
             }
-            if (JMPFlags.DebugMode == true || console_out == true) {
+            if (out == true || console_out == true) {
                 if (ln == true) {
                     JMPCore.getSystemManager().consoleOutln(msg);
                 }
