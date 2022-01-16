@@ -194,7 +194,6 @@ public class FileManager extends AbstractManager implements IFileManager {
         SoundManager sm = JMPCore.getSoundManager();
 
         String ex = JmpUtil.getExtension(f);
-        System.out.println(ex);
 
         /* 事前の判定 */
         FileResult beginResult = new FileResult();
