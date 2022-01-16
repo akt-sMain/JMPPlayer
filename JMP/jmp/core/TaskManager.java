@@ -10,8 +10,11 @@ import jmp.JMPFlags;
 import jmp.task.CallbackPackage;
 import jmp.task.ICallbackFunction;
 import jmp.task.ITask;
+import jmp.task.NotifyPacket;
 import jmp.task.TaskOfBase;
 import jmp.task.TaskOfMidiEvent;
+import jmp.task.TaskOfNotify;
+import jmp.task.TaskOfNotify.NotifyID;
 import jmp.task.TaskOfSequence;
 import jmp.task.TaskOfTimer;
 import jmp.task.TaskOfUpdate;
@@ -20,7 +23,7 @@ public class TaskManager extends AbstractManager {
 
     /** タスクID */
     public static enum TaskID {
-        UPDATE, TIMER, SEQUENCE, MIDI,
+        UPDATE, TIMER, SEQUENCE, MIDI, NOTIFY,
     }
 
     /** タスクデータベース */
@@ -47,6 +50,9 @@ public class TaskManager extends AbstractManager {
 
         // MIDIイベントタスク登録
         taskMap.put(TaskID.MIDI, new TaskOfMidiEvent());
+        
+        // Notifyタスク登録
+        taskMap.put(TaskID.NOTIFY, new TaskOfNotify());
 
         // アプリケーション共通コールバック関数の登録
         registerCommonCallbackPackage();
@@ -153,5 +159,16 @@ public class TaskManager extends AbstractManager {
                 }
             }
         });
+    }
+    
+    public void sendNotifyMessage(NotifyID id, Object... data) {
+        if (taskMap == null) {
+            /* taskMapが生成前は何もしない */
+            return;
+        }
+        if (taskMap.containsKey(TaskID.NOTIFY) == true) {
+            TaskOfNotify task = (TaskOfNotify) taskMap.get(TaskID.NOTIFY);
+            task.add(new NotifyPacket(id, data));
+        }
     }
 }

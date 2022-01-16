@@ -25,6 +25,7 @@ import jmp.gui.BuiltinSynthSetupDialog;
 import jmp.gui.DebugLogConsole;
 import jmp.lang.DefineLanguage;
 import jmp.midi.toolkit.MidiToolkitManager;
+import jmp.task.TaskOfNotify.NotifyID;
 import jmp.util.JmpUtil;
 import jmp.util.toolkit.UtilityToolkitManager;
 import jmsynth.JMSoftSynthesizer;
@@ -486,7 +487,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         boolean ret = cReg.setValue(key, value);
         if (ret == true) {
             // 全てのマネージャーに通知
-            JMPCore.callNotifyUpdateCommonRegister(key);
+            JMPCore.getTaskManager().sendNotifyMessage(NotifyID.UPDATE_SYSCOMMON, key);
         }
         return ret;
     }

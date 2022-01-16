@@ -23,7 +23,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import function.Platform;
 import function.Platform.KindOfPlatform;
 import function.Utility;
-import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SystemManager;
@@ -368,8 +367,7 @@ public class FFmpegConvertDialog extends JMPDialog {
                 repaint();
 
                 if (chckbxToPlay.isSelected() == true) {
-                    JMPFlags.LoadToPlayFlag = true;
-                    JMPCore.getFileManager().loadFile(out.getPath());
+                    JMPCore.getFileManager().loadFileToPlay(out.getPath());
                 }
                 else {
                     JMPCore.getWindowManager().showFilePickupDialog(outdir, dstExtTextField.getText());

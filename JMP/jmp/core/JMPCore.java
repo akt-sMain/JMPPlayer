@@ -5,9 +5,8 @@ import java.util.List;
 import jlib.JMPLIB;
 import jmp.CommonRegisterINI;
 import jmp.JMPFlags;
-import jmp.core.TaskManager.TaskID;
 import jmp.plugin.PluginWrapper;
-import jmp.task.ICallbackFunction;
+import jmp.task.NotifyPacket;
 import jmp.util.JmpUtil;
 
 public class JMPCore {
@@ -24,7 +23,7 @@ public class JMPCore {
     /** スタンドアロンモードのプラグイン */
     // private static IPlugin StandAlonePlugin = null;
     private static PluginWrapper StandAlonePluginWrapper = null;
-    
+
     public static List<CommonRegisterINI> cregStack = null;
 
     public static boolean initFunc() {
@@ -82,42 +81,39 @@ public class JMPCore {
         return StandAlonePluginWrapper;
     }
 
-    /** 通知メソッド作成 */
-    private static void createNotifyFunc(ICallbackFunction func) {
-        if (JMPFlags.EnableNotifyFlag == false) {
-            // func.callback();
+    /* Notify処理 */
+    public static void parseNotifyPacket(NotifyPacket packet) {
+        if (JMPFlags.EnableNotifyFlag == true) {
+            /* 無効状態 */
             return;
         }
-        getTaskManager().queuing(TaskID.SEQUENCE, func);
-    }
-
-    public static void callNotifyUpdateConfig(String key) {
-        createNotifyFunc(new ICallbackFunction() {
-            @Override
-            public void callback() {
+        
+        switch (packet.getId()) {
+            case UPDATE_CONFIG: {
+                /* Config変更通知 */
+                String key = packet.getData().toString();
                 for (AbstractManager am : ManagerInstances.getManagersOfAsc()) {
                     if (am.isFinishedInitialize() == true) {
                         am.notifyUpdateConfig(key);
                     }
                 }
+                break;
             }
-        });
-    }
-
-    public static void callNotifyUpdateCommonRegister(String key) {
-        createNotifyFunc(new ICallbackFunction() {
-            @Override
-            public void callback() {
+            case UPDATE_SYSCOMMON: {
+                /* Syscommon変更通知 */
+                String key = packet.getData().toString();
                 for (AbstractManager am : ManagerInstances.getManagersOfAsc()) {
                     if (am.isFinishedInitialize() == true) {
                         am.notifyUpdateCommonRegister(key);
                     }
                 }
+                break;
             }
-
-        });
+            default:
+                break;
+        }
     }
-    
+
     public static void initializeAllSetting() {
         // 全てのWindowを閉じる
         getWindowManager().setVisibleAll(false);

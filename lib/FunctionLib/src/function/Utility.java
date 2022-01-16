@@ -194,13 +194,12 @@ public class Utility {
         String ex = "";
         try {
             String name = getFileNameAndExtension(file);
-            String[] s = name.split("\\.");
-            if (s.length > 0) {
-                if (s.length == 1) {
-                    ex = "";
-                }
-                else {
-                    ex = s[s.length - 1];
+            
+            int such = name.lastIndexOf(".");
+            if (such != -1) {
+                String s = name.substring(such);
+                if (s.length() > 1) {
+                    ex = s.substring(1);
                 }
             }
         }

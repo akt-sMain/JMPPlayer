@@ -214,7 +214,6 @@ public class JMPLoader {
 
                         // ロード設定
                         JMPFlags.StartupAutoConectSynth = true;
-                        JMPFlags.LoadToPlayFlag = true;
                     }
                 }
             }
@@ -224,10 +223,10 @@ public class JMPLoader {
             // ※nonplgとstdplgコマンドは併用不可
             jmsName = "";
         }
-        
+
         // cregのコマンドを受け渡し
         JMPCore.cregStack = res.creg;
-        
+
         /* スタンドアロンプラグインの特殊処理 */
         if (jmsName.isEmpty() == false) {
             // システムパス設定
@@ -325,12 +324,9 @@ public class JMPLoader {
                         @Override
                         public void callback() {
                             JmpUtil.threadSleep(500);
-                            JMPCore.getFileManager().loadFile(loadFile);
+                            JMPCore.getFileManager().loadFileToPlay(loadFile);
                         }
                     });
-                }
-                else {
-                    JMPFlags.LoadToPlayFlag = false;
                 }
             }
 
@@ -400,7 +396,7 @@ public class JMPLoader {
 
         // システムパス設定
         JMPCore.getSystemManager().makeSystemPath();
-        
+
         // フォントリソース作成
         JMPCore.getLanguageManager().makeFontRsrc();
 

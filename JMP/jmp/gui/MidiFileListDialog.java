@@ -589,9 +589,8 @@ public class MidiFileListDialog extends JMPFrame {
                         
                         JMPCore.getSoundManager().syncNextlist(midiFile);
 
-                        // 自動再生フラグ
-                        JMPFlags.LoadToPlayFlag = true;
-                        JMPCore.getFileManager().loadFile(midiFile);
+                        // 自動再生
+                        JMPCore.getFileManager().loadFileToPlay(midiFile);
                     }
                 }
             }

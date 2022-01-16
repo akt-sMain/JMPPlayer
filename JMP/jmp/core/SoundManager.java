@@ -441,10 +441,12 @@ public class SoundManager extends AbstractManager implements ISoundManager, IMid
                 IPlayer player = getCurrentPlayer();
                 player.stop();
                 if (isLoadOnly == false) {
-                    // 自動再生フラグ
-                    JMPFlags.LoadToPlayFlag = true;
+                    // 自動再生
+                    JMPCore.getFileManager().loadFileToPlay(file);
                 }
-                JMPCore.getFileManager().loadFile(file);
+                else {
+                    JMPCore.getFileManager().loadFile(file);
+                }
             }
             catch (Exception e) {
             }

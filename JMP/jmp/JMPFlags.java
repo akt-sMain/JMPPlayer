@@ -77,7 +77,7 @@ public class JMPFlags {
     public static boolean StartupAutoConectSynth = false;
 
     /** ロード後に自動再生するか？ */
-    public static boolean LoadToPlayFlag = false;
+    //public static boolean LoadToPlayFlag = false;
 
     /** 履歴に残さずロードする */
     public static boolean NoneHIstoryLoadFlag = false;
