@@ -77,6 +77,15 @@ public class TaskManager extends AbstractManager {
     public void queuing(ICallbackFunction callbackFunction) {
         queuing(TaskID.SEQUENCE, callbackFunction);
     }
+    
+    public void queuing(TaskID id, Runnable runnable) {
+        // 対応するタスクに対してキューイングを行う
+        taskMap.get(id).queuing(runnable);
+    }
+
+    public void queuing(Runnable runnable) {
+        queuing(TaskID.SEQUENCE, runnable);
+    }
 
     public void taskStart() {
         /* Threadインスタンスのstart処理 */

@@ -7,6 +7,7 @@ import jmp.util.JmpUtil;
 public abstract class TaskOfBase implements ITask, Runnable {
 
     private ArrayList<ICallbackFunction> callbackQue = null;
+    private ArrayList<Runnable> runnableQue = null;
     private boolean isRunnable = true;
     protected Thread thread = null;
     protected long sleepTime = 100;
@@ -14,6 +15,7 @@ public abstract class TaskOfBase implements ITask, Runnable {
 
     public TaskOfBase(long sleepTime) {
         this.callbackQue = new ArrayList<ICallbackFunction>();
+        this.runnableQue = new ArrayList<Runnable>();
         this.sleepTime = sleepTime;
         this.isRunnable = true;
         this.waitTime = 0;
@@ -30,6 +32,9 @@ public abstract class TaskOfBase implements ITask, Runnable {
 
             if (callbackQue != null) {
                 execCallback();
+            }
+            if (runnableQue != null) {
+                execRunnable();
             }
             loop();
 
@@ -53,6 +58,9 @@ public abstract class TaskOfBase implements ITask, Runnable {
         // コールバック関数のクリア
         if (callbackQue != null) {
             callbackQue.clear();
+        }
+        if (runnableQue != null) {
+        	runnableQue.clear();
         }
     }
 
@@ -88,15 +96,13 @@ public abstract class TaskOfBase implements ITask, Runnable {
     public void queuing(ICallbackFunction callbackFunction) {
         callbackQue.add(callbackFunction);
     }
+    
+    public void queuing(Runnable runnable) {
+        runnableQue.add(runnable);
+    }
 
     protected void execCallback() {
         for (int i = 0; i < callbackQue.size(); i++) {
-            // ExecutorService service = Executors.newCachedThreadPool();
-            // ICallbackFunction cp = callbackQue.get(i);
-            // CallableTask task = new CallableTask(cp);
-            // service.submit(task);
-            // service.shutdown();
-
             ICallbackFunction cp = callbackQue.get(i);
             if (cp != null) {
                 cp.callback();
@@ -105,6 +111,19 @@ public abstract class TaskOfBase implements ITask, Runnable {
 
             // コールバック関数の削除
             callbackQue.remove(i);
+        }
+    }
+    
+    protected void execRunnable() {
+        for (int i = 0; i < runnableQue.size(); i++) {
+            Runnable cp = runnableQue.get(i);
+            if (cp != null) {
+                cp.run();
+                cp = null;
+            }
+
+            // コールバック関数の削除
+            runnableQue.remove(i);
         }
     }
 

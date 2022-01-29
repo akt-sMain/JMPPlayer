@@ -83,7 +83,7 @@ public class JMPCore {
 
     /* Notify処理 */
     public static void parseNotifyPacket(NotifyPacket packet) {
-        if (JMPFlags.EnableNotifyFlag == true) {
+        if (JMPFlags.EnableNotifyFlag == false) {
             /* 無効状態 */
             return;
         }
