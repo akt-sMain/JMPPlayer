@@ -4,7 +4,6 @@ import java.util.List;
 
 import jlib.JMPLIB;
 import jmp.CommonRegisterINI;
-import jmp.JMPFlags;
 import jmp.plugin.PluginWrapper;
 import jmp.task.NotifyPacket;
 import jmp.util.JmpUtil;
@@ -83,11 +82,6 @@ public class JMPCore {
 
     /* Notify処理 */
     public static void parseNotifyPacket(NotifyPacket packet) {
-        if (JMPFlags.EnableNotifyFlag == false) {
-            /* 無効状態 */
-            return;
-        }
-        
         switch (packet.getId()) {
             case UPDATE_CONFIG: {
                 /* Config変更通知 */

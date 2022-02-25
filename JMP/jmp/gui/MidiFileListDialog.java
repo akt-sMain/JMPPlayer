@@ -39,8 +39,8 @@ import javax.swing.table.TableColumn;
 
 import function.Platform;
 import function.Utility;
-import jmp.JMPFlags;
 import jmp.core.DataManager;
+import jmp.core.FileManager.AutoPlayMode;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SoundManager;
@@ -527,7 +527,7 @@ public class MidiFileListDialog extends JMPFrame {
     }
 
     public void setVisibleExtendGUI(boolean visible) {
-        if (JMPFlags.PlayListExtention == false) {
+        if (JMPCore.getFileManager().getAutoPlayMode() != AutoPlayMode.PLAY_LIST) {
             visible = false;
         }
 

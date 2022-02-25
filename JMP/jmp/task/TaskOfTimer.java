@@ -1,6 +1,7 @@
 package jmp.task;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * タイマータスク。 <br>
@@ -29,14 +30,16 @@ public class TaskOfTimer extends TaskOfBase {
 
     @Override
     void loop() {
-        for (int i = 0; i < callbackPackages.size(); i++) {
-            CallbackPackage cp = callbackPackages.get(i);
-            cp.callback();
-
-            if (cp.isDeleteConditions() == true) {
-                // コールバック関数の削除
-                cp = null;
-                callbackPackages.remove(i);
+        synchronized (callbackPackages) {
+            // スタックされたコールバックを呼び出し
+            Iterator<CallbackPackage> i = callbackPackages.iterator();
+            while (i.hasNext()) {
+                CallbackPackage cp = i.next();
+                cp.callback();
+                if (cp.isDeleteConditions() == true) {
+                    // コールバック関数の削除
+                    i.remove();
+                }
             }
         }
     }

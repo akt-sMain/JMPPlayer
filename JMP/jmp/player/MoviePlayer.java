@@ -13,7 +13,7 @@ import gui.FlagMediaAccessor.PlayerStatus;
 import jlib.player.Player;
 import jmp.core.JMPCore;
 
-public class MoviePlayer extends Player {
+public class MoviePlayer extends Player implements IMoviePlayerModel {
 
     private static final long TIMEOUT_MILLS = 15 * 1000;
 
@@ -200,6 +200,7 @@ public class MoviePlayer extends Player {
         super.changingPlayer();
     }
 
+    @Override
     public void setVisibleView(boolean visible) {
         if (isValid() == false) {
             return;
@@ -207,6 +208,7 @@ public class MoviePlayer extends Player {
         mediaAccessor.setVisibleView(visible);
     }
 
+    @Override
     public boolean isValidView() {
         if (isValid() == false) {
             return false;
@@ -217,6 +219,7 @@ public class MoviePlayer extends Player {
         return true;
     }
 
+    @Override
     public boolean isVisibleView() {
         if (isValid() == false) {
             return false;

@@ -21,6 +21,7 @@ import jmp.CommonRegisterINI;
 import jmp.ErrorDef;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
+import jmp.core.FileManager.AutoPlayMode;
 import jmp.gui.BuiltinSynthSetupDialog;
 import jmp.gui.DebugLogConsole;
 import jmp.lang.DefineLanguage;
@@ -276,10 +277,10 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
 
         if (getCommonRegisterValue(COMMON_REGKEY_NO_AUTOPLAY_FUNC).equalsIgnoreCase("PLT")) {
-            JMPFlags.PlayListExtention = true;
+            JMPCore.getFileManager().setAutoPlayMode(AutoPlayMode.PLAY_LIST);
         }
         else {
-            JMPFlags.PlayListExtention = false;
+            JMPCore.getFileManager().setAutoPlayMode(AutoPlayMode.DIRECTORY);
         }
 
         // OSごとのFFmpeg設定
@@ -730,10 +731,10 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
         if (key.equals(getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_AUTOPLAY_FUNC)) == true) {
             if (getCommonRegisterValue(COMMON_REGKEY_NO_AUTOPLAY_FUNC).equalsIgnoreCase("PLT")) {
-                JMPFlags.PlayListExtention = true;
+                JMPCore.getFileManager().setAutoPlayMode(AutoPlayMode.PLAY_LIST);
             }
             else {
-                JMPFlags.PlayListExtention = false;
+                JMPCore.getFileManager().setAutoPlayMode(AutoPlayMode.DIRECTORY);
             }
         }
         if (key.equals(getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_DEBUGMODE)) == true) {
@@ -847,7 +848,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         youtubeDlWrapper.convert(url, extension);
     }
 
-    public void setYoutubeDlWrapperPath(String path) {
+    protected void setYoutubeDlWrapperPath(String path) {
         youtubeDlWrapper.setPath(path);
     }
 
@@ -863,7 +864,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         return youtubeDlWrapper.isYoutubeDlInstalled();
     }
 
-    public void setYoutubeDlInstalled(boolean isEnableEnvironmentVariable) {
+    protected void setYoutubeDlInstalled(boolean isEnableEnvironmentVariable) {
         youtubeDlWrapper.setYoutubeDlInstalled(isEnableEnvironmentVariable);
     }
 }

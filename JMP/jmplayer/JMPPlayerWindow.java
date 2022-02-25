@@ -1552,6 +1552,8 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             }
         }
         else {
+            JMPCore.getSoundManager().stop();
+            Utility.threadSleep(200);
             JMPCore.getFileManager().loadFileToPlay(path);
         }
     }

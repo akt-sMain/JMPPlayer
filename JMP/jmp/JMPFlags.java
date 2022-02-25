@@ -76,11 +76,8 @@ public class JMPFlags {
     /** 自動シンセ接続 */
     public static boolean StartupAutoConectSynth = false;
 
-    /** ロード後に自動再生するか？ */
-    //public static boolean LoadToPlayFlag = false;
-
     /** 履歴に残さずロードする */
-    public static boolean NoneHIstoryLoadFlag = false;
+    public static boolean NoneHistoryLoadFlag = false;
 
     /** ロード中フラグ */
     public static boolean NowLoadingFlag = false;
@@ -105,12 +102,6 @@ public class JMPFlags {
 
     /** 再生中の点滅表示を制御するためのフラグ。主にシーケンスバーで使用 */
     public static boolean PlayingTimerToggleFlag = false;
-
-    /** Notifyを各マネージャークラスに送信するか？ */
-    public static boolean EnableNotifyFlag = true;
-
-    /** 拡張プレイリスト機能有効化 */
-    public static boolean PlayListExtention = false;
 
     /** 次の曲再生検索フラグ */
     public static boolean NextPlayFlag = false;

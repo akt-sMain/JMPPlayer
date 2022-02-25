@@ -325,7 +325,7 @@ public class YoutubeConvertDialog extends JMPDialog {
         SystemManager system = JMPCore.getSystemManager();
         LanguageManager lm = JMPCore.getLanguageManager();
 
-        system.setYoutubeDlWrapperPath(textFieldExePath.getText());
+        dm.setYoutubeDlPath(textFieldExePath.getText());
         if (system.isValidYoutubeDlWrapper() == false) {
             lblStatus.setForeground(Color.RED);
             String name = String.format("\"%s\"", ".exe");
@@ -431,7 +431,6 @@ public class YoutubeConvertDialog extends JMPDialog {
         try {
             // ダウンロード実行
             system.executeYoutubeDownload(url, outdir, dstExt, chckbxAudioOnly.isSelected());
-            dm.setYoutubeDlPath(textFieldExePath.getText());
         }
         catch (IOException e1) {
             lblStatus.setForeground(Color.RED);

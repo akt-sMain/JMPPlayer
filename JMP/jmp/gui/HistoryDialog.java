@@ -72,7 +72,7 @@ public class HistoryDialog extends JMPDialog implements IFileResultCallback {
                         String item = history.getSelectedValue();
                         if (item != null) {
                             // 履歴に残さずロードする
-                            JMPFlags.NoneHIstoryLoadFlag = true;
+                            JMPFlags.NoneHistoryLoadFlag = true;
                             JMPCore.getSoundManager().stop();
                             JMPCore.getFileManager().loadFileToPlay(item);
                         }

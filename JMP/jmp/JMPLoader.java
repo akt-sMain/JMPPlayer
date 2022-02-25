@@ -364,6 +364,11 @@ public class JMPLoader {
         if (JMPCore.getWindowManager().isValidBuiltinSynthFrame() == true) {
             JMPCore.getWindowManager().closeBuiltinSynthFrame();
         }
+        
+        // 動画ビューワを閉じる
+        if (JMPCore.getSoundManager().isVisibleMediaView() == true) {
+            JMPCore.getSoundManager().setVisibleMediaView(false);
+        }
 
         // 終了前に全てのプラグインを閉じる
         JMPCore.getPluginManager().closeAllPlugins();
@@ -390,9 +395,6 @@ public class JMPLoader {
      * @return
      */
     public static boolean initLibrary(ConfigDatabaseWrapper config, IPlugin plugin) {
-
-        // Sequenceタスクが準備出来るまではNotifyを破棄する必要がある
-        JMPFlags.EnableNotifyFlag = false;
 
         // システムパス設定
         JMPCore.getSystemManager().makeSystemPath();
@@ -483,9 +485,6 @@ public class JMPLoader {
             else {
                 result = false;
             }
-
-            // Notify有効化
-            JMPFlags.EnableNotifyFlag = true;
         }
         return result;
     }

@@ -88,6 +88,11 @@ public class TaskManager extends AbstractManager {
     }
 
     public void taskStart() {
+        /* キューの初期化 */
+        for (ITask task : taskMap.values()) {
+            task.clearQue();
+        }
+        
         /* Threadインスタンスのstart処理 */
         for (ITask task : taskMap.values()) {
             task.startTask();
@@ -180,4 +185,5 @@ public class TaskManager extends AbstractManager {
             task.add(new NotifyPacket(id, data));
         }
     }
+
 }

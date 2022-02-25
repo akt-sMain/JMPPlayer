@@ -1,6 +1,7 @@
 package jmp.task;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import jmp.util.JmpUtil;
 
@@ -56,12 +57,7 @@ public abstract class TaskOfBase implements ITask, Runnable {
         end();
 
         // コールバック関数のクリア
-        if (callbackQue != null) {
-            callbackQue.clear();
-        }
-        if (runnableQue != null) {
-        	runnableQue.clear();
-        }
+        clearQue();
     }
 
     /**
@@ -100,30 +96,38 @@ public abstract class TaskOfBase implements ITask, Runnable {
     public void queuing(Runnable runnable) {
         runnableQue.add(runnable);
     }
+    
+    @Override
+    public void clearQue() {
+        if (callbackQue != null) {
+            callbackQue.clear();
+        }
+        if (runnableQue != null) {
+            runnableQue.clear();
+        }
+    }
 
     protected void execCallback() {
-        for (int i = 0; i < callbackQue.size(); i++) {
-            ICallbackFunction cp = callbackQue.get(i);
-            if (cp != null) {
-                cp.callback();
-                cp = null;
+        synchronized (callbackQue) {
+            // スタックされたコールバックを呼び出し
+            Iterator<ICallbackFunction> i = callbackQue.iterator();
+            while (i.hasNext()) {
+                ICallbackFunction exec = i.next();
+                exec.callback();
+                i.remove();
             }
-
-            // コールバック関数の削除
-            callbackQue.remove(i);
         }
     }
     
     protected void execRunnable() {
-        for (int i = 0; i < runnableQue.size(); i++) {
-            Runnable cp = runnableQue.get(i);
-            if (cp != null) {
-                cp.run();
-                cp = null;
+        synchronized (runnableQue) {
+            // スタックされたコールバックを呼び出し
+            Iterator<Runnable> i = runnableQue.iterator();
+            while (i.hasNext()) {
+                Runnable exec = i.next();
+                exec.run();
+                i.remove();
             }
-
-            // コールバック関数の削除
-            runnableQue.remove(i);
         }
     }
 

@@ -12,9 +12,9 @@ import jlib.player.Player;
  */
 public class WavPlayerMin extends WavPlayer {
 
-    private MoviePlayer mediaPlayer;
+    private Player mediaPlayer;
 
-    public WavPlayerMin(MoviePlayer mediaPlayer) {
+    public WavPlayerMin(Player mediaPlayer) {
         super();
         this.mediaPlayer = mediaPlayer;
     }

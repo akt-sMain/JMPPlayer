@@ -21,6 +21,14 @@ public class TaskOfNotify extends TaskOfBase {
         stack = Collections.synchronizedList(new LinkedList<NotifyPacket>());
     }
     
+    @Override
+    public void clearQue() {
+        super.clearQue();
+        synchronized (stack) {
+            stack.clear();
+        }
+    }
+    
     public void add(NotifyPacket p) {
         synchronized (stack) {
             // Notifyパケットを発行

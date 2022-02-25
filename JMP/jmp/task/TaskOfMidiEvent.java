@@ -50,6 +50,14 @@ public class TaskOfMidiEvent extends TaskOfBase {
             stack.add(packet);
         }
     }
+    
+    @Override
+    public void clearQue() {
+        super.clearQue();
+        synchronized (stack) {
+            stack.clear();
+        }
+    }
 
     @Override
     void begin() {

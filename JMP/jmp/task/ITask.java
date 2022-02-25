@@ -15,6 +15,11 @@ public interface ITask {
      * タスク待機状態遷移
      */
     abstract void joinTask();
+    
+    /**
+     * キューを空にする
+     */
+    abstract void clearQue();
 
     /**
      * タスク待ち状態遷移

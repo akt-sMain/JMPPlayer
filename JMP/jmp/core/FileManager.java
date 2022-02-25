@@ -20,6 +20,13 @@ import jmp.task.ICallbackFunction;
 import jmp.util.JmpUtil;
 
 public class FileManager extends AbstractManager implements IFileManager {
+    
+    public enum AutoPlayMode {
+        DIRECTORY,
+        PLAY_LIST
+    }
+    
+    private AutoPlayMode autoPlayMode = AutoPlayMode.DIRECTORY;
 
     private static final String SUCCESS_MSG_FOAMET_LOAD = "%s ...(%s)";
 
@@ -171,7 +178,7 @@ public class FileManager extends AbstractManager implements IFileManager {
 
     private void initializeFlag() {
         // フラグ初期化
-        JMPFlags.NoneHIstoryLoadFlag = false; // 履歴保存
+        JMPFlags.NoneHistoryLoadFlag = false; // 履歴保存
     }
 
     public void addLoadResultCallback(IFileResultCallback loadResultCallback) {
@@ -238,7 +245,7 @@ public class FileManager extends AbstractManager implements IFileManager {
             JMPFlags.NowLoadingFlag = true;
 
             // Sequenceタスクに委託
-            ICallbackFunction func = new LoadCallbackFunc(f, JMPFlags.NoneHIstoryLoadFlag, toPlay);
+            ICallbackFunction func = new LoadCallbackFunc(f, JMPFlags.NoneHistoryLoadFlag, toPlay);
             JMPCore.getTaskManager().queuing(func);
         }
 
@@ -250,5 +257,13 @@ public class FileManager extends AbstractManager implements IFileManager {
     public void reload() {
         String path = JMPCore.getDataManager().getLoadedFile();
         loadFile(path);
+    }
+
+    public AutoPlayMode getAutoPlayMode() {
+        return autoPlayMode;
+    }
+
+    public void setAutoPlayMode(AutoPlayMode autoPlayMode) {
+        this.autoPlayMode = autoPlayMode;
     }
 }
