@@ -413,6 +413,7 @@ public class JMPLoader {
         // 管理クラス初期化処理
         boolean result = JMPCore.initFunc();
         if (result == true) {
+            
             // 全ての画面を最新版にする
             JMPCore.getWindowManager().updateBackColor();
             JMPCore.getWindowManager().updateDebugMenu();
@@ -451,6 +452,12 @@ public class JMPLoader {
         /* 起動準備 */
         if (result == true) {
 
+            // 設定ファイル情報表示
+            JMPFlags.Log.cprintln("## file info ##");
+            JMPFlags.Log.cprintln("AppName : " + JMPCore.getDataManager().getReadInfoForAppName());
+            JMPFlags.Log.cprintln("Version : " + JMPCore.getDataManager().getReadInfoForVersion());
+            JMPFlags.Log.cprintln();
+            
             if (JMPCore.getDataManager().isShowStartupDeviceSetup() == false) {
                 // 自動接続フラグを立てる
                 JMPFlags.StartupAutoConectSynth = true;

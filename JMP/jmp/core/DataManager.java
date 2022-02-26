@@ -108,6 +108,13 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
         }
         return true;
     }
+    
+    public String getReadInfoForAppName() {
+        return database.getAppName();
+    }
+    public String getReadInfoForVersion() {
+        return database.getVersion();
+    }
 
     public void setConfigDatabase(ConfigDatabase db) {
         database = db;
