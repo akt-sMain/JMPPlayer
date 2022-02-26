@@ -1,7 +1,6 @@
 package jmp;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -40,6 +39,10 @@ public class ConfigDatabase {
     private String appName = "None";
     private String version = "None";
 
+    private ConfigDatabase() {
+        setup(null);
+    }
+    
     public ConfigDatabase(String[] keys) {
         setup(keys);
     }
@@ -70,8 +73,10 @@ public class ConfigDatabase {
 
         keyset = keys;
 
-        for (String key : keyset) {
-            database.put(key, "");
+        if (keyset != null) {
+            for (String key : keyset) {
+                database.put(key, "");
+            }
         }
     }
 
@@ -88,39 +93,13 @@ public class ConfigDatabase {
     }
 
     public static ConfigDatabase create(String path) {
-        ArrayList<String> keys = new ArrayList<String>();
-        ArrayList<String> values = new ArrayList<String>();
         File file = new File(path);
         if (file.exists() == false) {
             return null;
         }
 
-        try {
-            List<String> textContents = JmpUtil.readTextFile(file);
-
-            for (String line : textContents) {
-                String[] sLine = line.split(KER_SEPARATOR);
-                if (sLine.length >= 1) {
-                    String key = sLine[0].trim();
-                    String value = (sLine.length >= 2) ? sLine[1] : "";
-                    keys.add(key);
-                    values.add(value);
-                }
-            }
-        }
-        catch (Exception e) {
-            return null;
-        }
-
-        String[] aKeys = new String[keys.size()];
-        for (int i = 0; i < aKeys.length; i++) {
-            aKeys[i] = keys.get(i);
-        }
-
-        ConfigDatabase db = new ConfigDatabase(aKeys);
-        for (int i = 0; i < aKeys.length; i++) {
-            db.setConfigParam(aKeys[i], values.get(i));
-        }
+        ConfigDatabase db = new ConfigDatabase();
+        db.reading(file.getPath());
         return db;
     }
 
@@ -150,8 +129,10 @@ public class ConfigDatabase {
     public boolean reading(String path) {
         setAppName("Unknown");
         setVersion("Unknown");
-        //return readingTxt(path);
-        return readingXml(path);
+        //boolean ret = readingTxt(path);
+        boolean ret = readingXml(path);
+        keyset = keySetToArray(database.keySet());
+        return ret;
     }
     
     protected boolean outputTxt(String path) {
@@ -185,13 +166,26 @@ public class ConfigDatabase {
             for (String line : textContents) {
                 String[] sLine = line.split(KER_SEPARATOR);
                 if (sLine.length >= 1) {
+                    
                     String key = sLine[0].trim();
-                    for (String ckey : getKeySet()) {
-                        if (key.equals(ckey) == true) {
-                            String value = (sLine.length >= 2) ? sLine[1] : "";
-                            database.put(key, value);
-                            break;
+                    
+                    boolean isContainsKey = false;
+                    if (keyset == null) {
+                        // キーセット未指定の場合は全て追加
+                        isContainsKey = true;
+                    }
+                    else {
+                        for (String ckey : getKeySet()) {
+                            if (key.equals(ckey) == true) {
+                                isContainsKey = true;
+                                break;
+                            }
                         }
+                    }
+                    
+                    if (isContainsKey == true) {
+                        String value = (sLine.length >= 2) ? sLine[1] : "";
+                        database.put(key, value);
                     }
                 }
             }
@@ -277,11 +271,23 @@ public class ConfigDatabase {
                     key = ele.getAttribute(JMP_XML_KEY);
                     value = ele.getTextContent();
                 }
-                for (String ckey : getKeySet()) {
-                    if (key.equals(ckey) == true) {
-                        database.put(key, value);
-                        break;
+                
+                boolean isContainsKey = false;
+                if (keyset == null) {
+                    // キーセット未指定の場合は全て追加
+                    isContainsKey = true;
+                }
+                else {
+                    for (String ckey : getKeySet()) {
+                        if (key.equals(ckey) == true) {
+                            isContainsKey = true;
+                            break;
+                        }
                     }
+                }
+                
+                if (isContainsKey == true) {
+                    database.put(key, value);
                 }
             }
         }
