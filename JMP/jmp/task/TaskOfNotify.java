@@ -11,7 +11,7 @@ public class TaskOfNotify extends TaskOfBase {
     
     /** Notify ID */
     public static enum NotifyID {
-        UPDATE_CONFIG, UPDATE_SYSCOMMON, 
+        UPDATE_CONFIG, UPDATE_SYSCOMMON, FILE_RESULT_BEGIN, FILE_RESULT_END
     }
     
     private List<NotifyPacket> stack = null;

@@ -88,13 +88,9 @@ public class TaskManager extends AbstractManager {
     }
 
     public void taskStart() {
-        /* キューの初期化 */
-        for (ITask task : taskMap.values()) {
-            task.clearQue();
-        }
-        
         /* Threadインスタンスのstart処理 */
         for (ITask task : taskMap.values()) {
+            task.clearQue();
             task.startTask();
         }
     }
@@ -163,7 +159,7 @@ public class TaskManager extends AbstractManager {
             }
         });
         // シーケンスバーのトグル用コールバック関数を登録
-        addCallbackPackage((long) 500, new ICallbackFunction() {
+        addCallbackPackage(500L, new ICallbackFunction() {
 
             @Override
             public void callback() {

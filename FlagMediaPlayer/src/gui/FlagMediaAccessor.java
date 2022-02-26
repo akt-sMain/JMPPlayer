@@ -75,6 +75,9 @@ public class FlagMediaAccessor {
     }
 
     public void setVisibleView(boolean b, boolean LocationRelativeTo) {
+        if (isAudioOnly() == true) {
+            return;
+        }
         if (b == true && LocationRelativeTo == true) {
             win.setLocationRelativeTo(null);
         }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import jlib.JMPLIB;
 import jmp.CommonRegisterINI;
+import jmp.FileResult;
 import jmp.plugin.PluginWrapper;
 import jmp.task.NotifyPacket;
 import jmp.util.JmpUtil;
@@ -100,6 +101,22 @@ public class JMPCore {
                     if (am.isFinishedInitialize() == true) {
                         am.notifyUpdateCommonRegister(key);
                     }
+                }
+                break;
+            }
+            case FILE_RESULT_BEGIN: {
+                /* ファイル処理 事前判定結果通知 */
+                if (packet.getData() instanceof FileResult) {
+                    FileResult result = (FileResult)packet.getData();
+                    getFileManager().callFileResultBegin(result);
+                }
+                break;
+            }
+            case FILE_RESULT_END: {
+                /* ファイル処理 事後判定結果通知 */
+                if (packet.getData() instanceof FileResult) {
+                    FileResult result = (FileResult)packet.getData();
+                    getFileManager().callFileResultEnd(result);
                 }
                 break;
             }
