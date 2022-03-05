@@ -33,6 +33,14 @@ public abstract class AbstractWaveGenOscillator implements IOscillator {
             /* Rch 分 */
             data[i + 1] += y;
         }
+        if (toneStep >= (Integer.MAX_VALUE - 100000)) {
+            /* 
+             * toneStepがintの最大値を超えないようにする。
+             * ユースケースとしてNoteONが最大値を超えるほど押されることはありえないので
+             * 音声が一瞬途切れるが単純に0クリアする。 
+             */
+            toneStep = 0;
+        }
         tone.setToneStep(toneStep);
         return length;
     }
