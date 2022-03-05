@@ -242,58 +242,6 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
         int sampleRate = BUF_SIZE;
         while (isRunnable) {
-
-            int a = 0;
-            switch (channel) {
-                case 0:
-                    a = channel;
-                    break;
-                case 1:
-                    a = channel;
-                    break;
-                case 2:
-                    a = channel;
-                    break;
-                case 3:
-                    a = channel;
-                    break;
-                case 4:
-                    a = channel;
-                    break;
-                case 5:
-                    a = channel;
-                    break;
-                case 6:
-                    a = channel;
-                    break;
-                case 7:
-                    a = channel;
-                    break;
-                case 8:
-                    a = channel;
-                    break;
-                case 9:
-                    a = channel;
-                    break;
-                case 10:
-                    a = channel;
-                    break;
-                case 11:
-                    a = channel;
-                    break;
-                case 12:
-                    a = channel;
-                    break;
-                case 13:
-                    a = channel;
-                    break;
-                case 14:
-                    a = channel;
-                    break;
-                case 15:
-                    a = channel;
-                    break;
-            }
             try {
                 int length = makeTone(waveData, sampleRate); // 再生するたびに作り直す
                 // samplesOfAverage(waveData, length);
@@ -670,21 +618,6 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         setNRPN(0, 0);
         setPan(0, 64);
         setModulationDepth(0, 0);
-        
-        /* 中途半端なリリース中の音源を強制的に破棄する */
-        for (int i=0; i<tones.length; i++) {
-            Tone tone = tones[i];
-            if (tone != null) {
-                tone.setVelocity(0);
-                tone.setReleaseFlag(false);
-                activeTones.remove(tone);
-                tonePool.push(tone);
-                tones[i] = null;
-                if (!oscillator.isToneSync()) {
-                    tone.setTablePointer(0);
-                }
-            }
-        }
     }
 
     @Override
