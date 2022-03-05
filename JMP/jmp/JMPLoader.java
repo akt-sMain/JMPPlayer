@@ -11,7 +11,6 @@ import jmp.core.TaskManager;
 import jmp.core.WindowManager;
 import jmp.file.CommonRegisterINI;
 import jmp.file.ConfigDatabaseWrapper;
-import jmp.task.ICallbackFunction;
 import jmp.util.JmpUtil;
 import lib.MakeJmpLib;
 
@@ -22,6 +21,9 @@ import lib.MakeJmpLib;
  *
  */
 public class JMPLoader {
+    
+    // 起動設定
+    public static boolean MainThreadRunnable = true;
 
     /** プラグインフォルダを使用するか */
     public static boolean UsePluginDirectory = true;
@@ -306,50 +308,24 @@ public class JMPLoader {
      */
     private static boolean invokeImpl(ConfigDatabaseWrapper config, IPlugin standAlonePlugin, File loadFile) {
 
-        // invokeメソッドからの起動はLibraryモードではない
-        JMPFlags.LibraryMode = false;
-
-        SystemManager.consoleOutSystemInfo();
-
-        // ライブラリ初期化処理
-        boolean result = initLibrary(config, standAlonePlugin);
-
-        /* 起動準備 */
-        if (result == true) {
-
-            TaskManager taskManager = JMPCore.getTaskManager();
-
-            // コマンド引数で指定されたファイルを開く
-            if (loadFile != null) {
-                if (loadFile.canRead() == true) {
-                    taskManager.queuing(new ICallbackFunction() {
-                        @Override
-                        public void callback() {
-                            JmpUtil.threadSleep(500);
-                            JMPCore.getFileManager().loadFileToPlay(loadFile);
-                        }
-                    });
-                }
-            }
-
-            // タスクジョイン
+        boolean ret = true;
+        InvokeTask invokeTask = new InvokeTask(config, standAlonePlugin, loadFile);
+        if (MainThreadRunnable == true) {
+            // このスレッド内で処理する
+            invokeTask.run();
+            ret = invokeTask.getResult();
+        }
+        else {
+            // 別スレッドを起動する
             try {
-                taskManager.join();
+                InvokeThread invokeThread = new InvokeThread(invokeTask);
+                invokeThread.start();
             }
-            catch (InterruptedException e) {
-                // 強制終了
-                exit();
-
-                JMPCore.getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_UNKNOWN_EXIT_APPLI);
+            catch (Exception e) {
+                ret = false;
             }
         }
-
-        // ライブラリ終了処理
-        boolean endResult = exitLibrary();
-        if (result == false) {
-            endResult = result;
-        }
-        return endResult;
+        return ret;
     }
 
     /**
@@ -360,20 +336,6 @@ public class JMPLoader {
             return;
         }
         exitFlag = true;
-
-        JMPCore.getWindowManager().setVisibleAll(false);
-
-        if (JMPCore.getWindowManager().isValidBuiltinSynthFrame() == true) {
-            JMPCore.getWindowManager().closeBuiltinSynthFrame();
-        }
-        
-        // 動画ビューワを閉じる
-        if (JMPCore.getSoundManager().isVisibleMediaView() == true) {
-            JMPCore.getSoundManager().setVisibleMediaView(false);
-        }
-
-        // 終了前に全てのプラグインを閉じる
-        JMPCore.getPluginManager().closeAllPlugins();
 
         // タスクの終了
         JMPCore.getTaskManager().taskExit();
@@ -505,22 +467,32 @@ public class JMPLoader {
      */
     public static boolean exitLibrary() {
 
-        // 生きているタスクが無いか確認、あったら終了させる
+        // Windowを閉じる
+        JMPCore.getWindowManager().setVisibleAll(false);
+        
+        if (JMPCore.getWindowManager().isValidBuiltinSynthFrame() == true) {
+            JMPCore.getWindowManager().closeBuiltinSynthFrame();
+        }
+        
+        // 動画ビューワを閉じる
+        if (JMPCore.getSoundManager().isVisibleMediaView() == true) {
+            JMPCore.getSoundManager().setVisibleMediaView(false);
+        }
+
+        // 終了前に全てのプラグインを閉じる
+        JMPCore.getPluginManager().closeAllPlugins();
+        
+        // この時点でタスクが生きてたら終了する
         TaskManager taskManager = JMPCore.getTaskManager();
         if (taskManager.isRunnable() == true) {
-            exitFlag = false;
-            exit();
-
-            // タスクジョイン
+            taskManager.taskExit();
             try {
                 taskManager.join();
             }
             catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-
-        // Windowを閉じる
-        JMPCore.getWindowManager().setVisibleAll(false);
 
         boolean result = JMPCore.endFunc();
         if (result == false && JMPCore.isFinishedInitialize() == true) {
