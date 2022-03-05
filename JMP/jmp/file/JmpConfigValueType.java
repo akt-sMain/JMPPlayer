@@ -1,4 +1,4 @@
-package jmp;
+package jmp.file;
 
 import jmp.core.DataManager.TypeOfKey;
 

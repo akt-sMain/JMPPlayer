@@ -1,4 +1,4 @@
-package jmp;
+package jmp.file;
 
 import java.io.File;
 import java.util.ArrayList;

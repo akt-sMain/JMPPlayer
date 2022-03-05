@@ -3,8 +3,8 @@ package jmp.core;
 import java.util.List;
 
 import jlib.JMPLIB;
-import jmp.CommonRegisterINI;
-import jmp.FileResult;
+import jmp.file.CommonRegisterINI;
+import jmp.file.FileResult;
 import jmp.plugin.PluginWrapper;
 import jmp.task.NotifyPacket;
 import jmp.util.JmpUtil;

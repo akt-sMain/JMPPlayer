@@ -2,8 +2,8 @@ package jmp.core;
 
 import java.io.File;
 
-import jmp.FileResult;
 import jmp.JMPFlags;
+import jmp.file.FileResult;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.task.ICallbackFunction;
 import jmp.task.TaskOfNotify.NotifyID;

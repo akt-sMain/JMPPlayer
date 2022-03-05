@@ -9,6 +9,8 @@ import jmp.core.PluginManager;
 import jmp.core.SystemManager;
 import jmp.core.TaskManager;
 import jmp.core.WindowManager;
+import jmp.file.CommonRegisterINI;
+import jmp.file.ConfigDatabaseWrapper;
 import jmp.task.ICallbackFunction;
 import jmp.util.JmpUtil;
 import lib.MakeJmpLib;

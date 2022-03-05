@@ -3,7 +3,7 @@ package jmp.core;
 import java.io.File;
 
 import jlib.core.IManager;
-import jmp.FileResult;
+import jmp.file.FileResult;
 
 public abstract class AbstractManager implements IManager {
 

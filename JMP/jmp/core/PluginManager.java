@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.sound.midi.MidiMessage;
@@ -13,9 +15,10 @@ import function.Platform;
 import function.Utility;
 import jlib.plugin.IPlugin;
 import jlib.plugin.ISupportExtensionConstraints;
-import jmp.ConfigDatabase;
-import jmp.FileResult;
 import jmp.JMPFlags;
+import jmp.file.FileResult;
+import jmp.file.IJmpFileBuilder;
+import jmp.file.JmpFileBuilderFactory;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.plugin.JMPPluginLoader;
 import jmp.plugin.PluginObserver;
@@ -73,8 +76,9 @@ public class PluginManager extends AbstractManager {
 
     /** プラグインオブザーバ */
     private PluginObserver observers = null;
-
-    private ConfigDatabase plginStateMem = null;
+    
+    public static final String BUILDER_TYPE = JmpFileBuilderFactory.BUILDER_TYPE_TEXT;
+    private Map<String, String> plginStateMap = null;
 
     // ---------------------------------------------
     // メソッド群
@@ -106,7 +110,11 @@ public class PluginManager extends AbstractManager {
 
     private void loadPluginState() {
         String path = Utility.pathCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_PLUGINS_DIR), PLUGIN_STATE_FILE_NAME);
-        plginStateMem = ConfigDatabase.create(path);
+        
+        plginStateMap = new HashMap<String, String>();
+        JmpFileBuilderFactory fc = new JmpFileBuilderFactory(BUILDER_TYPE);
+        IJmpFileBuilder builder = fc.createFileBuilder(plginStateMap, null);
+        builder.read(new File(path));
     }
 
     private void savePluginState() {
@@ -117,12 +125,16 @@ public class PluginManager extends AbstractManager {
             plgKeys[j] = pName;
             j++;
         }
-        plginStateMem = new ConfigDatabase(plgKeys);
+        
+        plginStateMap = new HashMap<String, String>();
         for (String plgKey : plgKeys) {
             String state = PluginWrapper.toString(observers.getPluginWrapper(plgKey).getState());
-            plginStateMem.setConfigParam(plgKey, state);
+            plginStateMap.put(plgKey, state);
         }
-        plginStateMem.output(Utility.pathCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_PLUGINS_DIR), PLUGIN_STATE_FILE_NAME));
+        JmpFileBuilderFactory fc = new JmpFileBuilderFactory(BUILDER_TYPE);
+        IJmpFileBuilder builder = fc.createFileBuilder(plginStateMap, null);
+        String path = Utility.pathCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_PLUGINS_DIR), PLUGIN_STATE_FILE_NAME);
+        builder.write(new File(path));
     }
 
     public void startupPluginInstance(IPlugin stdPlugin) {
@@ -569,12 +581,21 @@ public class PluginManager extends AbstractManager {
 
             // プラグインをインポート
             boolean isValid = true;
-            if (plginStateMem != null) {
-                String jarName = JmpUtil.getFileNameNotExtension(jms.getJar());
-                if (plginStateMem.getConfigParam(jarName).equalsIgnoreCase(PluginWrapper.toString(PluginState.INVALID)) == true) {
-                    isValid = false;
+            if (jms == null) {
+                /* jms読み込み失敗時は無効状態にする */
+                isValid = false;
+            }
+            else {
+                if (plginStateMap != null) {
+                    String jarName = JmpUtil.getFileNameNotExtension(jms.getJar());
+                    if (plginStateMap.containsKey(jarName) == true) {
+                        if (plginStateMap.get(jarName).equalsIgnoreCase(PluginWrapper.toString(PluginState.INVALID)) == true) {
+                            isValid = false;
+                        }
+                    }
                 }
             }
+            
             if (isValid == true) {
                 importPlugin(jms.getJar());
             }
@@ -585,9 +606,12 @@ public class PluginManager extends AbstractManager {
         }
 
         // PluginStateを設定する
-        if (plginStateMem != null) {
+        if (plginStateMap != null) {
             for (String pName : observers.getPluginsNameSet()) {
-                PluginState pstate = PluginWrapper.toPluginState(plginStateMem.getConfigParam(pName));
+                PluginState pstate = PluginState.CONNECTED;
+                if (plginStateMap.containsKey(pName) == true) {
+                    pstate = PluginWrapper.toPluginState(plginStateMap.get(pName));
+                }
                 observers.getPluginWrapper(pName).setState(pstate);
             }
         }

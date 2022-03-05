@@ -1,14 +1,14 @@
-package jmp;
+package jmp.file;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
-
-import jmp.util.JmpUtil;
+import java.util.Map;
 
 public class CommonRegister {
-    private static final String KER_SEPARATOR = "<->";
+    
+    private static final String BUILDER_TYPE = JmpFileBuilderFactory.BUILDER_TYPE_TEXT;
 
     private List<CommonRegisterINI> iniList = null;
 
@@ -95,25 +95,16 @@ public class CommonRegister {
         if (file.canRead() == false) {
             return;
         }
-
-        try {
-            List<String> textContents = JmpUtil.readTextFile(file);
-
-            for (String line : textContents) {
-                String[] sLine = line.split(KER_SEPARATOR);
-                if (sLine.length >= 1) {
-                    String key = sLine[0].trim();
-                    for (String ckey : getKeySet()) {
-                        if (key.equals(ckey) == true) {
-                            String value = (sLine.length >= 2) ? sLine[1] : "";
-                            setValue(key, value);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        catch (Exception e) {
+        
+        Map<String, String> map = new HashMap<String, String>();
+        String[] keyset = getKeySet();
+        
+        JmpFileBuilderFactory fc = new JmpFileBuilderFactory(BUILDER_TYPE);
+        IJmpFileBuilder builder = fc.createFileBuilder(map, keyset);
+        builder.read(file);
+        
+        for (String key : map.keySet()) {
+            setValue(key, map.get(key));
         }
     }
 
@@ -122,17 +113,17 @@ public class CommonRegister {
         if (file != null && file.getParentFile() != null && file.getParentFile().exists() == false) {
             return;
         }
-
-        try {
-            List<String> textContents = new LinkedList<String>();
-            for (CommonRegisterINI ini : iniList) {
-                if (ini.isWrite == true) {
-                    textContents.add(ini.key + KER_SEPARATOR + ini.value);
-                }
+        
+        Map<String, String> map = new HashMap<String, String>();
+        String[] keyset = getKeySet();
+        for (CommonRegisterINI ini : iniList) {
+            if (ini.isWrite == true) {
+                map.put(ini.key, ini.value);
             }
-            JmpUtil.writeTextFile(file, textContents);
         }
-        catch (Exception e) {
-        }
+        
+        JmpFileBuilderFactory fc = new JmpFileBuilderFactory(BUILDER_TYPE);
+        IJmpFileBuilder builder = fc.createFileBuilder(map, keyset);
+        builder.write(file);
     }
 }

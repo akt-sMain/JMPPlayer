@@ -10,9 +10,9 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import jlib.core.IFileManager;
-import jmp.FileResult;
-import jmp.IFileResultCallback;
 import jmp.JMPFlags;
+import jmp.file.FileResult;
+import jmp.file.IFileResultCallback;
 import jmp.gui.ui.FileListTableModel;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.plugin.PluginWrapper;
@@ -160,7 +160,7 @@ public class FileManager extends AbstractManager implements IFileManager {
             // ロード中フラグ
             JMPFlags.NowLoadingFlag = true;
 
-            // Sequenceタスクに委託
+            // 実処理はSequenceタスクに委譲する
             ICallbackFunction func = FileCallbackCreator.getInstance().createLoadCallback(f, JMPFlags.NoneHistoryLoadFlag, toPlay);
             JMPCore.getTaskManager().queuing(func);
         }

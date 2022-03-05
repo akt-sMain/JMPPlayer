@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jlib.plugin.IPlugin;
+import jmp.file.CommonRegisterINI;
 
 public class InvokeArgs {
 

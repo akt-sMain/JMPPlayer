@@ -6,11 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import jlib.core.IDataManager;
-import jmp.ConfigDatabase;
-import jmp.ConfigDatabaseWrapper;
-import jmp.IJmpConfigDatabase;
 import jmp.JMPLoader;
-import jmp.JmpConfigValueType;
+import jmp.file.ConfigDatabase;
+import jmp.file.ConfigDatabaseWrapper;
+import jmp.file.IJmpConfigDatabase;
+import jmp.file.JmpConfigValueType;
 import jmp.task.TaskOfNotify.NotifyID;
 import jmp.util.JmpUtil;
 

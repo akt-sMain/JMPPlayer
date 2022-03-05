@@ -45,8 +45,6 @@ import function.Utility;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jmp.ErrorDef;
-import jmp.FileResult;
-import jmp.IFileResultCallback;
 import jmp.JMPFlags;
 import jmp.JMPLoader;
 import jmp.core.DataManager;
@@ -56,6 +54,8 @@ import jmp.core.PluginManager;
 import jmp.core.SoundManager;
 import jmp.core.SystemManager;
 import jmp.core.WindowManager;
+import jmp.file.FileResult;
+import jmp.file.IFileResultCallback;
 import jmp.gui.JmpPlayerLaunch;
 import jmp.gui.VersionInfoDialog;
 import jmp.gui.ui.ControlButtonUI;
@@ -548,7 +548,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             public void actionPerformed(ActionEvent e) {
                 // ファイルフィルター
                 JFileChooser filechooser = new JFileChooser();
-                filechooser.setFileFilter(JmpUtil.createFileFilter("PLUGIN SETUP Files", PluginManager.SETUP_FILE_EX));
+                filechooser.setFileFilter(JmpUtil.createFileFilter("PLUGIN STRUCTURE Files", PluginManager.SETUP_FILE_EX));
 
                 File dir = new File(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_JMS_DIR));
                 filechooser.setCurrentDirectory(dir);

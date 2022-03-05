@@ -13,12 +13,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
-import jmp.FileResult;
-import jmp.IFileResultCallback;
 import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.WindowManager;
+import jmp.file.FileResult;
+import jmp.file.IFileResultCallback;
 import jmp.gui.ui.JMPDialog;
 import jmp.lang.DefineLanguage.LangID;
 

@@ -1,4 +1,4 @@
-package jmp;
+package jmp.file;
 
 import function.Platform;
 import function.Platform.KindOfPlatform;

@@ -1,8 +1,8 @@
 package std;
 
 import jlib.plugin.IPlugin;
-import jmp.ConfigDatabaseWrapper;
 import jmp.JMPLoader;
+import jmp.file.ConfigDatabaseWrapper;
 
 /**
  * プラグインのスタンドアロン実行

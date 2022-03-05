@@ -1,12 +1,7 @@
-package jmp;
+package jmp.file;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,176 +20,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import jmp.core.JMPCore;
-import jmp.util.JmpUtil;
 
-public class ConfigDatabase {
-
-    private static final String KER_SEPARATOR = "<->";
-
-    // 設定データベース
-    private Map<String, String> database = null;
-
-    private String[] keyset = null;
-    
-    private String appName = "None";
-    private String version = "None";
-
-    private ConfigDatabase() {
-        setup(null);
-    }
-    
-    public ConfigDatabase(String[] keys) {
-        setup(keys);
-    }
-
-    public ConfigDatabase(Set<String> keys) {
-        setup(keySetToArray(keys));
-    }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    private void setup(String[] keys) {
-        database = new HashMap<String, String>();
-        database.clear();
-
-        keyset = keys;
-
-        if (keyset != null) {
-            for (String key : keyset) {
-                database.put(key, "");
-            }
-        }
-    }
-
-    public static String[] keySetToArray(Set<String> keys) {
-        String[] aKey = new String[keys.size()];
-        int i = 0;
-        Iterator<String> ite = keys.iterator();
-        while (ite.hasNext()) {
-            String s = ite.next();
-            aKey[i] = s;
-            i++;
-        }
-        return aKey;
-    }
-
-    public static ConfigDatabase create(String path) {
-        File file = new File(path);
-        if (file.exists() == false) {
-            return null;
-        }
-
-        ConfigDatabase db = new ConfigDatabase();
-        db.reading(file.getPath());
-        return db;
-    }
-
-    public String[] getKeySet() {
-        return keyset;
-    }
-
-    public void setConfigParam(String key, String value) {
-        if (database.containsKey(key) == true) {
-            database.put(key, value);
-        }
-    }
-
-    public String getConfigParam(String key) {
-        String ret = "";
-        if (database.containsKey(key) == true) {
-            ret = database.get(key);
-        }
-        return ret;
-    }
-
-    public boolean output(String path) {
-        //return outputTxt(path);
-        return outputXml(path);
-    }
-    
-    public boolean reading(String path) {
-        setAppName("Unknown");
-        setVersion("Unknown");
-        //boolean ret = readingTxt(path);
-        boolean ret = readingXml(path);
-        keyset = keySetToArray(database.keySet());
-        return ret;
-    }
-    
-    protected boolean outputTxt(String path) {
-        boolean ret = true;
-
-        try {
-            List<String> textContents = new LinkedList<String>();
-
-            for (String key : database.keySet()) {
-                String value = getConfigParam(key);
-                textContents.add(key + KER_SEPARATOR + value);
-            }
-            JmpUtil.writeTextFile(path, textContents);
-        }
-        catch (Exception e) {
-            ret = false;
-        }
-        return ret;
-    }
-
-    protected boolean readingTxt(String path) {
-        boolean ret = true;
-        File file = new File(path);
-        if (file.exists() == false) {
-            return false;
-        }
-
-        try {
-            List<String> textContents = JmpUtil.readTextFile(file);
-
-            for (String line : textContents) {
-                String[] sLine = line.split(KER_SEPARATOR);
-                if (sLine.length >= 1) {
-                    
-                    String key = sLine[0].trim();
-                    
-                    boolean isContainsKey = false;
-                    if (keyset == null) {
-                        // キーセット未指定の場合は全て追加
-                        isContainsKey = true;
-                    }
-                    else {
-                        for (String ckey : getKeySet()) {
-                            if (key.equals(ckey) == true) {
-                                isContainsKey = true;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    if (isContainsKey == true) {
-                        String value = (sLine.length >= 2) ? sLine[1] : "";
-                        database.put(key, value);
-                    }
-                }
-            }
-        }
-        catch (Exception e) {
-            ret = false;
-        }
-        return ret;
-    }
+public class JmpFileBuilderXml implements IJmpFileBuilder {
     
     private static String JMP_XML_ROOT = "jmpp";
     private static String JMP_XML_INFO = "info";
@@ -203,11 +30,21 @@ public class ConfigDatabase {
     private static String JMP_XML_DATA = "data";
     private static String JMP_XML_OBJ = "param";
     private static String JMP_XML_KEY = "key";
-    
-    protected boolean readingXml(String path) {
-        boolean ret = true;
 
-        File file = new  File(path);
+    private String[] keyset = null;
+    private Map<String, String> database = null;
+    
+    private String appName = "Unknown";
+    private String version = "Unknown";
+
+    public JmpFileBuilderXml(Map<String, String> database, String[] keyset) {
+        this.database = database;
+        this.keyset = keyset;
+    }
+    
+    @Override
+    public boolean read(File file) {
+        boolean ret = true;
         if (file.exists() == false) {
             return false;
         }
@@ -245,7 +82,7 @@ public class ConfigDatabase {
                 }
 
                 Element el = (Element) lst.item(i);
-                setAppName(el.getTextContent());
+                appName = el.getTextContent();
             }
             else if (lst.item(i).getNodeName().equals(JMP_XML_VERSION) == true) {
                 if (!(lst.item(i) instanceof Element)) {
@@ -253,7 +90,7 @@ public class ConfigDatabase {
                 }
 
                 Element el = (Element) lst.item(i);
-                setVersion(el.getTextContent());
+                version = el.getTextContent();
             }
         }
     }
@@ -278,7 +115,7 @@ public class ConfigDatabase {
                     isContainsKey = true;
                 }
                 else {
-                    for (String ckey : getKeySet()) {
+                    for (String ckey : keyset) {
                         if (key.equals(ckey) == true) {
                             isContainsKey = true;
                             break;
@@ -293,8 +130,8 @@ public class ConfigDatabase {
         }
     }
     
-    protected boolean outputXml(String path) {
-        File file = new File(path);
+    @Override
+    public boolean write(File file) {
         DocumentBuilder documentBuilder = null;
         try {
             documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -326,7 +163,14 @@ public class ConfigDatabase {
          */
         Element dataElement = document.createElement(JMP_XML_DATA);
         rootElement.appendChild(dataElement);
-        apendDataElement(document, dataElement);
+        for (String key : database.keySet()) {
+            String value = database.get(key);
+            
+            Element objElement = document.createElement(JMP_XML_OBJ);
+            objElement.setAttribute(JMP_XML_KEY, key);
+            objElement.setTextContent(value);
+            dataElement.appendChild(objElement);
+        }
 
         // Transformerインスタンスの生成
         Transformer transformer = null;
@@ -354,15 +198,14 @@ public class ConfigDatabase {
         return true;
     }
 
-    private void apendDataElement(Document document, Element rootElement) {
-        for (String key : database.keySet()) {
-            String value = getConfigParam(key);
-            
-            Element objElement = document.createElement(JMP_XML_OBJ);
-            objElement.setAttribute(JMP_XML_KEY, key);
-            objElement.setTextContent(value);
-            rootElement.appendChild(objElement);
-        }
+    @Override
+    public String getAppName() {
+        return new String(appName);
+    }
+
+    @Override
+    public String getVersion() {
+        return new String(version);
     }
 
 }
