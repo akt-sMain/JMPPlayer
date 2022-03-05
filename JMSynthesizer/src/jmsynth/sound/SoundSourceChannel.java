@@ -627,20 +627,20 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
     @Override
     public void systemReset() {
-        // 中途半端な音が出ないように一時的にボリュームを0にする
-        setVolume(0, 0.0f);
+        // Expressionを0にすることで初期化中の音声レベルを0にする
+        setExpression(0, 0);
         
         pitch_sc = 2;
         allSoundOff(0);
         resetAllController(0);
-        setExpression(0, 127);
         pitchBend(0, 0);
         setNRPN(0, 0);
         setPan(0, 64);
         setModulationDepth(0, 0);
-        
-        // ボリュームは最後に初期化
         setVolume(0, 1.0f);
+        
+        // Expressionは最後に初期化
+        setExpression(0, 127);
     }
 
     @Override
