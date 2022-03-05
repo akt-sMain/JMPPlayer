@@ -141,6 +141,8 @@ public class MidiInterface implements Receiver {
                 controller.resetAllController(channel);
                 break;
             case DefineControlChange.ALL_SOUND_OFF:// All Sound Off
+                controller.allSoundOff(channel);
+                break;
             case DefineControlChange.ALL_NOTE_OFF:// All Note Off
                 controller.allNoteOff(channel);
                 break;

@@ -483,6 +483,24 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         }
         this.setVolume(1.0f);
     }
+    
+    @Override
+    public void allSoundOff(int ch) {
+        /* 音源を強制的に破棄する */
+        for (int i=0; i<tones.length; i++) {
+            Tone tone = tones[i];
+            if (tone != null) {
+                tone.setVelocity(0);
+                tone.setReleaseFlag(false);
+                activeTones.remove(tone);
+                tonePool.push(tone);
+                tones[i] = null;
+                if (!oscillator.isToneSync()) {
+                    tone.setTablePointer(0);
+                }
+            }
+        }
+    }
 
     public void allNoteOff(int ch) {
         for (int i = 0; i < activeTones.size(); i++) {
@@ -609,15 +627,20 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
     @Override
     public void systemReset() {
+        // 中途半端な音が出ないように一時的にボリュームを0にする
+        setVolume(0, 0.0f);
+        
         pitch_sc = 2;
-        allNoteOff(0);
+        allSoundOff(0);
         resetAllController(0);
-        setVolume(0, 1.0f);
         setExpression(0, 127);
         pitchBend(0, 0);
         setNRPN(0, 0);
         setPan(0, 64);
         setModulationDepth(0, 0);
+        
+        // ボリュームは最後に初期化
+        setVolume(0, 1.0f);
     }
 
     @Override

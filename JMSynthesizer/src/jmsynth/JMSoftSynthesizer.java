@@ -238,6 +238,11 @@ public class JMSoftSynthesizer implements ISynthController {
     public void allNoteOff(int ch) {
         channels[ch].allNoteOff(ch);
     }
+    
+    @Override
+    public void allSoundOff(int ch) {
+        channels[ch].allSoundOff(ch);
+    }
 
     @Override
     public void setVibratoRate(int ch, int rate) {
