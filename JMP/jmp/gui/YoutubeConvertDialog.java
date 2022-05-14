@@ -123,23 +123,7 @@ public class YoutubeConvertDialog extends JMPDialog {
                     return;
                 }
 
-                if (Utility.checkExtension(file, "url") == true) {
-                    /* .urlファイルは開いてURL記述部分を抜粋する */
-                    String str = "";
-                    try {
-                        List<String> content = Utility.getTextFileContents(file.getPath());
-                        for (String c : content) {
-                            if (c.startsWith("URL=") == true) {
-                                str = c.substring(4);
-                                break;
-                            }
-                        }
-                    }
-                    catch (IOException e) {
-                    }
-                    setInputPath(str);
-                }
-                else {
+                if (parseUrlFile(file) == false) {
                     setInputPath(file.getPath());
                 }
             }
@@ -373,8 +357,8 @@ public class YoutubeConvertDialog extends JMPDialog {
                 lblStatus.setText(lm.getLanguageStr(LangID.Conversion_completed));
                 repaint();
 
-                String dstExt = dstExtTextField.getText();
-                JMPCore.getWindowManager().showFilePickupDialog(new File(Platform.getCurrentPath()), dstExt);
+                //String dstExt = dstExtTextField.getText();
+                JMPCore.getWindowManager().showFilePickupDialog(new File(Platform.getCurrentPath()));
             }
 
             @Override
@@ -436,6 +420,31 @@ public class YoutubeConvertDialog extends JMPDialog {
             lblStatus.setForeground(Color.RED);
             lblStatus.setText("Faild.");
         }
+    }
+    
+    public boolean parseUrlFile(File file) {
+        if (Utility.checkExtension(file, "url") == true) {
+            /* .urlファイルは開いてURL記述部分を抜粋する */
+            String str = "";
+            try {
+                List<String> content = Utility.getTextFileContents(file.getPath());
+                for (String c : content) {
+                    if (c.startsWith("URL=") == true) {
+                        str = c.substring(4);
+                        break;
+                    }
+                }
+            }
+            catch (IOException e) {
+                str = "";
+            }
+            
+            if (str.isEmpty() == false) {
+                setInputPath(str);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

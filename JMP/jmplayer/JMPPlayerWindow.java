@@ -58,6 +58,7 @@ import jmp.file.FileResult;
 import jmp.file.IFileResultCallback;
 import jmp.gui.JmpPlayerLaunch;
 import jmp.gui.VersionInfoDialog;
+import jmp.gui.YoutubeConvertDialog;
 import jmp.gui.ui.ControlButtonUI;
 import jmp.gui.ui.DropFileCallbackHandler;
 import jmp.gui.ui.IButtonMarkPaint;
@@ -1550,6 +1551,11 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             else {
                 system.showSystemErrorMessage(ErrorDef.ERROR_ID_PLUGIN_FAIL_LOAD);
             }
+        }
+        else if (Utility.checkExtension(path, "url") == true) {
+            YoutubeConvertDialog win = (YoutubeConvertDialog)wm.getWindow(WindowManager.WINDOW_NAME_YOUTUBEDL);
+            win.parseUrlFile(file);
+            win.showWindow();
         }
         else {
             JMPCore.getSoundManager().stop();

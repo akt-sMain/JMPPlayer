@@ -20,6 +20,7 @@ import javax.swing.border.EmptyBorder;
 import function.Utility;
 import jlib.gui.IJmpWindow;
 import jmp.core.JMPCore;
+import jmp.core.SoundManager;
 import jmp.core.WindowManager;
 import jmp.gui.ui.IJMPComponentUI;
 import jmp.lang.DefineLanguage.LangID;
@@ -32,7 +33,7 @@ public class FilePickupDialog extends JDialog implements IJMPComponentUI, IJmpWi
     private JList<String> list;
     private JLabel lblDirectory;
     private File dir = null;
-    private String extention = null;
+    private File selectionFile = null;
     private Map<String, File> map = null;
     private JButton playButton;
     private JButton btnDelete;
@@ -137,18 +138,12 @@ public class FilePickupDialog extends JDialog implements IJMPComponentUI, IJmpWi
         return map.get(name);
     }
 
-    public void setDirectory(File f) {
+    public void setDirectory(File f, File selection) {
         dir = f;
-        extention = "";
+        selectionFile = selection;
         updateList();
     }
-
-    public void setDirectory(File f, String ext) {
-        dir = f;
-        extention = ext;
-        updateList();
-    }
-
+    
     public void updateList() {
         listModel.removeAllElements();
         if (dir == null) {
@@ -159,22 +154,27 @@ public class FilePickupDialog extends JDialog implements IJMPComponentUI, IJmpWi
         lblDirectory.setText(dir.getAbsolutePath());
         map = JMPCore.getFileManager().getFileMap(dir);
 
-        if (extention.isEmpty() == true) {
-            for (String key : map.keySet()) {
+        int index = 0;
+        int focus = 0;
+        SoundManager sm = JMPCore.getSoundManager();
+        for (String key : map.keySet()) {
+            File f = map.get(key);
+            if (sm.checkMusicFileExtention(f) == true) {
                 listModel.addElement(key);
-            }
-        }
-        else {
-            for (String key : map.keySet()) {
-                String ext = Utility.getExtension(key);
-                if (extention.equalsIgnoreCase(ext) == true) {
-                    listModel.addElement(key);
+                
+                if (selectionFile != null) { 
+                    String suchName = f.getName();
+                    String focusName = selectionFile.getName();
+                    if (suchName.equals(focusName)) {
+                        focus = index;
+                    }
                 }
+                index++;
             }
         }
 
         if (listModel.getSize() > 0) {
-            list.setSelectedIndex(0);
+            list.setSelectedIndex(focus);
         }
     }
 

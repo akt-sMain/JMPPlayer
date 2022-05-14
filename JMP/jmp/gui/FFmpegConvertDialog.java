@@ -370,7 +370,7 @@ public class FFmpegConvertDialog extends JMPDialog {
                     JMPCore.getFileManager().loadFileToPlay(out.getPath());
                 }
                 else {
-                    JMPCore.getWindowManager().showFilePickupDialog(outdir, dstExtTextField.getText());
+                    JMPCore.getWindowManager().showFilePickupDialog(outdir, out);
                 }
             }
 

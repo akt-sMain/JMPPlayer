@@ -122,7 +122,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         }
         else if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_DEBUGMODE)) == true) {
             updateDebugMenu();
-            repaintAll();
+            JMPFlags.ForcedCyclicRepaintFlag = true;
         }
         super.notifyUpdateCommonRegister(key);
     }
@@ -319,9 +319,13 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         });
     }
 
-    public void showFilePickupDialog(File dir, String ext) {
+    public void showFilePickupDialog(File dir) {
+        showFilePickupDialog(dir, null);
+    }
+    
+    public void showFilePickupDialog(File dir, File focus) {
         FilePickupDialog dlg = (FilePickupDialog) JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_FILE_PICKUP);
-        dlg.setDirectory(dir, ext);
+        dlg.setDirectory(dir, focus);
         dlg.showWindow();
     }
 
@@ -340,7 +344,6 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         if (this.builtinSynthFrame != null) {
             this.builtinSynthFrame.dispose();
         }
-        this.builtinSynthFrame = null;
     }
 
     public boolean isValidBuiltinSynthFrame() {
