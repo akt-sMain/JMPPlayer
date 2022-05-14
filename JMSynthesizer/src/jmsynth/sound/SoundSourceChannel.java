@@ -17,12 +17,13 @@ import jmsynth.app.component.IWaveRepaintListener;
 import jmsynth.envelope.Envelope;
 import jmsynth.modulate.Modulator;
 import jmsynth.oscillator.IOscillator;
+import jmsynth.oscillator.LongNoisWaveOscillator;
 import jmsynth.oscillator.LowSamplingSinWaveOscillator;
-import jmsynth.oscillator.NoisWaveOscillator;
 import jmsynth.oscillator.OscillatorConfig;
 import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.oscillator.PulseWaveOscillator;
 import jmsynth.oscillator.SawWaveOscillator;
+import jmsynth.oscillator.ShortNoisWaveOscillator;
 import jmsynth.oscillator.SinWaveOscillator;
 import jmsynth.oscillator.SquareWaveOscillator;
 import jmsynth.oscillator.TriWaveOscillator;
@@ -32,7 +33,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     // public static final float SAMPLE_RATE = 22050.0f; // サンプルレート
     // public static final float SAMPLE_RATE = 11025.0f; // サンプルレート
 
-    public static final boolean SAMPLE_16BITS = true;
+    public static final boolean SAMPLE_16BITS = false;
     public static final int SAMPLE_SIZE = SAMPLE_16BITS ? 16 : 8;
     public static final int CHANNEL = 2;
     public static final int FRAME_SIZE = CHANNEL * (SAMPLE_SIZE / 8);
@@ -98,8 +99,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
             put(WaveType.TRIANGLE, new TriWaveOscillator());
             put(WaveType.PULSE_25, new PulseWaveOscillator(0.25));
             put(WaveType.PULSE_12_5, new PulseWaveOscillator(0.125));
-            put(WaveType.LONG_NOISE, new NoisWaveOscillator(false));
-            put(WaveType.SHORT_NOISE, new NoisWaveOscillator(true));
+            put(WaveType.LONG_NOISE, new LongNoisWaveOscillator());
+            put(WaveType.SHORT_NOISE, new ShortNoisWaveOscillator());
         }
     };
 
@@ -285,19 +286,12 @@ public class SoundSourceChannel extends Thread implements ISynthController {
      *            0.0 ~ 1.0
      */
     public void setVolume(float volume) {
-        for (int i = 0; i < activeTones.size(); i++) {
-            Tone tone = activeTones.get(i);
-            if (tone == null) {
-                continue;
-            }
-
-            FloatControl control = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
-            double max = Math.pow(10.0, control.getMaximum() / 20.0);
-            double min = Math.pow(10.0, control.getMinimum() / 20.0);
-            double newValue = (max - min) * (volume * volume) + min;
-            newValue = 20 * Math.log(newValue) / Math.log(10);
-            control.setValue((float) newValue);
-        }
+        FloatControl control = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
+        double max = Math.pow(10.0, control.getMaximum() / 20.0);
+        double min = Math.pow(10.0, control.getMinimum() / 20.0);
+        double newValue = (max - min) * (volume * volume) + min;
+        newValue = 20 * Math.log(newValue) / Math.log(10);
+        control.setValue((float) newValue);
     }
 
     /**

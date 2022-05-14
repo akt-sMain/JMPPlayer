@@ -30,6 +30,7 @@ public abstract class AbstractWaveGenOscillator implements IOscillator {
 
             /* Lch 分 */
             data[i] += y;
+            
             /* Rch 分 */
             data[i + 1] += y;
         }

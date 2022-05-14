@@ -1,7 +1,5 @@
 package jmsynth.oscillator;
 
-import java.util.Random;
-
 import jmsynth.sound.Tone;
 
 public class NoisWaveOscillator implements IOscillator {
@@ -17,20 +15,12 @@ public class NoisWaveOscillator implements IOscillator {
     }
 
     private NoiseSim[] simSet = new NoiseSim[128];
-
+    protected double[] moiseTable = new double[NOISE_VAR];
+    protected final static int NOISE_VAR = 32;
+    
     static final int[] AMP_TABLE = { 150, 100, 50, 30, 20, 15, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, };
-
+    
     public NoisWaveOscillator() {
-        this.isShortCycle = false;
-        init();
-    }
-
-    public NoisWaveOscillator(boolean isShortCycle) {
-        this.isShortCycle = isShortCycle;
-        init();
-    }
-
-    private void init() {
         int i = 0;
         int j = 0;
         while (true) {
@@ -48,43 +38,6 @@ public class NoisWaveOscillator implements IOscillator {
             moiseTable[i] = Math.random();
         }
     }
-
-    // private void init() {
-    // for (int i = 0; i < simSet.length; i++) {
-    // simSet[i] = new NoiseSim(200);
-    // }
-    // simSet[35] = new NoiseSim(60); // Acou Bass Drum
-    // simSet[36] = new NoiseSim(60); // Bass Drum1
-    // simSet[37] = new NoiseSim(20); // Side Stick
-    // simSet[38] = new NoiseSim(10); // Acou Snare
-    // simSet[39] = new NoiseSim(1); // Hand Clap
-    // simSet[40] = new NoiseSim(10); // E. Snare
-    // simSet[41] = new NoiseSim(40); // Low Floor Tom
-    // simSet[42] = new NoiseSim(5); // Closed Hi-Hat
-    // simSet[43] = new NoiseSim(35); // High Floor Tom
-    // simSet[44] = new NoiseSim(3); // Pedal Hi-Hat
-    // simSet[45] = new NoiseSim(40); // Low Tom
-    // simSet[46] = new NoiseSim(1); // Open Hi-Hat
-    // simSet[47] = new NoiseSim(40); // Low Mid Tom
-    // simSet[48] = new NoiseSim(35); // High Mid Tom
-    // simSet[49] = new NoiseSim(1); // Crash Cymbal1
-    // simSet[50] = new NoiseSim(35); // High Tom
-    // simSet[51] = new NoiseSim(2); // Ride Cymbal1
-    // simSet[52] = new NoiseSim(1); // Chinese Cymbal
-    // simSet[53] = new NoiseSim(1); // Ride Bell
-    // simSet[54] = new NoiseSim(1); // Tambourine
-    // simSet[55] = new NoiseSim(1); // Crash Cymbal1
-    // simSet[56] = new NoiseSim(1); // Cowbell
-    // simSet[57] = new NoiseSim(1); // Crash Cymbal2
-    // simSet[58] = new NoiseSim(1); // Vibraslap
-    // simSet[59] = new NoiseSim(3); // Ride Cymbal2
-    // }
-
-    double[] moiseTable = new double[NOISE_VAR];
-
-    boolean isShortCycle = true;
-    final static int NOISE_VAR = 32;
-    int ntStep = 0;
 
     @Override
     public int makeTone(byte[] data, int bufSize, Tone tone, OscillatorConfig oscConfig) {
@@ -111,25 +64,11 @@ public class NoisWaveOscillator implements IOscillator {
             /* toneStepがamplitudeを超えたら音量を変更する */
             if (toneStep > amplitude) {
 
-                double ran;
-                if (isShortCycle == true) {
-                    // 短周期を繰り返す
-                    ran = moiseTable[ntStep];
-                    ntStep++;
-                    if (ntStep >= NOISE_VAR) {
-                        ntStep = 0;
-                    }
-                }
-                else {
-                    // 完全ランダム
-                    Random rn = new Random();
-                    int iRan = rn.nextInt(NOISE_VAR);
-                    ran = moiseTable[iRan];
-                    // ran = Math.random();
-                }
+                // Level計算用の係数を取得
+                double nc = generateNoiseCoefficient();
 
                 /* 音量データ生成 */
-                f = (-overallLevel / 2 + (ran * overallLevel));
+                f = (-overallLevel / 2 + (nc * overallLevel));
                 toneStep = 0;
             }
 
@@ -143,6 +82,10 @@ public class NoisWaveOscillator implements IOscillator {
         }
         tone.setToneStep(toneStep);
         return length;
+    }
+    
+    protected double generateNoiseCoefficient() {
+        return 1.0;
     }
 
     @Override
