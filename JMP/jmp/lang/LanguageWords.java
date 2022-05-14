@@ -7,7 +7,7 @@ import jmp.util.JmpUtil;
 public class LanguageWords {
 
     /** Blankテキスト */
-    public static final String BLANK_TEXT = "#BLANK#";
+    public static final String BLANK_TEXT = "???";
 
     private String[] words = null;
 
@@ -39,6 +39,6 @@ public class LanguageWords {
         catch (CharacterCodingException e) {
             dst = new String(org);
         }
-        return dst;
+        return VBA.replaceSpecialTag(dst);
     }
 }

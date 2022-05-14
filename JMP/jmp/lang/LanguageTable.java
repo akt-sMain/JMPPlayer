@@ -49,7 +49,7 @@ public class LanguageTable {
             }
             ret = words.getWord(langIndex, charset);
         }
-        return ret.replace(DefineLanguage.CODE_LINE_END, VBA.NL);
+        return ret;
     }
 
     /**

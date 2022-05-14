@@ -7,8 +7,6 @@ import jlib.plugin.IPlugin;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
 import jmp.core.SystemManager;
-import jmp.core.TaskManager;
-import jmp.core.WindowManager;
 import jmp.file.CommonRegisterINI;
 import jmp.file.ConfigDatabaseWrapper;
 import jmp.util.JmpUtil;
@@ -23,7 +21,7 @@ import lib.MakeJmpLib;
 public class JMPLoader {
     
     // 起動設定
-    public static boolean MainThreadRunnable = true;
+    public static boolean MainThreadRunnable = false;
 
     /** プラグインフォルダを使用するか */
     public static boolean UsePluginDirectory = true;
@@ -310,6 +308,10 @@ public class JMPLoader {
 
         boolean ret = true;
         InvokeTask invokeTask = new InvokeTask(config, standAlonePlugin, loadFile);
+        
+        // invokeメソッドからの起動はLibraryモードではない
+        JMPFlags.LibraryMode = false;
+        
         if (MainThreadRunnable == true) {
             // このスレッド内で処理する
             invokeTask.run();
@@ -359,103 +361,19 @@ public class JMPLoader {
      * @return
      */
     public static boolean initLibrary(ConfigDatabaseWrapper config, IPlugin plugin) {
-
-        // システムパス設定
-        JMPCore.getSystemManager().makeSystemPath();
-
-        // フォントリソース作成
-        JMPCore.getLanguageManager().makeFontRsrc();
-
-        // 設定値を先行して登録する
-        if (config == null) {
-            JMPCore.getDataManager().setConfigDatabase(null);
+        boolean result = false;
+        try {
+            result = JMPCore.initFunc(config, plugin);
         }
-        else {
-            JMPCore.getDataManager().setConfigDatabase(config.getConfigDatabase());
-        }
-
-        // 管理クラス初期化処理
-        boolean result = JMPCore.initFunc();
-        if (result == true) {
-            
-            // 全ての画面を最新版にする
-            JMPCore.getWindowManager().updateBackColor();
-            JMPCore.getWindowManager().updateDebugMenu();
-            JMPCore.getWindowManager().updateLanguage();
-
-            /* ライセンス確認 */
-            if (JMPFlags.LibraryMode == false) {
-                /* ライセンス確認 */
-                if (JMPFlags.ActivateFlag == false) {
-                    JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LANGUAGE).showWindow();
-                    // Notifyタスクがまだ有効ではないため、ここで言語更新する必要がある
-                    JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE).updateLanguage();
-                    JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE).showWindow();
-                }
-
-                // ダイアログが閉じられてから再度ActivateFlagを確認する
-                if (JMPFlags.ActivateFlag == false) {
-                    // アクティベートされなかった場合は終了する
-                    result = false;
-                }
+        catch (Exception e) {
+            try {
+                String eMsg = function.Utility.getCurrentTimeStr() + function.Platform.getNewLine() + function.Error.getPrintStackTrace(e);
+                JmpUtil.writeTextFile("errorlog_init.txt", eMsg);
             }
-        }
-        else {
-            // 立ち上げ失敗
-            JMPCore.getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_SYSTEM_FAIL_INIT_FUNC);
-        }
-
-        /* プレイヤーロード */
-        if (result == true) {
-            result = JMPCore.getSoundManager().openPlayer();
-            if (result == false) {
-                JMPCore.getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_UNKNOWN_FAIL_LOAD_PLAYER);
+            catch (Exception e1) {
+                e1.printStackTrace();
             }
-        }
-
-        /* 起動準備 */
-        if (result == true) {
-
-            // 設定ファイル情報表示
-            JMPFlags.Log.cprintln("## file info ##");
-            JMPFlags.Log.cprintln("AppName : " + JMPCore.getDataManager().getReadInfoForAppName());
-            JMPFlags.Log.cprintln("Version : " + JMPCore.getDataManager().getReadInfoForVersion());
-            JMPFlags.Log.cprintln();
-            
-            if (JMPCore.getDataManager().isShowStartupDeviceSetup() == false) {
-                // 自動接続フラグを立てる
-                JMPFlags.StartupAutoConectSynth = true;
-            }
-
-            // サウンドデバイス設定の初期処理
-            if (JMPCore.getSoundManager().startupDeviceSetup() == true) {
-                /* サウンドデバイスが用意出来たら次の設定へ */
-
-                // プラグイン準備
-                JMPCore.getPluginManager().startupPluginInstance(plugin);
-
-                // Window初期処理
-                JMPCore.getWindowManager().startupWindow();
-
-                // 起動構成
-                if (JMPCore.isEnableStandAlonePlugin() == false) {
-                    // JMPPlayer起動
-                    if (JMPFlags.LibraryMode == false) {
-                        JMPCore.getWindowManager().getMainWindow().showWindow();
-                    }
-                }
-                else {
-                    // スタンドアロンプラグイン起動
-                    JMPCore.getStandAlonePluginWrapper().open();
-                }
-
-                // タスク開始
-                TaskManager taskManager = JMPCore.getTaskManager();
-                taskManager.taskStart();
-            }
-            else {
-                result = false;
-            }
+            result = false;
         }
         return result;
     }
@@ -466,37 +384,19 @@ public class JMPLoader {
      * @return
      */
     public static boolean exitLibrary() {
-
-        // Windowを閉じる
-        JMPCore.getWindowManager().setVisibleAll(false);
-        
-        if (JMPCore.getWindowManager().isValidBuiltinSynthFrame() == true) {
-            JMPCore.getWindowManager().closeBuiltinSynthFrame();
+        boolean result = true;
+        try {
+            result = JMPCore.endFunc();
         }
-        
-        // 動画ビューワを閉じる
-        if (JMPCore.getSoundManager().isVisibleMediaView() == true) {
-            JMPCore.getSoundManager().setVisibleMediaView(false);
-        }
-
-        // 終了前に全てのプラグインを閉じる
-        JMPCore.getPluginManager().closeAllPlugins();
-        
-        // この時点でタスクが生きてたら終了する
-        TaskManager taskManager = JMPCore.getTaskManager();
-        if (taskManager.isRunnable() == true) {
-            taskManager.taskExit();
+        catch (Exception e) {
             try {
-                taskManager.join();
+                String eMsg = function.Utility.getCurrentTimeStr() + function.Platform.getNewLine() + function.Error.getPrintStackTrace(e);
+                JmpUtil.writeTextFile("errorlog_end.txt", eMsg);
             }
-            catch (InterruptedException e) {
-                e.printStackTrace();
+            catch (Exception e1) {
+                e1.printStackTrace();
             }
-        }
-
-        boolean result = JMPCore.endFunc();
-        if (result == false && JMPCore.isFinishedInitialize() == true) {
-            JMPCore.getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_SYSTEM_FAIL_END_FUNC);
+            result = false;
         }
         return result;
     }

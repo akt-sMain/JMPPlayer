@@ -3,11 +3,14 @@ package jmp.core;
 import java.util.List;
 
 import jlib.JMPLIB;
+import jlib.plugin.IPlugin;
+import jmp.ErrorDef;
+import jmp.JMPFlags;
 import jmp.file.CommonRegisterINI;
+import jmp.file.ConfigDatabaseWrapper;
 import jmp.file.FileResult;
 import jmp.plugin.PluginWrapper;
 import jmp.task.NotifyPacket;
-import jmp.util.JmpUtil;
 
 public class JMPCore {
 
@@ -25,39 +28,139 @@ public class JMPCore {
     private static PluginWrapper StandAlonePluginWrapper = null;
 
     public static List<CommonRegisterINI> cregStack = null;
+    
+    public static boolean initFunc(ConfigDatabaseWrapper config, IPlugin plugin) {
+        // システムパス設定
+        getSystemManager().makeSystemPath();
 
-    public static boolean initFunc() {
-        boolean result = true;
-        try {
-            result = ManagerInstances.callInitFunc();
+        // フォントリソース作成
+        getLanguageManager().makeFontRsrc();
+
+        // 設定値を先行して登録する
+        if (config == null) {
+            getDataManager().setConfigDatabase(null);
         }
-        catch (Exception e) {
-            try {
-                String eMsg = function.Utility.getCurrentTimeStr() + function.Platform.getNewLine() + function.Error.getPrintStackTrace(e);
-                JmpUtil.writeTextFile("errorlog_init.txt", eMsg);
+        else {
+            getDataManager().setConfigDatabase(config.getConfigDatabase());
+        }
+
+        // 管理クラス初期化処理
+        boolean result = ManagerInstances.callInitFunc();
+        if (result == true) {
+            
+            // 全ての画面を最新版にする
+            getWindowManager().updateBackColor();
+            getWindowManager().updateDebugMenu();
+            getWindowManager().updateLanguage();
+
+            /* ライセンス確認 */
+            if (JMPFlags.LibraryMode == false) {
+                /* ライセンス確認 */
+                if (JMPFlags.ActivateFlag == false) {
+                    getWindowManager().getWindow(WindowManager.WINDOW_NAME_LANGUAGE).showWindow();
+                    // Notifyタスクがまだ有効ではないため、ここで言語更新する必要がある
+                    getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE).updateLanguage();
+                    getWindowManager().getWindow(WindowManager.WINDOW_NAME_LICENSE).showWindow();
+                }
+
+                // ダイアログが閉じられてから再度ActivateFlagを確認する
+                if (JMPFlags.ActivateFlag == false) {
+                    // アクティベートされなかった場合は終了する
+                    result = false;
+                }
             }
-            catch (Exception e1) {
-                e1.printStackTrace();
+        }
+        else {
+            // 立ち上げ失敗
+            getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_SYSTEM_FAIL_INIT_FUNC);
+        }
+
+        /* プレイヤーロード */
+        if (result == true) {
+            result = getSoundManager().openPlayer();
+            if (result == false) {
+                getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_UNKNOWN_FAIL_LOAD_PLAYER);
             }
-            result = false;
+        }
+
+        /* 起動準備 */
+        if (result == true) {
+
+            // 設定ファイル情報表示
+            JMPFlags.Log.cprintln("## file info ##");
+            JMPFlags.Log.cprintln("AppName : " + JMPCore.getDataManager().getReadInfoForAppName());
+            JMPFlags.Log.cprintln("Version : " + JMPCore.getDataManager().getReadInfoForVersion());
+            JMPFlags.Log.cprintln();
+            
+            if (getDataManager().isShowStartupDeviceSetup() == false) {
+                // 自動接続フラグを立てる
+                JMPFlags.StartupAutoConectSynth = true;
+            }
+
+            // サウンドデバイス設定の初期処理
+            if (getSoundManager().startupDeviceSetup() == true) {
+                /* サウンドデバイスが用意出来たら次の設定へ */
+
+                // プラグイン準備
+                getPluginManager().startupPluginInstance(plugin);
+
+                // Window初期処理
+                getWindowManager().startupWindow();
+
+                // 起動構成
+                if (isEnableStandAlonePlugin() == false) {
+                    // JMPPlayer起動
+                    if (JMPFlags.LibraryMode == false) {
+                        getWindowManager().getMainWindow().showWindow();
+                    }
+                }
+                else {
+                    // スタンドアロンプラグイン起動
+                    getStandAlonePluginWrapper().open();
+                }
+
+                // タスク開始
+                TaskManager taskManager = getTaskManager();
+                taskManager.taskStart();
+            }
+            else {
+                result = false;
+            }
         }
         return result;
     }
-
+    
     public static boolean endFunc() {
-        boolean result = true;
-        try {
-            result = ManagerInstances.callEndFunc();
+        // Windowを閉じる
+        getWindowManager().setVisibleAll(false);
+        
+        if (getWindowManager().isValidBuiltinSynthFrame() == true) {
+            getWindowManager().closeBuiltinSynthFrame();
         }
-        catch (Exception e) {
+        
+        // 動画ビューワを閉じる
+        if (getSoundManager().isVisibleMediaView() == true) {
+            getSoundManager().setVisibleMediaView(false);
+        }
+
+        // 終了前に全てのプラグインを閉じる
+        getPluginManager().closeAllPlugins();
+        
+        // この時点でタスクが生きてたら終了する
+        TaskManager taskManager = getTaskManager();
+        if (taskManager.isRunnable() == true) {
+            taskManager.taskExit();
             try {
-                String eMsg = function.Utility.getCurrentTimeStr() + function.Platform.getNewLine() + function.Error.getPrintStackTrace(e);
-                JmpUtil.writeTextFile("errorlog_end.txt", eMsg);
+                taskManager.join();
             }
-            catch (Exception e1) {
-                e1.printStackTrace();
+            catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            result = false;
+        }
+
+        boolean result = ManagerInstances.callEndFunc();
+        if (result == false && isFinishedInitialize() == true) {
+            getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_SYSTEM_FAIL_END_FUNC);
         }
         return result;
     }

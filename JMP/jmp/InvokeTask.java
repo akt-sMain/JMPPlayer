@@ -25,8 +25,6 @@ class InvokeTask implements Runnable {
 
     @Override
     public void run() {
-        // invokeメソッドからの起動はLibraryモードではない
-        JMPFlags.LibraryMode = false;
 
         SystemManager.consoleOutSystemInfo();
 

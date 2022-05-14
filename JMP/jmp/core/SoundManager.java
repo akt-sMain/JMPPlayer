@@ -861,7 +861,6 @@ public class SoundManager extends AbstractManager implements ISoundManager, IMid
             return;
         }
 
-        PlayerAccessor.getCurrent().stop();
         if (PlayerAccessor.change(ex) == true) {
             JMPCore.getPluginManager().closeNonSupportPlugins(ex);
         }
@@ -1030,7 +1029,7 @@ public class SoundManager extends AbstractManager implements ISoundManager, IMid
         updateLineVolume();
     }
 
-    public void updateLineVolume() {
+    private void updateLineVolume() {
         int supported = 0;
         for (int i = 0; i < LineInfos.length; i++) {
             Line.Info source = LineInfos[i];

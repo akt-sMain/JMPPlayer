@@ -60,19 +60,9 @@ public class PlayerAccessor {
     }
 
     public boolean change(String extension) {
-        Player tmpPlayer = null;
-        for (Player player : registerPlayer) {
-            if (player.isAllSupported() == true) {
-                tmpPlayer = player;
-            }
-            if (player.isSupportedExtension(extension) == true) {
-                tmpPlayer = player;
-                break;
-            }
-        }
-
-        if (tmpPlayer != null) {
-            change(tmpPlayer);
+        Player player = getSupportedPlayer(extension);
+        if (player != null) {
+            change(player);
             return true;
         }
         return false;
@@ -80,12 +70,32 @@ public class PlayerAccessor {
 
     public void change(Player player) {
         if (registerPlayer.contains(player) == true) {
+            if (currentPlayer != null) {
+                if (currentPlayer.isRunnable() == true) {
+                    currentPlayer.stop();
+                }
+            }
             currentPlayer = player;
         }
     }
 
     public Player getCurrent() {
         return currentPlayer;
+    }
+    
+    private Player getSupportedPlayer(String extension) {
+        Player supportedPlayer = null;
+        for (Player player : registerPlayer) {
+            if (player.isAllSupported() == true) {
+                supportedPlayer = player;
+            }
+            if (player.isSupportedExtension(extension) == true) {
+                // 限定プレイヤーを優先して使用する
+                supportedPlayer = player;
+                break;
+            }
+        }
+        return supportedPlayer;
     }
 
     public boolean isSupportedExtension(String extension) {
