@@ -444,7 +444,10 @@ public class DefaultImageMaker {
             g2d.setStroke(new BasicStroke(1.0f));
             g2d.drawRect(fx, fy, fw, fh);
             g2d.setColor(transColor);
-            g2d.drawLine(fx + 4, fy + fh, fx + fw - 4, fy + fh);
+            g2d.drawLine(fx + 5, fy + fh, fx + fw - 5, fy + fh);
+            g2d.setColor(color);
+            g2d.drawLine(fx + fw - 5, fy + fh, fx + fw - 3, fy + fh - 2);
+            g2d.drawLine(fx + fw - 5, fy + fh, fx + fw - 3, fy + fh + 2);
             defBtnLoopIcon = JmpUtil.transformImageToTransparency(buf, transColor);
         }
         return defBtnLoopIcon;
