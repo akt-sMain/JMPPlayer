@@ -185,6 +185,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
     private JLabel lblVolumeSlider;
     private JSlider mntmVolumeSlider;
     private JMenuItem mntmPlayInit;
+    private JMenuItem mntmOpenFilePicker;
 
     /**
      * コンストラクタ(WindowBuilderによる自動生成)
@@ -865,14 +866,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             }
         });
         configMenu.add(mntmMidiExport);
-
-        mntmDebugDummy = new JMenuItem("Dummy");
-        mntmDebugDummy.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                executeDebugFunc(0);
-            }
-        });
-
+        
         mntmOpenCurrentFolder = new JMenuItem("Open current folder");
         mntmOpenCurrentFolder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -884,6 +878,33 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             }
         });
         configMenu.add(mntmOpenCurrentFolder);
+        
+        mntmOpenFilePicker = new JMenuItem("Open File Picker");
+        mntmOpenFilePicker.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                File dir = new File(Platform.getCurrentPath());
+                JFileChooser filechooser = new JFileChooser();
+                filechooser.setCurrentDirectory(dir);
+                filechooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int selected = filechooser.showOpenDialog(getParent());
+                switch (selected) {
+                    case JFileChooser.APPROVE_OPTION:
+                        dir = filechooser.getSelectedFile();
+                        break;
+                    default:
+                        break;
+                }
+                JMPCore.getWindowManager().showFilePickupDialog(dir);
+            }
+        });
+        configMenu.add(mntmOpenFilePicker);
+        
+        mntmDebugDummy = new JMenuItem("Dummy");
+        mntmDebugDummy.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                executeDebugFunc(0);
+            }
+        });
         configMenu.add(mntmDebugDummy);
 
         separator_2 = new JSeparator();
@@ -949,6 +970,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
         mntmReloadJmzFolder.setVisible(enable);
         mntmMidiExport.setVisible(enable);
         mntmDebugDummy.setVisible(enable);
+        mntmOpenFilePicker.setVisible(enable);
         mntmOpenCurrentFolder.setVisible(enable);
     }
 

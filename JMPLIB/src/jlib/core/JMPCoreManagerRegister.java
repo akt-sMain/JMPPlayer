@@ -20,7 +20,6 @@ public class JMPCoreManagerRegister {
      * @param manager
      */
     public static void register(IManager manager) {
-
         if (manager instanceof ISystemManager) {
             systemManager = (ISystemManager) (systemManager == null ? manager : systemManager);
         }

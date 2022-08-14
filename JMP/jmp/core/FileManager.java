@@ -14,11 +14,7 @@ import jmp.JMPFlags;
 import jmp.file.FileResult;
 import jmp.file.IFileResultCallback;
 import jmp.gui.ui.FileListTableModel;
-import jmp.lang.DefineLanguage.LangID;
-import jmp.plugin.PluginWrapper;
 import jmp.task.ICallbackFunction;
-import jmp.task.TaskOfNotify.NotifyID;
-import jmp.util.JmpUtil;
 
 public class FileManager extends AbstractManager implements IFileManager {
     
@@ -105,65 +101,19 @@ public class FileManager extends AbstractManager implements IFileManager {
 
     @Override
     public void loadFileToPlay(File f) {
-        loadFileImpl(f, true);
+        ICallbackFunction func = FileCallbackCreator.getInstance().createLoadCallback(f, JMPFlags.NoneHistoryLoadFlag, true);
+        execFileProcess(func);
     }
 
     @Override
     public void loadFile(File f) {
-        loadFileImpl(f, false);
+        ICallbackFunction func = FileCallbackCreator.getInstance().createLoadCallback(f, JMPFlags.NoneHistoryLoadFlag, false);
+        execFileProcess(func);
     }
-
-    private void loadFileImpl(File f, boolean toPlay) {
-        SystemManager system = JMPCore.getSystemManager();
-        LanguageManager lm = JMPCore.getLanguageManager();
-        SoundManager sm = JMPCore.getSoundManager();
-
-        String ex = JmpUtil.getExtension(f);
-
-        /* 事前の判定 */
-        FileResult beginResult = new FileResult();
-        beginResult.status = true;
-        beginResult.statusMsg = lm.getLanguageStr(LangID.Now_loading);
-        if (JMPFlags.NowLoadingFlag == true) {
-            // ロード中
-            beginResult.status = false;
-            beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_1);
-        }
-        else if (sm.isPlay() == true) {
-            // 再生中
-            beginResult.status = false;
-            beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_3);
-        }
-        else if (f.getPath().isEmpty() == true || f.canRead() == false || f.exists() == false) {
-            // アクセス不可
-            beginResult.status = false;
-            beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_4);
-        }
-        else if (sm.isSupportedExtensionAccessor(ex) == false) {
-            // サポート外
-            beginResult.status = false;
-            beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_2);
-        }
-        else if (system.isEnableStandAlonePlugin() == true) {
-            // サポート外(スタンドアロンモード時)
-            PluginWrapper pw = JMPCore.getStandAlonePluginWrapper();
-            if (pw.isSupportExtension(f) == false) {
-                beginResult.status = false;
-                beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_2);
-            }
-        }
-
-        // 事前判定の結果を通知
-        JMPCore.getTaskManager().sendNotifyMessage(NotifyID.FILE_RESULT_BEGIN, beginResult);
-
-        if (beginResult.status == true) {
-            // ロード中フラグ
-            JMPFlags.NowLoadingFlag = true;
-
-            // 実処理はSequenceタスクに委譲する
-            ICallbackFunction func = FileCallbackCreator.getInstance().createLoadCallback(f, JMPFlags.NoneHistoryLoadFlag, toPlay);
-            JMPCore.getTaskManager().queuing(func);
-        }
+    
+    private void execFileProcess(ICallbackFunction func) {
+        // 実処理はSequenceタスクに委譲する
+        JMPCore.getTaskManager().queuing(func);
 
         // フラグ初期化
         initializeFlag();

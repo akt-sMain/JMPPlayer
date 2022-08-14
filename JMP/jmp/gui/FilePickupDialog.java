@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
+import function.Platform;
 import function.Utility;
 import jlib.gui.IJmpWindow;
 import jmp.core.JMPCore;
@@ -147,8 +148,9 @@ public class FilePickupDialog extends JDialog implements IJMPComponentUI, IJmpWi
     public void updateList() {
         listModel.removeAllElements();
         if (dir == null) {
-            lblDirectory.setText("None");
-            return;
+            dir = new File(Platform.getCurrentPath());
+            //lblDirectory.setText("None");
+            //return;
         }
 
         lblDirectory.setText(dir.getAbsolutePath());
@@ -176,6 +178,14 @@ public class FilePickupDialog extends JDialog implements IJMPComponentUI, IJmpWi
         if (listModel.getSize() > 0) {
             list.setSelectedIndex(focus);
         }
+    }
+    
+    @Override
+    public void setVisible(boolean b) {
+        if (b == true) {
+            updateList();
+        }
+        super.setVisible(b);
     }
 
     @Override

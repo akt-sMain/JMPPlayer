@@ -113,7 +113,9 @@ public abstract class TaskOfBase implements ITask, Runnable {
             Iterator<ICallbackFunction> i = callbackQue.iterator();
             while (i.hasNext()) {
                 ICallbackFunction exec = i.next();
+                exec.preCall();
                 exec.callback();
+                exec.postCall();
                 i.remove();
             }
         }

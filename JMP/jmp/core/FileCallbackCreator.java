@@ -5,6 +5,7 @@ import java.io.File;
 import jmp.JMPFlags;
 import jmp.file.FileResult;
 import jmp.lang.DefineLanguage.LangID;
+import jmp.plugin.PluginWrapper;
 import jmp.task.ICallbackFunction;
 import jmp.task.TaskOfNotify.NotifyID;
 import jmp.util.JmpUtil;
@@ -19,6 +20,57 @@ public class FileCallbackCreator {
         return instance;
     }
     
+    public abstract class FileCallbackFunction implements ICallbackFunction {
+        protected FileResult beginResult;
+        protected FileResult endResult;
+        protected File file;
+        
+        public FileCallbackFunction() {
+            this.beginResult = new FileResult();
+            this.endResult = new FileResult();
+        }
+        
+        @Override
+        public void preCall() {
+            /* 事前の判定 */
+            validatePreProcces();
+            
+            // 事前判定の結果を通知
+            JMPCore.getTaskManager().sendNotifyMessage(NotifyID.FILE_RESULT_BEGIN, beginResult);
+        }
+        
+        @Override
+        public void callback() {
+            if (beginResult.status == true) {
+                // ロード中フラグ
+                JMPFlags.NowLoadingFlag = true;
+                
+                fileProcces();
+            }
+        }
+        
+        @Override
+        public void postCall() {
+            if (endResult.status == true) {
+                // 終了判定の結果を通知
+                JMPCore.getTaskManager().sendNotifyMessage(NotifyID.FILE_RESULT_END, endResult);
+            }
+            
+            // ロード中フラグ解除
+            JMPFlags.NowLoadingFlag = false;
+        }
+        
+        /**
+         * 事前判定
+         */
+        abstract void validatePreProcces();
+        
+        /**
+         * ファイルメイン処理
+         */
+        abstract void fileProcces();
+    }
+    
     private static final String SUCCESS_MSG_FOAMET_LOAD = "%s ...(%s)";
 
     /**
@@ -27,21 +79,60 @@ public class FileCallbackCreator {
      * @author akkut
      *
      */
-    private class LoadCallbackFunc implements ICallbackFunction {
-
-        private File file;
+    private class LoadCallbackFunc extends FileCallbackFunction {
         private boolean noneHistoryFlag = false;
         private boolean loadToPlayFlag = false;
 
         public LoadCallbackFunc(File f, boolean noneHistoryFlag, boolean toPlay) {
+            super();
             this.file = f;
             this.noneHistoryFlag = noneHistoryFlag;
             this.loadToPlayFlag = toPlay;
         }
+        
+        @Override
+        public void validatePreProcces() {
+            SystemManager system = JMPCore.getSystemManager();
+            LanguageManager lm = JMPCore.getLanguageManager();
+            SoundManager sm = JMPCore.getSoundManager();
+
+            String ex = JmpUtil.getExtension(file);
+
+            /* 事前の判定 */
+            beginResult.status = true;
+            beginResult.statusMsg = lm.getLanguageStr(LangID.Now_loading);
+            if (JMPFlags.NowLoadingFlag == true) {
+                // ロード中
+                beginResult.status = false;
+                beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_1);
+            }
+            else if (sm.isPlay() == true) {
+                // 再生中
+                beginResult.status = false;
+                beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_3);
+            }
+            else if (file.getPath().isEmpty() == true || file.canRead() == false || file.exists() == false) {
+                // アクセス不可
+                beginResult.status = false;
+                beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_4);
+            }
+            else if (sm.isSupportedExtensionAccessor(ex) == false) {
+                // サポート外
+                beginResult.status = false;
+                beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_2);
+            }
+            else if (system.isEnableStandAlonePlugin() == true) {
+                // サポート外(スタンドアロンモード時)
+                PluginWrapper pw = JMPCore.getStandAlonePluginWrapper();
+                if (pw.isSupportExtension(file) == false) {
+                    beginResult.status = false;
+                    beginResult.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_2);
+                }
+            }
+        }
 
         @Override
-        public void callback() {
-
+        void fileProcces() {
             /* Coreのロード処理 */
             DataManager dm = JMPCore.getDataManager();
             SoundManager sm = JMPCore.getSoundManager();
@@ -56,18 +147,17 @@ public class FileCallbackCreator {
             dm.clearCachedFiles(file);
 
             /* ロード処理 */
-            FileResult result = new FileResult();
-            result.status = true;
-            result.statusMsg = "";
+            endResult.status = true;
+            endResult.statusMsg = "";
             for (AbstractManager am : ManagerInstances.getManagersOfAsc()) {
-                am.loadFileForCore(file, result);
-                if (result.status == false) {
+                am.loadFileForCore(file, endResult);
+                if (endResult.status == false) {
                     break;
                 }
             }
 
             /* 事後処理 */
-            if (result.status == true) {
+            if (endResult.status == true) {
 
                 // 履歴に追加
                 if (this.noneHistoryFlag == false) {
@@ -85,7 +175,7 @@ public class FileCallbackCreator {
                 // メッセージ発行
                 String successFileName = JmpUtil.getFileNameAndExtension(dm.getLoadedFile());
                 String successMsg = lm.getLanguageStr(LangID.FILE_LOAD_SUCCESS);
-                result.statusMsg = String.format(SUCCESS_MSG_FOAMET_LOAD, successFileName, successMsg);
+                endResult.statusMsg = String.format(SUCCESS_MSG_FOAMET_LOAD, successFileName, successMsg);
 
                 if (sm.getCurrentPlayerInfo() != null) {
                     sm.getCurrentPlayerInfo().update();
@@ -101,16 +191,10 @@ public class FileCallbackCreator {
                 // ファイル読み込み失敗時、連続再生を停止する
                 JMPFlags.NextPlayFlag = false;
             }
-
-            // ロード中フラグ解除
-            JMPFlags.NowLoadingFlag = false;
-
-            // 終了判定の結果を通知
-            JMPCore.getTaskManager().sendNotifyMessage(NotifyID.FILE_RESULT_END, result);
         }
     }
     
-    public ICallbackFunction createLoadCallback(File f, boolean noneHistoryFlag, boolean toPlay) {
+    public FileCallbackFunction createLoadCallback(File f, boolean noneHistoryFlag, boolean toPlay) {
         return new LoadCallbackFunc(f, JMPFlags.NoneHistoryLoadFlag, toPlay);
     }
 }

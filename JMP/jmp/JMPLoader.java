@@ -21,7 +21,7 @@ import lib.MakeJmpLib;
 public class JMPLoader {
     
     // 起動設定
-    public static boolean MainThreadRunnable = false;
+    public static boolean MainThreadRunnable = true;
 
     /** プラグインフォルダを使用するか */
     public static boolean UsePluginDirectory = true;
@@ -316,6 +316,7 @@ public class JMPLoader {
             // このスレッド内で処理する
             invokeTask.run();
             ret = invokeTask.getResult();
+            System.exit(ret ? 0 : 1);
         }
         else {
             // 別スレッドを起動する
