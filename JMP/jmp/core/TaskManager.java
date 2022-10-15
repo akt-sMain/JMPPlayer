@@ -97,7 +97,9 @@ public class TaskManager extends AbstractManager {
 
     public void taskExit() {
         for (ITask task : taskMap.values()) {
-            task.exitTask();
+            if (task.isRunnable() == true) {
+                task.exitTask();
+            }
         }
     }
 

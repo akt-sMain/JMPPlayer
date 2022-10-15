@@ -29,7 +29,7 @@ public class ReceiverWrapper implements Receiver {
 
     @Override
     public void send(MidiMessage message, long timeStamp) {
-        if (JMPCore.getSoundManager().filter(message, IMidiEventListener.SENDER_MIDI_OUT) == false) {
+        if (JMPCore.getSoundManager().executeMidiFilter(message, IMidiEventListener.SENDER_MIDI_OUT) == false) {
             return;
         }
 

@@ -12,7 +12,6 @@ import java.util.Random;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
-import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.FloatControl;
@@ -29,7 +28,6 @@ import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jlib.midi.IMidiController;
 import jlib.midi.IMidiEventListener;
-import jlib.midi.IMidiFilter;
 import jlib.midi.IMidiToolkit;
 import jlib.midi.IMidiUnit;
 import jlib.midi.MidiByte;
@@ -40,7 +38,7 @@ import jmp.core.FileManager.AutoPlayMode;
 import jmp.file.FileResult;
 import jmp.file.PlaylistPickup;
 import jmp.lang.DefineLanguage.LangID;
-import jmp.midi.MidiByteMessage;
+import jmp.midi.JMPMidiFilter;
 import jmp.midi.MidiController;
 import jmp.midi.MidiUnit;
 import jmp.midi.toolkit.MidiToolkitManager;
@@ -62,7 +60,7 @@ import jmp.util.JmpUtil;
  * @author abs
  *
  */
-public class SoundManager extends AbstractManager implements ISoundManager, IMidiFilter {
+public class SoundManager extends AbstractManager implements ISoundManager {
 
     /** NULLレシーバー */
     public static final String NULL_RECEIVER_NAME = "NULL";
@@ -100,7 +98,7 @@ public class SoundManager extends AbstractManager implements ISoundManager, IMid
     private IMidiController midiInController = null;
     private IMidiController midiOutController = null;
     private MidiUnit midiUnit = null;
-
+    
     // Line情報
     private static Line.Info[] LineInfos = new Line.Info[] { Port.Info.SPEAKER, Port.Info.LINE_OUT, Port.Info.HEADPHONE };
 
@@ -126,7 +124,7 @@ public class SoundManager extends AbstractManager implements ISoundManager, IMid
 
         // MidiToolKitを更新する
         updateMidiToolkit();
-
+        
         PlayerAccessor = new PlayerAccessor();
 
         /* プレイヤーインスタンス作成 */
@@ -147,7 +145,7 @@ public class SoundManager extends AbstractManager implements ISoundManager, IMid
         // midi
         SMidiPlayer = new MidiPlayer();
         SMidiPlayer.setSupportExtentions(exMIDI);
-        SMidiPlayer.addFilter(this);
+        SMidiPlayer.addFilter(new JMPMidiFilter());
         PlayerAccessor.register(SMidiPlayer);
         
         // movie
@@ -255,46 +253,6 @@ public class SoundManager extends AbstractManager implements ISoundManager, IMid
         // Midiデバイスの読み込み
         JMPCore.getSoundManager().reloadMidiDevice(true, true);
         return wasCommit;
-    }
-
-    @Override
-    public boolean filter(MidiMessage message, short senderType) {
-        IMidiToolkit toolkit = getMidiToolkit();
-        int transpose = getTranspose();
-        if (transpose != 0) {
-            if (toolkit.isNoteOn(message) == true || toolkit.isNoteOff(message) == true) {
-                byte[] data = message.getMessage();
-                int length = message.getLength();
-
-                int channel = MidiByte.getChannel(data, length);
-                if (channel == 9) {
-                    // ドラムトラックは対象外
-                    return true;
-                }
-
-                int status = message.getStatus();
-                int data1 = MidiByte.getData1(data, length);
-                int data2 = MidiByte.getData2(data, length);
-
-                data1 += transpose;
-
-                /* TODO instanceofを指定して処理を分岐するのはよろしくない 【改善策はないか...】 */
-                if (message instanceof ShortMessage) {
-                    try {
-                        ((ShortMessage) message).setMessage(status, data1, data2);
-                    }
-                    catch (InvalidMidiDataException e) {
-                    }
-                }
-                else if (message instanceof MidiByteMessage) {
-                    MidiByteMessage bMes = (MidiByteMessage) message;
-                    bMes.changeByte(0, status);
-                    bMes.changeByte(1, data1);
-                    bMes.changeByte(2, data2);
-                }
-            }
-        }
-        return true;
     }
 
     @Override
@@ -1110,5 +1068,9 @@ public class SoundManager extends AbstractManager implements ISoundManager, IMid
             return;
         }
         moviePlayerModel.setVisibleView(visible);
+    }
+    
+    public boolean executeMidiFilter(MidiMessage message, short senderType) {
+        return SMidiPlayer.filter(message, senderType);
     }
 }

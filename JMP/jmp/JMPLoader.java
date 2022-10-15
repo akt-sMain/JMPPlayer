@@ -21,15 +21,13 @@ import lib.MakeJmpLib;
 public class JMPLoader {
     
     // 起動設定
-    public static boolean MainThreadRunnable = true;
+    public static boolean MainThreadRunnable = false;
 
     /** プラグインフォルダを使用するか */
     public static boolean UsePluginDirectory = true;
     public static boolean UseConfigFile = true;
     public static boolean UseHistoryFile = true;
     public static boolean UseSkinFile = true;
-
-    private static boolean exitFlag = false;
 
     /* コマンド文字列 */
     public static final String CMD_MANUAL = "-man";
@@ -335,11 +333,6 @@ public class JMPLoader {
      * 終了
      */
     public static void exit() {
-        if (exitFlag == true) {
-            return;
-        }
-        exitFlag = true;
-
         // タスクの終了
         JMPCore.getTaskManager().taskExit();
     }
