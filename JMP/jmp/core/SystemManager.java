@@ -22,17 +22,15 @@ import jmp.JMPLoader;
 import jmp.core.FileManager.AutoPlayMode;
 import jmp.file.CommonRegister;
 import jmp.file.CommonRegisterINI;
-import jmp.gui.BuiltinSynthSetupDialog;
 import jmp.gui.DebugLogConsole;
 import jmp.lang.DefineLanguage;
+import jmp.midi.JMPBuiltinSynthMidiDevice;
 import jmp.midi.toolkit.MidiToolkitManager;
 import jmp.task.TaskOfNotify.NotifyID;
 import jmp.util.JmpUtil;
 import jmp.util.toolkit.UtilityToolkitManager;
 import jmsynth.JMSoftSynthesizer;
-import jmsynth.JMSynthEngine;
 import jmsynth.JMSynthFile;
-import jmsynth.midi.MidiInterface;
 import process.IConsoleOutCallback;
 import process.IProcessingCallback;
 import wffmpeg.FFmpegWrapper;
@@ -812,28 +810,10 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         return array;
     }
 
-    // 新しいJMSynthインスタンスを取得する
-    MidiInterface miface;
-
-    public MidiInterface newBuiltinSynthInstance() {
-        miface = JMSynthEngine.getMidiInterface(true);
-
-        // Window登録
-        BuiltinSynthSetupDialog wvf = new BuiltinSynthSetupDialog(miface);
-        Color[] ct = new Color[16];
-        for (int i = 0; i < 16; i++) {
-            String key = String.format(SystemManager.COMMON_REGKEY_CH_COLOR_FORMAT, i + 1);
-            ct[i] = getUtilityToolkit().convertCodeToHtmlColor(getCommonRegisterValue(key));
-        }
-        wvf.setWaveColorTable(ct);
-        JMPCore.getWindowManager().registerBuiltinSynthFrame(wvf);
-        return miface;
-    }
-
     public void loadJMSynthConfig(File file) {
         if (JMPCore.getDataManager().getConfigParam(DataManager.CFG_KEY_MIDIOUT).equals(JMSYNTH_LIB_NAME) == true) {
-            if (miface != null) {
-                JMSynthFile.loadSynthConfig(file, (JMSoftSynthesizer) miface.getSynthController());
+            if (JMPBuiltinSynthMidiDevice.SCurrentFaceAccesser != null) {
+                JMSynthFile.loadSynthConfig(file, (JMSoftSynthesizer) JMPBuiltinSynthMidiDevice.SCurrentFaceAccesser.getSynthController());
             }
         }
     }

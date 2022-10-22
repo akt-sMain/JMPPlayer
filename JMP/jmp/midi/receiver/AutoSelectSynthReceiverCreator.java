@@ -6,6 +6,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 
 import jmp.core.JMPCore;
+import jmp.midi.JMPBuiltinSynthMidiDevice;
 
 class AutoSelectSynthReceiverCreator extends ReceiverCreator {
 
@@ -53,8 +54,11 @@ class AutoSelectSynthReceiverCreator extends ReceiverCreator {
 
         // ない場合は内蔵シンセを採用する
         if (reciever == null) {
-            BuiltinSynthReceiverCreator builtin = new BuiltinSynthReceiverCreator();
-            reciever = builtin.getReciever();
+            try {
+                reciever = JMPCore.getSoundManager().getMidiToolkit().getMidiDevice(JMPBuiltinSynthMidiDevice.INFO).getReceiver();
+            }
+            catch (MidiUnavailableException e) {
+            }
         }
 
         // 本来ならありえないが、上記の処理でレシーバーがnullの場合は

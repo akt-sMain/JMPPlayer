@@ -372,18 +372,19 @@ public class YoutubeConvertDialog extends JMPDialog {
                 syncConrolEnable(false);
 
                 JMPCore.getTaskManager().addCallbackPackage(1000, new ICallbackFunction() {
-
+/*
                     int ite = 0;
 
                     String[] ites = { ">-- ", "->- ", "--> " };
                     boolean wasDownload = false;
-
+*/
                     @Override
                     public void callback() {
                         if (isConverting == false) {
                             return;
                         }
                         String ss = new String(SystemManager.SLineCache);
+                        /*
                         if (ss.contains("[download]") == true) {
                             wasDownload = true;
                             lblStatus.setText(ss.substring(11));
@@ -397,7 +398,8 @@ public class YoutubeConvertDialog extends JMPDialog {
                             if (ite >= ites.length) {
                                 ite = 0;
                             }
-                        }
+                        }*/
+                        lblStatus.setText(ss);
                         repaint();
                     }
 

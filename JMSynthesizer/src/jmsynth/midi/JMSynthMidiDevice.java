@@ -77,7 +77,10 @@ public class JMSynthMidiDevice implements MidiDevice {
 
     @Override
     public Receiver getReceiver() throws MidiUnavailableException {
-        return iface;
+        if (getMaxReceivers() <= 0) {
+            return null;
+        }
+        return receivers.get(0);
     }
 
     @Override
@@ -87,7 +90,10 @@ public class JMSynthMidiDevice implements MidiDevice {
 
     @Override
     public Transmitter getTransmitter() throws MidiUnavailableException {
-        return null;
+        if (getMaxTransmitters() <= 0) {
+            return null;
+        }
+        return transmitters.get(0);
     }
 
     @Override

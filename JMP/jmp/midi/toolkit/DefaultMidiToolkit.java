@@ -16,6 +16,7 @@ import javax.sound.midi.SysexMessage;
 
 import jlib.midi.IMidiToolkit;
 import jlib.midi.MidiByte;
+import jmp.midi.JMPBuiltinSynthMidiDevice;
 import jmp.midi.MidiByteMessage;
 
 public class DefaultMidiToolkit implements IMidiToolkit {
@@ -26,14 +27,14 @@ public class DefaultMidiToolkit implements IMidiToolkit {
     public List<MidiDevice> getMidiDevices() {
         ArrayList<MidiDevice> devices = new ArrayList<MidiDevice>();
 
-        MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+        MidiDevice.Info[] infos = getMidiDeviceInfo(true, true);
 
         for (int i = 0; i < infos.length; i++) {
             MidiDevice.Info info = infos[i];
             MidiDevice device = null;
 
             try {
-                device = MidiSystem.getMidiDevice(info);
+                device = getMidiDevice(info);
                 devices.add(device);
             }
             catch (MidiUnavailableException me) {
@@ -48,32 +49,44 @@ public class DefaultMidiToolkit implements IMidiToolkit {
     @Override
     public MidiDevice.Info[] getMidiDeviceInfo(boolean incTransmitter, boolean incReciever) {
         ArrayList<MidiDevice.Info> ret = new ArrayList<MidiDevice.Info>();
+        
+        // 内蔵シンセ追加
+        ret.add(JMPBuiltinSynthMidiDevice.INFO);
 
         MidiDevice.Info[] tmp = MidiSystem.getMidiDeviceInfo();
         for (int i = 0; i < tmp.length; i++) {
+            ret.add(tmp[i]);
+        }
+        
+        for (int i = ret.size() - 1; i >= 0; i--) {
             MidiDevice dev;
             try {
-                dev = MidiSystem.getMidiDevice(tmp[i]);
+                dev = getMidiDevice(ret.get(i));
             }
             catch (MidiUnavailableException e) {
+                ret.remove(i);
                 continue;
             }
-
             if (incTransmitter == false && dev.getMaxTransmitters() != 0) {
                 // Transmitterは除外
+                ret.remove(i);
                 continue;
             }
             else if (incReciever == false && dev.getMaxReceivers() != 0) {
                 // Recieverは除外
+                ret.remove(i);
                 continue;
             }
-            ret.add(tmp[i]);
         }
         return (MidiDevice.Info[]) ret.toArray(new MidiDevice.Info[0]);
     }
 
     @Override
     public MidiDevice getMidiDevice(Info info) throws MidiUnavailableException {
+        // 内蔵シンセ
+        if (JMPBuiltinSynthMidiDevice.INFO.equals(info) == true) {
+            return new JMPBuiltinSynthMidiDevice();
+        }
         return MidiSystem.getMidiDevice(info);
     }
 
@@ -88,7 +101,7 @@ public class DefaultMidiToolkit implements IMidiToolkit {
             }
         }
         if (recInfo != null) {
-            dev = MidiSystem.getMidiDevice(recInfo);
+            dev = getMidiDevice(recInfo);
         }
         else {
             throw new MidiUnavailableException();
