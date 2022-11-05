@@ -3,7 +3,7 @@ package jmp.task;
 import jlib.gui.IJmpMainWindow;
 import jlib.player.IPlayer;
 import jmp.JMPFlags;
-import jmp.JMPLoader;
+import jmp.JMPLibrary;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
 import jmp.core.SoundManager;
@@ -121,7 +121,7 @@ public class TaskOfUpdate extends TaskOfBase {
             PluginWrapper pw = JMPCore.getStandAlonePluginWrapper();
             if (pw != null) {
                 if (pw.isOpen() == false) {
-                    JMPLoader.exit();
+                    JMPLibrary.exitApplication();
                 }
             }
         }

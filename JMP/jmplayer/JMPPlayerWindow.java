@@ -46,7 +46,7 @@ import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
 import jmp.ErrorDef;
 import jmp.JMPFlags;
-import jmp.JMPLoader;
+import jmp.JMPLibrary;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
@@ -1213,7 +1213,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             JMPCore.getSoundManager().stop();
 
             // JMPリソースの終了処理
-            JMPLoader.exit();
+            JMPLibrary.exitApplication();
         }
     }
 

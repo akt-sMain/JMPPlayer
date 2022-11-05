@@ -137,10 +137,10 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         
         /* MoviePlayerはjava8のみ */
         String javaVer = Platform.getJavaVersion();
-        boolean isJava8 = false;
-        if (javaVer.startsWith("1.8") == true) {
-            isJava8 = true;
-        }
+        boolean isEnableMoviePlayer = false;
+        //if (javaVer.startsWith("1.8") == true) {
+            isEnableMoviePlayer = true;
+        //}
 
         // midi
         SMidiPlayer = new MidiPlayer();
@@ -149,7 +149,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         PlayerAccessor.register(SMidiPlayer);
         
         // movie
-        if (isJava8 == true) {
+        if (isEnableMoviePlayer == true) {
             SMoviePlayer = new MoviePlayer();
             SMoviePlayer.setSupportExtentions(exMUSIC);
             PlayerAccessor.register(SMoviePlayer);
@@ -160,7 +160,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         moviePlayerModel = (IMoviePlayerModel)SMoviePlayer;
 
         // wav
-        if (isJava8 == true) {
+        if (isEnableMoviePlayer == true) {
             SWavPlayer = new WavPlayerMin(SMoviePlayer);
         }
         else {

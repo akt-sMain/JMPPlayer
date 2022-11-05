@@ -29,7 +29,7 @@ class InvokeTask implements Runnable {
         SystemManager.consoleOutSystemInfo();
 
         // ライブラリ初期化処理
-        boolean result = JMPLoader.initLibrary(config, standAlonePlugin);
+        boolean result = JMPLibrary.initCoreAssets(config, standAlonePlugin);
 
         /* 起動準備 */
         if (result == true) {
@@ -59,7 +59,7 @@ class InvokeTask implements Runnable {
         }
 
         // ライブラリ終了処理
-        boolean endResult = JMPLoader.exitLibrary();
+        boolean endResult = JMPLibrary.exitCoreAssets();
         if (result == false) {
             endResult = result;
         }

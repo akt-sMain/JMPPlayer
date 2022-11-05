@@ -1,22 +1,15 @@
 package jmp.task;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jmp.task.TaskOfNotify.NotifyID;
 
 public class NotifyPacket {
 
     private NotifyID id;
-    private List<Object> datas;
+    private Object[] data = null;
 
     public NotifyPacket(NotifyID id, Object... d) {
         this.id = id;
-
-        this.datas = new ArrayList<Object>();
-        for (Object o : d) {
-            this.datas.add(o);
-        }
+        this.data = d;
     }
 
     public NotifyID getId() {
@@ -28,10 +21,13 @@ public class NotifyPacket {
     }
 
     public Object getData(int index) {
-        if (index >= datas.size()) {
+        if (this.data == null) {
             return null;
         }
-        return datas.get(index);
+        if (index >= this.data.length) {
+            return null;
+        }
+        return this.data[index];
     }
 
 }

@@ -10,7 +10,6 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import jlib.core.IFileManager;
-import jmp.JMPFlags;
 import jmp.file.FileResult;
 import jmp.file.IFileResultCallback;
 import jmp.gui.ui.FileListTableModel;
@@ -79,11 +78,6 @@ public class FileManager extends AbstractManager implements IFileManager {
         return result;
     }
 
-    private void initializeFlag() {
-        // フラグ初期化
-        JMPFlags.NoneHistoryLoadFlag = false; // 履歴保存
-    }
-
     public void addLoadResultCallback(IFileResultCallback loadResultCallback) {
         loadCallbacks.add(loadResultCallback);
     }
@@ -101,22 +95,19 @@ public class FileManager extends AbstractManager implements IFileManager {
 
     @Override
     public void loadFileToPlay(File f) {
-        ICallbackFunction func = FileCallbackCreator.getInstance().createLoadCallback(f, JMPFlags.NoneHistoryLoadFlag, true);
+        ICallbackFunction func = FileCallbackCreator.getInstance().createLoadCallback(f, true);
         execFileProcess(func);
     }
 
     @Override
     public void loadFile(File f) {
-        ICallbackFunction func = FileCallbackCreator.getInstance().createLoadCallback(f, JMPFlags.NoneHistoryLoadFlag, false);
+        ICallbackFunction func = FileCallbackCreator.getInstance().createLoadCallback(f, false);
         execFileProcess(func);
     }
     
     private void execFileProcess(ICallbackFunction func) {
         // 実処理はSequenceタスクに委譲する
         JMPCore.getTaskManager().queuing(func);
-
-        // フラグ初期化
-        initializeFlag();
     }
 
     @Override

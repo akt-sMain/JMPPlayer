@@ -42,28 +42,30 @@ public class FileCallbackCreator {
         @Override
         public void callback() {
             if (beginResult.status == true) {
-                // ロード中フラグ
-                JMPFlags.NowLoadingFlag = true;
-                
                 fileProcces();
             }
         }
         
         @Override
         public void postCall() {
+            // 後処理 
+            cleanupProcces();
+            
             if (endResult.status == true) {
                 // 終了判定の結果を通知
                 JMPCore.getTaskManager().sendNotifyMessage(NotifyID.FILE_RESULT_END, endResult);
             }
-            
-            // ロード中フラグ解除
-            JMPFlags.NowLoadingFlag = false;
         }
         
         /**
          * 事前判定
          */
         abstract void validatePreProcces();
+        
+        /**
+         * 後処理
+         */
+        abstract void cleanupProcces();
         
         /**
          * ファイルメイン処理
@@ -138,7 +140,7 @@ public class FileCallbackCreator {
             SoundManager sm = JMPCore.getSoundManager();
             LanguageManager lm = JMPCore.getLanguageManager();
 
-            // 念のためロード中フラグを立てる
+            // ロード中フラグを立てる
             JMPFlags.NowLoadingFlag = true;
 
             // ファイル名をバックアップ
@@ -192,9 +194,18 @@ public class FileCallbackCreator {
                 JMPFlags.NextPlayFlag = false;
             }
         }
+
+        @Override
+        void cleanupProcces() {
+            // フラグ初期化
+            JMPFlags.NoneHistoryLoadFlag = false; // 履歴保存
+            
+            // ロード中フラグ解除
+            JMPFlags.NowLoadingFlag = false;
+        }
     }
     
-    public FileCallbackFunction createLoadCallback(File f, boolean noneHistoryFlag, boolean toPlay) {
+    public FileCallbackFunction createLoadCallback(File f, boolean toPlay) {
         return new LoadCallbackFunc(f, JMPFlags.NoneHistoryLoadFlag, toPlay);
     }
 }

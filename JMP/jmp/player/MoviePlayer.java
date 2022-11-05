@@ -152,11 +152,16 @@ public class MoviePlayer extends Player implements IMoviePlayerModel {
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     JMPCore.getWindowManager().getMainWindow().showWindow();
-                    if (isRunnable() == false) {
-                        play();
-                    }
-                    else {
-                        stop();
+                    if (e.getButton() == MouseEvent.BUTTON1) {
+                        if (isRunnable() == false) {
+                            if (getPosition() >= getLength()) {
+                                setPosition(0);
+                            }
+                            play();
+                        }
+                        else {
+                            stop();
+                        }
                     }
                 }
                 
