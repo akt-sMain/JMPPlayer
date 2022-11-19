@@ -33,7 +33,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     // public static final float SAMPLE_RATE = 22050.0f; // サンプルレート
     // public static final float SAMPLE_RATE = 11025.0f; // サンプルレート
 
-    public static final boolean SAMPLE_16BITS = false;
+    public static final boolean SAMPLE_16BITS = true;
     public static final int SAMPLE_SIZE = SAMPLE_16BITS ? 16 : 8;
     public static final int CHANNEL = 2;
     public static final int FRAME_SIZE = CHANNEL * (SAMPLE_SIZE / 8);
@@ -286,6 +286,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
      *            0.0 ~ 1.0
      */
     public void setVolume(float volume) {
+        if (volume > 1.0f) volume = 1.0f;
+        else if (volume < 0.0f) volume = 0.0f;
         FloatControl control = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
         double max = Math.pow(10.0, control.getMaximum() / 20.0);
         double min = Math.pow(10.0, control.getMinimum() / 20.0);

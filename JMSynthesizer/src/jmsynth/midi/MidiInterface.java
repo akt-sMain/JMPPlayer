@@ -87,8 +87,7 @@ public class MidiInterface implements Receiver {
             case DefineControlChange.PORTAMENTO_TIME:// Portamento Time
                 break;
             case DefineControlChange.DATA_ENTRY_MSB:// データエントリ（ＲＰＮ／ＮＲＰＮで指定したパラメータの値を設定）
-                // System.out.println("NRPN "+NRPN +" " +
-                // sm.getData2() +" ");
+                 //System.out.println("NRPN "+controller.getNRPN(channel) +" " +  data2 +" ");
                 switch (controller.getNRPN(channel)) {
                     // ピッチベンド・センシティビティ
                     case 0x00: {
@@ -113,10 +112,8 @@ public class MidiInterface implements Receiver {
                 }
                 break;
             case DefineControlChange.MAIN_VOLUME:// メインボリューム(チャンネルの音量を設定）
-            // float vol =
-            // ((float)sm.getData2()/150);//127
             {
-                float vol = ((float) data2 / 200);// 127
+                float vol = ((float) data2 / 127.0f);// 127
                 controller.setVolume(channel, vol);
             }
                 break;
