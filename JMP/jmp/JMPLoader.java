@@ -294,6 +294,18 @@ public class JMPLoader {
         }
         return invokeImpl(config, standAlonePlugin, null);
     }
+    
+    /**
+     * 事前ロードプラグイン起動設定（プラグイン開発用）
+     *
+     * @param args
+     * @param config
+     * @return
+     */
+    public static boolean invokePreLoadPlugin(String[] args, ConfigDatabaseWrapper config, String pluginName, IPlugin PreLoadPlugin) {
+        JMPCore.getPluginManager().setPreLoadPlugin(pluginName, PreLoadPlugin);
+        return invokeImpl(config, null, null);
+    }
 
     /**
      * 起動処理本体

@@ -36,52 +36,31 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
         }
     };
 
-    private final static IPlayerListener DUMMY_PLAYER_LISTENER = new IPlayerListener() {
-
-        @Override
-        public void startSequencer() {
-        }
-
-        @Override
-        public void stopSequencer() {
-        }
-
-        @Override
-        public void updateTickPosition(long before, long after) {
-        }
-    };
-    private final static IMidiEventListener DUMMY_MIDI_EVENT_LISTENER = new IMidiEventListener() {
-
-        @Override
-        public void catchMidiEvent(MidiMessage message, long timeStamp, short senderType) {
-        }
-    };
-
     public static enum PluginState {
         CONNECTED, DISCONNECTED, INVALID;
-    }
-
-    public static PluginState toPluginState(String str) {
-        if (str.equalsIgnoreCase("INVALID") == true) {
-            return PluginState.INVALID;
+        
+        public static PluginState strToState(String str) {
+            for (PluginState p : values()) {
+                if (str.equalsIgnoreCase(p.toString()) == true) {
+                    return p;
+                }
+            }
+            return CONNECTED;
         }
-        else if (str.equalsIgnoreCase("DISCONNECTED") == true) {
-            return PluginState.DISCONNECTED;
-        }
-        else {
-            return PluginState.CONNECTED;
-        }
-    }
-
-    public static String toString(PluginState pStat) {
-        switch (pStat) {
-            case DISCONNECTED:
-                return "DISCONNECTED";
-            case INVALID:
-                return "INVALID";
-            case CONNECTED:
-            default:
-                return "CONNECTED";
+        
+        @Override
+        public String toString() {
+            switch (this) {
+                case CONNECTED:
+                    return "CONNECTED";
+                case DISCONNECTED:
+                    return "DISCONNECTED";
+                case INVALID:
+                    return "INVALID";
+                default:
+                    return "";
+                
+            }
         }
     }
 
@@ -103,27 +82,62 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
         this.state = PluginState.CONNECTED;
         this.name = name;
     }
+    
+    private IPlayerListener makeDummyPlayerListener() {
+        return new IPlayerListener() {
 
+            @Override
+            public void updateTickPosition(long before, long after) {
+            }
+
+            @Override
+            public void stopSequencer() {
+            }
+
+            @Override
+            public void startSequencer() {
+            }
+        };        
+    }
+    
+    private IMidiEventListener makeDummyMidiEventListener() {
+        return new IMidiEventListener() {
+
+            @Override
+            public void catchMidiEvent(MidiMessage message, long timeStamp, short senderType) {
+            }
+        };  
+    }
+    
+    private ISupportExtensionConstraints makeDummySupportExtensionConstraints() {
+        return new ISupportExtensionConstraints() {
+            @Override
+            public String allowedExtensions() {
+                return "";
+            }
+        };
+    }
+    
     public void setInterface() {
         if (this.plugin instanceof IPlayerListener) {
             this.playerListener = (IPlayerListener) this.plugin;
         }
         else {
-            this.playerListener = null;
+            this.playerListener = makeDummyPlayerListener();
         }
 
         if (this.plugin instanceof IMidiEventListener) {
             this.midiEventListener = (IMidiEventListener) this.plugin;
         }
         else {
-            this.midiEventListener = null;
+            this.midiEventListener = makeDummyMidiEventListener();
         }
 
         if (this.plugin instanceof ISupportExtensionConstraints) {
             this.supportExtensionConstraints = (ISupportExtensionConstraints) this.plugin;
         }
         else {
-            this.supportExtensionConstraints = null;
+            this.supportExtensionConstraints = makeDummySupportExtensionConstraints();
         }
     }
 
@@ -170,9 +184,9 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
 
     public void toInvalidPlugin() {
         this.plugin = DUMMY_PLG;
-        this.playerListener = DUMMY_PLAYER_LISTENER;
-        this.midiEventListener = DUMMY_MIDI_EVENT_LISTENER;
-        this.supportExtensionConstraints = null;
+        this.playerListener = makeDummyPlayerListener();
+        this.midiEventListener = makeDummyMidiEventListener();
+        this.supportExtensionConstraints = makeDummySupportExtensionConstraints();
     }
 
     @Override
@@ -181,30 +195,22 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
             return;
         }
 
-        if (midiEventListener != null) {
-            midiEventListener.catchMidiEvent(message, timeStamp, senderType);
-        }
+        midiEventListener.catchMidiEvent(message, timeStamp, senderType);
     }
 
     @Override
     public void startSequencer() {
-        if (playerListener != null) {
-            playerListener.startSequencer();
-        }
+        playerListener.startSequencer();
     }
 
     @Override
     public void stopSequencer() {
-        if (playerListener != null) {
-            playerListener.stopSequencer();
-        }
+        playerListener.stopSequencer();
     }
 
     @Override
     public void updateTickPosition(long before, long after) {
-        if (playerListener != null) {
-            playerListener.updateTickPosition(before, after);
-        }
+        playerListener.updateTickPosition(before, after);
     }
 
     @Override
@@ -267,6 +273,12 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
 
     public boolean isSupportExtension(File file) {
         if (this.supportExtensionConstraints == null) {
+            return true;
+        }
+        if (this.supportExtensionConstraints.allowedExtensions() == null) {
+            return true;
+        }
+        if (this.supportExtensionConstraints.allowedExtensions().isEmpty() == true) {
             return true;
         }
 

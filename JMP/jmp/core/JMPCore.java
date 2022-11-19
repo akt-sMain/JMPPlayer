@@ -175,7 +175,7 @@ public class JMPCore {
         }
         return false;
     }
-
+    
     public static void setStandAlonePluginWrapper(PluginWrapper plg) {
         StandAlonePluginWrapper = plg;
     }
@@ -183,7 +183,7 @@ public class JMPCore {
     public static PluginWrapper getStandAlonePluginWrapper() {
         return StandAlonePluginWrapper;
     }
-
+    
     /* Notify処理 */
     public static void parseNotifyPacket(NotifyPacket packet) {
         switch (packet.getId()) {

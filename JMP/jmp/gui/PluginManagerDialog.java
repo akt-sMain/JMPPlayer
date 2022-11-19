@@ -188,7 +188,7 @@ public class PluginManagerDialog extends JMPFrame {
             String name = model.getValueAt(i, 0).toString();
             PluginWrapper plg = pm.getPluginWrapper(name);
             String visibleState = plg.isOpen() == true ? "Open" : "Close";
-            String pluginState = PluginWrapper.toString(pm.getPluginState(name));
+            String pluginState = pm.getPluginState(name).toString();
             if (pm.getPluginState(name) == PluginState.INVALID) {
                 visibleState = "----";
             }

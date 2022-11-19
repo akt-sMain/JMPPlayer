@@ -13,8 +13,8 @@ import javax.swing.JOptionPane;
 
 import function.Platform;
 import function.Utility;
+import jlib.core.ISystemManager;
 import jlib.plugin.IPlugin;
-import jlib.plugin.ISupportExtensionConstraints;
 import jmp.JMPFlags;
 import jmp.file.FileResult;
 import jmp.file.IJmpFileBuilder;
@@ -79,6 +79,9 @@ public class PluginManager extends AbstractManager {
     
     public static final String BUILDER_TYPE = JmpFileBuilderFactory.BUILDER_TYPE_TEXT;
     private Map<String, String> plginStateMap = null;
+    
+    private String preLoadPluginName = "Sample";
+    private IPlugin preLoadPlugin = null;
 
     // ---------------------------------------------
     // メソッド群
@@ -128,7 +131,7 @@ public class PluginManager extends AbstractManager {
         
         plginStateMap = new HashMap<String, String>();
         for (String plgKey : plgKeys) {
-            String state = PluginWrapper.toString(observers.getPluginWrapper(plgKey).getState());
+            String state = observers.getPluginWrapper(plgKey).getState().toString();
             plginStateMap.put(plgKey, state);
         }
         JmpFileBuilderFactory fc = new JmpFileBuilderFactory(BUILDER_TYPE);
@@ -150,6 +153,24 @@ public class PluginManager extends AbstractManager {
                 // return false;
             }
             JMPCore.setStandAlonePluginWrapper(getPluginWrapper(name));
+        }
+        else if (preLoadPlugin != null) {
+            // 事前ロードするプラグイン(プラグイン開発用の起動方法)
+            if (addPlugin(preLoadPluginName, preLoadPlugin) == false) {
+                // return false;
+            }
+            // ディレクトリ作成 
+            SystemManager system = JMPCore.getSystemManager();
+            String path = system.getSystemPath(ISystemManager.PATH_RES_DIR, preLoadPlugin);
+            File f = new File(path);
+            if (f.exists() == false) {
+                f.mkdir();
+            }
+            path = system.getSystemPath(ISystemManager.PATH_DATA_DIR, preLoadPlugin);
+            f = new File(path);
+            if (f.exists() == false) {
+                f.mkdir();
+            }
         }
         else {
             // 起動時に削除予定のプラグインを削除する
@@ -589,7 +610,7 @@ public class PluginManager extends AbstractManager {
                 if (plginStateMap != null) {
                     String jarName = JmpUtil.getFileNameNotExtension(jms.getJar());
                     if (plginStateMap.containsKey(jarName) == true) {
-                        if (plginStateMap.get(jarName).equalsIgnoreCase(PluginWrapper.toString(PluginState.INVALID)) == true) {
+                        if (plginStateMap.get(jarName).equalsIgnoreCase(PluginState.INVALID.toString()) == true) {
                             isValid = false;
                         }
                     }
@@ -610,7 +631,7 @@ public class PluginManager extends AbstractManager {
             for (String pName : observers.getPluginsNameSet()) {
                 PluginState pstate = PluginState.CONNECTED;
                 if (plginStateMap.containsKey(pName) == true) {
-                    pstate = PluginWrapper.toPluginState(plginStateMap.get(pName));
+                    pstate = PluginState.strToState(plginStateMap.get(pName));
                 }
                 observers.getPluginWrapper(pName).setState(pstate);
             }
@@ -845,28 +866,16 @@ public class PluginManager extends AbstractManager {
         observers.close();
     }
 
-    public void closeNonSupportPlugins(String ex) {
+    public void closeNonSupportPlugins(File file) {
         if (JMPCore.isEnableStandAlonePlugin() == true) {
             // スタンドアロンモードの時は無効
             return;
         }
-
+        
         for (PluginWrapper pm : observers.getPlugins()) {
-            ISupportExtensionConstraints sec = pm.getSupportExtensionConstraints();
-            if (sec != null) {
-                String[] allowsEx = sec.allowedExtensionsArray();
-                boolean ret = false;
-                for (String ae : allowsEx) {
-                    if (ae.equalsIgnoreCase(ex) == true) {
-                        ret = true;
-                        break;
-                    }
-                }
-
-                if (ret == false) {
-                    if (pm.isOpen() == true) {
-                        pm.close();
-                    }
+            if (pm.isSupportExtension(file) == false) {
+                if (pm.isOpen() == true) {
+                    pm.close();
                 }
             }
         }
@@ -898,5 +907,12 @@ public class PluginManager extends AbstractManager {
         else {
             observers.notifyUpdateConfig(key);
         }
+    }
+
+    public void setPreLoadPlugin(String name, IPlugin preLoadPlugin) {
+        if (name.isEmpty() == false) {
+            this.preLoadPluginName = name;
+        }
+        this.preLoadPlugin = preLoadPlugin;
     }
 }
