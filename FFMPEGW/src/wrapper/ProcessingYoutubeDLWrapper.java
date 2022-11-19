@@ -9,13 +9,20 @@ import process.IProcessingCallback;
 import process.ProcessInvoker;
 
 public class ProcessingYoutubeDLWrapper {
+    
+    enum FileNameConfig {
+        WEB_TITLE,
+        WEB_ID,
+    }
     /** FFmpegの実行パス */
     protected String path = "";
 
     /** 環境変数定義有効 */
-    protected boolean isYoutubeDlInstalled = false;
+    private boolean isYoutubeDlInstalled = false;
 
-    protected boolean audioOnly = true;
+    private boolean audioOnly = true;
+    
+    private FileNameConfig fileNameConfig = FileNameConfig.WEB_TITLE;
 
     protected String output = "";
 
@@ -68,6 +75,15 @@ public class ProcessingYoutubeDLWrapper {
         // cmd.add(output);
         // }
         cmd.add(url);
+        
+        switch (getFileNameConfig()) {
+            case WEB_ID:
+                cmd.add("--id");
+                break;
+            case WEB_TITLE:
+            default:
+                break;
+        }
         if (isAudioOnly() == true) {
             cmd.add("-x");
             cmd.add("--audio-format");
@@ -116,5 +132,13 @@ public class ProcessingYoutubeDLWrapper {
 
     public void setConsoleOut(IConsoleOutCallback cb) {
         invoker.setConsoleOutCallback(cb);
+    }
+
+    public FileNameConfig getFileNameConfig() {
+        return fileNameConfig;
+    }
+
+    public void setFileNameConfig(FileNameConfig fileNameConfig) {
+        this.fileNameConfig = fileNameConfig;
     }
 }
