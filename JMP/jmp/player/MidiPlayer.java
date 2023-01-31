@@ -4,14 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
-import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
@@ -21,7 +18,6 @@ import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 
 import jlib.midi.IMidiEventListener;
-import jlib.midi.IMidiFilter;
 import jlib.midi.MidiByte;
 import jlib.player.Player;
 import jmp.JMPFlags;
@@ -211,8 +207,6 @@ public class MidiPlayer extends Player {
         }
     }
 
-    private List<IMidiFilter> filters = null;
-
     // MIDI Synth
     private JMPSequencer sequencer;
 
@@ -232,24 +226,6 @@ public class MidiPlayer extends Player {
     };
 
     public MidiPlayer() {
-        filters = new LinkedList<IMidiFilter>();
-    }
-
-    public void addFilter(IMidiFilter f) {
-        filters.add(f);
-    }
-
-    public void removeFilter(IMidiFilter f) {
-        filters.remove(f);
-    }
-
-    public boolean filter(MidiMessage message, short senderType) {
-        for (IMidiFilter f : filters) {
-            if (f.filter(message, senderType) == false) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public JMPSequencer getSequencer() {

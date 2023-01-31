@@ -1,11 +1,7 @@
 package jmp.task;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import jmp.core.JMPCore;
+import jmp.task.TaskPacket.PacketType;
 
 public class TaskOfNotify extends TaskOfBase {
     
@@ -13,47 +9,28 @@ public class TaskOfNotify extends TaskOfBase {
     public static enum NotifyID {
         UPDATE_CONFIG, UPDATE_SYSCOMMON, FILE_RESULT_BEGIN, FILE_RESULT_END
     }
-    
-    private List<NotifyPacket> stack = null;
 
     public TaskOfNotify() {
-        super(100);
-        stack = Collections.synchronizedList(new LinkedList<NotifyPacket>());
+        super(100, true);
     }
     
     @Override
-    public void clearQue() {
-        super.clearQue();
-        synchronized (stack) {
-            stack.clear();
-        }
-    }
-    
-    public void add(NotifyPacket p) {
-        synchronized (stack) {
-            // Notifyパケットを発行
-            stack.add(p);
+    protected void interpret(TaskPacket obj) {
+        if (obj.getType() == PacketType.Notify) {
+            NotifyPacket notify = (NotifyPacket)obj;
+            JMPCore.parseNotifyPacket(notify.getId(), notify.getDatas());
         }
     }
 
     @Override
-    void begin() {
+    protected void begin() {
     }
 
     @Override
-    void loop() {
-        synchronized (stack) {
-            // スタックされたパケットを送信
-            Iterator<NotifyPacket> i = stack.iterator();
-            while (i.hasNext()) {
-                NotifyPacket packet = i.next();
-                JMPCore.parseNotifyPacket(packet);
-                i.remove();
-            }
-        }
+    protected void loop() {
     }
 
     @Override
-    void end() {
+    protected void end() {
     }
 }

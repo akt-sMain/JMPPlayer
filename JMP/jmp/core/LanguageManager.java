@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import function.Platform;
+import function.Platform.KindOfPlatform;
 import jmp.lang.DefineLanguage;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.lang.FontRsrc;
@@ -24,6 +25,16 @@ public class LanguageManager extends AbstractManager {
 
     /** デフォルト文字コード */
     public static final String CHARSET_DEFAULT = CHARSET_UTF16;
+    
+    private static final Map<KindOfPlatform, Integer> s_platToFontFamily = new HashMap<KindOfPlatform, Integer>() {
+        {
+            put(KindOfPlatform.WINDOWS, FontSet.FONT_OF_WIN);
+            put(KindOfPlatform.MAC, FontSet.FONT_OF_MAC);
+            put(KindOfPlatform.LINUX, FontSet.FONT_OF_OTHR);
+            put(KindOfPlatform.SUN_OS, FontSet.FONT_OF_OTHR);
+            put(KindOfPlatform.OTHER, FontSet.FONT_OF_OTHR);
+        }
+    };
 
     private FontRsrc defaultFontRsrc = null;
     private Map<Integer, FontSet> fontInfos = null;
@@ -40,22 +51,7 @@ public class LanguageManager extends AbstractManager {
      */
     public void makeFontRsrc() {
 
-        /* OSごとのフォントファミリを切り替え */
-        int platformFont = 0;
-        switch (Platform.getRunPlatform()) {
-            case WINDOWS:
-                platformFont = FontSet.FONT_OF_WIN;
-                break;
-            case MAC:
-                platformFont = FontSet.FONT_OF_MAC;
-                break;
-            case LINUX:
-            case SUN_OS:
-            case OTHER:
-            default:
-                platformFont = FontSet.FONT_OF_OTHR;
-                break;
-        }
+        /* OSごとのフォントファミリを登録 */
         
         fontInfos = new HashMap<Integer, FontSet>();
         
@@ -71,7 +67,7 @@ public class LanguageManager extends AbstractManager {
         win = new FontRsrc("Open Sans");
         mac = new FontRsrc("Helvetica Neue");
         other = defaultFontRsrc;
-        fontInfos.put(lang, new FontSet(platformFont, charset, win, mac, other));
+        fontInfos.put(lang, new FontSet(charset, win, mac, other));
         
         /* フォントファミリ(Japanese) */
         lang = DefineLanguage.INDEX_LANG_JAPANESE;
@@ -79,7 +75,7 @@ public class LanguageManager extends AbstractManager {
         win = new FontRsrc("Meiryo");
         mac = new FontRsrc("Hiragino Sans");
         other = defaultFontRsrc;
-        fontInfos.put(lang, new FontSet(platformFont, charset, win, mac, other));
+        fontInfos.put(lang, new FontSet(charset, win, mac, other));
         
         /* フォントファミリ(Chinese) */
         lang = DefineLanguage.INDEX_LANG_CHINESE;
@@ -87,7 +83,7 @@ public class LanguageManager extends AbstractManager {
         win = new FontRsrc("Microsoft YaHei");
         mac = new FontRsrc("PingFang SC");
         other = defaultFontRsrc;
-        fontInfos.put(lang, new FontSet(platformFont, charset, win, mac, other));
+        fontInfos.put(lang, new FontSet(charset, win, mac, other));
         
         /* フォントファミリ(Traditional Chinese) */
         lang = DefineLanguage.INDEX_LANG_TRADITIONALCHINESE;
@@ -95,7 +91,7 @@ public class LanguageManager extends AbstractManager {
         win = new FontRsrc("Helvetica");
         mac = new FontRsrc("SF Pro TC");
         other = defaultFontRsrc;
-        fontInfos.put(lang, new FontSet(platformFont, charset, win, mac, other));
+        fontInfos.put(lang, new FontSet(charset, win, mac, other));
         
         /* フォントファミリ(Korean) */
         lang = DefineLanguage.INDEX_LANG_KOREAN;
@@ -103,7 +99,7 @@ public class LanguageManager extends AbstractManager {
         win = new FontRsrc("Malgun Gothic");
         mac = new FontRsrc("Gulim");
         other = defaultFontRsrc;
-        fontInfos.put(lang, new FontSet(platformFont, charset, win, mac, other));
+        fontInfos.put(lang, new FontSet(charset, win, mac, other));
         
         /* フォントファミリ(Russian) */
         lang = DefineLanguage.INDEX_LANG_RUSSIAN;
@@ -111,7 +107,7 @@ public class LanguageManager extends AbstractManager {
         win = new FontRsrc("Times New Roman");
         mac = new FontRsrc("Times");
         other = defaultFontRsrc;
-        fontInfos.put(lang, new FontSet(platformFont, charset, win, mac, other));
+        fontInfos.put(lang, new FontSet(charset, win, mac, other));
     }
 
     /**
@@ -124,7 +120,12 @@ public class LanguageManager extends AbstractManager {
     public String getFontName(int lang, int type) {
         FontRsrc f;
         if (fontInfos.containsKey(lang) == true) {
-            f = fontInfos.get(lang).getRsrc();
+            int family = FontSet.FONT_OF_OTHR;
+            KindOfPlatform plat = Platform.getRunPlatform();
+            if (s_platToFontFamily.containsKey(plat) == true) {
+                family = s_platToFontFamily.get(plat);
+            }
+            f = fontInfos.get(lang).getRsrc(family);
         }
         else {
             f = defaultFontRsrc;

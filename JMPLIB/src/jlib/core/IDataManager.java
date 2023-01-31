@@ -34,6 +34,8 @@ public interface IDataManager {
     public static final String CFG_KEY_YOUTUBEDL_INSTALLED = "YOUTUBEDL_INSTALLED";
     /** ランダム再生 */
     public static final String CFG_KEY_RANDOMPLAY = "RANDOMPLAY";
+    /** YoutubeDLファイル名指定モード(TITLE or ID) */
+    public static final String CFG_KEY_YOUTUBEDL_FILENAME_MODE = "YOUTUBEDL_FILENAME_MODE";
 
     /**
      * コンフィグ変更

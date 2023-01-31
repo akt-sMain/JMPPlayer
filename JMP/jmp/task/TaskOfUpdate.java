@@ -28,7 +28,7 @@ public class TaskOfUpdate extends TaskOfBase {
     private boolean pastRunnableState = false;
 
     public TaskOfUpdate() {
-        super(50);
+        super(50, true);
     }
 
     @Override

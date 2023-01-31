@@ -145,7 +145,6 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         // midi
         SMidiPlayer = new MidiPlayer();
         SMidiPlayer.setSupportExtentions(exMIDI);
-        SMidiPlayer.addFilter(new JMPMidiFilter());
         PlayerAccessor.register(SMidiPlayer);
         
         // movie
@@ -189,6 +188,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
         // Midiユニットインスタンス生成
         midiUnit = new MidiUnit(SMidiPlayer);
+        midiUnit.addFilter(new JMPMidiFilter());
 
         // Midiコントローラーの準備
         midiInController = new MidiController(IMidiEventListener.SENDER_MIDI_IN); // INコントローラインターフェース
@@ -1071,6 +1071,6 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
     
     public boolean executeMidiFilter(MidiMessage message, short senderType) {
-        return SMidiPlayer.filter(message, senderType);
+        return midiUnit.filter(message, senderType);
     }
 }

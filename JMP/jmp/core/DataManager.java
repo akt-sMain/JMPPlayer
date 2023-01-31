@@ -57,6 +57,7 @@ public class DataManager extends AbstractManager implements IDataManager, IJmpCo
             put(CFG_KEY_YOUTUBEDL_PATH, new JmpConfigValueType("youtube-dl.exe"));
             put(CFG_KEY_YOUTUBEDL_INSTALLED, new JmpConfigValueType(IJ_TRUE, TypeOfKey.BOOL));
             put(CFG_KEY_RANDOMPLAY, new JmpConfigValueType(IJ_FALSE, TypeOfKey.BOOL));
+            put(CFG_KEY_YOUTUBEDL_FILENAME_MODE, new JmpConfigValueType("ID"));
         }
     };
 

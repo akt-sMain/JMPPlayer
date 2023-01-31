@@ -12,6 +12,10 @@ public interface IJmpConfigDatabase {
     public static final String IJ_TRUE = "ON";
     public static final String IJ_FALSE = "OFF";
 
+    public static enum IJ_YoutubeDlFileNameConfig {
+        IJ_Title, IJ_Id,
+    }
+
     //
     // util
     //
@@ -176,5 +180,30 @@ public interface IJmpConfigDatabase {
 
     default void setRandomPlay(boolean isRandomPlay) {
         setConfigParamToBoolean(DataManager.CFG_KEY_RANDOMPLAY, isRandomPlay);
+    }
+
+    default IJ_YoutubeDlFileNameConfig getYoutubeDlFileNameMode() {
+        String s = getConfigParam(DataManager.CFG_KEY_YOUTUBEDL_FILENAME_MODE);
+        if (s.equalsIgnoreCase("TITLE") == true) {
+            return IJ_YoutubeDlFileNameConfig.IJ_Title;
+        }
+        else if (s.equalsIgnoreCase("ID") == true) {
+            return IJ_YoutubeDlFileNameConfig.IJ_Id;
+        }
+        return IJ_YoutubeDlFileNameConfig.IJ_Id;
+    }
+
+    default void setYoutubeDlInstalled(IJ_YoutubeDlFileNameConfig youtubeDlFileNameMode) {
+        String s = "ID";
+        switch (youtubeDlFileNameMode) {
+            case IJ_Title:
+                s = "TITLE";
+                break;
+            case IJ_Id:
+            default:
+                s = "ID";
+                break;
+        }
+        setConfigParam(DataManager.CFG_KEY_YOUTUBEDL_FILENAME_MODE, s);
     }
 }

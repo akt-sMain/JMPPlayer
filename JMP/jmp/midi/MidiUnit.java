@@ -1,25 +1,49 @@
 package jmp.midi;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.Transmitter;
 
+import jlib.midi.IMidiFilter;
 import jlib.midi.IMidiUnit;
 import jmp.player.MidiPlayer;
 
 public class MidiUnit implements IMidiUnit {
 
     private MidiPlayer midiPlayer;
+    
+    private List<IMidiFilter> filters = null;
 
     public MidiUnit(MidiPlayer midiPlayer) {
         this.midiPlayer = midiPlayer;
+        this.filters = new LinkedList<IMidiFilter>();
     }
 
     public MidiPlayer getMidiPlayer() {
         return midiPlayer;
+    }
+    
+    public void addFilter(IMidiFilter f) {
+        filters.add(f);
+    }
+
+    public void removeFilter(IMidiFilter f) {
+        filters.remove(f);
+    }
+
+    public boolean filter(MidiMessage message, short senderType) {
+        for (IMidiFilter f : filters) {
+            if (f.filter(message, senderType) == false) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private Sequencer getSequencer() {

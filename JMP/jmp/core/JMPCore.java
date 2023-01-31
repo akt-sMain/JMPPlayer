@@ -10,7 +10,7 @@ import jmp.file.CommonRegisterINI;
 import jmp.file.ConfigDatabaseWrapper;
 import jmp.file.FileResult;
 import jmp.plugin.PluginWrapper;
-import jmp.task.NotifyPacket;
+import jmp.task.TaskOfNotify.NotifyID;
 
 public class JMPCore {
 
@@ -131,7 +131,7 @@ public class JMPCore {
     }
     
     public static boolean endFunc() {
-        // Windowを閉じる
+        // 念のためWindowを閉じる
         getWindowManager().setVisibleAll(false);
         
         if (getWindowManager().isValidBuiltinSynthFrame() == true) {
@@ -185,11 +185,18 @@ public class JMPCore {
     }
     
     /* Notify処理 */
-    public static void parseNotifyPacket(NotifyPacket packet) {
-        switch (packet.getId()) {
+    public static void parseNotifyPacket(NotifyID id, Object... data) {
+        if (data == null) {
+            return;
+        }
+        if (data.length <= 0) {
+            return;
+        }
+        
+        switch (id) {
             case UPDATE_CONFIG: {
                 /* Config変更通知 */
-                String key = packet.getData().toString();
+                String key = data[0].toString();
                 for (AbstractManager am : ManagerInstances.getManagersOfAsc()) {
                     if (am.isFinishedInitialize() == true) {
                         am.notifyUpdateConfig(key);
@@ -199,7 +206,7 @@ public class JMPCore {
             }
             case UPDATE_SYSCOMMON: {
                 /* Syscommon変更通知 */
-                String key = packet.getData().toString();
+                String key = data[0].toString();
                 for (AbstractManager am : ManagerInstances.getManagersOfAsc()) {
                     if (am.isFinishedInitialize() == true) {
                         am.notifyUpdateCommonRegister(key);
@@ -209,16 +216,16 @@ public class JMPCore {
             }
             case FILE_RESULT_BEGIN: {
                 /* ファイル処理 事前判定結果通知 */
-                if (packet.getData() instanceof FileResult) {
-                    FileResult result = (FileResult)packet.getData();
+                if (data[0] instanceof FileResult) {
+                    FileResult result = (FileResult)data[0];
                     getFileManager().callFileResultBegin(result);
                 }
                 break;
             }
             case FILE_RESULT_END: {
                 /* ファイル処理 事後判定結果通知 */
-                if (packet.getData() instanceof FileResult) {
-                    FileResult result = (FileResult)packet.getData();
+                if (data[0] instanceof FileResult) {
+                    FileResult result = (FileResult)data[0];
                     getFileManager().callFileResultEnd(result);
                 }
                 break;

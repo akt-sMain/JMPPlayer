@@ -629,14 +629,24 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         // String lf = "com.sun.java.swing.plaf.motif.MotifLookAndFeel";
         // String lf = "javax.swing.plaf.metal.MetalLookAndFeel";
         try {
-            UIManager.setLookAndFeel(systemlf);
+            switch (Platform.getRunPlatform()) {
+                case WINDOWS:
+                    // 推奨環境 
+                    UIManager.setLookAndFeel(systemlf);
+                    break;
+                case OTHER:
+                default:
+                    // 非推奨のためクロスプラットフォームルックアンドフィールを採用する 
+                    UIManager.setLookAndFeel(crosslf);
+                    break;
+            }
         }
         catch (Exception e) {
             System.out.println("lferror");
 
             // 念のためMetalを再設定
             try {
-                UIManager.setLookAndFeel(crosslf);
+                UIManager.setLookAndFeel(new javax.swing.plaf.metal.MetalLookAndFeel());
             }
             catch (Exception e2) {
             }

@@ -2,32 +2,17 @@ package jmp.task;
 
 import jmp.task.TaskOfNotify.NotifyID;
 
-public class NotifyPacket {
+public class NotifyPacket extends TaskPacket {
 
-    private NotifyID id;
-    private Object[] data = null;
+    private NotifyID notifyId;
 
-    public NotifyPacket(NotifyID id, Object... d) {
-        this.id = id;
-        this.data = d;
+    public NotifyPacket(NotifyID notifyId, Object... d) {
+        super(PacketType.Notify, d);
+        this.notifyId = notifyId;
     }
-
+    
     public NotifyID getId() {
-        return id;
-    }
-
-    public Object getData() {
-        return getData(0);
-    }
-
-    public Object getData(int index) {
-        if (this.data == null) {
-            return null;
-        }
-        if (index >= this.data.length) {
-            return null;
-        }
-        return this.data[index];
+        return notifyId;
     }
 
 }

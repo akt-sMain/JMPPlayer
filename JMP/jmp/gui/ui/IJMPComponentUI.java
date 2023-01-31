@@ -18,6 +18,8 @@ public interface IJMPComponentUI {
 
     default void updateDebugMenu() {
     };
+    
+    default void initComponentUI() {}
 
     default Color getJmpBackColor() {
         SystemManager sm = JMPCore.getSystemManager();

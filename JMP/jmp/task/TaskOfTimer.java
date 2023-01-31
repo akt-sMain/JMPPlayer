@@ -17,7 +17,7 @@ public class TaskOfTimer extends TaskOfBase {
     private ArrayList<CallbackPackage> callbackPackages = new ArrayList<CallbackPackage>();
 
     public TaskOfTimer() {
-        super(100);
+        super(100, true);
     }
 
     public void addCallbackPackage(CallbackPackage pakage) {

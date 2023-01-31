@@ -8,16 +8,17 @@ import javax.sound.midi.MidiMessage;
 import jlib.player.IPlayer;
 import jmp.JMPFlags;
 import jmp.task.CallbackPackage;
+import jmp.task.CallbackPacket;
 import jmp.task.ICallbackFunction;
 import jmp.task.ITask;
 import jmp.task.NotifyPacket;
-import jmp.task.TaskOfBase;
 import jmp.task.TaskOfMidiEvent;
 import jmp.task.TaskOfNotify;
 import jmp.task.TaskOfNotify.NotifyID;
 import jmp.task.TaskOfSequence;
 import jmp.task.TaskOfTimer;
 import jmp.task.TaskOfUpdate;
+import jmp.task.TaskPacket;
 
 public class TaskManager extends AbstractManager {
 
@@ -27,7 +28,7 @@ public class TaskManager extends AbstractManager {
     }
 
     /** タスクデータベース */
-    private Map<TaskID, TaskOfBase> taskMap = null;
+    private Map<TaskID, ITask> taskMap = null;
 
     TaskManager() {
         super("task");
@@ -37,7 +38,7 @@ public class TaskManager extends AbstractManager {
     protected boolean initFunc() {
         super.initFunc();
 
-        taskMap = new HashMap<TaskID, TaskOfBase>();
+        taskMap = new HashMap<TaskID, ITask>();
 
         // 更新タスク登録
         taskMap.put(TaskID.UPDATE, new TaskOfUpdate());
@@ -68,23 +69,22 @@ public class TaskManager extends AbstractManager {
     public void waitTask(TaskID id, long mills) {
         taskMap.get(id).waitTask(mills);
     }
-
-    public void queuing(TaskID id, ICallbackFunction callbackFunction) {
-        // 対応するタスクに対してキューイングを行う
-        taskMap.get(id).queuing(callbackFunction);
-    }
-
-    public void queuing(ICallbackFunction callbackFunction) {
-        queuing(TaskID.SEQUENCE, callbackFunction);
-    }
     
-    public void queuing(TaskID id, Runnable runnable) {
+    public void queuing(TaskID id, TaskPacket packet) {
         // 対応するタスクに対してキューイングを行う
-        taskMap.get(id).queuing(runnable);
+        if (taskMap == null) {
+            /* taskMapが生成前は何もしない */
+            return;
+        }
+        taskMap.get(id).queuing(packet);
     }
 
-    public void queuing(Runnable runnable) {
-        queuing(TaskID.SEQUENCE, runnable);
+    public void queuing(ICallbackFunction func) {
+        queuing(TaskID.SEQUENCE, new CallbackPacket(func));
+    }
+
+    public void queuing(Runnable func) {
+        queuing(TaskID.SEQUENCE, new CallbackPacket(func));
     }
 
     public void taskStart() {
@@ -174,14 +174,7 @@ public class TaskManager extends AbstractManager {
     }
     
     public void sendNotifyMessage(NotifyID id, Object... data) {
-        if (taskMap == null) {
-            /* taskMapが生成前は何もしない */
-            return;
-        }
-        if (taskMap.containsKey(TaskID.NOTIFY) == true) {
-            TaskOfNotify task = (TaskOfNotify) taskMap.get(TaskID.NOTIFY);
-            task.add(new NotifyPacket(id, data));
-        }
+        queuing(TaskID.NOTIFY, new NotifyPacket(id, data));
     }
 
 }

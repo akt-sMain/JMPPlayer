@@ -1,6 +1,7 @@
 package jmp.task;
 
 public interface ITask {
+    
     /**
      * タスク開始状態遷移
      */
@@ -20,6 +21,13 @@ public interface ITask {
      * キューを空にする
      */
     abstract void clearQue();
+    
+    /**
+     * キューにパケットを追加
+     * 
+     * @param packet
+     */
+    abstract void queuing(TaskPacket packet);
 
     /**
      * タスク待ち状態遷移

@@ -9,11 +9,11 @@ import process.IProcessingCallback;
 import process.ProcessInvoker;
 
 public class ProcessingYoutubeDLWrapper {
-    
+
     enum FileNameConfig {
-        WEB_TITLE,
-        WEB_ID,
+        WEB_TITLE, WEB_ID,
     }
+
     /** FFmpegの実行パス */
     protected String path = "";
 
@@ -21,7 +21,7 @@ public class ProcessingYoutubeDLWrapper {
     private boolean isYoutubeDlInstalled = false;
 
     private boolean audioOnly = true;
-    
+
     private FileNameConfig fileNameConfig = FileNameConfig.WEB_TITLE;
 
     protected String output = "";
@@ -75,7 +75,7 @@ public class ProcessingYoutubeDLWrapper {
         // cmd.add(output);
         // }
         cmd.add(url);
-        
+
         switch (getFileNameConfig()) {
             case WEB_ID:
                 cmd.add("--id");

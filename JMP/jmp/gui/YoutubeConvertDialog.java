@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -24,6 +23,7 @@ import function.Platform;
 import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.util.IUtilityToolkit;
+import jmp.JMPFlags;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
@@ -42,7 +42,7 @@ public class YoutubeConvertDialog extends JMPDialog {
     public static final String DEFAULT_DST_EXT_AUDIO = "mp3";
     public static final String DEFAULT_DST_EXT_VIDEO = "mp4";
 
-    private final JPanel contentPanel = new JPanel();
+    private JPanel contentPanel;
     private JTextField textFieldExePath;
     private JTextField textFieldURL;
     private JLabel lblStatus;
@@ -74,11 +74,7 @@ public class YoutubeConvertDialog extends JMPDialog {
         setBounds(100, 100, 450, 235);
         setResizable(false);
 
-        Image jmpIcon = JMPCore.getResourceManager().getJmpImageIcon();
-        if (jmpIcon != null) {
-            setIconImage(jmpIcon);
-        }
-
+        contentPanel = new JPanel();
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -243,15 +239,16 @@ public class YoutubeConvertDialog extends JMPDialog {
             }
         }
 
-        chckbxAudioOnly.setSelected(true);
-        dstExtTextField.setText(DEFAULT_DST_EXT_AUDIO);
-
         updateGuiState();
         updateBackColor();
         _init();
     }
 
     private void _init() {
+        setJmpIcon();
+        
+        chckbxAudioOnly.setSelected(true);
+        dstExtTextField.setText(DEFAULT_DST_EXT_AUDIO);
     }
 
     private void updateGuiState() {
@@ -400,7 +397,7 @@ public class YoutubeConvertDialog extends JMPDialog {
                             }
                         }*/
                         lblStatus.setText(ss);
-                        repaint();
+                        JMPFlags.ForcedCyclicRepaintFlag = true;
                     }
 
                     @Override

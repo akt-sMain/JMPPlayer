@@ -1,5 +1,7 @@
 package jmp.task;
 
+import jmp.task.TaskPacket.PacketType;
+
 /**
  * シーケンスタスク。 <br>
  * コールバックを実行する
@@ -9,7 +11,7 @@ package jmp.task;
  */
 public class TaskOfSequence extends TaskOfBase {
     public TaskOfSequence() {
-        super(100);
+        super(100, true);
     }
 
     @Override
@@ -22,5 +24,12 @@ public class TaskOfSequence extends TaskOfBase {
 
     @Override
     void end() {
+    }
+    
+    @Override
+    protected void interpret(TaskPacket obj) {
+        if (obj.getType() == PacketType.Callback) {
+            ((CallbackPacket)obj).exec();
+        }
     }
 }

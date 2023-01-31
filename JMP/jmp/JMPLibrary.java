@@ -11,6 +11,9 @@ public class JMPLibrary {
      * 終了
      */
     public static void exitApplication() {
+        // Windowを非表示化
+        JMPCore.getWindowManager().setVisibleAll(false);
+        
         // タスクの終了
         JMPCore.getTaskManager().taskExit();
     }

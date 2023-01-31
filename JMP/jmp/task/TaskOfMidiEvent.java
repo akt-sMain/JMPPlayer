@@ -30,7 +30,7 @@ public class TaskOfMidiEvent extends TaskOfBase {
     private List<JmpMidiPacket> stack = null;
 
     public TaskOfMidiEvent() {
-        super(20);
+        super(20, true);
         stack = Collections.synchronizedList(new LinkedList<JmpMidiPacket>());
     }
 

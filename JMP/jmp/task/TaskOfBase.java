@@ -1,22 +1,96 @@
 package jmp.task;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
-
-import jmp.util.JmpUtil;
+import java.util.LinkedList;
+import java.util.List;
 
 public abstract class TaskOfBase implements ITask, Runnable {
+    
+    class TaskQueue {
+        protected List<TaskPacket> lst = null;
+        
+        public TaskQueue() {
+            createInstance();
+        }
+        
+        protected void createInstance() {
+            this.lst = new LinkedList<TaskPacket>();
+        }
+        
+        public boolean push(TaskPacket o) {
+            lst.add(o);
+            return true;
+        }
+        
+        public TaskPacket pop() {
+            // スタックされたコールバックを呼び出し
+            TaskPacket ret = null;
+            Iterator<TaskPacket> i = lst.iterator();
+            while (i.hasNext()) {
+                ret = i.next();
+                i.remove();
+                
+                break;
+            }
+            return ret;
+        }
+        
+        public void clear() {
+            lst.clear();
+        }
+        
+        public boolean isEmpty() {
+            return lst.isEmpty();
+        }
+        
+    }
+    
+    class SynchronizedTaskQueue extends TaskQueue {
+        @Override
+        protected void createInstance() {
+            this.lst = Collections.synchronizedList(new LinkedList<TaskPacket>());
+        }
+        
+        @Override
+        public TaskPacket pop() {
+            TaskPacket ret = null;
+            synchronized (lst) {
+                ret = super.pop();
+            }
+            return ret;
+        }
+        
+        @Override
+        public boolean push(TaskPacket o) {
+            boolean ret = false;
+            synchronized (lst) {
+                ret = super.push(o);
+            }
+            return ret;
+        }
+        
+        @Override
+        public void clear() {
+            synchronized (lst) {
+                super.clear();
+            }
+        }
+    }
 
-    private ArrayList<ICallbackFunction> callbackQue = null;
-    private ArrayList<Runnable> runnableQue = null;
+    private TaskQueue queue = null;
     private boolean isRunnable = true;
-    protected Thread thread = null;
-    protected long sleepTime = 100;
-    protected long waitTime = 0;
-
-    public TaskOfBase(long sleepTime) {
-        this.callbackQue = new ArrayList<ICallbackFunction>();
-        this.runnableQue = new ArrayList<Runnable>();
+    private Thread thread = null;
+    private long sleepTime = 100;
+    private long waitTime = 0;
+    
+    public TaskOfBase(long sleepTime, boolean isSyncQueue) {
+        if (isSyncQueue == true) {
+            this.queue = new SynchronizedTaskQueue();
+        } 
+        else {
+            this.queue = new TaskQueue();
+        }
         this.sleepTime = sleepTime;
         this.isRunnable = true;
         this.waitTime = 0;
@@ -28,15 +102,15 @@ public abstract class TaskOfBase implements ITask, Runnable {
         begin();
 
         while (isRunnable) {
-
             long pastTime = System.currentTimeMillis();
-
-            if (callbackQue != null) {
-                execCallback();
+            
+            if (queue.isEmpty() == false) {
+                TaskPacket obj = pop();
+                if (obj != null) {
+                    interpret(obj);
+                }
             }
-            if (runnableQue != null) {
-                execRunnable();
-            }
+            
             loop();
 
             long newTime = System.currentTimeMillis();
@@ -51,7 +125,12 @@ public abstract class TaskOfBase implements ITask, Runnable {
                 pSleepTime += this.waitTime;
                 this.waitTime = 0;
             }
-            JmpUtil.threadSleep(pSleepTime);
+            
+            try {
+                Thread.sleep(pSleepTime);
+            }
+            catch (Exception e) {
+            }
         }
 
         end();
@@ -88,49 +167,26 @@ public abstract class TaskOfBase implements ITask, Runnable {
     public void waitTask(long sleepTime) {
         this.waitTime = sleepTime;
     }
-
-    public void queuing(ICallbackFunction callbackFunction) {
-        callbackQue.add(callbackFunction);
-    }
     
-    public void queuing(Runnable runnable) {
-        runnableQue.add(runnable);
+    @Override
+    public void queuing(TaskPacket packet) {
+        push(packet);
     }
     
     @Override
     public void clearQue() {
-        if (callbackQue != null) {
-            callbackQue.clear();
-        }
-        if (runnableQue != null) {
-            runnableQue.clear();
-        }
-    }
-
-    protected void execCallback() {
-        synchronized (callbackQue) {
-            // スタックされたコールバックを呼び出し
-            Iterator<ICallbackFunction> i = callbackQue.iterator();
-            while (i.hasNext()) {
-                ICallbackFunction exec = i.next();
-                exec.preCall();
-                exec.callback();
-                exec.postCall();
-                i.remove();
-            }
-        }
+        queue.clear();
     }
     
-    protected void execRunnable() {
-        synchronized (runnableQue) {
-            // スタックされたコールバックを呼び出し
-            Iterator<Runnable> i = runnableQue.iterator();
-            while (i.hasNext()) {
-                Runnable exec = i.next();
-                exec.run();
-                i.remove();
-            }
-        }
+    protected void interpret(TaskPacket obj) {
+    }
+    
+    protected boolean push(TaskPacket o) {
+        return queue.push(o);
+    }
+    
+    protected TaskPacket pop() {
+        return queue.pop();
     }
 
     /**
