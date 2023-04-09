@@ -324,7 +324,7 @@ public class FFmpegConvertDialog extends JMPDialog {
             return;
         }
 
-        system.setFFmpegWrapperPath(textFieldFFmpegExePath.getText());
+        system.setFFmpegPath(textFieldFFmpegExePath.getText());
         if (system.isValidFFmpegWrapper() == false) {
             lblStatus.setForeground(Color.RED);
             String name = String.format("\"%s\"", lm.getLanguageStr(LangID.FFmpeg_path));

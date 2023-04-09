@@ -21,7 +21,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import function.Platform;
 import function.Platform.SystemProperty;
 import function.Utility;
-import jmp.core.DataManager;
+import jmp.core.ManagerInstances;
 import jmp.lang.VBA;
 
 public class JmpUtil {
@@ -76,7 +76,7 @@ public class JmpUtil {
     }
 
     public static boolean checkConfigKey(String key, String dKey) {
-        if (key.equals(dKey) == true || key.equals(DataManager.CFG_KEY_INITIALIZE) == true) {
+        if (key.equals(dKey) == true || key.equals(ManagerInstances.CFG_KEY_INITIALIZE) == true) {
             return true;
         }
         return false;

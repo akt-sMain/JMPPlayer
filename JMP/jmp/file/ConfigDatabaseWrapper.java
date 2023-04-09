@@ -1,13 +1,13 @@
 package jmp.file;
 
-import jmp.core.DataManager;
+import jmp.core.ManagerInstances;
 
 public class ConfigDatabaseWrapper implements IJmpConfigDatabase {
 
     private ConfigDatabase database = null;
 
     public ConfigDatabaseWrapper() {
-        database = new ConfigDatabase(DataManager.CFG_INIT_TABLE.keySet());
+        database = new ConfigDatabase(ManagerInstances.CFG_INIT_TABLE.keySet());
         initialize();
     }
 
@@ -16,10 +16,10 @@ public class ConfigDatabaseWrapper implements IJmpConfigDatabase {
     }
 
     public void initialize() {
-        for (String key : DataManager.CFG_INIT_TABLE.keySet()) {
+        for (String key : ManagerInstances.CFG_INIT_TABLE.keySet()) {
             String init = "";
-            if (DataManager.CFG_INIT_TABLE.containsKey(key) == true) {
-                JmpConfigValueType valueType = DataManager.CFG_INIT_TABLE.get(key);
+            if (ManagerInstances.CFG_INIT_TABLE.containsKey(key) == true) {
+                JmpConfigValueType valueType = ManagerInstances.CFG_INIT_TABLE.get(key);
                 init = new String(valueType.value);
             }
             database.setConfigParam(key, init);

@@ -3,6 +3,7 @@ package jmp.core;
 import java.util.List;
 
 import jlib.JMPLIB;
+import jlib.core.IDataManager;
 import jlib.plugin.IPlugin;
 import jmp.ErrorDef;
 import jmp.JMPFlags;
@@ -249,8 +250,8 @@ public class JMPCore {
         getWindowManager().updateLanguage();
 
         // 設定ファイルのFFmpegパスを同期
-        getSystemManager().setFFmpegWrapperPath(getDataManager().getFFmpegPath());
-        getSystemManager().setFFmpegInstalled(getDataManager().isFFmpegInstalled());
+        getSystemManager().syncDatabase(IDataManager.CFG_KEY_FFMPEG_PATH);
+        getSystemManager().syncDatabase(IDataManager.CFG_KEY_FFMPEG_INSTALLED);
     }
 
     public static SystemManager getSystemManager() {

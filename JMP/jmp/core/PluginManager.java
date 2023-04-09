@@ -102,6 +102,8 @@ public class PluginManager extends AbstractManager {
 
     protected boolean endFunc() {
         super.endFunc();
+        
+        closeAllPlugins();
 
         // プラグインの状態を保存する
         savePluginState();
@@ -897,7 +899,7 @@ public class PluginManager extends AbstractManager {
     @Override
     protected void notifyUpdateConfig(String key) {
         super.notifyUpdateConfig(key);
-        if (key.equals(DataManager.CFG_KEY_INITIALIZE) == true) {
+        if (key.equals(ManagerInstances.CFG_KEY_INITIALIZE) == true) {
             // 初期化はすべてのキーを通知する
             DataManager dm = JMPCore.getDataManager();
             for (String k : dm.getKeySet()) {

@@ -12,6 +12,7 @@ import javax.swing.UIManager;
 
 import function.Platform;
 import function.Utility;
+import jlib.core.IDataManager;
 import jlib.core.ISystemManager;
 import jlib.gui.IJmpMainWindow;
 import jlib.plugin.IPlugin;
@@ -187,6 +188,8 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         ffmpegWrapper.setOverwrite(true);
 
         youtubeDlWrapper = new ProcessingYoutubeDLWrapper();
+        
+        makeSystemPath();
 
         // 共通レジスタのキー名登録
         cRegKeys = new String[NUMBER_OF_COMMON_REGKEY];
@@ -331,64 +334,36 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         ((ProcessingFFmpegWrapper) ffmpegWrapper).setConsoleOut(cOutCb);
 
         if (JMPLoader.UsePluginDirectory == true) {
-            File pluginsDir = new File(aPath[PATH_PLUGINS_DIR]);
-            if (pluginsDir.exists() == false) {
-                // プラグインフォルダ作成
-                if (!pluginsDir.mkdir()) {
-                    return false;
-                }
-            }
-        }
-        File dataDir = new File(aPath[PATH_DATA_DIR]);
-        if (dataDir.exists() == false) {
-            // データフォルダ作成
-            if (!dataDir.mkdir()) {
+            if (makeDir(aPath[PATH_PLUGINS_DIR]) == false) {
                 return false;
             }
         }
-        File resDir = new File(aPath[PATH_RES_DIR]);
-        if (resDir.exists() == false) {
-            // resフォルダ作成
-            if (!resDir.mkdir()) {
-
-            }
+        if (makeDir(aPath[PATH_PLUGINS_DIR]) == false) {
+            return false;
+        }
+        if (makeDir(aPath[PATH_DATA_DIR]) == false) {
+            return false;
+        }
+        if (makeDir(aPath[PATH_RES_DIR]) == false) {
+            return false;
         }
         if (JMPLoader.UseHistoryFile == true || JMPLoader.UseConfigFile == true) {
-            File saveDir = new File(aPath[PATH_SAVE_DIR]);
-            if (saveDir.exists() == false) {
-                // saveフォルダ作成
-                if (!saveDir.mkdir()) {
-                    return false;
-                }
+            if (makeDir(aPath[PATH_SAVE_DIR]) == false) {
+                return false;
             }
         }
         if (JMPLoader.UsePluginDirectory == true) {
-            File jarDir = new File(aPath[PATH_JAR_DIR]);
-            if (jarDir.exists() == false) {
-                // Jarフォルダ作成
-                if (!jarDir.mkdir()) {
-                    return false;
-                }
+            if (makeDir(aPath[PATH_JAR_DIR]) == false) {
+                return false;
             }
-            File jmsDir = new File(aPath[PATH_JMS_DIR]);
-            if (jmsDir.exists() == false) {
-                // jmsフォルダ作成
-                if (!jmsDir.mkdir()) {
-                    return false;
-                }
+            if (makeDir(aPath[PATH_JMS_DIR]) == false) {
+                return false;
             }
-            File outDir = new File(aPath[PATH_OUTPUT_DIR]);
-            if (outDir.exists() == false) {
-                // outputフォルダ作成
-                if (!outDir.mkdir()) {
-                    return false;
-                }
+            if (makeDir(aPath[PATH_OUTPUT_DIR]) == false) {
+                return false;
             }
-            File zipDir = new File(aPath[PATH_ZIP_DIR]);
-            if (zipDir.exists() == false) {
-                if (!zipDir.mkdir()) {
-                    return false;
-                }
+            if (makeDir(aPath[PATH_ZIP_DIR]) == false) {
+                return false;
             }
         }
 
@@ -396,6 +371,16 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         preActivate();
 
         return super.initFunc();
+    }
+    
+    private boolean makeDir(String path) {
+        File dir = new File(path);
+        if (dir.exists() == false) {
+            if (!dir.mkdir()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     protected boolean endFunc() {
@@ -500,21 +485,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             }
         }
         return setCommonRegisterValueAdmin(key, value);
-    }
-
-    public float getCommonRegisterValueToFloat(String key, float def) {
-        String s = getCommonRegisterValue(key);
-        return JmpUtil.toFloat(s, def);
-    }
-
-    public boolean getCommonRegisterValueToBoolean(String key, boolean def) {
-        String s = getCommonRegisterValue(key);
-        return JmpUtil.toBoolean(s, def);
-    }
-
-    public int getCommonRegisterValueToInt(String key, int def) {
-        String s = getCommonRegisterValue(key);
-        return JmpUtil.toInt(s, def);
     }
 
     public String getCommonRegisterValue(String key) {
@@ -711,21 +681,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         return ffmpegWrapper.isValid();
     }
 
-    public void setFFmpegWrapperPath(String path) {
-        if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
-            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
-            pfw.setPath(path);
-        }
-    }
-
-    public String getFFmpegWrapperPath() {
-        if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
-            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
-            return pfw.getPath();
-        }
-        return "";
-    }
-
     @Override
     public IUtilityToolkit getUtilityToolkit() {
         return utilToolkit;
@@ -749,39 +704,33 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             JMPFlags.DebugMode = JmpUtil.toBoolean(getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_DEBUGMODE));
         }
     }
+    
+    public void syncDatabase(String key) {
+        if (JmpUtil.checkConfigKey(key, IDataManager.CFG_KEY_FFMPEG_PATH) == true) {
+            if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
+                ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
+                pfw.setPath(getFFmpegPath());
+            }
+        }
+        if (JmpUtil.checkConfigKey(key, IDataManager.CFG_KEY_FFMPEG_INSTALLED) == true) {
+            if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
+                ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
+                pfw.setFFmpegInstalled(isFFmpegInstalled());
+            }
+        }
+        if (JmpUtil.checkConfigKey(key, IDataManager.CFG_KEY_YOUTUBEDL_PATH) == true) {
+            youtubeDlWrapper.setPath(getYoutubeDlPath());
+        }
+        if (JmpUtil.checkConfigKey(key, IDataManager.CFG_KEY_YOUTUBEDL_INSTALLED) == true) {
+            youtubeDlWrapper.setYoutubeDlInstalled(isYoutubeDlInstalled());
+        }
+    }
 
     @Override
     protected void notifyUpdateConfig(String key) {
         super.notifyUpdateConfig(key);
 
-        DataManager dm = JMPCore.getDataManager();
-        if (JmpUtil.checkConfigKey(key, DataManager.CFG_KEY_FFMPEG_PATH) == true) {
-            setFFmpegWrapperPath(dm.getFFmpegPath());
-        }
-        if (JmpUtil.checkConfigKey(key, DataManager.CFG_KEY_FFMPEG_INSTALLED) == true) {
-            setFFmpegInstalled(dm.isFFmpegInstalled());
-        }
-        if (JmpUtil.checkConfigKey(key, DataManager.CFG_KEY_YOUTUBEDL_PATH) == true) {
-            setYoutubeDlWrapperPath(dm.getYoutubeDlPath());
-        }
-        if (JmpUtil.checkConfigKey(key, DataManager.CFG_KEY_YOUTUBEDL_INSTALLED) == true) {
-            setYoutubeDlInstalled(dm.isYoutubeDlInstalled());
-        }
-    }
-
-    public boolean isFFmpegInstalled() {
-        if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
-            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
-            return pfw.isFFmpegInstalled();
-        }
-        return false;
-    }
-
-    public void setFFmpegInstalled(boolean isEnableEnvironmentVariable) {
-        if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
-            ProcessingFFmpegWrapper pfw = (ProcessingFFmpegWrapper) ffmpegWrapper;
-            pfw.setFFmpegInstalled(isEnableEnvironmentVariable);
-        }
+        syncDatabase(key);
     }
 
     public String getFFmpegCommand() {
@@ -838,23 +787,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         youtubeDlWrapper.convert(url, extension);
     }
 
-    protected void setYoutubeDlWrapperPath(String path) {
-        youtubeDlWrapper.setPath(path);
-    }
-
-    public String getYoutubeDlWrapperPath() {
-        return youtubeDlWrapper.getPath();
-    }
-
     public boolean isValidYoutubeDlWrapper() {
         return youtubeDlWrapper.isValid();
-    }
-
-    public boolean isYoutubeDlInstalled() {
-        return youtubeDlWrapper.isYoutubeDlInstalled();
-    }
-
-    protected void setYoutubeDlInstalled(boolean isEnableEnvironmentVariable) {
-        youtubeDlWrapper.setYoutubeDlInstalled(isEnableEnvironmentVariable);
     }
 }

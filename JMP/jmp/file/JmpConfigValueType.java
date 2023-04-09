@@ -1,11 +1,11 @@
 package jmp.file;
 
-import jmp.core.DataManager.TypeOfKey;
+import jmp.core.ManagerInstances.TypeOfKey;
 
 public class JmpConfigValueType {
 
     public String value = "";
-    public TypeOfKey type = TypeOfKey.STRING;
+    public jmp.core.ManagerInstances.TypeOfKey type = TypeOfKey.STRING;
 
     public JmpConfigValueType(String value, TypeOfKey type) {
         this.value = value;

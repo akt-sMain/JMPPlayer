@@ -152,6 +152,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             SMoviePlayer = new MoviePlayer();
             SMoviePlayer.setSupportExtentions(exMUSIC);
             PlayerAccessor.register(SMoviePlayer);
+            System.out.println("enable movie");
         }
         else {
             SMoviePlayer = SDummyPlayer;
@@ -232,6 +233,10 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
         stop();
         PlayerAccessor.stopAllPlayer();
+        
+        if (isVisibleMediaView() == true) {
+            setVisibleMediaView(false);
+        }
         PlayerAccessor.close();
         return true;
     }

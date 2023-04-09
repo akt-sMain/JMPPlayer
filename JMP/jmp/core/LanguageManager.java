@@ -192,7 +192,7 @@ public class LanguageManager extends AbstractManager {
      * @return 文字列
      */
     public String getLanguageStr(LangID id) {
-        int langIndex = JMPCore.getDataManager().getLanguage();
+        int langIndex = getLanguage();
         return getLanguageStr(id, langIndex);
     }
 
@@ -213,11 +213,11 @@ public class LanguageManager extends AbstractManager {
      * @return
      */
     public String getCurLanguageName() {
-        return getTitle(JMPCore.getDataManager().getLanguage(), DefineLanguage.INDEX_LANG_ENGLISH);
+        return getTitle(getLanguage(), DefineLanguage.INDEX_LANG_ENGLISH);
     }
 
     public String getReadmeContent() {
-        int langIndex = JMPCore.getDataManager().getLanguage();
+        int langIndex = getLanguage();
         return LanguageTable.getReadmeContent(langIndex);
     }
 
