@@ -9,22 +9,41 @@ public class ModulatorFactory implements Runnable {
     private boolean isRunnable = true;
     private Thread timerThread = null;
     private Vector<Modulator> targets = null;
+    private boolean useMultiThread = true;
 
-    public ModulatorFactory() {
+    public ModulatorFactory(boolean useMultiThread) {
+        this.useMultiThread = useMultiThread;
         targets = new Vector<Modulator>();
         timerThread = new Thread(this);
         timerThread.setPriority(Thread.MAX_PRIORITY);
     }
 
     public Modulator newModulatorInstance() {
-        Modulator m = new Modulator();
+        Modulator m;
+        if (this.useMultiThread == false) {
+            m = new Modulator();
+        }
+        else {
+            m = new ThreadableModulator();
+        }
         m.setDepth(DEFAULT_DEPTH);
         targets.add(m);
         return m;
     }
 
     public void timerStart() {
-        timerThread.start();
+        if (this.useMultiThread == false) {
+            timerThread.start();
+        }
+        else {
+            for (int i = 0; i < targets.size(); i++) {
+                Modulator m = targets.get(i);
+                if (m == null) {
+                    continue;
+                }
+                m.startMod();
+            }
+        }
     }
 
     @Override
@@ -49,7 +68,18 @@ public class ModulatorFactory implements Runnable {
     public void dispose() {
         isRunnable = false;
         try {
-            timerThread.join();
+            if (this.useMultiThread == false) {
+                timerThread.join();
+            }
+            else {
+                for (int i = 0; i < targets.size(); i++) {
+                    Modulator m = targets.get(i);
+                    if (m == null) {
+                        continue;
+                    }
+                    m.endMod();
+                }
+            }
         }
         catch (InterruptedException e) {
             e.printStackTrace();

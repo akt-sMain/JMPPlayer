@@ -23,6 +23,11 @@ public class JMSoftSynthesizer implements ISynthController {
 
     private static final short CHANNEL_TYPE_SOUND = 0;
     private static final short CHANNEL_TYPE_DRUM = 1;
+    
+    // エンベロープのスレッドモード 
+    private static final boolean USE_MULTITHREAD_ENV = true;
+    // モジュレーションのスレッドモード 
+    private static final boolean USE_MULTITHREAD_MOD = true;
 
     // チャンネル構成
     private static final short[] CHANNEL_TYPE_LIST = { //
@@ -62,8 +67,8 @@ public class JMSoftSynthesizer implements ISynthController {
 
     private void makeChannel(int polyphony) {
 
-        envelopeFactory = new EnvelopeFactory();
-        modulatorFactory = new ModulatorFactory();
+        envelopeFactory = new EnvelopeFactory(USE_MULTITHREAD_ENV);
+        modulatorFactory = new ModulatorFactory(USE_MULTITHREAD_MOD);
 
         // チャンネル生成
         channels = new SoundSourceChannel[CHANNEL_TYPE_LIST.length];

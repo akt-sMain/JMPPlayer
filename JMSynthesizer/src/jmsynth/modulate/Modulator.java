@@ -19,6 +19,14 @@ public class Modulator {
 
     Modulator() {
     }
+    
+    public void startMod() {
+        /* スレッド開始時のコールバック */
+    }
+    
+    public void endMod() {
+        /* スレッド終了時のコールバック */
+    }
 
     public void process() {
         if (targetTones != null) {

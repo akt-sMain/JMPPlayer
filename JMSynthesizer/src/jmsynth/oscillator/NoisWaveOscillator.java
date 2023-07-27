@@ -14,10 +14,10 @@ public class NoisWaveOscillator implements IOscillator {
         public int amp = 0;
     }
 
-    private NoiseSim[] simSet = new NoiseSim[128];
-    protected double[] moiseTable = new double[NOISE_VAR];
     protected final static int NOISE_VAR = 32;
     
+    private NoiseSim[] simSet = new NoiseSim[128];
+    protected double[] moiseTable = new double[NOISE_VAR];
     static final int[] AMP_TABLE = { 150, 100, 50, 30, 20, 15, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, };
     
     public NoisWaveOscillator() {
@@ -27,7 +27,7 @@ public class NoisWaveOscillator implements IOscillator {
             simSet[i] = new NoiseSim(AMP_TABLE[j]);
             i++;
             j++;
-            if (j >= 16) {
+            if (j >= AMP_TABLE.length) {
                 j = 0;
             }
             if (i >= simSet.length) {

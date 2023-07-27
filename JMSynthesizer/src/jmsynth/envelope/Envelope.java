@@ -33,6 +33,14 @@ public class Envelope {
     public long getReleaseMills() {
         return (long) ((double) maxReleaseMills * releaseTime);
     }
+    
+    public void startEnv() {
+        /* スレッド開始時のコールバック */
+    }
+    
+    public void endEnv() {
+        /* スレッド終了時のコールバック */
+    }
 
     public void process() {
         if (targetTones != null) {
