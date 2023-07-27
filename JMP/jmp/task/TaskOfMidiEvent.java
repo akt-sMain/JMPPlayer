@@ -1,5 +1,6 @@
 package jmp.task;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -12,6 +13,7 @@ import jmp.JMPFlags;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
 import jmp.core.WindowManager;
+import jmp.midi.MidiByteMessage;
 
 public class TaskOfMidiEvent extends TaskOfBase {
 
@@ -39,7 +41,10 @@ public class TaskOfMidiEvent extends TaskOfBase {
         JmpMidiPacket packet;
         if (JMPFlags.UseUnsynchronizedMidiPacket == true) {
             // 非同期にするため、MidiMessageをクローンする
-            packet = new JmpMidiPacket((MidiMessage) message.clone(), timeStamp, senderType);
+            byte[] sMes = message.getMessage();
+            byte[] dMes = Arrays.copyOf(sMes, sMes.length);
+            packet = new JmpMidiPacket(new MidiByteMessage(dMes), timeStamp, senderType);
+            //packet = new JmpMidiPacket((MidiMessage) message.clone(), timeStamp, senderType);
         }
         else {
             packet = new JmpMidiPacket(message, timeStamp, senderType);

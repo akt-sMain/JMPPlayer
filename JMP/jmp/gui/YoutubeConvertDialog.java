@@ -6,12 +6,16 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -23,12 +27,12 @@ import function.Platform;
 import function.Platform.KindOfPlatform;
 import function.Utility;
 import jlib.util.IUtilityToolkit;
-import jmp.JMPFlags;
 import jmp.core.DataManager;
 import jmp.core.JMPCore;
 import jmp.core.LanguageManager;
 import jmp.core.SystemManager;
 import jmp.core.WindowManager;
+import jmp.file.IJmpConfigDatabase.IJ_YoutubeDlFileNameConfig;
 import jmp.gui.ui.DropFileCallbackHandler;
 import jmp.gui.ui.IDropFileCallback;
 import jmp.gui.ui.JMPDialog;
@@ -56,6 +60,7 @@ public class YoutubeConvertDialog extends JMPDialog {
     private JCheckBox chckbxInstalled;
     private JCheckBox chckbxAudioOnly;
     private JButton buttonPaste;
+    private JComboBox<String> comboboxNameType;
 
     private void syncConrolEnable(boolean b) {
         textFieldURL.setEnabled(b);
@@ -238,6 +243,25 @@ public class YoutubeConvertDialog extends JMPDialog {
                 getRootPane().setDefaultButton(convertButton);
             }
         }
+        
+        comboboxNameType = new JComboBox<String>();
+        comboboxNameType.setBounds(100, 83, 70, 19);
+        contentPanel.add(comboboxNameType);
+        comboboxNameType.setModel(new DefaultComboBoxModel<String>(new String[] { "ID", "Title"}));
+        comboboxNameType.addItemListener(new ItemListener() {
+            
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                String sWebNameType = comboboxNameType.getSelectedItem().toString();
+                if (sWebNameType.isEmpty() == false) {
+                    IJ_YoutubeDlFileNameConfig fileNameConf = IJ_YoutubeDlFileNameConfig.IJ_Title;
+                    if (sWebNameType.equalsIgnoreCase("ID") == true) {
+                        fileNameConf = IJ_YoutubeDlFileNameConfig.IJ_Id;
+                    }
+                    JMPCore.getDataManager().setYoutubeDlFileNameMode(fileNameConf);
+                }
+            }
+        });
 
         updateGuiState();
         updateBackColor();
@@ -259,6 +283,18 @@ public class YoutubeConvertDialog extends JMPDialog {
         }
         else {
             textFieldExePath.setText(JMPCore.getDataManager().getYoutubeDlPath());
+        }
+        
+        
+        IJ_YoutubeDlFileNameConfig cfg = JMPCore.getDataManager().getYoutubeDlFileNameMode();
+        switch (cfg) {
+            case IJ_Id:
+                comboboxNameType.setSelectedItem("ID");
+                break;
+            case IJ_Title:
+            default:
+                comboboxNameType.setSelectedItem("Title");
+                break;
         }
     }
 
@@ -397,7 +433,7 @@ public class YoutubeConvertDialog extends JMPDialog {
                             }
                         }*/
                         lblStatus.setText(ss);
-                        JMPFlags.ForcedCyclicRepaintFlag = true;
+                        JMPCore.getTaskManager().requestWindowUpdate();
                     }
 
                     @Override

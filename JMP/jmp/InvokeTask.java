@@ -54,16 +54,20 @@ class InvokeTask implements Runnable {
                 taskManager.join();
             }
             catch (InterruptedException e) {
-                JMPCore.getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_UNKNOWN_EXIT_APPLI);
+                JMPCore.ErrorId = ErrorDef.ERROR_ID_UNKNOWN_EXIT_APPLI;
             }
         }
-
+        
         // ライブラリ終了処理
         boolean endResult = JMPLibrary.exitCoreAssets();
         if (result == false) {
             endResult = result;
         }
         invokeResult = endResult;
+        
+        if (JMPCore.ErrorId != ErrorDef.ERROR_ID_NOERROR) {
+            JMPCore.getSystemManager().showSystemErrorMessage(JMPCore.ErrorId);
+        }
     }
 
     public boolean getResult() {

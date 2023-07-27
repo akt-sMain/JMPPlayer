@@ -97,9 +97,6 @@ public class JMPFlags {
     /** Window自動配置調整 */
     public static boolean WindowAutomationPosFlag = true;
 
-    /** 定周期描画を強制的に動作させる */
-    public static boolean ForcedCyclicRepaintFlag = false;
-
     /** 再生中の点滅表示を制御するためのフラグ。主にシーケンスバーで使用 */
     public static boolean PlayingTimerToggleFlag = false;
 

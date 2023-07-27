@@ -23,6 +23,8 @@ public class JMPCore {
 
     /** ライブラリバージョン */
     public static final String LIBRALY_VERSION = JMPLIB.BUILD_VERSION;
+    
+    public static int ErrorId = ErrorDef.ERROR_ID_NOERROR;
 
     /** スタンドアロンモードのプラグイン */
     // private static IPlugin StandAlonePlugin = null;
@@ -73,14 +75,14 @@ public class JMPCore {
         }
         else {
             // 立ち上げ失敗
-            getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_SYSTEM_FAIL_INIT_FUNC);
+            JMPCore.ErrorId = ErrorDef.ERROR_ID_SYSTEM_FAIL_INIT_FUNC;
         }
 
         /* プレイヤーロード */
         if (result == true) {
             result = getSoundManager().openPlayer();
             if (result == false) {
-                getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_UNKNOWN_FAIL_LOAD_PLAYER);
+                JMPCore.ErrorId = ErrorDef.ERROR_ID_UNKNOWN_FAIL_LOAD_PLAYER;
             }
         }
 
@@ -161,7 +163,7 @@ public class JMPCore {
 
         boolean result = ManagerInstances.callEndFunc();
         if (result == false && isFinishedInitialize() == true) {
-            getSystemManager().showSystemErrorMessage(ErrorDef.ERROR_ID_SYSTEM_FAIL_END_FUNC);
+            JMPCore.ErrorId = ErrorDef.ERROR_ID_SYSTEM_FAIL_END_FUNC;
         }
         return result;
     }

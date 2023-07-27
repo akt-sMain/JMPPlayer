@@ -19,6 +19,7 @@ import jmp.task.TaskOfSequence;
 import jmp.task.TaskOfTimer;
 import jmp.task.TaskOfUpdate;
 import jmp.task.TaskPacket;
+import jmp.task.TaskPacket.PacketType;
 
 public class TaskManager extends AbstractManager {
 
@@ -70,7 +71,7 @@ public class TaskManager extends AbstractManager {
         taskMap.get(id).waitTask(mills);
     }
     
-    public void queuing(TaskID id, TaskPacket packet) {
+    private void queuing(TaskID id, TaskPacket packet) {
         // 対応するタスクに対してキューイングを行う
         if (taskMap == null) {
             /* taskMapが生成前は何もしない */
@@ -175,6 +176,10 @@ public class TaskManager extends AbstractManager {
     
     public void sendNotifyMessage(NotifyID id, Object... data) {
         queuing(TaskID.NOTIFY, new NotifyPacket(id, data));
+    }
+    
+    public void requestWindowUpdate() {
+        queuing(TaskID.UPDATE, new TaskPacket(PacketType.RequestUpdate));
     }
 
 }

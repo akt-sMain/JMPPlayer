@@ -9,6 +9,9 @@ import jmp.lang.DefineLanguage.LangID;
 
 public class ErrorDef {
     /* エラーID定義 */
+    // NoError
+    public static final int ERROR_ID_NOERROR = 0;
+    
     public static final int UNIT_OF_ERROR_ID = 100;
     // UNKNOWN区分
     public static final int ERROR_ID_UNKNOWN = (UNIT_OF_ERROR_ID * 1);

@@ -10,7 +10,7 @@ import process.ProcessInvoker;
 
 public class ProcessingYoutubeDLWrapper {
 
-    enum FileNameConfig {
+    public enum FileNameConfig {
         WEB_TITLE, WEB_ID,
     }
 
@@ -74,7 +74,7 @@ public class ProcessingYoutubeDLWrapper {
         // cmd.add("-o");
         // cmd.add(output);
         // }
-        cmd.add(url);
+        cmd.add("\"" + url + "\"");
 
         switch (getFileNameConfig()) {
             case WEB_ID:
@@ -109,7 +109,7 @@ public class ProcessingYoutubeDLWrapper {
             }
         }
         else {
-            cmd.add(0, path);
+            cmd.add(0, "\"" + path + "\"");
         }
         invoker.exec(cmd);
     }

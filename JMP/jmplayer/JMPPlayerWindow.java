@@ -1395,6 +1395,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
 
         statusLabel.setForeground(color);
         statusLabel.setText(text);
+        statusLabel.setToolTipText(text);
         statusLabel.repaint();
     }
 

@@ -3,6 +3,8 @@ package jmp.player;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 
 import fmp.FlagMediaPlayer;
@@ -180,6 +182,37 @@ public class MoviePlayer extends Player implements IMoviePlayerModel {
                 
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                }
+            });
+            mediaAccessor.addWindowListener(new WindowListener() {
+                
+                @Override
+                public void windowOpened(WindowEvent e) {
+                }
+                
+                @Override
+                public void windowIconified(WindowEvent e) {
+                }
+                
+                @Override
+                public void windowDeiconified(WindowEvent e) {
+                }
+                
+                @Override
+                public void windowDeactivated(WindowEvent e) {
+                }
+                
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    JMPCore.getTaskManager().requestWindowUpdate();
+                }
+                
+                @Override
+                public void windowClosed(WindowEvent e) {
+                }
+                
+                @Override
+                public void windowActivated(WindowEvent e) {
                 }
             });
             // 画面中心に表示

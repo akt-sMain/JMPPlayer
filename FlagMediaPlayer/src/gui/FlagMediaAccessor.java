@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.event.MouseListener;
+import java.awt.event.WindowListener;
 
 import fmp.FlagMediaPlayer;
 import javafx.scene.media.MediaPlayer;
@@ -82,6 +83,10 @@ public class FlagMediaAccessor {
             win.setLocationRelativeTo(null);
         }
         win.setVisible(b);
+    }
+    
+    public void addWindowListener(WindowListener l) {
+        win.addWindowListener(l);
     }
 
     public boolean isVisibleView() {

@@ -2,7 +2,6 @@ package jmp.task;
 
 import jlib.gui.IJmpMainWindow;
 import jlib.player.IPlayer;
-import jmp.JMPFlags;
 import jmp.JMPLibrary;
 import jmp.core.JMPCore;
 import jmp.core.PluginManager;
@@ -10,6 +9,7 @@ import jmp.core.SoundManager;
 import jmp.core.WindowManager;
 import jmp.gui.JmpQuickLaunch;
 import jmp.plugin.PluginWrapper;
+import jmp.task.TaskPacket.PacketType;
 
 /**
  * 更新タスク
@@ -26,6 +26,7 @@ public class TaskOfUpdate extends TaskOfBase {
     private int cyclicRepaintCount = 0;
     private int cyclicBuiltinRepaintCount = 0;
     private boolean pastRunnableState = false;
+    private boolean requestUpdateFlag = false;
 
     public TaskOfUpdate() {
         super(50, true);
@@ -33,6 +34,9 @@ public class TaskOfUpdate extends TaskOfBase {
 
     @Override
     void begin() {
+        cyclicUpdateCount = 0;
+        cyclicRepaintCount = 0;
+        cyclicBuiltinRepaintCount = 0;
     }
 
     @Override
@@ -80,11 +84,11 @@ public class TaskOfUpdate extends TaskOfBase {
         }
 
         // 強制再描画
-        if (JMPFlags.ForcedCyclicRepaintFlag == true) {
+        if (requestUpdateFlag == true) {
             isUpdate = true;
             isRepaint = true;
             isRepaintBuiltin = true;
-            JMPFlags.ForcedCyclicRepaintFlag = false;
+            requestUpdateFlag = false;
         }
 
         // 更新
@@ -129,5 +133,12 @@ public class TaskOfUpdate extends TaskOfBase {
 
     @Override
     void end() {
+    }
+    
+    @Override
+    protected void interpret(TaskPacket obj) {
+        if (obj.getType() == PacketType.RequestUpdate) {
+            requestUpdateFlag = true;
+        }
     }
 }

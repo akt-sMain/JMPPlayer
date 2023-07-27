@@ -724,6 +724,20 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         if (JmpUtil.checkConfigKey(key, IDataManager.CFG_KEY_YOUTUBEDL_INSTALLED) == true) {
             youtubeDlWrapper.setYoutubeDlInstalled(isYoutubeDlInstalled());
         }
+        if (JmpUtil.checkConfigKey(key, IDataManager.CFG_KEY_YOUTUBEDL_FILENAME_MODE) == true) {
+            IJ_YoutubeDlFileNameConfig ijNameMode = getYoutubeDlFileNameMode();
+            switch (ijNameMode) {
+                case IJ_Id:
+                    youtubeDlWrapper.setFileNameConfig(wrapper.ProcessingYoutubeDLWrapper.FileNameConfig.WEB_ID);
+                    break;
+                case IJ_Title:
+                    youtubeDlWrapper.setFileNameConfig(wrapper.ProcessingYoutubeDLWrapper.FileNameConfig.WEB_TITLE);
+                    break;
+                default:
+                    break;
+                
+            }
+        }
     }
 
     @Override

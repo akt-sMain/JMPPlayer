@@ -193,7 +193,7 @@ public interface IJmpConfigDatabase {
         return IJ_YoutubeDlFileNameConfig.IJ_Id;
     }
 
-    default void setYoutubeDlInstalled(IJ_YoutubeDlFileNameConfig youtubeDlFileNameMode) {
+    default void setYoutubeDlFileNameMode(IJ_YoutubeDlFileNameConfig youtubeDlFileNameMode) {
         String s = "ID";
         switch (youtubeDlFileNameMode) {
             case IJ_Title:

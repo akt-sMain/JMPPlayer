@@ -5,7 +5,8 @@ public class TaskPacket {
     public enum PacketType {
         Notify,
         Callback,
-        Object
+        Object,
+        RequestUpdate, //Window更新 
     }
     
     private Object[] data;

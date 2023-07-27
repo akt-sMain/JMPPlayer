@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import jlib.core.IWindowManager;
 import jlib.gui.IJmpMainWindow;
 import jlib.gui.IJmpWindow;
-import jmp.JMPFlags;
 import jmp.gui.BuiltinSynthSetupDialog;
 import jmp.gui.FFmpegConvertDialog;
 import jmp.gui.FilePickupDialog;
@@ -122,7 +121,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         }
         else if (key.equals(system.getCommonRegisterKeyName(SystemManager.COMMON_REGKEY_NO_DEBUGMODE)) == true) {
             updateDebugMenu();
-            JMPFlags.ForcedCyclicRepaintFlag = true;
+            JMPCore.getTaskManager().requestWindowUpdate();
         }
         super.notifyUpdateCommonRegister(key);
     }
@@ -291,7 +290,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         }
 
         // 再描画を実行させる
-        JMPFlags.ForcedCyclicRepaintFlag = true;
+        JMPCore.getTaskManager().requestWindowUpdate();
     }
 
     public void showInformationMessageDialog(String message) {

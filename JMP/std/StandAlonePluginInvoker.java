@@ -17,7 +17,10 @@ public class StandAlonePluginInvoker {
 
     public static void exec(String args[], ConfigDatabaseWrapper config, IPlugin plugin) {
         boolean res = JMPLoader.invoke(args, config, plugin);
-        System.exit(res ? 0 : 1);
+        // ただしfalse起動失敗は常に終了する
+        if (res == false) {
+            System.exit(1);
+        }
     }
 
     public static void execSimple(String args[], IPlugin plugin) {

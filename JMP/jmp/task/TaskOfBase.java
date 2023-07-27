@@ -24,7 +24,6 @@ public abstract class TaskOfBase implements ITask, Runnable {
         }
         
         public TaskPacket pop() {
-            // スタックされたコールバックを呼び出し
             TaskPacket ret = null;
             Iterator<TaskPacket> i = lst.iterator();
             while (i.hasNext()) {
