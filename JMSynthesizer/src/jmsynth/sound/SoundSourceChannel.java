@@ -477,7 +477,6 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                 continue;
             tone.reset();
         }
-        this.setVolume(1.0f);
     }
     
     @Override
