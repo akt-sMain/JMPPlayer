@@ -1,6 +1,8 @@
 package jmsynth.app.component;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -22,6 +24,19 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
 
     private JPanel contentPane;
     protected MultiWaveViewerPanel panel;
+
+    private ChannelSetupDialog setupDialog = null;
+
+    private MidiInterface midiInterface = null;
+    private JMSoftSynthesizer softSynth = null;
+    private JCheckBox chckbxAutoOscChange;
+    private final ButtonGroup buttonGroup = new ButtonGroup();
+    private JRadioButton rdbtnModeDetail;
+    private JRadioButton rdbtnModeSpectrum;
+    private JRadioButton rdbtnModeMerge;
+
+    private ProgramChangeTableEditDialog tableEditer;
+    private JPanel leftPanel;
     private JCheckBox chckbxWave1;
     private JCheckBox chckbxWave2;
     private JCheckBox chckbxWave3;
@@ -39,20 +54,13 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
     private JCheckBox chckbxWave15;
     private JCheckBox chckbxWave16;
     private JButton btnAllOff;
-    private JButton btnSetup;
-
-    private ChannelSetupDialog setupDialog = null;
-
-    private MidiInterface midiInterface = null;
-    private JMSoftSynthesizer softSynth = null;
-    private JCheckBox chckbxAutoOscChange;
-    private final ButtonGroup buttonGroup = new ButtonGroup();
-    private JRadioButton rdbtnModeDetail;
-    private JRadioButton rdbtnModeSpectrum;
+    private JButton btnAllOn;
     private JCheckBox chckbxAutoWaveVisible;
-    private JRadioButton rdbtnModeMerge;
-
-    private ProgramChangeTableEditDialog tableEditer;
+    private JPanel topPanel;
+    private JButton btnSetup;
+    private JPanel bottomPanel;
+    private JButton btnWCDefault;
+    private JButton btnWCSimple;
 
     /**
      * Create the frame.
@@ -61,205 +69,76 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
      */
     public WaveViewerFrame(JMSoftSynthesizer synth) {
         setTitle("Synthesizer setting");
-        setResizable(false);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setBounds(100, 100, 853, 667);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
-        contentPane.setLayout(null);
 
         softSynth = synth;
+        contentPane.setLayout(new BorderLayout(0, 0));
 
         panel = new MultiWaveViewerPanel(synth);
-        panel.setBounds(97, 58, 728, 542);
         contentPane.add(panel);
 
-        chckbxWave1 = new JCheckBox("wave1");
-        chckbxWave1.setBounds(12, 99, 73, 21);
-        contentPane.add(chckbxWave1);
+        bottomPanel = new JPanel();
+        contentPane.add(bottomPanel, BorderLayout.SOUTH);
 
-        chckbxWave2 = new JCheckBox("wave2");
-        chckbxWave2.setBounds(12, 131, 73, 21);
-        contentPane.add(chckbxWave2);
+        setupDialog = new ChannelSetupDialog(synth);
 
-        chckbxWave3 = new JCheckBox("wave3");
-        chckbxWave3.setBounds(12, 163, 73, 21);
-        contentPane.add(chckbxWave3);
-
-        chckbxWave4 = new JCheckBox("wave4");
-        chckbxWave4.setBounds(12, 195, 73, 21);
-        contentPane.add(chckbxWave4);
-
-        chckbxWave5 = new JCheckBox("wave5");
-        chckbxWave5.setBounds(12, 227, 73, 21);
-        contentPane.add(chckbxWave5);
-
-        chckbxWave6 = new JCheckBox("wave6");
-        chckbxWave6.setBounds(12, 259, 73, 21);
-        contentPane.add(chckbxWave6);
-
-        chckbxWave7 = new JCheckBox("wave7");
-        chckbxWave7.setBounds(12, 291, 73, 21);
-        contentPane.add(chckbxWave7);
-
-        chckbxWave8 = new JCheckBox("wave8");
-        chckbxWave8.setBounds(12, 323, 73, 21);
-        contentPane.add(chckbxWave8);
-
-        chckbxWave9 = new JCheckBox("wave9");
-        chckbxWave9.setBounds(12, 355, 73, 21);
-        contentPane.add(chckbxWave9);
-
-        chckbxWave10 = new JCheckBox("wave10");
-        chckbxWave10.setBounds(12, 387, 73, 21);
-        contentPane.add(chckbxWave10);
-
-        chckbxWave11 = new JCheckBox("wave11");
-        chckbxWave11.setBounds(12, 419, 73, 21);
-        contentPane.add(chckbxWave11);
-
-        chckbxWave12 = new JCheckBox("wave12");
-        chckbxWave12.setBounds(12, 451, 73, 21);
-        contentPane.add(chckbxWave12);
-
-        chckbxWave13 = new JCheckBox("wave13");
-        chckbxWave13.setBounds(12, 483, 73, 21);
-        contentPane.add(chckbxWave13);
-
-        chckbxWave14 = new JCheckBox("wave14");
-        chckbxWave14.setBounds(12, 515, 73, 21);
-        contentPane.add(chckbxWave14);
-
-        chckbxWave15 = new JCheckBox("wave15");
-        chckbxWave15.setBounds(12, 547, 73, 21);
-        contentPane.add(chckbxWave15);
-
-        chckbxWave16 = new JCheckBox("wave16");
-        chckbxWave16.setBounds(12, 579, 73, 21);
-        contentPane.add(chckbxWave16);
-
-        btnAllOff = new JButton("All Off");
-        btnAllOff.addActionListener(new ActionListener() {
+        JButton btnSaveButton = new JButton("Save");
+        btnSaveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                boolean bb = false;
-                chckbxWave1.setSelected(bb);
-                chckbxWave2.setSelected(bb);
-                chckbxWave3.setSelected(bb);
-                chckbxWave4.setSelected(bb);
-                chckbxWave5.setSelected(bb);
-                chckbxWave6.setSelected(bb);
-                chckbxWave7.setSelected(bb);
-                chckbxWave8.setSelected(bb);
-                chckbxWave9.setSelected(bb);
-                chckbxWave10.setSelected(bb);
-                chckbxWave11.setSelected(bb);
-                chckbxWave12.setSelected(bb);
-                chckbxWave13.setSelected(bb);
-                chckbxWave14.setSelected(bb);
-                chckbxWave15.setSelected(bb);
-                chckbxWave16.setSelected(bb);
-                updateLabel();
-            }
-        });
-        btnAllOff.setBounds(8, 42, 77, 21);
-        contentPane.add(btnAllOff);
+                File ret = null;
 
-        JButton btnAllOn = new JButton("All ON");
-        btnAllOn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                boolean bb = true;
-                chckbxWave1.setSelected(bb);
-                chckbxWave2.setSelected(bb);
-                chckbxWave3.setSelected(bb);
-                chckbxWave4.setSelected(bb);
-                chckbxWave5.setSelected(bb);
-                chckbxWave6.setSelected(bb);
-                chckbxWave7.setSelected(bb);
-                chckbxWave8.setSelected(bb);
-                chckbxWave9.setSelected(bb);
-                chckbxWave10.setSelected(bb);
-                chckbxWave11.setSelected(bb);
-                chckbxWave12.setSelected(bb);
-                chckbxWave13.setSelected(bb);
-                chckbxWave14.setSelected(bb);
-                chckbxWave15.setSelected(bb);
-                chckbxWave16.setSelected(bb);
-                updateLabel();
-            }
-        });
-        btnAllOn.setBounds(8, 10, 77, 21);
-        contentPane.add(btnAllOn);
+                JFileChooser filechooser = new JFileChooser();
+                File f = new File(new File("config." + JMSynthFile.EXTENSION_CONFIG).getAbsolutePath());
+                filechooser.setSelectedFile(f);
 
-        chckbxWave1.addActionListener(this);
-        chckbxWave2.addActionListener(this);
-        chckbxWave3.addActionListener(this);
-        chckbxWave4.addActionListener(this);
-        chckbxWave5.addActionListener(this);
-        chckbxWave6.addActionListener(this);
-        chckbxWave7.addActionListener(this);
-        chckbxWave8.addActionListener(this);
-        chckbxWave9.addActionListener(this);
-        chckbxWave10.addActionListener(this);
-        chckbxWave11.addActionListener(this);
-        chckbxWave12.addActionListener(this);
-        chckbxWave13.addActionListener(this);
-        chckbxWave14.addActionListener(this);
-        chckbxWave15.addActionListener(this);
-        chckbxWave16.addActionListener(this);
-
-        btnSetup = new JButton("Setup");
-        btnSetup.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setupDialog.setLocation(WaveViewerFrame.this.getX() + 20, WaveViewerFrame.this.getY() + 20);
-                setupDialog.setVisible(true);
-            }
-        });
-        btnSetup.setBounds(734, 26, 91, 21);
-        contentPane.add(btnSetup);
-
-        chckbxAutoOscChange = new JCheckBox("Auto tone change");
-        chckbxAutoOscChange.setVisible(false);
-        chckbxAutoOscChange.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (midiInterface != null) {
-                    midiInterface.setAutoSelectOscillator(chckbxAutoOscChange.isSelected());
+                int selected = filechooser.showSaveDialog(WaveViewerFrame.this);
+                if (selected == JFileChooser.APPROVE_OPTION) {
+                    ret = filechooser.getSelectedFile();
+                }
+                if (ret != null) {
+                    JMSynthFile.saveSynthConfig(ret, softSynth);
                 }
             }
         });
-        chckbxAutoOscChange.setBounds(463, 26, 141, 21);
-        contentPane.add(chckbxAutoOscChange);
+        bottomPanel.add(btnSaveButton);
 
-        rdbtnModeDetail = new JRadioButton("Detail");
-        rdbtnModeDetail.addActionListener(new ActionListener() {
+        JButton btnLoad = new JButton("Load");
+        btnLoad.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                updateLabel();
+                File ret = null;
+
+                // 確認ダイアログ
+                JFileChooser filechooser = new JFileChooser();
+                int selected = filechooser.showOpenDialog(WaveViewerFrame.this);
+                switch (selected) {
+                    case JFileChooser.APPROVE_OPTION:
+                        ret = filechooser.getSelectedFile();
+                        break;
+                    default:
+                        break;
+                }
+                if (ret != null) {
+                    JMSynthFile.loadSynthConfig(ret, softSynth);
+                }
             }
         });
-        buttonGroup.add(rdbtnModeDetail);
-        rdbtnModeDetail.setSelected(true);
-        rdbtnModeDetail.setBounds(97, 26, 113, 21);
-        contentPane.add(rdbtnModeDetail);
+        bottomPanel.add(btnLoad);
 
-        rdbtnModeSpectrum = new JRadioButton("Spectrum");
-        rdbtnModeSpectrum.addActionListener(new ActionListener() {
+        JButton btnTable = new JButton("Table asign");
+        btnTable.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                updateLabel();
+                tableEditer.openDlg(midiInterface.getProgramChangeTable(), softSynth);
             }
         });
-        buttonGroup.add(rdbtnModeSpectrum);
-        rdbtnModeSpectrum.setBounds(348, 26, 91, 21);
-        contentPane.add(rdbtnModeSpectrum);
+        bottomPanel.add(btnTable);
 
-        rdbtnModeMerge = new JRadioButton("Merge");
-        rdbtnModeMerge.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                updateLabel();
-            }
-        });
-        buttonGroup.add(rdbtnModeMerge);
-        rdbtnModeMerge.setBounds(214, 26, 113, 21);
-        contentPane.add(rdbtnModeMerge);
+        leftPanel = new JPanel();
+        contentPane.add(leftPanel, BorderLayout.WEST);
+        leftPanel.setLayout(new GridLayout(22, 0, 0, 0));
 
         chckbxAutoWaveVisible = new JCheckBox("Auto");
         chckbxAutoWaveVisible.addActionListener(new ActionListener() {
@@ -291,10 +170,248 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
                 updateMenu();
             }
         });
-        chckbxAutoWaveVisible.setBounds(12, 69, 77, 21);
-        contentPane.add(chckbxAutoWaveVisible);
+        chckbxAutoWaveVisible.setSelected(true);
+        leftPanel.add(chckbxAutoWaveVisible);
 
-        setupDialog = new ChannelSetupDialog(synth);
+        btnAllOff = new JButton("All Off");
+        btnAllOff.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                boolean bb = false;
+                chckbxWave1.setSelected(bb);
+                chckbxWave2.setSelected(bb);
+                chckbxWave3.setSelected(bb);
+                chckbxWave4.setSelected(bb);
+                chckbxWave5.setSelected(bb);
+                chckbxWave6.setSelected(bb);
+                chckbxWave7.setSelected(bb);
+                chckbxWave8.setSelected(bb);
+                chckbxWave9.setSelected(bb);
+                chckbxWave10.setSelected(bb);
+                chckbxWave11.setSelected(bb);
+                chckbxWave12.setSelected(bb);
+                chckbxWave13.setSelected(bb);
+                chckbxWave14.setSelected(bb);
+                chckbxWave15.setSelected(bb);
+                chckbxWave16.setSelected(bb);
+                updateLabel();
+            }
+        });
+        leftPanel.add(btnAllOff, BorderLayout.NORTH);
+
+        btnAllOn = new JButton("All ON");
+        btnAllOn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                boolean bb = true;
+                chckbxWave1.setSelected(bb);
+                chckbxWave2.setSelected(bb);
+                chckbxWave3.setSelected(bb);
+                chckbxWave4.setSelected(bb);
+                chckbxWave5.setSelected(bb);
+                chckbxWave6.setSelected(bb);
+                chckbxWave7.setSelected(bb);
+                chckbxWave8.setSelected(bb);
+                chckbxWave9.setSelected(bb);
+                chckbxWave10.setSelected(bb);
+                chckbxWave11.setSelected(bb);
+                chckbxWave12.setSelected(bb);
+                chckbxWave13.setSelected(bb);
+                chckbxWave14.setSelected(bb);
+                chckbxWave15.setSelected(bb);
+                chckbxWave16.setSelected(bb);
+                updateLabel();
+            }
+        });
+        leftPanel.add(btnAllOn, BorderLayout.SOUTH);
+
+        btnWCDefault = new JButton("Full color");
+        btnWCDefault.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                panel.setRestoreColorTable();
+            }
+        });
+        leftPanel.add(btnWCDefault);
+
+        btnWCSimple = new JButton("Mono color");
+        btnWCSimple.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                panel.setDefaultColorTable();
+            }
+        });
+        leftPanel.add(btnWCSimple);
+
+        chckbxWave1 = new JCheckBox("wave1");
+        chckbxWave1.setSelected(false);
+        chckbxWave1.setEnabled(true);
+        leftPanel.add(chckbxWave1);
+
+        chckbxWave2 = new JCheckBox("wave2");
+        chckbxWave2.setSelected(false);
+        chckbxWave2.setEnabled(true);
+        leftPanel.add(chckbxWave2);
+
+        chckbxWave3 = new JCheckBox("wave3");
+        chckbxWave3.setSelected(false);
+        chckbxWave3.setEnabled(true);
+        leftPanel.add(chckbxWave3);
+
+        chckbxWave4 = new JCheckBox("wave4");
+        chckbxWave4.setSelected(false);
+        chckbxWave4.setEnabled(true);
+        leftPanel.add(chckbxWave4);
+
+        chckbxWave5 = new JCheckBox("wave5");
+        chckbxWave5.setSelected(false);
+        chckbxWave5.setEnabled(true);
+        leftPanel.add(chckbxWave5);
+
+        chckbxWave6 = new JCheckBox("wave6");
+        chckbxWave6.setSelected(false);
+        chckbxWave6.setEnabled(true);
+        leftPanel.add(chckbxWave6);
+
+        chckbxWave7 = new JCheckBox("wave7");
+        chckbxWave7.setSelected(false);
+        chckbxWave7.setEnabled(true);
+        leftPanel.add(chckbxWave7);
+
+        chckbxWave8 = new JCheckBox("wave8");
+        chckbxWave8.setSelected(false);
+        chckbxWave8.setEnabled(true);
+        leftPanel.add(chckbxWave8);
+
+        chckbxWave9 = new JCheckBox("wave9");
+        chckbxWave9.setSelected(false);
+        chckbxWave9.setEnabled(true);
+        leftPanel.add(chckbxWave9);
+
+        chckbxWave10 = new JCheckBox("wave10");
+        chckbxWave10.setSelected(false);
+        chckbxWave10.setEnabled(true);
+        leftPanel.add(chckbxWave10);
+
+        chckbxWave11 = new JCheckBox("wave11");
+        chckbxWave11.setSelected(false);
+        chckbxWave11.setEnabled(true);
+        leftPanel.add(chckbxWave11);
+
+        chckbxWave12 = new JCheckBox("wave12");
+        chckbxWave12.setSelected(false);
+        chckbxWave12.setEnabled(true);
+        leftPanel.add(chckbxWave12);
+
+        chckbxWave13 = new JCheckBox("wave13");
+        chckbxWave13.setSelected(false);
+        chckbxWave13.setEnabled(true);
+        leftPanel.add(chckbxWave13);
+
+        chckbxWave14 = new JCheckBox("wave14");
+        chckbxWave14.setSelected(false);
+        chckbxWave14.setEnabled(true);
+        leftPanel.add(chckbxWave14);
+
+        chckbxWave15 = new JCheckBox("wave15");
+        chckbxWave15.setSelected(false);
+        chckbxWave15.setEnabled(true);
+        leftPanel.add(chckbxWave15);
+
+        chckbxWave16 = new JCheckBox("wave16");
+        chckbxWave16.setSelected(false);
+        chckbxWave16.setEnabled(true);
+        leftPanel.add(chckbxWave16);
+
+        topPanel = new JPanel();
+        contentPane.add(topPanel, BorderLayout.NORTH);
+
+        rdbtnModeDetail = new JRadioButton("Detail");
+        rdbtnModeDetail.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateLabel();
+            }
+        });
+        buttonGroup.add(rdbtnModeDetail);
+        rdbtnModeDetail.setSelected(true);
+        topPanel.add(rdbtnModeDetail);
+
+        rdbtnModeSpectrum = new JRadioButton("Spectrum");
+        rdbtnModeSpectrum.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateLabel();
+            }
+        });
+        buttonGroup.add(rdbtnModeSpectrum);
+        topPanel.add(rdbtnModeSpectrum);
+
+        rdbtnModeMerge = new JRadioButton("Merge");
+        rdbtnModeMerge.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateLabel();
+            }
+        });
+        buttonGroup.add(rdbtnModeMerge);
+        topPanel.add(rdbtnModeMerge);
+
+        btnSetup = new JButton("Wave setup");
+        btnSetup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setupDialog.setLocation(WaveViewerFrame.this.getX() + 20, WaveViewerFrame.this.getY() + 20);
+                setupDialog.setVisible(true);
+            }
+        });
+        topPanel.add(btnSetup);
+
+        JButton btnResetAllChannel = new JButton("Init all channel");
+        topPanel.add(btnResetAllChannel);
+
+        chckbxAutoOscChange = new JCheckBox("Enable ProgramChange");
+        topPanel.add(chckbxAutoOscChange);
+        chckbxAutoOscChange.setVisible(false);
+        chckbxAutoOscChange.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (midiInterface != null) {
+                    midiInterface.setAutoSelectOscillator(chckbxAutoOscChange.isSelected());
+                }
+            }
+        });
+        btnResetAllChannel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                softSynth.initializeAllChannel();
+
+                if (setupDialog.isVisible() == true) {
+                    setupDialog.reset();
+                    setupDialog.repaint();
+                }
+            }
+        });
+
+        _init();
+    }
+
+    public WaveViewerFrame(MidiInterface iface) {
+        this((JMSoftSynthesizer) iface.getSynthController());
+        midiInterface = iface;
+        chckbxAutoOscChange.setVisible(true);
+
+        _init();
+    }
+
+    private void _init() {
+
+        chckbxWave1.addActionListener(this);
+        chckbxWave2.addActionListener(this);
+        chckbxWave3.addActionListener(this);
+        chckbxWave4.addActionListener(this);
+        chckbxWave5.addActionListener(this);
+        chckbxWave6.addActionListener(this);
+        chckbxWave7.addActionListener(this);
+        chckbxWave8.addActionListener(this);
+        chckbxWave9.addActionListener(this);
+        chckbxWave10.addActionListener(this);
+        chckbxWave11.addActionListener(this);
+        chckbxWave12.addActionListener(this);
+        chckbxWave13.addActionListener(this);
+        chckbxWave14.addActionListener(this);
+        chckbxWave15.addActionListener(this);
+        chckbxWave16.addActionListener(this);
 
         boolean bb = false;
         chckbxWave1.setSelected(bb);
@@ -315,86 +432,11 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
         chckbxWave16.setSelected(bb);
         chckbxAutoWaveVisible.setSelected(true);
 
-        JButton btnSaveButton = new JButton("Save");
-        btnSaveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                File ret = null;
-
-                JFileChooser filechooser = new JFileChooser();
-                File f = new File(new File("config." + JMSynthFile.EXTENSION_CONFIG).getAbsolutePath());
-                filechooser.setSelectedFile(f);
-
-                int selected = filechooser.showSaveDialog(WaveViewerFrame.this);
-                if (selected == JFileChooser.APPROVE_OPTION) {
-                    ret = filechooser.getSelectedFile();
-                }
-                if (ret != null) {
-                    JMSynthFile.saveSynthConfig(ret, softSynth);
-                }
-            }
-        });
-        btnSaveButton.setBounds(734, 610, 91, 21);
-        contentPane.add(btnSaveButton);
-
-        JButton btnLoad = new JButton("Load");
-        btnLoad.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                File ret = null;
-
-                // 確認ダイアログ
-                JFileChooser filechooser = new JFileChooser();
-                int selected = filechooser.showOpenDialog(WaveViewerFrame.this);
-                switch (selected) {
-                    case JFileChooser.APPROVE_OPTION:
-                        ret = filechooser.getSelectedFile();
-                        break;
-                    default:
-                        break;
-                }
-                if (ret != null) {
-                    JMSynthFile.loadSynthConfig(ret, softSynth);
-                }
-            }
-        });
-        btnLoad.setBounds(635, 610, 91, 21);
-        contentPane.add(btnLoad);
-
-        JButton btnTable = new JButton("Table");
-        btnTable.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tableEditer.openDlg(midiInterface.getProgramChangeTable(), softSynth);
-            }
-        });
-        btnTable.setBounds(631, 26, 91, 21);
-        contentPane.add(btnTable);
-
-        JButton btnResetAllChannel = new JButton("Reset all channel");
-        btnResetAllChannel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                softSynth.initializeAllChannel();
-
-                if (setupDialog.isVisible() == true) {
-                    setupDialog.reset();
-                    setupDialog.repaint();
-                }
-            }
-        });
-        btnResetAllChannel.setBounds(97, 610, 141, 21);
-        contentPane.add(btnResetAllChannel);
-
+        tableEditer = new ProgramChangeTableEditDialog();
         rdbtnModeDetail.setVisible(true);
         rdbtnModeSpectrum.setVisible(false);
         rdbtnModeMerge.setVisible(true);
 
-        tableEditer = new ProgramChangeTableEditDialog();
-
-        updateLabel();
-    }
-
-    public WaveViewerFrame(MidiInterface iface) {
-        this((JMSoftSynthesizer) iface.getSynthController());
-        midiInterface = iface;
-        chckbxAutoOscChange.setVisible(true);
         updateLabel();
     }
 
@@ -427,7 +469,6 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
         else {
             panel.traceViewMode = MultiWaveViewerPanel.TRACE_VIEW_MODE_SPECT;
         }
-
         panel.visibleAuto = chckbxAutoWaveVisible.isSelected();
         boolean cbEnable = true;
         if (chckbxAutoWaveVisible.isSelected() == true) {

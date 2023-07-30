@@ -20,11 +20,9 @@ public class MultiWaveViewerPanel extends JPanel {
     public static final int TRACE_VIEW_MODE_MERGE = 1;
     public static final int TRACE_VIEW_MODE_SPECT = 2;
 
-    private static Color BG_COLOR = Color.BLACK; // new Color(0, 0, 102);
-    private static Color[] WAVE_COLOR = new Color[] { new Color(255, 255, 102), new Color(255, 204, 255), new Color(255, 204, 102), new Color(255, 102, 102),
-            new Color(255, 255, 255), new Color(204, 255, 102), new Color(204, 204, 255), new Color(204, 255, 204), new Color(255, 0, 255),
-            new Color(255, 0, 0), new Color(204, 102, 255), new Color(102, 51, 255), new Color(0, 128, 128), new Color(51, 204, 51), new Color(230, 230, 250),
-            new Color(0, 0, 255), };
+    private static Color BG_COLOR = Color.BLACK;
+    //private static Color BG_COLOR = new Color(230, 230, 230);
+    private static Color DEFAULT_COLOR = Color.WHITE;
     private static Color CENTER_COLOR = Color.DARK_GRAY;
 
     byte[] d1 = null;
@@ -49,6 +47,7 @@ public class MultiWaveViewerPanel extends JPanel {
     public int traceViewMode = TRACE_VIEW_MODE_DETAIL;
 
     private Color[] waveColorTable = null;
+    private Color[] backupWaveColorTable = null;
 
     private static boolean hispeedSpectrum = false;
     private boolean hispeedSpectrumRunnable = true;
@@ -192,9 +191,11 @@ public class MultiWaveViewerPanel extends JPanel {
         setBackground(BG_COLOR);
         Arrays.fill(visibleWave, true);
 
-        waveColorTable = new Color[WAVE_COLOR.length];
+        waveColorTable = new Color[16];
+        backupWaveColorTable = new Color[16];
         for (int i = 0; i < waveColorTable.length; i++) {
-            waveColorTable[i] = WAVE_COLOR[i];
+            waveColorTable[i] = DEFAULT_COLOR;
+            backupWaveColorTable[i] = DEFAULT_COLOR;
         }
 
         if (hispeedSpectrum == true) {
@@ -508,9 +509,22 @@ public class MultiWaveViewerPanel extends JPanel {
         }
     }
 
+    public void setDefaultColorTable() {
+        for (int i = 0; i < waveColorTable.length; i++) {
+            this.waveColorTable[i] = DEFAULT_COLOR;
+        }
+    }
+    
+    public void setRestoreColorTable() {
+        for (int i = 0; i < waveColorTable.length; i++) {
+            this.waveColorTable[i] = this.backupWaveColorTable[i];
+        }
+    }
+    
     public void setWaveColorTable(Color[] waveColorTable) {
         for (int i = 0; i < waveColorTable.length; i++) {
             this.waveColorTable[i] = waveColorTable[i];
+            this.backupWaveColorTable[i] = waveColorTable[i];
         }
     }
 
