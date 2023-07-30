@@ -35,7 +35,9 @@ import jlib.player.IPlayer;
 import jlib.player.Player;
 import jmp.JMPFlags;
 import jmp.core.FileManager.AutoPlayMode;
-import jmp.file.FileResult;
+import jmp.core.asset.AbstractCoreAsset;
+import jmp.core.asset.AbstractCoreAsset.OperateType;
+import jmp.core.asset.FileLoadCoreAsset;
 import jmp.file.PlaylistPickup;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.midi.JMPMidiFilter;
@@ -152,9 +154,9 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             SMoviePlayer = new MoviePlayer();
             SMoviePlayer.setSupportExtentions(exMUSIC);
             PlayerAccessor.register(SMoviePlayer);
-            System.out.println("enable movie");
         }
         else {
+            System.out.println("Disable movie player");
             SMoviePlayer = SDummyPlayer;
         }
         moviePlayerModel = (IMoviePlayerModel)SMoviePlayer;
@@ -626,46 +628,51 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         }
         JmpUtil.writeTextFile(path, lst);
     }
-
+    
     @Override
-    protected void loadFileForCore(File file, FileResult result) {
-        super.loadFileForCore(file, result);
+    protected boolean operate(AbstractCoreAsset asset) {
+        boolean res = super.operate(asset);
+        if (asset.getOperateType() == OperateType.FileLoad) {
+            /* ファイルロード処理 */
+            FileLoadCoreAsset fileAsset = (FileLoadCoreAsset)asset;
+            Player tmpPlayer = PlayerAccessor.getCurrent();
+            boolean loadResult = true;
 
-        Player tmpPlayer = PlayerAccessor.getCurrent();
+            try {
+                changePlayer(fileAsset.file);
+                if (tmpPlayer != PlayerAccessor.getCurrent()) {
+                    tmpPlayer.changingPlayer();
+                }
 
-        boolean loadResult = true;
-
-        try {
-            changePlayer(file);
-            if (tmpPlayer != PlayerAccessor.getCurrent()) {
-                tmpPlayer.changingPlayer();
+                if (PlayerAccessor.getCurrent().loadFile(fileAsset.file) == false) {
+                    loadResult = false;
+                }
             }
-
-            if (PlayerAccessor.getCurrent().loadFile(file) == false) {
+            catch (Exception e) {
+                if (JMPFlags.DebugMode == true) {
+                    e.printStackTrace();
+                }
                 loadResult = false;
             }
-        }
-        catch (Exception e) {
-            if (JMPFlags.DebugMode == true) {
-                e.printStackTrace();
+            finally {
+                if (loadResult == false) {
+                    // ロードに失敗した場合は、プレイヤーを元に戻す
+                    PlayerAccessor.change(tmpPlayer);
+                }
             }
-            loadResult = false;
-        }
-        finally {
-            if (loadResult == false) {
-                // ロードに失敗した場合は、プレイヤーを元に戻す
-                PlayerAccessor.change(tmpPlayer);
-            }
-        }
 
-        result.status = loadResult;
-        if (result.status == false) {
-            /* ファイルオープンに例外が発生した場合、プレーヤーを切り替える */
-            changeMidiPlayer();
-            JMPCore.getWindowManager().getMainWindow().clearStatusMessage();
-            LanguageManager lm = JMPCore.getLanguageManager();
-            result.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_5);
+            fileAsset.result.status = loadResult;
+            if (fileAsset.result.status == false) {
+                /* ファイルオープンに例外が発生した場合、プレーヤーを切り替える */
+                changeMidiPlayer();
+                JMPCore.getWindowManager().getMainWindow().clearStatusMessage();
+                LanguageManager lm = JMPCore.getLanguageManager();
+                fileAsset.result.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_5);
+            }
+            
+            res = loadResult; 
         }
+        return res;
     }
 
     public boolean isSupportedExtensionAccessor(String extension) {

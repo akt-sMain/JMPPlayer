@@ -7,6 +7,7 @@ import jlib.core.IDataManager;
 import jlib.plugin.IPlugin;
 import jmp.ErrorDef;
 import jmp.JMPFlags;
+import jmp.core.asset.AbstractCoreAsset;
 import jmp.file.CommonRegisterINI;
 import jmp.file.ConfigDatabaseWrapper;
 import jmp.file.FileResult;
@@ -166,6 +167,26 @@ public class JMPCore {
             JMPCore.ErrorId = ErrorDef.ERROR_ID_SYSTEM_FAIL_END_FUNC;
         }
         return result;
+    }
+    
+    static boolean operate(AbstractCoreAsset asset, boolean dirIsAsc) {
+        boolean res = true; 
+        List<AbstractManager> managers;
+        
+        if (dirIsAsc == true) {
+            managers = ManagerInstances.getManagersOfAsc();
+        }
+        else {
+            managers = ManagerInstances.getManagersOfDesc();
+        }
+        
+        for (AbstractManager am : managers) {
+            if (false == am.operate(asset)) {
+                res = false;
+                break;
+            }
+        }
+        return res;
     }
 
     public static boolean isFinishedInitialize() {

@@ -3,6 +3,7 @@ package jmp.core;
 import java.io.File;
 
 import jmp.JMPFlags;
+import jmp.core.asset.FileLoadCoreAsset;
 import jmp.file.FileResult;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.plugin.PluginWrapper;
@@ -151,12 +152,10 @@ public class FileCallbackCreator {
             /* ロード処理 */
             endResult.status = true;
             endResult.statusMsg = "";
-            for (AbstractManager am : ManagerInstances.getManagersOfAsc()) {
-                am.loadFileForCore(file, endResult);
-                if (endResult.status == false) {
-                    break;
-                }
-            }
+            
+            /* coreのOperateをコール */
+            FileLoadCoreAsset asset = new FileLoadCoreAsset(file, endResult);
+            JMPCore.operate(asset, true);
 
             /* 事後処理 */
             if (endResult.status == true) {

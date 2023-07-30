@@ -16,7 +16,9 @@ import function.Utility;
 import jlib.core.ISystemManager;
 import jlib.plugin.IPlugin;
 import jmp.JMPFlags;
-import jmp.file.FileResult;
+import jmp.core.asset.AbstractCoreAsset;
+import jmp.core.asset.AbstractCoreAsset.OperateType;
+import jmp.core.asset.FileLoadCoreAsset;
 import jmp.file.IJmpFileBuilder;
 import jmp.file.JmpFileBuilderFactory;
 import jmp.lang.DefineLanguage.LangID;
@@ -849,19 +851,24 @@ public class PluginManager extends AbstractManager {
     public void send(JmpMidiPacket packet) {
         observers.catchMidiEvent(packet.message, packet.timeStamp, packet.senderType);
     }
-
+    
     @Override
-    protected void loadFileForCore(File file, FileResult result) {
-        super.loadFileForCore(file, result);
-
-        try {
-            observers.loadFile(file);
+    protected boolean operate(AbstractCoreAsset asset) {
+        boolean res = super.operate(asset);
+        if (asset.getOperateType() == OperateType.FileLoad) {
+            /* ファイルロード処理 */
+            FileLoadCoreAsset fileAsset = (FileLoadCoreAsset)asset;
+            try {
+                observers.loadFile(fileAsset.file);
+            }
+            catch (Exception e) {
+                LanguageManager lm = JMPCore.getLanguageManager();
+                fileAsset.result.status = false;
+                fileAsset.result.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_5) + "(" + lm.getLanguageStr(LangID.Plugin_error) + ")";
+                res = false;
+            }
         }
-        catch (Exception e) {
-            LanguageManager lm = JMPCore.getLanguageManager();
-            result.status = false;
-            result.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_5) + "(" + lm.getLanguageStr(LangID.Plugin_error) + ")";
-        }
+        return res;
     }
 
     public void closeAllPlugins() {

@@ -1,10 +1,8 @@
 package jmp.core;
 
-import java.io.File;
-
 import jlib.core.IManager;
 import jmp.core.ManagerInstances.TypeOfKey;
-import jmp.file.FileResult;
+import jmp.core.asset.AbstractCoreAsset;
 import jmp.file.IJmpConfigDatabase;
 import jmp.task.TaskOfNotify.NotifyID;
 import jmp.util.JmpUtil;
@@ -49,7 +47,14 @@ public abstract class AbstractManager implements IManager, IJmpConfigDatabase {
         return initializeFlag;
     }
 
-    protected void loadFileForCore(File file, FileResult result) {
+    /**
+     * 全管理クラス共通の実行処理 
+     * 
+     * @param asset 実行資産
+     * @return 実行の成否(falseの場合は処理を中断する)
+     */
+    protected boolean operate(AbstractCoreAsset asset) {
+        return true;
     }
     
     @Override
