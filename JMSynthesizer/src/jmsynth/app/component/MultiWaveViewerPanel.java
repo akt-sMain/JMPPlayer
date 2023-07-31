@@ -2,12 +2,14 @@ package jmsynth.app.component;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.util.Arrays;
 
+import javax.sound.sampled.FloatControl;
 import javax.swing.JPanel;
 
 import jmsynth.JMSoftSynthesizer;
@@ -19,6 +21,7 @@ public class MultiWaveViewerPanel extends JPanel {
     public static final int TRACE_VIEW_MODE_DETAIL = 0;
     public static final int TRACE_VIEW_MODE_MERGE = 1;
     public static final int TRACE_VIEW_MODE_SPECT = 2;
+    public static final int TRACE_VIEW_MODE_INFO = 3;
 
     private static Color BG_COLOR = Color.BLACK;
     // private static Color BG_COLOR = new Color(230, 230, 230);
@@ -54,12 +57,14 @@ public class MultiWaveViewerPanel extends JPanel {
     private byte[] hWaveBuf = null;
     private double[] hSpetrumBuf = null;
     private Thread spectrumMonitorThread = null;
+    
+    private JMSoftSynthesizer synth;
 
     /**
      * Create the panel.
      */
     public MultiWaveViewerPanel(JMSoftSynthesizer synth) {
-
+        this.synth = synth;
         synth.setWaveRepaintListener(0, new IWaveRepaintListener() {
 
             @Override
@@ -286,8 +291,11 @@ public class MultiWaveViewerPanel extends JPanel {
         else if (traceViewMode == TRACE_VIEW_MODE_MERGE) {
             paintMergeWave(g);
         }
-        else {
+        else if (traceViewMode == TRACE_VIEW_MODE_SPECT) {
             paintSpectrum(g2d);
+        }
+        else {
+            paintChannelInfo(g);
         }
     }
 
@@ -342,6 +350,61 @@ public class MultiWaveViewerPanel extends JPanel {
         g2d.setStroke(new BasicStroke(WAVE_BOLD, BasicStroke.CAP_ROUND, BasicStroke.CAP_ROUND));
         g2d.drawPolyline(xPoints, yPoints, length);
         g2d.setStroke(new BasicStroke());
+    }
+    
+    public void paintChannelInfo(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        int numOfRow = 4;
+        int numOfCol = 4;
+        
+        int rh = 12;
+        int w = getWidth() / numOfCol;
+        int h = getHeight() / numOfRow;
+        for (int c=0; c<numOfRow; c++) {
+            for (int r=0; r<numOfRow; r++) {
+                String str = "";
+                int x = 10 + (c * w);
+                int y = 15 + (r * h);
+                int i = (r * numOfCol) + c;
+                SoundSourceChannel channel = synth.getChannel(i);
+                Color waveColor = waveColorTable[channel.getChannel()];
+                g2d.setFont(new Font(Font.DIALOG, Font.PLAIN, 14));
+                g2d.setColor(waveColor);
+                g2d.drawString("CH" + (channel.getChannel() + 1), x, y);
+                g2d.setFont(new Font(Font.DIALOG, Font.PLAIN, 12));
+                x += 15;
+                y += 14;
+                str = String.format("vol = %.5f", channel.getFloatControl(FloatControl.Type.MASTER_GAIN).getValue());
+                g2d.drawString(str, x, y);
+                y += rh;
+                str = String.format("pan = %.5f", channel.getFloatControl(FloatControl.Type.PAN).getValue());
+                g2d.drawString(str, x, y);
+//                y += rh;
+//                g2d.drawString("reverb = " + (channel.getFloatControl(FloatControl.Type.REVERB_RETURN).getValue()), x, y);
+                y += rh;
+                g2d.drawString("NRPN = " + (channel.getNRPN(i)), x, y);
+                y += rh;
+                g2d.drawString("tones = " + channel.getNumOfTones(), x, y);
+//                y += rh;
+//                g2d.drawString("activeTones = " + channel.getNumOfActiveTone(), x, y);
+                y += rh;
+                g2d.drawString("pool = " + channel.getNumOfTonePool(), x, y);
+                y += rh;
+                str = String.format("pit = %.5f", channel.getTonePitch());
+                g2d.drawString(str, x, y);
+                y += rh;
+                g2d.drawString("vel = " + channel.getToneVelocity(), x, y);
+                y += rh;
+                g2d.drawString("exp = " + channel.getToneExpression(), x, y);
+                y += rh;
+                str = String.format("envOffs = %.5f", channel.getToneEnvelopeOffset());
+                g2d.drawString(str, x, y);
+                y += rh;
+                g2d.drawString("level = " + channel.getToneOverallLevel(), x, y);
+                g2d.setColor(null);
+                g2d.setFont(null);
+            }
+        }
     }
 
     public void paintWave(Graphics g, byte[] d, int ch) {

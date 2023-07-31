@@ -61,6 +61,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
     private JPanel bottomPanel;
     private JButton btnWCDefault;
     private JButton btnWCSimple;
+    private JRadioButton rdbtnModeInfo;
 
     /**
      * Create the frame.
@@ -322,7 +323,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
         topPanel = new JPanel();
         contentPane.add(topPanel, BorderLayout.NORTH);
 
-        rdbtnModeDetail = new JRadioButton("Detail");
+        rdbtnModeDetail = new JRadioButton("Waves");
         rdbtnModeDetail.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateLabel();
@@ -357,6 +358,15 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
                 setupDialog.setVisible(true);
             }
         });
+        
+        rdbtnModeInfo = new JRadioButton("ValueMonitor");
+        rdbtnModeInfo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateLabel();
+            }
+        });
+        buttonGroup.add(rdbtnModeInfo);
+        topPanel.add(rdbtnModeInfo);
         topPanel.add(btnSetup);
 
         JButton btnResetAllChannel = new JButton("Init all channel");
@@ -466,8 +476,11 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
         else if (rdbtnModeMerge.isSelected() == true) {
             panel.traceViewMode = MultiWaveViewerPanel.TRACE_VIEW_MODE_MERGE;
         }
-        else {
+        else if (rdbtnModeSpectrum.isSelected() == true) {
             panel.traceViewMode = MultiWaveViewerPanel.TRACE_VIEW_MODE_SPECT;
+        }
+        else if (rdbtnModeInfo.isSelected() == true) {
+            panel.traceViewMode = MultiWaveViewerPanel.TRACE_VIEW_MODE_INFO;
         }
         panel.visibleAuto = chckbxAutoWaveVisible.isSelected();
         boolean cbEnable = true;

@@ -278,6 +278,11 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     protected void exit() { // 再生終了
         isRunnable = false;
     }
+    
+    public FloatControl getFloatControl(FloatControl.Type type) {
+        FloatControl control = (FloatControl) line.getControl(type);
+        return control;
+    }
 
     /**
      * ボリュームの設定
@@ -466,12 +471,14 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     }
 
     public void resetAllController(int ch) {
-        for (int i = 0; i < activeTones.size(); i++) {
-            Tone tone = activeTones.get(i);
-            if (tone == null) {
-                continue;
+        // 発音中の音源を元に戻す  
+        for (int i = 0; i < tones.length; i++) {
+            Tone tone = tones[i];
+            if (tone != null) {
+                activeTones.remove(tone);
+                tonePool.push(tone);
+                tones[i] = null;
             }
-            tone.reset();
         }
         for (int i = 0; i < tonePool.size(); i++) {
             Tone tone = tonePool.get(i);
@@ -630,7 +637,6 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         pitch_sc = 2;
         allSoundOff(0);
         resetAllController(0);
-        pitchBend(0, 0);
         setNRPN(0, 0);
         setPan(0, 64);
         setModulationDepth(0, 0);
@@ -690,6 +696,104 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     @Override
     public boolean isValidFesSimulate(int ch) {
         return this.oscConfig.isValidFesSimulate();
+    }
+    
+    public int getNumOfTones() {
+        int cnt = 0;
+        for (int i=0; i<tones.length; i++) {
+            if (tones[i] != null) {
+                cnt++;
+            }
+        }
+        return cnt;
+    }
+    
+    public int getNumOfActiveTone() {
+        return activeTones.size();
+    }
+    
+    public int getNumOfTonePool() {
+        return tonePool.size();
+    }
+    
+    public double getTonePitch() {
+        double val = 0.0;
+        try {
+            for (int i=0; i<tones.length; i++) {
+                Tone t = tones[i];
+                if (t != null) {
+                    val = t.getPitch();
+                    break;
+                }
+            }
+        }
+        catch(Exception e) {
+        }
+        return val;
+    }
+    
+    public int getToneExpression() {
+        int val = 0;
+        try {
+            for (int i=0; i<tones.length; i++) {
+                Tone t = tones[i];
+                if (t != null) {
+                    val = t.getExpression();
+                    break;
+                }
+            }
+        }
+        catch(Exception e) {
+        }
+        return val;
+    }
+    
+    public int getToneVelocity() {
+        int val = 0;
+        try {
+            for (int i=0; i<tones.length; i++) {
+                Tone t = tones[i];
+                if (t != null) {
+                    val = t.getVelocity();
+                    break;
+                }
+            }
+        }
+        catch(Exception e) {
+        }
+        return val;
+    }
+    
+    public double getToneEnvelopeOffset() {
+        double val = 0;
+        try {
+            for (int i=0; i<tones.length; i++) {
+                Tone t = tones[i];
+                if (t != null) {
+                    val = t.getEnvelopeOffset();
+                    break;
+                }
+            }
+        }
+        catch(Exception e) {
+        }
+        return val;
+    }
+    
+    public int getToneOverallLevel() {
+        int val = 0;
+        try {
+            for (int i=0; i<tones.length; i++) {
+                Tone t = tones[i];
+                if (t != null) {
+                    val = t.getOverallLevel();
+                    break;
+                }
+            }
+        }
+        catch(Exception e) {
+        }
+        return val;
     }
 
 }
