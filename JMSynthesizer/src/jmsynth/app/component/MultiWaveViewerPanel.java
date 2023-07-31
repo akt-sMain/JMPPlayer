@@ -410,7 +410,6 @@ public class MultiWaveViewerPanel extends JPanel {
         String value = "";
         final int valXGap = 50;
         double max, min, cur;
-        int barWidth = 50;
         for (int c=0; c<numOfRow; c++) {
             for (int r=0; r<numOfRow; r++) {
                 int x = 5 + (c * w);
@@ -639,10 +638,18 @@ public class MultiWaveViewerPanel extends JPanel {
 
         if (isVisibleWave(ch) == true) {
             if (traceViewMode != TRACE_VIEW_MODE_MERGE) {
+//                g2d.setColor(Color.DARK_GRAY);
+//                g2d.drawString("wave" + (ch + 1), xoffset + 5 + 1, (int) (yCenter - (vHeight / 3)) + 1);
+//                g2d.setColor(waveColor);
+//                g2d.drawString("wave" + (ch + 1), xoffset + 5, (int) (yCenter - (vHeight / 3)));
+                int x = 5 + ((visibleIndex % col) * vWidth);
+                int y = 15 + ((visibleIndex / col) * vHeight);
+                g2d.setFont(new Font(Font.DIALOG, Font.PLAIN, 14));
                 g2d.setColor(Color.DARK_GRAY);
-                g2d.drawString("wave" + (ch + 1), xoffset + 5 + 1, (int) (yCenter - (vHeight / 3)) + 1);
+                g2d.drawString("CH" + (ch + 1), x+1, y+1);
                 g2d.setColor(waveColor);
-                g2d.drawString("wave" + (ch + 1), xoffset + 5, (int) (yCenter - (vHeight / 3)));
+                g2d.drawString("CH" + (ch + 1), x, y);
+                g2d.setFont(null);
             }
             g2d.setStroke(new BasicStroke(1.5f));
             for (int i = 1; i <= 3; i++) {
