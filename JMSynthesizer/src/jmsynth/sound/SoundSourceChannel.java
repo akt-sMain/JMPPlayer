@@ -461,6 +461,10 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public void pitchBendSenc(int ch, int sc) {
         pitch_sc = (double)sc;
     }
+    
+    public double getPitchBendSenc() {
+        return pitch_sc;
+    }
 
     public void setNRPN(int ch, int nRPN) {
         NRPN = nRPN;

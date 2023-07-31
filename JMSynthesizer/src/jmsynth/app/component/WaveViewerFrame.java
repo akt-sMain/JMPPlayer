@@ -329,9 +329,36 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
                 updateLabel();
             }
         });
+
+        rdbtnModeMerge = new JRadioButton("Top");
+        rdbtnModeMerge.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateLabel();
+            }
+        });
+        rdbtnModeMerge.setSelected(true);
+        buttonGroup.add(rdbtnModeMerge);
+        topPanel.add(rdbtnModeMerge);
         buttonGroup.add(rdbtnModeDetail);
-        rdbtnModeDetail.setSelected(true);
+        rdbtnModeDetail.setSelected(false);
         topPanel.add(rdbtnModeDetail);
+
+        btnSetup = new JButton("Wave setup");
+        btnSetup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setupDialog.setLocation(WaveViewerFrame.this.getX() + 20, WaveViewerFrame.this.getY() + 20);
+                setupDialog.setVisible(true);
+            }
+        });
+
+        rdbtnModeInfo = new JRadioButton("Parameters");
+        rdbtnModeInfo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateLabel();
+            }
+        });
+        buttonGroup.add(rdbtnModeInfo);
+        topPanel.add(rdbtnModeInfo);
 
         rdbtnModeSpectrum = new JRadioButton("Spectrum");
         rdbtnModeSpectrum.addActionListener(new ActionListener() {
@@ -341,32 +368,6 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
         });
         buttonGroup.add(rdbtnModeSpectrum);
         topPanel.add(rdbtnModeSpectrum);
-
-        rdbtnModeMerge = new JRadioButton("Merge");
-        rdbtnModeMerge.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                updateLabel();
-            }
-        });
-        buttonGroup.add(rdbtnModeMerge);
-        topPanel.add(rdbtnModeMerge);
-
-        btnSetup = new JButton("Wave setup");
-        btnSetup.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                setupDialog.setLocation(WaveViewerFrame.this.getX() + 20, WaveViewerFrame.this.getY() + 20);
-                setupDialog.setVisible(true);
-            }
-        });
-        
-        rdbtnModeInfo = new JRadioButton("ValueMonitor");
-        rdbtnModeInfo.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                updateLabel();
-            }
-        });
-        buttonGroup.add(rdbtnModeInfo);
-        topPanel.add(rdbtnModeInfo);
         topPanel.add(btnSetup);
 
         JButton btnResetAllChannel = new JButton("Init all channel");
