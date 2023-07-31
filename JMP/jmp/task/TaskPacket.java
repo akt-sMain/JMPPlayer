@@ -1,14 +1,11 @@
 package jmp.task;
 
 public class TaskPacket {
-    
+
     public enum PacketType {
-        Notify,
-        Callback,
-        Object,
-        RequestUpdate, //Window更新 
+        Notify, Callback, Object, RequestUpdate, // Window更新
     }
-    
+
     private Object[] data;
     private PacketType type;
 
@@ -20,7 +17,7 @@ public class TaskPacket {
     public Object[] getDatas() {
         return data;
     }
-    
+
     public Object getData() {
         return getData(0);
     }

@@ -4,7 +4,7 @@ public class ThreadableModulator extends Modulator implements Runnable {
 
     private boolean isRunnable = true;
     private Thread timerThread = null;
-    
+
     public ThreadableModulator() {
         super();
         timerThread = new Thread(this);
@@ -23,12 +23,12 @@ public class ThreadableModulator extends Modulator implements Runnable {
             }
         }
     }
-    
+
     @Override
     public void startMod() {
         timerThread.start();
     }
-    
+
     @Override
     public void endMod() {
         isRunnable = false;

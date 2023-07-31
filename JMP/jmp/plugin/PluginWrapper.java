@@ -38,7 +38,7 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
 
     public static enum PluginState {
         CONNECTED, DISCONNECTED, INVALID;
-        
+
         public static PluginState strToState(String str) {
             for (PluginState p : values()) {
                 if (str.equalsIgnoreCase(p.toString()) == true) {
@@ -47,7 +47,7 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
             }
             return CONNECTED;
         }
-        
+
         @Override
         public String toString() {
             switch (this) {
@@ -59,7 +59,7 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
                     return "INVALID";
                 default:
                     return "";
-                
+
             }
         }
     }
@@ -82,7 +82,7 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
         this.state = PluginState.CONNECTED;
         this.name = name;
     }
-    
+
     private IPlayerListener makeDummyPlayerListener() {
         return new IPlayerListener() {
 
@@ -97,18 +97,18 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
             @Override
             public void startSequencer() {
             }
-        };        
+        };
     }
-    
+
     private IMidiEventListener makeDummyMidiEventListener() {
         return new IMidiEventListener() {
 
             @Override
             public void catchMidiEvent(MidiMessage message, long timeStamp, short senderType) {
             }
-        };  
+        };
     }
-    
+
     private ISupportExtensionConstraints makeDummySupportExtensionConstraints() {
         return new ISupportExtensionConstraints() {
             @Override
@@ -117,7 +117,7 @@ public class PluginWrapper implements IPlugin, IPlayerListener, IMidiEventListen
             }
         };
     }
-    
+
     public void setInterface() {
         if (this.plugin instanceof IPlayerListener) {
             this.playerListener = (IPlayerListener) this.plugin;

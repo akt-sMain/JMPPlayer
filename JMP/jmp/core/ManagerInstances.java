@@ -40,13 +40,13 @@ public class ManagerInstances {
 
     private static List<AbstractManager> asc = null;
     private static List<AbstractManager> desc = null;
-    
+
     // 設定データベース
     static ConfigDatabase SDatabase = null;
-    
+
     /** 初期化キー */
     public static final String CFG_KEY_INITIALIZE = "INITIALIZE";
-    
+
     public static enum TypeOfKey {
         STRING, LONG, INT, SHORT, FLOAT, DOUBLE, BOOL,
     }
@@ -79,11 +79,11 @@ public class ManagerInstances {
     static void setConfigParam(String key, String value) {
         SDatabase.setConfigParam(key, value);
     }
-    
+
     static String getConfigParam(String key) {
         return SDatabase.getConfigParam(key);
     }
-    
+
     static void sendNotify(NotifyID id, String key) {
         STaskManager.sendNotifyMessage(id, key);
     }

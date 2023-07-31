@@ -14,14 +14,14 @@ public class ConfigDatabase {
     private Map<String, String> database = null;
 
     private String[] keyset = null;
-    
+
     private String appName = "None";
     private String version = "None";
 
     private ConfigDatabase() {
         setup(null);
     }
-    
+
     public ConfigDatabase(String[] keys) {
         setup(keys);
     }
@@ -105,14 +105,14 @@ public class ConfigDatabase {
         IJmpFileBuilder builder = fc.createFileBuilder(database, keyset);
         return builder.write(new File(path));
     }
-    
+
     public boolean reading(String path) {
         setAppName("Unknown");
         setVersion("Unknown");
-        
+
         JmpFileBuilderFactory fc = new JmpFileBuilderFactory(BUILDER_TYPE);
         IJmpFileBuilder builder = fc.createFileBuilder(database, keyset);
-        
+
         boolean ret = builder.read(new File(path));
         appName = builder.getAppName();
         version = builder.getVersion();

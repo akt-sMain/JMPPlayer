@@ -27,7 +27,7 @@ public interface ISynthController {
     abstract int getNRPN(int ch);
 
     abstract void resetAllController(int ch);
-    
+
     abstract void allSoundOff(int ch);
 
     abstract void allNoteOff(int ch);

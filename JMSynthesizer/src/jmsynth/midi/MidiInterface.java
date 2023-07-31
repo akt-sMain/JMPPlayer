@@ -87,7 +87,8 @@ public class MidiInterface implements Receiver {
             case DefineControlChange.PORTAMENTO_TIME:// Portamento Time
                 break;
             case DefineControlChange.DATA_ENTRY_MSB:// データエントリ（ＲＰＮ／ＮＲＰＮで指定したパラメータの値を設定）
-                 //System.out.println("NRPN "+controller.getNRPN(channel) +" " +  data2 +" ");
+                // System.out.println("NRPN "+controller.getNRPN(channel) +" " +
+                // data2 +" ");
                 switch (controller.getNRPN(channel)) {
                     // ピッチベンド・センシティビティ
                     case 0x00: {

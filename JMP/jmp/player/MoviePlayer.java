@@ -143,14 +143,14 @@ public class MoviePlayer extends Player implements IMoviePlayerModel {
         if (mediaAccessor == null) {
             return false;
         }
-        
+
         mediaAccessor.setTitle("Movie - " + Utility.getFileNameAndExtension(file));
 
         // 動画ファイルは画面表示する
         if (mediaAccessor.isAudioOnly() == false) {
             // ビューにマウスリスナー登録
             mediaAccessor.addMouseListener(new MouseListener() {
-                
+
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     JMPCore.getWindowManager().getMainWindow().showWindow();
@@ -166,51 +166,51 @@ public class MoviePlayer extends Player implements IMoviePlayerModel {
                         }
                     }
                 }
-                
+
                 @Override
                 public void mousePressed(MouseEvent e) {
                 }
-                
+
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    
+
                 }
-                
+
                 @Override
                 public void mouseEntered(MouseEvent e) {
                 }
-                
+
                 @Override
                 public void mouseClicked(MouseEvent e) {
                 }
             });
             mediaAccessor.addWindowListener(new WindowListener() {
-                
+
                 @Override
                 public void windowOpened(WindowEvent e) {
                 }
-                
+
                 @Override
                 public void windowIconified(WindowEvent e) {
                 }
-                
+
                 @Override
                 public void windowDeiconified(WindowEvent e) {
                 }
-                
+
                 @Override
                 public void windowDeactivated(WindowEvent e) {
                 }
-                
+
                 @Override
                 public void windowClosing(WindowEvent e) {
                     JMPCore.getTaskManager().requestWindowUpdate();
                 }
-                
+
                 @Override
                 public void windowClosed(WindowEvent e) {
                 }
-                
+
                 @Override
                 public void windowActivated(WindowEvent e) {
                 }

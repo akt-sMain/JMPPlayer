@@ -52,7 +52,7 @@ public class TaskManager extends AbstractManager {
 
         // MIDIイベントタスク登録
         taskMap.put(TaskID.MIDI, new TaskOfMidiEvent());
-        
+
         // Notifyタスク登録
         taskMap.put(TaskID.NOTIFY, new TaskOfNotify());
 
@@ -70,7 +70,7 @@ public class TaskManager extends AbstractManager {
     public void waitTask(TaskID id, long mills) {
         taskMap.get(id).waitTask(mills);
     }
-    
+
     private void queuing(TaskID id, TaskPacket packet) {
         // 対応するタスクに対してキューイングを行う
         if (taskMap == null) {
@@ -173,11 +173,11 @@ public class TaskManager extends AbstractManager {
             }
         });
     }
-    
+
     public void sendNotifyMessage(NotifyID id, Object... data) {
         queuing(TaskID.NOTIFY, new NotifyPacket(id, data));
     }
-    
+
     public void requestWindowUpdate() {
         queuing(TaskID.UPDATE, new TaskPacket(PacketType.RequestUpdate));
     }

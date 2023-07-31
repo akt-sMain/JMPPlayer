@@ -16,14 +16,14 @@ public class VBA {
 
     // 改行コード
     static final String NL = function.Platform.getNewLine();
-    
+
     // 特殊タグ変換テーブル
     private static final HashMap<String, String> SSpecialTagTable = new HashMap<String, String>() {
         {
-            put(DefineLanguage.CODE_LINE_END, VBA.NL); //改行タグ
+            put(DefineLanguage.CODE_LINE_END, VBA.NL); // 改行タグ
         }
     };
-    
+
     /**
      * 特殊タグ文字列の差し替え
      * 

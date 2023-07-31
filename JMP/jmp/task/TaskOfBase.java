@@ -6,51 +6,51 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class TaskOfBase implements ITask, Runnable {
-    
+
     class TaskQueue {
         protected List<TaskPacket> lst = null;
-        
+
         public TaskQueue() {
             createInstance();
         }
-        
+
         protected void createInstance() {
             this.lst = new LinkedList<TaskPacket>();
         }
-        
+
         public boolean push(TaskPacket o) {
             lst.add(o);
             return true;
         }
-        
+
         public TaskPacket pop() {
             TaskPacket ret = null;
             Iterator<TaskPacket> i = lst.iterator();
             while (i.hasNext()) {
                 ret = i.next();
                 i.remove();
-                
+
                 break;
             }
             return ret;
         }
-        
+
         public void clear() {
             lst.clear();
         }
-        
+
         public boolean isEmpty() {
             return lst.isEmpty();
         }
-        
+
     }
-    
+
     class SynchronizedTaskQueue extends TaskQueue {
         @Override
         protected void createInstance() {
             this.lst = Collections.synchronizedList(new LinkedList<TaskPacket>());
         }
-        
+
         @Override
         public TaskPacket pop() {
             TaskPacket ret = null;
@@ -59,7 +59,7 @@ public abstract class TaskOfBase implements ITask, Runnable {
             }
             return ret;
         }
-        
+
         @Override
         public boolean push(TaskPacket o) {
             boolean ret = false;
@@ -68,7 +68,7 @@ public abstract class TaskOfBase implements ITask, Runnable {
             }
             return ret;
         }
-        
+
         @Override
         public void clear() {
             synchronized (lst) {
@@ -82,11 +82,11 @@ public abstract class TaskOfBase implements ITask, Runnable {
     private Thread thread = null;
     private long sleepTime = 100;
     private long waitTime = 0;
-    
+
     public TaskOfBase(long sleepTime, boolean isSyncQueue) {
         if (isSyncQueue == true) {
             this.queue = new SynchronizedTaskQueue();
-        } 
+        }
         else {
             this.queue = new TaskQueue();
         }
@@ -102,14 +102,14 @@ public abstract class TaskOfBase implements ITask, Runnable {
 
         while (isRunnable) {
             long pastTime = System.currentTimeMillis();
-            
+
             if (queue.isEmpty() == false) {
                 TaskPacket obj = pop();
                 if (obj != null) {
                     interpret(obj);
                 }
             }
-            
+
             loop();
 
             long newTime = System.currentTimeMillis();
@@ -124,7 +124,7 @@ public abstract class TaskOfBase implements ITask, Runnable {
                 pSleepTime += this.waitTime;
                 this.waitTime = 0;
             }
-            
+
             try {
                 Thread.sleep(pSleepTime);
             }
@@ -166,24 +166,24 @@ public abstract class TaskOfBase implements ITask, Runnable {
     public void waitTask(long sleepTime) {
         this.waitTime = sleepTime;
     }
-    
+
     @Override
     public void queuing(TaskPacket packet) {
         push(packet);
     }
-    
+
     @Override
     public void clearQue() {
         queue.clear();
     }
-    
+
     protected void interpret(TaskPacket obj) {
     }
-    
+
     protected boolean push(TaskPacket o) {
         return queue.push(o);
     }
-    
+
     protected TaskPacket pop() {
         return queue.pop();
     }

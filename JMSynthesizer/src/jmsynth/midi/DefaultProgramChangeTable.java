@@ -13,21 +13,22 @@ public class DefaultProgramChangeTable extends ProgramChangeTable {
         /*
          * Piano
          */
-        this.sets[PC_1] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
-        // Piano 2
-        this.sets[PC_2] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
-        // Piano 3
-        this.sets[PC_3] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
-        // Piano 4
-        this.sets[PC_4] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
-        // E.Piano 1
-        this.sets[PC_5] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
-        // E.Piano 2
-        this.sets[PC_6] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
-        // Harpsichord
-        this.sets[PC_7] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
-        // Clav.
-        this.sets[PC_8] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
+        this.sets[PC_1] = new OscillatorSet(WaveType.SINE);
+        this.sets[PC_2] = new OscillatorSet(WaveType.SINE);
+        this.sets[PC_3] = new OscillatorSet(WaveType.SINE);
+        this.sets[PC_4] = new OscillatorSet(WaveType.SINE);
+        this.sets[PC_5] = new OscillatorSet(WaveType.SINE);
+        this.sets[PC_6] = new OscillatorSet(WaveType.SINE);
+        this.sets[PC_7] = new OscillatorSet(WaveType.SINE);
+        this.sets[PC_8] = new OscillatorSet(WaveType.SINE);
+//        this.sets[PC_1] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
+//        this.sets[PC_2] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
+//        this.sets[PC_3] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
+//        this.sets[PC_4] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
+//        this.sets[PC_5] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
+//        this.sets[PC_6] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
+//        this.sets[PC_7] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
+//        this.sets[PC_8] = new OscillatorSet(0.0, 1.0, 0.0, 0.0, 1000, 3000, 1000, WaveType.SINE);
 
         /*
          * Chromatic Percussion

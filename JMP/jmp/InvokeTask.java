@@ -16,7 +16,7 @@ class InvokeTask implements Runnable {
     private ConfigDatabaseWrapper config;
     private IPlugin standAlonePlugin;
     private File loadFile;
-    
+
     public InvokeTask(ConfigDatabaseWrapper config, IPlugin standAlonePlugin, File loadFile) {
         this.config = config;
         this.standAlonePlugin = standAlonePlugin;
@@ -57,14 +57,14 @@ class InvokeTask implements Runnable {
                 JMPCore.ErrorId = ErrorDef.ERROR_ID_UNKNOWN_EXIT_APPLI;
             }
         }
-        
+
         // ライブラリ終了処理
         boolean endResult = JMPLibrary.exitCoreAssets();
         if (result == false) {
             endResult = result;
         }
         invokeResult = endResult;
-        
+
         if (JMPCore.ErrorId != ErrorDef.ERROR_ID_NOERROR) {
             JMPCore.getSystemManager().showSystemErrorMessage(JMPCore.ErrorId);
         }

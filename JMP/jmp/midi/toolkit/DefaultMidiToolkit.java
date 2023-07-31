@@ -49,7 +49,7 @@ public class DefaultMidiToolkit implements IMidiToolkit {
     @Override
     public MidiDevice.Info[] getMidiDeviceInfo(boolean incTransmitter, boolean incReciever) {
         ArrayList<MidiDevice.Info> ret = new ArrayList<MidiDevice.Info>();
-        
+
         // 内蔵シンセ追加
         ret.add(JMPBuiltinSynthMidiDevice.INFO);
 
@@ -57,7 +57,7 @@ public class DefaultMidiToolkit implements IMidiToolkit {
         for (int i = 0; i < tmp.length; i++) {
             ret.add(tmp[i]);
         }
-        
+
         for (int i = ret.size() - 1; i >= 0; i--) {
             MidiDevice dev;
             try {

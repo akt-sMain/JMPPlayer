@@ -78,10 +78,10 @@ public class PluginManager extends AbstractManager {
 
     /** プラグインオブザーバ */
     private PluginObserver observers = null;
-    
+
     public static final String BUILDER_TYPE = JmpFileBuilderFactory.BUILDER_TYPE_TEXT;
     private Map<String, String> plginStateMap = null;
-    
+
     private String preLoadPluginName = "Sample";
     private IPlugin preLoadPlugin = null;
 
@@ -104,7 +104,7 @@ public class PluginManager extends AbstractManager {
 
     protected boolean endFunc() {
         super.endFunc();
-        
+
         closeAllPlugins();
 
         // プラグインの状態を保存する
@@ -117,7 +117,7 @@ public class PluginManager extends AbstractManager {
 
     private void loadPluginState() {
         String path = Utility.pathCombin(JMPCore.getSystemManager().getSystemPath(SystemManager.PATH_PLUGINS_DIR), PLUGIN_STATE_FILE_NAME);
-        
+
         plginStateMap = new HashMap<String, String>();
         JmpFileBuilderFactory fc = new JmpFileBuilderFactory(BUILDER_TYPE);
         IJmpFileBuilder builder = fc.createFileBuilder(plginStateMap, null);
@@ -132,7 +132,7 @@ public class PluginManager extends AbstractManager {
             plgKeys[j] = pName;
             j++;
         }
-        
+
         plginStateMap = new HashMap<String, String>();
         for (String plgKey : plgKeys) {
             String state = observers.getPluginWrapper(plgKey).getState().toString();
@@ -163,7 +163,7 @@ public class PluginManager extends AbstractManager {
             if (addPlugin(preLoadPluginName, preLoadPlugin) == false) {
                 // return false;
             }
-            // ディレクトリ作成 
+            // ディレクトリ作成
             SystemManager system = JMPCore.getSystemManager();
             String path = system.getSystemPath(ISystemManager.PATH_RES_DIR, preLoadPlugin);
             File f = new File(path);
@@ -620,7 +620,7 @@ public class PluginManager extends AbstractManager {
                     }
                 }
             }
-            
+
             if (isValid == true) {
                 importPlugin(jms.getJar());
             }
@@ -851,13 +851,13 @@ public class PluginManager extends AbstractManager {
     public void send(JmpMidiPacket packet) {
         observers.catchMidiEvent(packet.message, packet.timeStamp, packet.senderType);
     }
-    
+
     @Override
     protected boolean operate(AbstractCoreAsset asset) {
         boolean res = super.operate(asset);
         if (asset.getOperateType() == OperateType.FileLoad) {
             /* ファイルロード処理 */
-            FileLoadCoreAsset fileAsset = (FileLoadCoreAsset)asset;
+            FileLoadCoreAsset fileAsset = (FileLoadCoreAsset) asset;
             try {
                 observers.loadFile(fileAsset.file);
             }
@@ -880,7 +880,7 @@ public class PluginManager extends AbstractManager {
             // スタンドアロンモードの時は無効
             return;
         }
-        
+
         for (PluginWrapper pm : observers.getPlugins()) {
             if (pm.isSupportExtension(file) == false) {
                 if (pm.isOpen() == true) {

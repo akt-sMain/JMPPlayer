@@ -321,7 +321,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
     public void showFilePickupDialog(File dir) {
         showFilePickupDialog(dir, null);
     }
-    
+
     public void showFilePickupDialog(File dir, File focus) {
         FilePickupDialog dlg = (FilePickupDialog) JMPCore.getWindowManager().getWindow(WindowManager.WINDOW_NAME_FILE_PICKUP);
         dlg.setDirectory(dir, focus);

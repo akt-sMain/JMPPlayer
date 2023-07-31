@@ -17,7 +17,7 @@ import jmp.player.MidiPlayer;
 public class MidiUnit implements IMidiUnit {
 
     private MidiPlayer midiPlayer;
-    
+
     private List<IMidiFilter> filters = null;
 
     public MidiUnit(MidiPlayer midiPlayer) {
@@ -28,7 +28,7 @@ public class MidiUnit implements IMidiUnit {
     public MidiPlayer getMidiPlayer() {
         return midiPlayer;
     }
-    
+
     public void addFilter(IMidiFilter f) {
         filters.add(f);
     }

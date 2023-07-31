@@ -82,7 +82,7 @@ public class PlayerAccessor {
     public Player getCurrent() {
         return currentPlayer;
     }
-    
+
     private Player getSupportedPlayer(String extension) {
         Player supportedPlayer = null;
         for (Player player : registerPlayer) {

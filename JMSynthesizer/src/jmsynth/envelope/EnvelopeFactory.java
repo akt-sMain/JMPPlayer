@@ -15,7 +15,7 @@ public class EnvelopeFactory implements Runnable {
     private boolean isRunnable = true;
     private Thread timerThread = null;
     private Vector<Envelope> targets = null;
-    
+
     private boolean useMultiThread = false;
 
     public EnvelopeFactory(boolean useMultiThread) {

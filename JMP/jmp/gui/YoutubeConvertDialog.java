@@ -243,13 +243,13 @@ public class YoutubeConvertDialog extends JMPDialog {
                 getRootPane().setDefaultButton(convertButton);
             }
         }
-        
+
         comboboxNameType = new JComboBox<String>();
         comboboxNameType.setBounds(100, 83, 70, 19);
         contentPanel.add(comboboxNameType);
-        comboboxNameType.setModel(new DefaultComboBoxModel<String>(new String[] { "ID", "Title"}));
+        comboboxNameType.setModel(new DefaultComboBoxModel<String>(new String[] { "ID", "Title" }));
         comboboxNameType.addItemListener(new ItemListener() {
-            
+
             @Override
             public void itemStateChanged(ItemEvent e) {
                 String sWebNameType = comboboxNameType.getSelectedItem().toString();
@@ -270,7 +270,7 @@ public class YoutubeConvertDialog extends JMPDialog {
 
     private void _init() {
         setJmpIcon();
-        
+
         chckbxAudioOnly.setSelected(true);
         dstExtTextField.setText(DEFAULT_DST_EXT_AUDIO);
     }
@@ -284,8 +284,7 @@ public class YoutubeConvertDialog extends JMPDialog {
         else {
             textFieldExePath.setText(JMPCore.getDataManager().getYoutubeDlPath());
         }
-        
-        
+
         IJ_YoutubeDlFileNameConfig cfg = JMPCore.getDataManager().getYoutubeDlFileNameMode();
         switch (cfg) {
             case IJ_Id:
@@ -390,7 +389,7 @@ public class YoutubeConvertDialog extends JMPDialog {
                 lblStatus.setText(lm.getLanguageStr(LangID.Conversion_completed));
                 repaint();
 
-                //String dstExt = dstExtTextField.getText();
+                // String dstExt = dstExtTextField.getText();
                 JMPCore.getWindowManager().showFilePickupDialog(new File(Platform.getCurrentPath()));
             }
 
@@ -405,12 +404,12 @@ public class YoutubeConvertDialog extends JMPDialog {
                 syncConrolEnable(false);
 
                 JMPCore.getTaskManager().addCallbackPackage(1000, new ICallbackFunction() {
-/*
-                    int ite = 0;
-
-                    String[] ites = { ">-- ", "->- ", "--> " };
-                    boolean wasDownload = false;
-*/
+                    /*
+                     * int ite = 0;
+                     * 
+                     * String[] ites = { ">-- ", "->- ", "--> " }; boolean
+                     * wasDownload = false;
+                     */
                     @Override
                     public void callback() {
                         if (isConverting == false) {
@@ -418,20 +417,14 @@ public class YoutubeConvertDialog extends JMPDialog {
                         }
                         String ss = new String(SystemManager.SLineCache);
                         /*
-                        if (ss.contains("[download]") == true) {
-                            wasDownload = true;
-                            lblStatus.setText(ss.substring(11));
-                        }
-                        else if (wasDownload == false) {
-
-                        }
-                        else {
-                            lblStatus.setText(ites[ite] + dstExtTextField.getText());
-                            ite++;
-                            if (ite >= ites.length) {
-                                ite = 0;
-                            }
-                        }*/
+                         * if (ss.contains("[download]") == true) { wasDownload
+                         * = true; lblStatus.setText(ss.substring(11)); } else
+                         * if (wasDownload == false) {
+                         * 
+                         * } else { lblStatus.setText(ites[ite] +
+                         * dstExtTextField.getText()); ite++; if (ite >=
+                         * ites.length) { ite = 0; } }
+                         */
                         lblStatus.setText(ss);
                         JMPCore.getTaskManager().requestWindowUpdate();
                     }
@@ -456,7 +449,7 @@ public class YoutubeConvertDialog extends JMPDialog {
             lblStatus.setText("Faild.");
         }
     }
-    
+
     public boolean parseUrlFile(File file) {
         if (Utility.checkExtension(file, "url") == true) {
             /* .urlファイルは開いてURL記述部分を抜粋する */
@@ -473,7 +466,7 @@ public class YoutubeConvertDialog extends JMPDialog {
             catch (IOException e) {
                 str = "";
             }
-            
+
             if (str.isEmpty() == false) {
                 setInputPath(str);
                 return true;

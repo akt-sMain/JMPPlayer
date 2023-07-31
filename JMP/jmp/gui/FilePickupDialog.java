@@ -144,13 +144,13 @@ public class FilePickupDialog extends JDialog implements IJMPComponentUI, IJmpWi
         selectionFile = selection;
         updateList();
     }
-    
+
     public void updateList() {
         listModel.removeAllElements();
         if (dir == null) {
             dir = new File(Platform.getCurrentPath());
-            //lblDirectory.setText("None");
-            //return;
+            // lblDirectory.setText("None");
+            // return;
         }
 
         lblDirectory.setText(dir.getAbsolutePath());
@@ -163,8 +163,8 @@ public class FilePickupDialog extends JDialog implements IJMPComponentUI, IJmpWi
             File f = map.get(key);
             if (sm.checkMusicFileExtention(f) == true) {
                 listModel.addElement(key);
-                
-                if (selectionFile != null) { 
+
+                if (selectionFile != null) {
                     String suchName = f.getName();
                     String focusName = selectionFile.getName();
                     if (suchName.equals(focusName)) {
@@ -179,7 +179,7 @@ public class FilePickupDialog extends JDialog implements IJMPComponentUI, IJmpWi
             list.setSelectedIndex(focus);
         }
     }
-    
+
     @Override
     public void setVisible(boolean b) {
         if (b == true) {

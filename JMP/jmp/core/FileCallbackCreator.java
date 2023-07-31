@@ -12,68 +12,69 @@ import jmp.task.TaskOfNotify.NotifyID;
 import jmp.util.JmpUtil;
 
 public class FileCallbackCreator {
-    
+
     private static FileCallbackCreator instance = new FileCallbackCreator();
+
     private FileCallbackCreator() {
     }
-    
+
     public static FileCallbackCreator getInstance() {
         return instance;
     }
-    
+
     public abstract class FileCallbackFunction implements ICallbackFunction {
         protected FileResult beginResult;
         protected FileResult endResult;
         protected File file;
-        
+
         public FileCallbackFunction() {
             this.beginResult = new FileResult();
             this.endResult = new FileResult();
         }
-        
+
         @Override
         public void preCall() {
             /* 事前の判定 */
             validatePreProcces();
-            
+
             // 事前判定の結果を通知
             JMPCore.getTaskManager().sendNotifyMessage(NotifyID.FILE_RESULT_BEGIN, beginResult);
         }
-        
+
         @Override
         public void callback() {
             if (beginResult.status == true) {
                 fileProcces();
             }
         }
-        
+
         @Override
         public void postCall() {
-            // 後処理 
+            // 後処理
             cleanupProcces();
-            
+
             if (endResult.status == true) {
                 // 終了判定の結果を通知
                 JMPCore.getTaskManager().sendNotifyMessage(NotifyID.FILE_RESULT_END, endResult);
             }
         }
-        
+
         /**
          * 事前判定
          */
         abstract void validatePreProcces();
-        
+
         /**
          * 後処理
          */
         abstract void cleanupProcces();
-        
+
         /**
          * ファイルメイン処理
          */
         abstract void fileProcces();
     }
-    
+
     private static final String SUCCESS_MSG_FOAMET_LOAD = "%s ...(%s)";
 
     /**
@@ -92,7 +93,7 @@ public class FileCallbackCreator {
             this.noneHistoryFlag = noneHistoryFlag;
             this.loadToPlayFlag = toPlay;
         }
-        
+
         @Override
         public void validatePreProcces() {
             SystemManager system = JMPCore.getSystemManager();
@@ -152,7 +153,7 @@ public class FileCallbackCreator {
             /* ロード処理 */
             endResult.status = true;
             endResult.statusMsg = "";
-            
+
             /* coreのOperateをコール */
             FileLoadCoreAsset asset = new FileLoadCoreAsset(file, endResult);
             JMPCore.operate(asset, true);
@@ -198,12 +199,12 @@ public class FileCallbackCreator {
         void cleanupProcces() {
             // フラグ初期化
             JMPFlags.NoneHistoryLoadFlag = false; // 履歴保存
-            
+
             // ロード中フラグ解除
             JMPFlags.NowLoadingFlag = false;
         }
     }
-    
+
     public FileCallbackFunction createLoadCallback(File f, boolean toPlay) {
         return new LoadCallbackFunc(f, JMPFlags.NoneHistoryLoadFlag, toPlay);
     }

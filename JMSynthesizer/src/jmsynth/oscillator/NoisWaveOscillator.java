@@ -15,11 +15,11 @@ public class NoisWaveOscillator implements IOscillator {
     }
 
     protected final static int NOISE_VAR = 32;
-    
+
     private NoiseSim[] simSet = new NoiseSim[128];
     protected double[] moiseTable = new double[NOISE_VAR];
     static final int[] AMP_TABLE = { 150, 100, 50, 30, 20, 15, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, };
-    
+
     public NoisWaveOscillator() {
         int i = 0;
         int j = 0;
@@ -83,7 +83,7 @@ public class NoisWaveOscillator implements IOscillator {
         tone.setToneStep(toneStep);
         return length;
     }
-    
+
     protected double generateNoiseCoefficient() {
         return 1.0;
     }

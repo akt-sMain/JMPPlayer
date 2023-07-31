@@ -68,7 +68,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
      * @wbp.parser.constructor
      */
     public WaveViewerFrame(JMSoftSynthesizer synth) {
-        setTitle("Synthesizer setting");
+        setTitle(JMSoftSynthesizer.INFO_NAME + " Setting Dialog");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setBounds(100, 100, 853, 667);
         contentPane = new JPanel();

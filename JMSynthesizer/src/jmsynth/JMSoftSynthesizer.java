@@ -23,10 +23,10 @@ public class JMSoftSynthesizer implements ISynthController {
 
     private static final short CHANNEL_TYPE_SOUND = 0;
     private static final short CHANNEL_TYPE_DRUM = 1;
-    
-    // エンベロープのスレッドモード 
+
+    // エンベロープのスレッドモード
     private static final boolean USE_MULTITHREAD_ENV = true;
-    // モジュレーションのスレッドモード 
+    // モジュレーションのスレッドモード
     private static final boolean USE_MULTITHREAD_MOD = true;
 
     // チャンネル構成
@@ -243,7 +243,7 @@ public class JMSoftSynthesizer implements ISynthController {
     public void allNoteOff(int ch) {
         channels[ch].allNoteOff(ch);
     }
-    
+
     @Override
     public void allSoundOff(int ch) {
         channels[ch].allSoundOff(ch);

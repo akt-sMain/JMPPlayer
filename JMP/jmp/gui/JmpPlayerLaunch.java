@@ -83,7 +83,7 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, MouseMotio
         paintPlaylistMark(g, x, y, SIZE, SIZE);
         g.setColor(BORDER_COLOR);
         g.drawRect(x, y, SIZE, SIZE);
-        
+
         x += (SIZE + (MERGIN * 2));
         if (JMPCore.getSoundManager().isValidMediaView() == true) {
             checked = checkVisibleMediaViewMark();
@@ -203,7 +203,7 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, MouseMotio
             g.drawImage(img, imgX, imgY, null);
         }
     }
-    
+
     public boolean checkVisibleMediaViewMark() {
         return JMPCore.getSoundManager().isVisibleMediaView();
     }
@@ -289,7 +289,7 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, MouseMotio
             wm.repaint(WindowManager.WINDOW_NAME_MAIN);
             return;
         }
-        
+
         x += (SIZE + (MERGIN * 2));
         if ((x < e.getX()) && (e.getX() < x + SIZE) && (y < e.getY()) && (e.getY() < y + SIZE)) {
             if (JMPCore.getSoundManager().isVisibleMediaView() == true) {

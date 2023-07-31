@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CommonRegister {
-    
+
     private static final String BUILDER_TYPE = JmpFileBuilderFactory.BUILDER_TYPE_TEXT;
 
     private List<CommonRegisterINI> iniList = null;
@@ -95,14 +95,14 @@ public class CommonRegister {
         if (file.canRead() == false) {
             return;
         }
-        
+
         Map<String, String> map = new HashMap<String, String>();
         String[] keyset = getKeySet();
-        
+
         JmpFileBuilderFactory fc = new JmpFileBuilderFactory(BUILDER_TYPE);
         IJmpFileBuilder builder = fc.createFileBuilder(map, keyset);
         builder.read(file);
-        
+
         for (String key : map.keySet()) {
             setValue(key, map.get(key));
         }
@@ -113,7 +113,7 @@ public class CommonRegister {
         if (file != null && file.getParentFile() != null && file.getParentFile().exists() == false) {
             return;
         }
-        
+
         Map<String, String> map = new HashMap<String, String>();
         String[] keyset = getKeySet();
         for (CommonRegisterINI ini : iniList) {
@@ -121,7 +121,7 @@ public class CommonRegister {
                 map.put(ini.key, ini.value);
             }
         }
-        
+
         JmpFileBuilderFactory fc = new JmpFileBuilderFactory(BUILDER_TYPE);
         IJmpFileBuilder builder = fc.createFileBuilder(map, keyset);
         builder.write(file);

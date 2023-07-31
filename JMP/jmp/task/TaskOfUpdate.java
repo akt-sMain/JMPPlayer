@@ -50,13 +50,13 @@ public class TaskOfUpdate extends TaskOfBase {
         boolean isRepaint = false;
         boolean isRepaintMain = false;
         boolean isRepaintBuiltin = false;
-        
+
         // 再描画カウント
         if (JMPCore.getSoundManager().isPlay() == true) {
             if ((CYCLIC_REPAINT_MSEC_PLAY / getSleepTime()) <= cyclicRepaintCount) {
                 isRepaintMain = true;
             }
-            
+
             /* 【例外処理】シークが終端まで到達してるのに再生が継続している場合、強制的に停止する */
             IPlayer player = sm.getCurrentPlayer();
             if (player.getPosition() >= player.getLength()) {
@@ -134,7 +134,7 @@ public class TaskOfUpdate extends TaskOfBase {
     @Override
     void end() {
     }
-    
+
     @Override
     protected void interpret(TaskPacket obj) {
         if (obj.getType() == PacketType.RequestUpdate) {

@@ -586,7 +586,7 @@ public class MidiFileListDialog extends JMPFrame {
                                 sm.stop();
                             }
                         }
-                        
+
                         JMPCore.getSoundManager().syncNextlist(midiFile);
 
                         // 自動再生

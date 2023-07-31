@@ -16,12 +16,11 @@ import jmp.gui.ui.FileListTableModel;
 import jmp.task.ICallbackFunction;
 
 public class FileManager extends AbstractManager implements IFileManager {
-    
+
     public enum AutoPlayMode {
-        DIRECTORY,
-        PLAY_LIST
+        DIRECTORY, PLAY_LIST
     }
-    
+
     private AutoPlayMode autoPlayMode = AutoPlayMode.DIRECTORY;
 
     private List<IFileResultCallback> loadCallbacks = null;
@@ -81,12 +80,13 @@ public class FileManager extends AbstractManager implements IFileManager {
     public void addLoadResultCallback(IFileResultCallback loadResultCallback) {
         loadCallbacks.add(loadResultCallback);
     }
-    
+
     void callFileResultBegin(FileResult beginResult) {
         for (IFileResultCallback cb : loadCallbacks) {
             cb.begin(beginResult);
         }
     }
+
     void callFileResultEnd(FileResult endResult) {
         for (IFileResultCallback cb : loadCallbacks) {
             cb.end(endResult);
@@ -104,7 +104,7 @@ public class FileManager extends AbstractManager implements IFileManager {
         ICallbackFunction func = FileCallbackCreator.getInstance().createLoadCallback(f, false);
         execFileProcess(func);
     }
-    
+
     private void execFileProcess(ICallbackFunction func) {
         // 実処理はSequenceタスクに委譲する
         JMPCore.getTaskManager().queuing(func);

@@ -72,10 +72,11 @@ public class DataManager extends AbstractManager implements IDataManager {
         }
         return true;
     }
-    
+
     public String getReadInfoForAppName() {
         return ManagerInstances.SDatabase.getAppName();
     }
+
     public String getReadInfoForVersion() {
         return ManagerInstances.SDatabase.getVersion();
     }

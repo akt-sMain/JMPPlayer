@@ -24,7 +24,7 @@ public class JMPCore {
 
     /** ライブラリバージョン */
     public static final String LIBRALY_VERSION = JMPLIB.BUILD_VERSION;
-    
+
     public static int ErrorId = ErrorDef.ERROR_ID_NOERROR;
 
     /** スタンドアロンモードのプラグイン */
@@ -32,7 +32,7 @@ public class JMPCore {
     private static PluginWrapper StandAlonePluginWrapper = null;
 
     public static List<CommonRegisterINI> cregStack = null;
-    
+
     public static boolean initFunc(ConfigDatabaseWrapper config, IPlugin plugin) {
         // システムパス設定
         getSystemManager().makeSystemPath();
@@ -51,7 +51,7 @@ public class JMPCore {
         // 管理クラス初期化処理
         boolean result = ManagerInstances.callInitFunc();
         if (result == true) {
-            
+
             // 全ての画面を最新版にする
             getWindowManager().updateBackColor();
             getWindowManager().updateDebugMenu();
@@ -95,7 +95,7 @@ public class JMPCore {
             JMPFlags.Log.cprintln("AppName : " + JMPCore.getDataManager().getReadInfoForAppName());
             JMPFlags.Log.cprintln("Version : " + JMPCore.getDataManager().getReadInfoForVersion());
             JMPFlags.Log.cprintln();
-            
+
             if (getDataManager().isShowStartupDeviceSetup() == false) {
                 // 自動接続フラグを立てる
                 JMPFlags.StartupAutoConectSynth = true;
@@ -133,15 +133,15 @@ public class JMPCore {
         }
         return result;
     }
-    
+
     public static boolean endFunc() {
         // 念のためWindowを閉じる
         getWindowManager().setVisibleAll(false);
-        
+
         if (getWindowManager().isValidBuiltinSynthFrame() == true) {
             getWindowManager().closeBuiltinSynthFrame();
         }
-        
+
         // 動画ビューワを閉じる
         if (getSoundManager().isVisibleMediaView() == true) {
             getSoundManager().setVisibleMediaView(false);
@@ -149,7 +149,7 @@ public class JMPCore {
 
         // 終了前に全てのプラグインを閉じる
         getPluginManager().closeAllPlugins();
-        
+
         // この時点でタスクが生きてたら終了する
         TaskManager taskManager = getTaskManager();
         if (taskManager.isRunnable() == true) {
@@ -168,18 +168,18 @@ public class JMPCore {
         }
         return result;
     }
-    
+
     static boolean operate(AbstractCoreAsset asset, boolean dirIsAsc) {
-        boolean res = true; 
+        boolean res = true;
         List<AbstractManager> managers;
-        
+
         if (dirIsAsc == true) {
             managers = ManagerInstances.getManagersOfAsc();
         }
         else {
             managers = ManagerInstances.getManagersOfDesc();
         }
-        
+
         for (AbstractManager am : managers) {
             if (false == am.operate(asset)) {
                 res = false;
@@ -199,7 +199,7 @@ public class JMPCore {
         }
         return false;
     }
-    
+
     public static void setStandAlonePluginWrapper(PluginWrapper plg) {
         StandAlonePluginWrapper = plg;
     }
@@ -207,7 +207,7 @@ public class JMPCore {
     public static PluginWrapper getStandAlonePluginWrapper() {
         return StandAlonePluginWrapper;
     }
-    
+
     /* Notify処理 */
     public static void parseNotifyPacket(NotifyID id, Object... data) {
         if (data == null) {
@@ -216,7 +216,7 @@ public class JMPCore {
         if (data.length <= 0) {
             return;
         }
-        
+
         switch (id) {
             case UPDATE_CONFIG: {
                 /* Config変更通知 */
@@ -241,7 +241,7 @@ public class JMPCore {
             case FILE_RESULT_BEGIN: {
                 /* ファイル処理 事前判定結果通知 */
                 if (data[0] instanceof FileResult) {
-                    FileResult result = (FileResult)data[0];
+                    FileResult result = (FileResult) data[0];
                     getFileManager().callFileResultBegin(result);
                 }
                 break;
@@ -249,7 +249,7 @@ public class JMPCore {
             case FILE_RESULT_END: {
                 /* ファイル処理 事後判定結果通知 */
                 if (data[0] instanceof FileResult) {
-                    FileResult result = (FileResult)data[0];
+                    FileResult result = (FileResult) data[0];
                     getFileManager().callFileResultEnd(result);
                 }
                 break;

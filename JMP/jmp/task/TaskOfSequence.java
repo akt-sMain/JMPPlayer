@@ -25,11 +25,11 @@ public class TaskOfSequence extends TaskOfBase {
     @Override
     void end() {
     }
-    
+
     @Override
     protected void interpret(TaskPacket obj) {
         if (obj.getType() == PacketType.Callback) {
-            ((CallbackPacket)obj).exec();
+            ((CallbackPacket) obj).exec();
         }
     }
 }

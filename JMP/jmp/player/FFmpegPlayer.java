@@ -10,7 +10,7 @@ import jmp.core.SystemManager;
 public class FFmpegPlayer extends Player {
 
     private Player mediaPlayer = null;
-    
+
     public FFmpegPlayer(Player mediaPlayer) {
         this.mediaPlayer = mediaPlayer;
     }

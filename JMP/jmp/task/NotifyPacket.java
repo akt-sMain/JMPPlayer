@@ -10,7 +10,7 @@ public class NotifyPacket extends TaskPacket {
         super(PacketType.Notify, d);
         this.notifyId = notifyId;
     }
-    
+
     public NotifyID getId() {
         return notifyId;
     }

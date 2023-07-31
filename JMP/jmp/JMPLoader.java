@@ -19,7 +19,7 @@ import lib.MakeJmpLib;
  *
  */
 public class JMPLoader {
-    
+
     // 起動設定
     public static boolean MainThreadRunnable = false;
 
@@ -294,7 +294,7 @@ public class JMPLoader {
         }
         return invokeImpl(config, standAlonePlugin, null);
     }
-    
+
     /**
      * 事前ロードプラグイン起動設定（プラグイン開発用）
      *
@@ -318,10 +318,10 @@ public class JMPLoader {
 
         boolean ret = true;
         InvokeTask invokeTask = new InvokeTask(config, standAlonePlugin, loadFile);
-        
+
         // invokeメソッドからの起動はLibraryモードではない
         JMPFlags.LibraryMode = false;
-        
+
         if (MainThreadRunnable == true) {
             // このスレッド内で処理する
             invokeTask.run();

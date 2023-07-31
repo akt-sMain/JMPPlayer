@@ -1,7 +1,7 @@
 package jmsynth.oscillator;
 
 public class ShortNoisWaveOscillator extends NoisWaveOscillator {
-    
+
     private int ntStep = 0;
 
     public ShortNoisWaveOscillator() {
@@ -18,6 +18,5 @@ public class ShortNoisWaveOscillator extends NoisWaveOscillator {
         }
         return val;
     }
-
 
 }

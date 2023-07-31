@@ -188,7 +188,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         ffmpegWrapper.setOverwrite(true);
 
         youtubeDlWrapper = new ProcessingYoutubeDLWrapper();
-        
+
         makeSystemPath();
 
         // 共通レジスタのキー名登録
@@ -263,15 +263,15 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
         // syscommon読み込み
         cReg.read(aPath[PATH_SYSCOMMON_FILE]);
-        
+
         /* コマンドラインからのcregパラメータ */
         if (JMPCore.cregStack != null) {
-            for (int i=0; i<JMPCore.cregStack.size(); i++) {
+            for (int i = 0; i < JMPCore.cregStack.size(); i++) {
                 CommonRegisterINI ini = JMPCore.cregStack.get(i);
                 setCommonRegisterValueAdmin(ini.key, ini.value);
             }
         }
-        
+
         // デバッグ設定の復元
         if (getCommonRegisterValue(COMMON_REGKEY_NO_DEBUGMODE).equalsIgnoreCase("TRUE")) {
             JMPFlags.DebugMode = true;
@@ -372,7 +372,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
 
         return super.initFunc();
     }
-    
+
     private boolean makeDir(String path) {
         File dir = new File(path);
         if (dir.exists() == false) {
@@ -601,12 +601,12 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         try {
             switch (Platform.getRunPlatform()) {
                 case WINDOWS:
-                    // 推奨環境 
+                    // 推奨環境
                     UIManager.setLookAndFeel(systemlf);
                     break;
                 case OTHER:
                 default:
-                    // 非推奨のためクロスプラットフォームルックアンドフィールを採用する 
+                    // 非推奨のためクロスプラットフォームルックアンドフィールを採用する
                     UIManager.setLookAndFeel(crosslf);
                     break;
             }
@@ -704,7 +704,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             JMPFlags.DebugMode = JmpUtil.toBoolean(getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_DEBUGMODE));
         }
     }
-    
+
     public void syncDatabase(String key) {
         if (JmpUtil.checkConfigKey(key, IDataManager.CFG_KEY_FFMPEG_PATH) == true) {
             if (ffmpegWrapper instanceof ProcessingFFmpegWrapper) {
@@ -735,7 +735,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
                     break;
                 default:
                     break;
-                
+
             }
         }
     }

@@ -11,7 +11,7 @@ public class Tone {
     private float defaultPitch = 440;
     private int note = 1;
 
-    private float pitch = 0;
+    private double pitch = 0;
     private int overallLevel = 0; // (ベロシティ値 ÷ 8) × (エクスプレッション値 ÷ 127)
     private int velocity = 60; // ベロシティ
     private int expression = 127; // エクスプレッション値
@@ -27,7 +27,7 @@ public class Tone {
 
     private boolean releaseFlag = false;
 
-    private float modulationValue = 0.0f;
+    private double modulationValue = 0.0;
 
     public Tone() {
     }
@@ -58,7 +58,7 @@ public class Tone {
         if (frequency <= 0) {
             return;
         }
-        this.amplitude = SoundSourceChannel.SAMPLE_RATE / frequency; // 振幅
+        this.amplitude = (double)SoundSourceChannel.SAMPLE_RATE / frequency; // 振幅
         this.frequency = frequency;
     }
 
@@ -132,13 +132,13 @@ public class Tone {
         this.stapTimingCounter = stapTimingCounter;
     }
 
-    public float getPitch() {
+    public double getPitch() {
         return pitch;
     }
 
-    public void setPitch(float pitch) {
+    public void setPitch(double pitch) {
         this.pitch = pitch;
-        setFrequency(note2freq((double) ((float) note + pitch + modulationValue)));
+        setFrequency(note2freq(((double) note + pitch + modulationValue)));
     }
 
     public float getVibratoDepth() {
@@ -183,7 +183,7 @@ public class Tone {
         this.releaseFlag = releaseFlag;
     }
 
-    public void setModulationValue(float modulationValue) {
+    public void setModulationValue(double modulationValue) {
         this.modulationValue = modulationValue;
         setPitch(getPitch()); // ピッチの再計算
     }

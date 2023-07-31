@@ -3,6 +3,8 @@ package jmsynth.oscillator;
 import java.util.ArrayList;
 import java.util.List;
 
+import jmsynth.envelope.EnvelopeFactory;
+
 public class OscillatorSet {
 
     public static final OscillatorSet DRUM_OSCILLATOR_SET = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
@@ -25,13 +27,13 @@ public class OscillatorSet {
 
     public OscillatorSet(WaveType... osc) {
         setOscillators(osc);
-        attackTime = 0.0;
-        decayTime = 0.0;
-        sustainLevel = 1.0;
-        releaseTime = 0.0;
-        maxAttackMills = 1000;
-        maxDecayMills = 1000;
-        maxReleaseMills = 1000;
+        attackTime = EnvelopeFactory.DEFAULT_A;
+        decayTime = EnvelopeFactory.DEFAULT_D;
+        sustainLevel = EnvelopeFactory.DEFAULT_S;
+        releaseTime = EnvelopeFactory.DEFAULT_R;
+        maxAttackMills = EnvelopeFactory.DEFAULT_MAX_A;
+        maxDecayMills = EnvelopeFactory.DEFAULT_MAX_D;
+        maxReleaseMills = EnvelopeFactory.DEFAULT_MAX_R;
     }
 
     public OscillatorSet(double a, double d, double s, double r, WaveType... osc) {

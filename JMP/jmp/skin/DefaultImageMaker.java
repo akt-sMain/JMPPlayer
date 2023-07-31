@@ -485,7 +485,7 @@ public class DefaultImageMaker {
         }
         return defBtnListIcon;
     }
-    
+
     private static Image defBtnViewIcon = null;
 
     public static Image makeDefaultBtnViewIcon() {

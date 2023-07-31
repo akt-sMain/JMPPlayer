@@ -11,17 +11,17 @@ import jmsynth.midi.JMSynthMidiDevice;
 import jmsynth.midi.MidiInterface;
 
 public class JMPBuiltinSynthMidiDevice extends JMSynthMidiDevice {
-    
+
     public static MidiInterface SCurrentFaceAccesser;
-    
+
     public JMPBuiltinSynthMidiDevice() {
         super();
     }
-    
+
     @Override
     public void open() throws MidiUnavailableException {
         super.open();
-        
+
         SystemManager system = JMPCore.getSystemManager();
         SCurrentFaceAccesser = getJMsynthInterface();
 
@@ -35,11 +35,11 @@ public class JMPBuiltinSynthMidiDevice extends JMSynthMidiDevice {
         wvf.setWaveColorTable(ct);
         JMPCore.getWindowManager().registerBuiltinSynthFrame(wvf);
     }
-    
+
     @Override
     public void close() {
         super.close();
-        
+
         SCurrentFaceAccesser = null;
     }
 

@@ -21,7 +21,7 @@ public class MultiWaveViewerPanel extends JPanel {
     public static final int TRACE_VIEW_MODE_SPECT = 2;
 
     private static Color BG_COLOR = Color.BLACK;
-    //private static Color BG_COLOR = new Color(230, 230, 230);
+    // private static Color BG_COLOR = new Color(230, 230, 230);
     private static Color DEFAULT_COLOR = Color.WHITE;
     private static Color CENTER_COLOR = Color.DARK_GRAY;
 
@@ -514,13 +514,13 @@ public class MultiWaveViewerPanel extends JPanel {
             this.waveColorTable[i] = DEFAULT_COLOR;
         }
     }
-    
+
     public void setRestoreColorTable() {
         for (int i = 0; i < waveColorTable.length; i++) {
             this.waveColorTable[i] = this.backupWaveColorTable[i];
         }
     }
-    
+
     public void setWaveColorTable(Color[] waveColorTable) {
         for (int i = 0; i < waveColorTable.length; i++) {
             this.waveColorTable[i] = waveColorTable[i];

@@ -25,7 +25,7 @@ public class LanguageManager extends AbstractManager {
 
     /** デフォルト文字コード */
     public static final String CHARSET_DEFAULT = CHARSET_UTF16;
-    
+
     private static final Map<KindOfPlatform, Integer> s_platToFontFamily = new HashMap<KindOfPlatform, Integer>() {
         {
             put(KindOfPlatform.WINDOWS, FontSet.FONT_OF_WIN);
@@ -45,22 +45,22 @@ public class LanguageManager extends AbstractManager {
     LanguageManager() {
         super("language");
     }
-    
+
     /**
      * フォントリソース作成
      */
     public void makeFontRsrc() {
 
         /* OSごとのフォントファミリを登録 */
-        
+
         fontInfos = new HashMap<Integer, FontSet>();
-        
+
         defaultFontRsrc = new FontRsrc(WindowManager.DEFAULT_FONT);
 
         int lang = 0;
         String charset;
         FontRsrc win, mac, other;
-        
+
         /* フォントファミリ(English) */
         lang = DefineLanguage.INDEX_LANG_ENGLISH;
         charset = CHARSET_DEFAULT;
@@ -68,7 +68,7 @@ public class LanguageManager extends AbstractManager {
         mac = new FontRsrc("Helvetica Neue");
         other = defaultFontRsrc;
         fontInfos.put(lang, new FontSet(charset, win, mac, other));
-        
+
         /* フォントファミリ(Japanese) */
         lang = DefineLanguage.INDEX_LANG_JAPANESE;
         charset = CHARSET_DEFAULT;
@@ -76,7 +76,7 @@ public class LanguageManager extends AbstractManager {
         mac = new FontRsrc("Hiragino Sans");
         other = defaultFontRsrc;
         fontInfos.put(lang, new FontSet(charset, win, mac, other));
-        
+
         /* フォントファミリ(Chinese) */
         lang = DefineLanguage.INDEX_LANG_CHINESE;
         charset = CHARSET_DEFAULT;
@@ -84,7 +84,7 @@ public class LanguageManager extends AbstractManager {
         mac = new FontRsrc("PingFang SC");
         other = defaultFontRsrc;
         fontInfos.put(lang, new FontSet(charset, win, mac, other));
-        
+
         /* フォントファミリ(Traditional Chinese) */
         lang = DefineLanguage.INDEX_LANG_TRADITIONALCHINESE;
         charset = CHARSET_DEFAULT;
@@ -92,7 +92,7 @@ public class LanguageManager extends AbstractManager {
         mac = new FontRsrc("SF Pro TC");
         other = defaultFontRsrc;
         fontInfos.put(lang, new FontSet(charset, win, mac, other));
-        
+
         /* フォントファミリ(Korean) */
         lang = DefineLanguage.INDEX_LANG_KOREAN;
         charset = CHARSET_DEFAULT;
@@ -100,7 +100,7 @@ public class LanguageManager extends AbstractManager {
         mac = new FontRsrc("Gulim");
         other = defaultFontRsrc;
         fontInfos.put(lang, new FontSet(charset, win, mac, other));
-        
+
         /* フォントファミリ(Russian) */
         lang = DefineLanguage.INDEX_LANG_RUSSIAN;
         charset = CHARSET_DEFAULT;

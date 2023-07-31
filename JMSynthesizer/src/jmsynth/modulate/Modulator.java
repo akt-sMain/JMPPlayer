@@ -19,11 +19,11 @@ public class Modulator {
 
     Modulator() {
     }
-    
+
     public void startMod() {
         /* スレッド開始時のコールバック */
     }
-    
+
     public void endMod() {
         /* スレッド終了時のコールバック */
     }
@@ -37,9 +37,9 @@ public class Modulator {
                 pastTime = current;
             }
             double f = (double) t / (double) MODULATION_RATE_TIME;
-            int base = MODULATION_MAX_VALUE / 2;
-            int value = (int) ((double) makeTriangleWave(f, base, false));
-            float fVal = (float) value / (float) base * (float) depthOffset;
+            double base = (double)MODULATION_MAX_VALUE / (double)2.0;
+            int value = (int) ((double) makeTriangleWave(f, (int)base, false));
+            double fVal = (double) value / base * depthOffset;
             for (int i = 0; i < targetTones.size(); i++) {
                 try {
                     Tone tone = (Tone) targetTones.get(i);

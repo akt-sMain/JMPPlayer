@@ -4,7 +4,7 @@ import jmp.core.JMPCore;
 import jmp.task.TaskPacket.PacketType;
 
 public class TaskOfNotify extends TaskOfBase {
-    
+
     /** Notify ID */
     public static enum NotifyID {
         UPDATE_CONFIG, UPDATE_SYSCOMMON, FILE_RESULT_BEGIN, FILE_RESULT_END
@@ -13,11 +13,11 @@ public class TaskOfNotify extends TaskOfBase {
     public TaskOfNotify() {
         super(100, true);
     }
-    
+
     @Override
     protected void interpret(TaskPacket obj) {
         if (obj.getType() == PacketType.Notify) {
-            NotifyPacket notify = (NotifyPacket)obj;
+            NotifyPacket notify = (NotifyPacket) obj;
             JMPCore.parseNotifyPacket(notify.getId(), notify.getDatas());
         }
     }

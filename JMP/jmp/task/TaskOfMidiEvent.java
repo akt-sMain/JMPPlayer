@@ -44,7 +44,8 @@ public class TaskOfMidiEvent extends TaskOfBase {
             byte[] sMes = message.getMessage();
             byte[] dMes = Arrays.copyOf(sMes, sMes.length);
             packet = new JmpMidiPacket(new MidiByteMessage(dMes), timeStamp, senderType);
-            //packet = new JmpMidiPacket((MidiMessage) message.clone(), timeStamp, senderType);
+            // packet = new JmpMidiPacket((MidiMessage) message.clone(),
+            // timeStamp, senderType);
         }
         else {
             packet = new JmpMidiPacket(message, timeStamp, senderType);
@@ -55,7 +56,7 @@ public class TaskOfMidiEvent extends TaskOfBase {
             stack.add(packet);
         }
     }
-    
+
     @Override
     public void clearQue() {
         super.clearQue();

@@ -48,15 +48,16 @@ public abstract class AbstractManager implements IManager, IJmpConfigDatabase {
     }
 
     /**
-     * 全管理クラス共通の実行処理 
+     * 全管理クラス共通の実行処理
      * 
-     * @param asset 実行資産
+     * @param asset
+     *            実行資産
      * @return 実行の成否(falseの場合は処理を中断する)
      */
     protected boolean operate(AbstractCoreAsset asset) {
         return true;
     }
-    
+
     @Override
     public void setConfigParam(String key, String value) {
         if (key.equals(ManagerInstances.CFG_KEY_INITIALIZE) == false) {
@@ -81,7 +82,7 @@ public abstract class AbstractManager implements IManager, IJmpConfigDatabase {
         // 設定変更通知
         ManagerInstances.sendNotify(NotifyID.UPDATE_CONFIG, key);
     }
-    
+
     @Override
     public String getConfigParam(String key) {
         return ManagerInstances.getConfigParam(key);

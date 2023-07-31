@@ -86,7 +86,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     private Player SMusicMacloPlayer = null;
     private Player SFFmpegPlayer = null;
     private Player SMoviePlayer = null;
-    
+
     // プレイヤーのインターフェース
     private IMoviePlayerModel moviePlayerModel = null;
 
@@ -100,7 +100,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     private IMidiController midiInController = null;
     private IMidiController midiOutController = null;
     private MidiUnit midiUnit = null;
-    
+
     // Line情報
     private static Line.Info[] LineInfos = new Line.Info[] { Port.Info.SPEAKER, Port.Info.LINE_OUT, Port.Info.HEADPHONE };
 
@@ -109,7 +109,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     // MIDIデバイス設定をコミットしたか保持する必要がある
     private boolean isCommitDeviceSelectAction = false;
-    
+
     // 連続再生の候補リスト
     private PlaylistPickup playlistPickup;
 
@@ -126,7 +126,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
         // MidiToolKitを更新する
         updateMidiToolkit();
-        
+
         PlayerAccessor = new PlayerAccessor();
 
         /* プレイヤーインスタンス作成 */
@@ -136,7 +136,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         String[] exMUSICXML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MUSICXML));
         String[] exMML = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MML));
         String[] exMUSIC = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MEDIA));
-        
+
         /* MoviePlayerはjava8のみ */
         String javaVer = Platform.getJavaVersion();
         boolean isEnableMoviePlayer = false;
@@ -148,7 +148,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         SMidiPlayer = new MidiPlayer();
         SMidiPlayer.setSupportExtentions(exMIDI);
         PlayerAccessor.register(SMidiPlayer);
-        
+
         // movie
         if (isEnableMoviePlayer == true) {
             SMoviePlayer = new MoviePlayer();
@@ -159,7 +159,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             System.out.println("Disable movie player");
             SMoviePlayer = SDummyPlayer;
         }
-        moviePlayerModel = (IMoviePlayerModel)SMoviePlayer;
+        moviePlayerModel = (IMoviePlayerModel) SMoviePlayer;
 
         // wav
         if (isEnableMoviePlayer == true) {
@@ -209,7 +209,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             catch (Exception e) {
             }
         }
-        
+
         // プレイリストの候補作成
         playlistPickup = new PlaylistPickup();
         playlistPickup.remakePool();
@@ -235,7 +235,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
         stop();
         PlayerAccessor.stopAllPlayer();
-        
+
         if (isVisibleMediaView() == true) {
             setVisibleMediaView(false);
         }
@@ -441,10 +441,11 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         int index = getCurrentPlayListIndex();
         playForList(index, isLoadOnly);
     }
-    
+
     public void syncNextlist(File file) {
         playlistPickup.sync(file);
     }
+
     public void remakeNextlist() {
         playlistPickup.remakePool();
     }
@@ -454,11 +455,11 @@ public class SoundManager extends AbstractManager implements ISoundManager {
     }
 
     public void playNext(boolean isLoadOnly) {
-        
+
         if (JMPFlags.NowLoadingFlag == true) {
             return;
         }
-        
+
         DataManager dm = JMPCore.getDataManager();
 
         int index = getCurrentPlayListIndex();
@@ -468,11 +469,11 @@ public class SoundManager extends AbstractManager implements ISoundManager {
                     JMPFlags.NextPlayFlag = false;
                     return;
                 }
-    
+
                 Random random = new Random();
-    
+
                 int newIndex = index;
-    
+
                 if (playListModel.size() >= 2) {
                     while (true) {
                         newIndex = random.nextInt(playListModel.size());
@@ -519,7 +520,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         else {
             File f = playlistPickup.prev();
             if (f == null) {
-                //JMPFlags.NextPlayFlag = false;
+                // JMPFlags.NextPlayFlag = false;
                 return;
             }
 
@@ -628,13 +629,13 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         }
         JmpUtil.writeTextFile(path, lst);
     }
-    
+
     @Override
     protected boolean operate(AbstractCoreAsset asset) {
         boolean res = super.operate(asset);
         if (asset.getOperateType() == OperateType.FileLoad) {
             /* ファイルロード処理 */
-            FileLoadCoreAsset fileAsset = (FileLoadCoreAsset)asset;
+            FileLoadCoreAsset fileAsset = (FileLoadCoreAsset) asset;
             Player tmpPlayer = PlayerAccessor.getCurrent();
             boolean loadResult = true;
 
@@ -669,8 +670,8 @@ public class SoundManager extends AbstractManager implements ISoundManager {
                 LanguageManager lm = JMPCore.getLanguageManager();
                 fileAsset.result.statusMsg = lm.getLanguageStr(LangID.FILE_ERROR_5);
             }
-            
-            res = loadResult; 
+
+            res = loadResult;
         }
         return res;
     }
@@ -819,7 +820,7 @@ public class SoundManager extends AbstractManager implements ISoundManager {
 
     public void changeMidiPlayer() {
         // MidiPlayerに変更する
-        if (PlayerAccessor.getCurrent() != midiUnit.getMidiPlayer()){
+        if (PlayerAccessor.getCurrent() != midiUnit.getMidiPlayer()) {
             PlayerAccessor.getCurrent().stop();
             PlayerAccessor.change(midiUnit.getMidiPlayer());
         }
@@ -1050,12 +1051,12 @@ public class SoundManager extends AbstractManager implements ISoundManager {
             JMPFlags.Log.cprintln("Device update[IN]  : " + (inName.isEmpty() ? "None" : inName));
         }
     }
-    
+
     public boolean isValidMediaView() {
         if (SMoviePlayer == null) {
             return false;
         }
-        
+
         IPlayer current = getCurrentPlayer();
         if (current != SMoviePlayer) {
             return false;
@@ -1068,20 +1069,21 @@ public class SoundManager extends AbstractManager implements ISoundManager {
         }
         return true;
     }
+
     public boolean isVisibleMediaView() {
         if (isValidMediaView() == false) {
             return false;
         }
         return moviePlayerModel.isVisibleView();
     }
-    
+
     public void setVisibleMediaView(boolean visible) {
         if (isValidMediaView() == false) {
             return;
         }
         moviePlayerModel.setVisibleView(visible);
     }
-    
+
     public boolean executeMidiFilter(MidiMessage message, short senderType) {
         return midiUnit.filter(message, senderType);
     }

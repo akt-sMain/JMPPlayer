@@ -7,7 +7,7 @@ public class LongNoisWaveOscillator extends NoisWaveOscillator {
     public LongNoisWaveOscillator() {
         super();
     }
-    
+
     @Override
     protected double generateNoiseCoefficient() {
         // 完全ランダム

@@ -855,7 +855,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
                     File dst = Utility.openSaveFileDialog(null, defaultDir, defaultFileName);
                     if (dst != null) {
                         try {
-                            ((MidiUnit)JMPCore.getSoundManager().getMidiUnit()).exportMidiFile(dst);
+                            ((MidiUnit) JMPCore.getSoundManager().getMidiUnit()).exportMidiFile(dst);
                             Utility.openExproler(dst);
                         }
                         catch (Exception e1) {
@@ -866,7 +866,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             }
         });
         configMenu.add(mntmMidiExport);
-        
+
         mntmOpenCurrentFolder = new JMenuItem("Open current folder");
         mntmOpenCurrentFolder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -878,7 +878,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             }
         });
         configMenu.add(mntmOpenCurrentFolder);
-        
+
         mntmOpenFilePicker = new JMenuItem("Open File Picker");
         mntmOpenFilePicker.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -898,7 +898,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             }
         });
         configMenu.add(mntmOpenFilePicker);
-        
+
         mntmDebugDummy = new JMenuItem("Dummy");
         mntmDebugDummy.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -1576,7 +1576,7 @@ public class JMPPlayerWindow extends JFrame implements WindowListener, IJmpMainW
             }
         }
         else if (Utility.checkExtension(path, "url") == true) {
-            YoutubeConvertDialog win = (YoutubeConvertDialog)wm.getWindow(WindowManager.WINDOW_NAME_YOUTUBEDL);
+            YoutubeConvertDialog win = (YoutubeConvertDialog) wm.getWindow(WindowManager.WINDOW_NAME_YOUTUBEDL);
             win.parseUrlFile(file);
             win.showWindow();
         }

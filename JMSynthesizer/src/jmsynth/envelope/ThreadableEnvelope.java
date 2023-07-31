@@ -4,18 +4,18 @@ public class ThreadableEnvelope extends Envelope implements Runnable {
 
     private boolean isRunnable = true;
     private Thread timerThread = null;
-    
+
     public ThreadableEnvelope() {
         super();
         timerThread = new Thread(this);
         timerThread.setPriority(Thread.MAX_PRIORITY);
     }
-    
+
     @Override
     public void startEnv() {
         timerThread.start();
     }
-    
+
     @Override
     public void endEnv() {
         isRunnable = false;

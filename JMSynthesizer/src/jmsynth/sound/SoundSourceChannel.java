@@ -60,7 +60,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     private OscillatorConfig oscConfig;
 
     private int NRPN = 0;
-    private float pitch_sc = 2;
+    private double pitch_sc = 2.0;
 
     /** アクティブな音声を管理 */
     protected Vector<Tone> activeTones = null;
@@ -286,8 +286,10 @@ public class SoundSourceChannel extends Thread implements ISynthController {
      *            0.0 ~ 1.0
      */
     public void setVolume(float volume) {
-        if (volume > 1.0f) volume = 1.0f;
-        else if (volume < 0.0f) volume = 0.0f;
+        if (volume > 1.0f)
+            volume = 1.0f;
+        else if (volume < 0.0f)
+            volume = 0.0f;
         FloatControl control = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
         double max = Math.pow(10.0, control.getMaximum() / 20.0);
         double min = Math.pow(10.0, control.getMinimum() / 20.0);
@@ -429,7 +431,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
             if (tone == null) {
                 continue;
             }
-            tone.setPitch((float) (pitch * pitch_sc) / 8191);//
+            tone.setPitch((double) ((double)pitch * pitch_sc) / 8191.0);//
             // 16382で半音あがる
         }
     }
@@ -452,7 +454,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     }
 
     public void pitchBendSenc(int ch, int sc) {
-        pitch_sc = sc;
+        pitch_sc = (double)sc;
     }
 
     public void setNRPN(int ch, int nRPN) {
@@ -478,11 +480,11 @@ public class SoundSourceChannel extends Thread implements ISynthController {
             tone.reset();
         }
     }
-    
+
     @Override
     public void allSoundOff(int ch) {
         /* 音源を強制的に破棄する */
-        for (int i=0; i<tones.length; i++) {
+        for (int i = 0; i < tones.length; i++) {
             Tone tone = tones[i];
             if (tone != null) {
                 tone.setVelocity(0);
@@ -624,7 +626,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public void systemReset() {
         // Expressionを0にすることで初期化中の音声レベルを0にする
         setExpression(0, 0);
-        
+
         pitch_sc = 2;
         allSoundOff(0);
         resetAllController(0);
@@ -633,7 +635,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         setPan(0, 64);
         setModulationDepth(0, 0);
         setVolume(0, 1.0f);
-        
+
         // Expressionは最後に初期化
         setExpression(0, 127);
     }

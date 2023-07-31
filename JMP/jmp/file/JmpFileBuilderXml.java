@@ -22,7 +22,7 @@ import org.w3c.dom.NodeList;
 import jmp.core.JMPCore;
 
 public class JmpFileBuilderXml implements IJmpFileBuilder {
-    
+
     private static String JMP_XML_ROOT = "jmpp";
     private static String JMP_XML_INFO = "info";
     private static String JMP_XML_NAME = "name";
@@ -33,7 +33,7 @@ public class JmpFileBuilderXml implements IJmpFileBuilder {
 
     private String[] keyset = null;
     private Map<String, String> database = null;
-    
+
     private String appName = "Unknown";
     private String version = "Unknown";
 
@@ -41,7 +41,7 @@ public class JmpFileBuilderXml implements IJmpFileBuilder {
         this.database = database;
         this.keyset = keyset;
     }
-    
+
     @Override
     public boolean read(File file) {
         boolean ret = true;
@@ -72,7 +72,7 @@ public class JmpFileBuilderXml implements IJmpFileBuilder {
         }
         return ret;
     }
-    
+
     private void readNodeInfo(Node node) {
         NodeList lst = node.getChildNodes();
         for (int i = 0; i < lst.getLength(); i++) {
@@ -94,21 +94,21 @@ public class JmpFileBuilderXml implements IJmpFileBuilder {
             }
         }
     }
-    
+
     private void readNodeData(Node node) {
         NodeList lst = node.getChildNodes();
         for (int i = 0; i < lst.getLength(); i++) {
             if (lst.item(i).getNodeName().equals(JMP_XML_OBJ) == true) {
                 Node objNode = lst.item(i);
                 Element ele = (Element) objNode;
-                
+
                 String key = "";
                 String value = "";
                 if (ele.hasAttribute(JMP_XML_KEY) == true) {
                     key = ele.getAttribute(JMP_XML_KEY);
                     value = ele.getTextContent();
                 }
-                
+
                 boolean isContainsKey = false;
                 if (keyset == null) {
                     // キーセット未指定の場合は全て追加
@@ -122,14 +122,14 @@ public class JmpFileBuilderXml implements IJmpFileBuilder {
                         }
                     }
                 }
-                
+
                 if (isContainsKey == true) {
                     database.put(key, value);
                 }
             }
         }
     }
-    
+
     @Override
     public boolean write(File file) {
         DocumentBuilder documentBuilder = null;
@@ -165,7 +165,7 @@ public class JmpFileBuilderXml implements IJmpFileBuilder {
         rootElement.appendChild(dataElement);
         for (String key : database.keySet()) {
             String value = database.get(key);
-            
+
             Element objElement = document.createElement(JMP_XML_OBJ);
             objElement.setAttribute(JMP_XML_KEY, key);
             objElement.setTextContent(value);
