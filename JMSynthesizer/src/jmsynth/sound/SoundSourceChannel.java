@@ -61,12 +61,15 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
     private int NRPN = 0;
     private double pitch_sc = 2.0;
+    
+    /** 音声オブジェクトのインスタンス管理 */
+    protected Tone[] toneInstances = null;
 
     /** アクティブな音声を管理 */
     protected Vector<Tone> activeTones = null;
 
     /** 発声中の音色を管理するためのテーブル */
-    protected Tone[] tones = null;
+    protected Tone[] playingTones = null;
 
     /** 利用可能な音色をプールするためのクラス */
     protected Stack<Tone> tonePool = null;
@@ -136,22 +139,28 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
         activeTones = new Vector<Tone>();
         tonePool = new Stack<Tone>();
-        tones = new Tone[128];
+        toneInstances = new Tone[polyphony];
+        playingTones = new Tone[128];
+        
+        // Toneインスタンス作成
+        for (int i = 0; i < polyphony; i++) {
+            toneInstances[i] = new Tone();
+        }
 
         this.envelope = envelope;
         if (this.envelope != null) {
-            this.envelope.setTargetTones(activeTones);
+            this.envelope.setTargetTones(toneInstances);
         }
 
         this.modulator = modulator;
         if (this.modulator != null) {
-            this.modulator.setTargetTones(activeTones);
+            this.modulator.setTargetTones(toneInstances);
         }
 
         /* 音階データ生成 */
         for (int i = 0; i < polyphony; i++) {
             try {
-                Tone rw = new Tone();
+                Tone rw = toneInstances[i];
                 rw.setFrequency(523.3);// 523.3
                 rw.setVelocity(0);
                 tonePool.add(rw);
@@ -313,6 +322,12 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         try {
             // 0 ~ 64 ~ 127
             // -1 ~ 0 ~ 1
+            if (pan < 0) {
+                pan = 0;
+            }
+            else if (pan > 127) {
+                pan = 127;
+            }
 
             FloatControl control = (FloatControl) line.getControl(FloatControl.Type.PAN);
             float _pan = ((float) pan - 64) / 127;
@@ -335,6 +350,12 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         try {
             // 0 ~ 64 ~ 127
             // -1 ~ 0 ~ 1
+            if (reverb < 0) {
+                reverb = 0;
+            }
+            else if (reverb > 127) {
+                reverb = 127;
+            }
 
             FloatControl control = (FloatControl) line.getControl(FloatControl.Type.REVERB_RETURN);
 
@@ -355,7 +376,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
     public boolean checkChannel(int ch) {
         int channel = ch;
-        if (channel > tones.length) {
+        if (channel > playingTones.length) {
             return false;
         }
         if (channel != this.channel) {
@@ -365,18 +386,22 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     }
 
     public void noteOn(int ch, int note, int velocity) {
+        if (note < 0 || 127 < note) {
+            return;
+        }
+        
         try {
             if (velocity > 0) {
-                if (tones[note] != null) {
+                if (playingTones[note] != null) {
                     // 重複音声
-                    if (tones[note].isReleaseFlag() == true) {
+                    if (playingTones[note].isReleaseFlag() == true) {
                         // リリースの途中破棄
-                        Tone tone = tones[note];
+                        Tone tone = playingTones[note];
                         activeTones.remove(tone);
                         tonePool.push(tone);
                         tone.setReleaseFlag(false);
                         tone.setVelocity(0);
-                        tones[note] = null;
+                        playingTones[note] = null;
                         if (!oscillator.isToneSync()) {
                             tone.setTablePointer(0);
                         }
@@ -386,7 +411,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                         noteOffImpl(note);
                     }
                 }
-                if (!tonePool.empty() && tones[note] == null) {
+                if (!tonePool.empty() && playingTones[note] == null) {
                     Tone t = tonePool.pop();
                     t.setNote(note);
                     t.setReleaseFlag(false);
@@ -394,7 +419,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                     t.setVelocity(velocity);
                     t.setStartMills();
                     activeTones.add(t);
-                    tones[note] = t;
+                    playingTones[note] = t;
                 }
             }
             else {
@@ -411,7 +436,11 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     }
 
     protected void noteOffImpl(int note) {
-        Tone tone = tones[note];
+        if (note < 0 || 127 < note) {
+            return;
+        }
+        
+        Tone tone = playingTones[note];
         if (tone != null) {
             if ((envelope.getReleaseTime() > 0.0) && (tone.isReleaseFlag() == false)) {
                 tone.setReleaseFlag(true);
@@ -422,7 +451,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                 tone.setReleaseFlag(false);
                 activeTones.remove(tone);
                 tonePool.push(tone);
-                tones[note] = null;
+                playingTones[note] = null;
                 if (!oscillator.isToneSync()) {
                     tone.setTablePointer(0);
                 }
@@ -431,29 +460,16 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     }
 
     public void pitchBend(int ch, int pitch) {
-        for (int i = 0; i < activeTones.size(); i++) {
-            Tone tone = activeTones.get(i);
-            if (tone == null) {
-                continue;
-            }
+        for (int i = 0; i < toneInstances.length; i++) {
+            Tone tone = toneInstances[i];
             tone.setPitch((double) ((double)pitch * pitch_sc) / 8191.0);//
             // 16382で半音あがる
         }
     }
 
     public void setExpression(int ch, int exp) {
-        for (int i = 0; i < activeTones.size(); i++) {
-            Tone tone = activeTones.get(i);
-            if (tone == null) {
-                continue;
-            }
-            tone.setExpression(exp);
-        }
-        for (int i = 0; i < tonePool.size(); i++) {
-            Tone tone = tonePool.get(i);
-            if (tone == null) {
-                continue;
-            }
+        for (int i = 0; i < toneInstances.length; i++) {
+            Tone tone = toneInstances[i];
             tone.setExpression(exp);
         }
     }
@@ -476,33 +492,26 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
     public void resetAllController(int ch) {
         // 発音中の音源を元に戻す  
-        for (int i = 0; i < tones.length; i++) {
-            Tone tone = tones[i];
-            if (tone != null) {
-                activeTones.remove(tone);
-                tonePool.push(tone);
-                tones[i] = null;
-            }
-        }
-        for (int i = 0; i < tonePool.size(); i++) {
-            Tone tone = tonePool.get(i);
-            if (tone == null)
-                continue;
+        for (int i = 0; i < toneInstances.length; i++) {
+            Tone tone = toneInstances[i];
             tone.reset();
         }
+        
+        setModulationDepth(ch, 0);
+        setNRPN(ch, 0);
     }
 
     @Override
     public void allSoundOff(int ch) {
         /* 音源を強制的に破棄する */
-        for (int i = 0; i < tones.length; i++) {
-            Tone tone = tones[i];
+        for (int i = 0; i < playingTones.length; i++) {
+            Tone tone = playingTones[i];
             if (tone != null) {
                 tone.setVelocity(0);
                 tone.setReleaseFlag(false);
                 activeTones.remove(tone);
                 tonePool.push(tone);
-                tones[i] = null;
+                playingTones[i] = null;
                 if (!oscillator.isToneSync()) {
                     tone.setTablePointer(0);
                 }
@@ -516,14 +525,13 @@ public class SoundSourceChannel extends Thread implements ISynthController {
             if (tone == null) {
                 continue;
             }
-            if (tones[tone.getNote()] != null) {
+            if (playingTones[tone.getNote()] != null) {
                 // 発声中の音声を止める
                 if ((envelope.getReleaseTime() > 0.0) && (tone.isReleaseFlag() == false)) {
                     tone.setReleaseFlag(true);
                 }
                 noteOffImpl(tone.getNote());
             }
-            tone.reset();
         }
     }
 
@@ -543,7 +551,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
             if (tone == null) {
                 continue;
             }
-            tone.setVibratoDepth(depth - 64);
+            //tone.setVibratoDepth(depth - 64);
         }
     }
 
@@ -639,6 +647,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         setExpression(0, 0);
 
         pitch_sc = 2;
+        pitchBend(0, 0);
         allSoundOff(0);
         resetAllController(0);
         setNRPN(0, 0);
@@ -704,8 +713,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     
     public int getNumOfTones() {
         int cnt = 0;
-        for (int i=0; i<tones.length; i++) {
-            if (tones[i] != null) {
+        for (int i=0; i<playingTones.length; i++) {
+            if (playingTones[i] != null) {
                 cnt++;
             }
         }
@@ -723,13 +732,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public double getTonePitch() {
         double val = 0.0;
         try {
-            for (int i=0; i<tones.length; i++) {
-                Tone t = tones[i];
-                if (t != null) {
-                    val = t.getPitch();
-                    break;
-                }
-            }
+            Tone t = toneInstances[0];
+            val = t.getPitch();
         }
         catch(Exception e) {
         }
@@ -739,13 +743,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public int getToneExpression() {
         int val = 0;
         try {
-            for (int i=0; i<tones.length; i++) {
-                Tone t = tones[i];
-                if (t != null) {
-                    val = t.getExpression();
-                    break;
-                }
-            }
+            Tone t = toneInstances[0];
+            val = t.getExpression();
         }
         catch(Exception e) {
         }
@@ -755,8 +754,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public int getToneVelocity() {
         int val = 0;
         try {
-            for (int i=0; i<tones.length; i++) {
-                Tone t = tones[i];
+            for (int i=0; i<playingTones.length; i++) {
+                Tone t = playingTones[i];
                 if (t != null) {
                     val = t.getVelocity();
                     break;
@@ -771,8 +770,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public double getToneEnvelopeOffset() {
         double val = 0;
         try {
-            for (int i=0; i<tones.length; i++) {
-                Tone t = tones[i];
+            for (int i=0; i<playingTones.length; i++) {
+                Tone t = playingTones[i];
                 if (t != null) {
                     val = t.getEnvelopeOffset();
                     break;
@@ -787,8 +786,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     public int getToneOverallLevel() {
         int val = 0;
         try {
-            for (int i=0; i<tones.length; i++) {
-                Tone t = tones[i];
+            for (int i=0; i<playingTones.length; i++) {
+                Tone t = playingTones[i];
                 if (t != null) {
                     val = t.getOverallLevel();
                     break;

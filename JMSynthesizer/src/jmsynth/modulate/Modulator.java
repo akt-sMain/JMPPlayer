@@ -1,12 +1,10 @@
 package jmsynth.modulate;
 
-import java.util.Vector;
-
 import jmsynth.sound.Tone;
 
 public class Modulator {
 
-    private Vector<Tone> targetTones = null;
+    private Tone[] targetTones = null;
     private int depth = 0;
     private double depthOffset = 0.0;
 
@@ -40,9 +38,9 @@ public class Modulator {
             double base = (double)MODULATION_MAX_VALUE / (double)2.0;
             int value = (int) ((double) makeTriangleWave(f, (int)base, false));
             double fVal = (double) value / base * depthOffset;
-            for (int i = 0; i < targetTones.size(); i++) {
+            for (int i = 0; i < targetTones.length; i++) {
                 try {
-                    Tone tone = (Tone) targetTones.get(i);
+                    Tone tone = (Tone) targetTones[i];
                     tone.setModulationValue(fVal);
                 }
                 catch (Exception e) {
@@ -74,7 +72,7 @@ public class Modulator {
         return y;
     }
 
-    public void setTargetTones(Vector<Tone> targetTones) {
+    public void setTargetTones(Tone[] targetTones) {
         this.targetTones = targetTones;
     }
 
@@ -85,6 +83,9 @@ public class Modulator {
     public void setDepth(int depth) {
         if (this.depth == 0 && depth > 0) {
             pastTime = System.currentTimeMillis();
+        }
+        if (this.depth > MAX_MODULATION_VALUE) {
+            this.depth = MAX_MODULATION_VALUE;
         }
         this.depth = depth;
         this.depthOffset = (double) depth / (double) MAX_MODULATION_VALUE;

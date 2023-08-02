@@ -195,6 +195,7 @@ public class JMSynthFile {
     public static final String XML_NODE_WAVE = "wave";
     public static final String XML_ATTR_TYPE = "type";
     public static final String XML_ATTR_REVERSE = "reverse";
+    public static final String XML_ATTR_NESSIM = "nes_sim";
     public static final String XML_NODE_ENVELOPE = "envelope";
     public static final String XML_ATTR_A = "a";
     public static final String XML_ATTR_MAX_A = "ma";
@@ -281,15 +282,16 @@ public class JMSynthFile {
             channelElement.setAttribute(XML_ATTR_CHANNEL, String.valueOf(ch));
             rootElement.appendChild(channelElement);
 
-            apendSynthElement(document, channelElement, synth.getWaveType(ch), synth.isWaveReverse(ch), synth.getEnvelope(ch), synth.getModulator(ch));
+            apendSynthElement(document, channelElement, synth.getWaveType(ch), synth.isWaveReverse(ch), synth.isValidFesSimulate(ch), synth.getEnvelope(ch), synth.getModulator(ch));
         }
     }
 
-    private static void apendSynthElement(Document document, Element rootElement, WaveType waveType, boolean waveReverse, Envelope env, Modulator mod) {
+    private static void apendSynthElement(Document document, Element rootElement, WaveType waveType, boolean waveReverse, boolean nesSim, Envelope env, Modulator mod) {
         // wave
         Element waveElement = document.createElement(XML_NODE_WAVE);
         waveElement.setAttribute(XML_ATTR_TYPE, String.valueOf(toWaveStr(waveType)));
         waveElement.setAttribute(XML_ATTR_REVERSE, waveReverse ? S_TRUE : S_FALSE);
+        waveElement.setAttribute(XML_ATTR_NESSIM, nesSim ? S_TRUE : S_FALSE);
         rootElement.appendChild(waveElement);
 
         // envelope
@@ -410,6 +412,9 @@ public class JMSynthFile {
                 }
                 if (waveElement.hasAttribute(XML_ATTR_REVERSE) == true) {
                     synth.setWaveReverse(ch, waveElement.getAttribute(XML_ATTR_REVERSE).equalsIgnoreCase(S_TRUE) ? true : false);
+                }
+                if (waveElement.hasAttribute(XML_ATTR_NESSIM) == true) {
+                    synth.setValidFesSimulate(ch, waveElement.getAttribute(XML_ATTR_NESSIM).equalsIgnoreCase(S_TRUE) ? true : false);
                 }
             }
             else if (chChild.getNodeName().equals(XML_NODE_ENVELOPE)) {

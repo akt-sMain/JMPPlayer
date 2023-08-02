@@ -416,7 +416,7 @@ public class ChannelSetupDialog extends JDialog {
         chckbxWaveReverse.setBounds(8, 6, 103, 21);
         panel_2.add(chckbxWaveReverse);
 
-        checkBoxFESSim = new JCheckBox("FES Simulate");
+        checkBoxFESSim = new JCheckBox("NES Simulate");
         checkBoxFESSim.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateValue();

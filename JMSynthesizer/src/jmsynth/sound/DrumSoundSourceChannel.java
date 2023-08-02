@@ -24,8 +24,8 @@ public class DrumSoundSourceChannel extends SoundSourceChannel {
                         long a = envelope.getAttackMills();
                         long d = envelope.getDecayMills();
                         if (envelope.getSustainLevel() <= 0.0) {
-                            for (int i = 0; i < tones.length; i++) {
-                                Tone tone = tones[i];
+                            for (int i = 0; i < playingTones.length; i++) {
+                                Tone tone = playingTones[i];
                                 if (tone != null) {
                                     long startTime = tone.getStartMills();
                                     long elapsedTime = current - startTime;

@@ -1,7 +1,5 @@
 package jmsynth.envelope;
 
-import java.util.Vector;
-
 import jmsynth.sound.Tone;
 
 public class Envelope {
@@ -13,7 +11,7 @@ public class Envelope {
     private long maxDecayMills = 1000;
     private long maxReleaseMills = 1000;
 
-    private Vector<Tone> targetTones = null;
+    private Tone[] targetTones = null;
     private double attackTime = 0.0;
     private double decayTime = 0.0;
     private double sustainLevel = 1.0;
@@ -49,9 +47,9 @@ public class Envelope {
             long a = getAttackMills();
             long d = getDecayMills();
             long r = getReleaseMills();
-            for (int i = 0; i < targetTones.size(); i++) {
+            for (int i = 0; i < targetTones.length; i++) {
                 try {
-                    Tone tone = (Tone) targetTones.get(i);
+                    Tone tone = (Tone) targetTones[i];
                     if (tone == null) {
                         continue;
                     }
@@ -101,7 +99,7 @@ public class Envelope {
         }
     }
 
-    public void setTargetTones(Vector<Tone> targetTones) {
+    public void setTargetTones(Tone[] targetTones) {
         this.targetTones = targetTones;
     }
 

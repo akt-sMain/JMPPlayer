@@ -33,20 +33,20 @@ public class Tone {
     }
 
     public void reset() { //
-        setVelocity(127);
+        //setVelocity(127);
 
         defaultPitch = 440;
-        note = 1;
-        pitch = 0;
+        //note = 1;
+        //pitch = 0;
         // vibrato = 0;
         expression = 127; // エクスプレッション値
 
-        vibratoDepth = 3;
+        // vibratoDepth = 3;
         // vibratoRate = 0.5;
         // vibratoDelay = 60;
         // vibratoCount = 0;
         // variation = 0;
-        startMills = 0;
+        //startMills = 0;
         setOverallLevel();
     }
 
@@ -104,6 +104,9 @@ public class Tone {
     }
 
     public void setExpression(int expression) {
+        if (expression > 127) {
+            expression = 127;
+        }
         this.expression = expression;
         setOverallLevel();
     }
