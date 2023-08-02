@@ -57,7 +57,7 @@ public class MultiWaveViewerPanel extends JPanel {
     private byte[] hWaveBuf = null;
     private double[] hSpetrumBuf = null;
     private Thread spectrumMonitorThread = null;
-    
+
     private JMSoftSynthesizer synth;
 
     /**
@@ -275,7 +275,7 @@ public class MultiWaveViewerPanel extends JPanel {
                 return null;
         }
     }
-    
+
     private boolean isVisibleWave(int ch) {
         if (traceViewMode == TRACE_VIEW_MODE_MERGE) {
             return true;
@@ -289,7 +289,7 @@ public class MultiWaveViewerPanel extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.WHITE);
         // g.drawString(panelName, 10, 20);
-        
+
         for (int i = 0; i < 16; i++) {
             if (visibleAuto == true) {
                 byte[] d = getDataArray(i);
@@ -308,7 +308,7 @@ public class MultiWaveViewerPanel extends JPanel {
             paintSpectrum(g2d);
         }
         else if (traceViewMode == TRACE_VIEW_MODE_MERGE) {
-            //paintMergeWave(g); 波形合成表示はボツ!
+            // paintMergeWave(g); 波形合成表示はボツ!
             for (int i = 0; i < 16; i++) {
                 paintWave(g, getDataArray(i), i);
             }
@@ -371,38 +371,43 @@ public class MultiWaveViewerPanel extends JPanel {
         g2d.drawPolyline(xPoints, yPoints, length);
         g2d.setStroke(new BasicStroke());
     }
-    
+
     private void drawBar(Graphics g, int x, int y, int height, double cur, double min, double max) {
-        int numOfMem = 50;
+        int gap = 1;
+        int numOfMem = 100;
+        if (traceViewMode == TRACE_VIEW_MODE_MERGE) {
+            gap = 2;
+            numOfMem = 50;
+        }
         int mem = 0;
         Graphics2D g2d = (Graphics2D) g;
         cur -= min;
         max -= min;
-        mem = (int)((double)numOfMem * (cur / max));
+        mem = (int) ((double) numOfMem * (cur / max));
         g2d.setColor(Color.GREEN);
-        for (int i=0; i<mem; i++) {
+        for (int i = 0; i < mem; i++) {
             if (i == 0) {
                 g2d.setColor(Color.BLUE);
             }
-            else if (i == numOfMem-1) {
+            else if (i == numOfMem - 1) {
                 g2d.setColor(Color.RED);
             }
-            else if (i == (numOfMem-1) / 2) {
+            else if (i == (numOfMem - 1) / 2) {
                 g2d.setColor(Color.GREEN);
             }
             else {
                 g2d.setColor(Color.WHITE);
             }
-            g2d.drawLine(x + (i * 2), y, x + (i * 2), y + height);
+            g2d.drawLine(x + (i * gap), y, x + (i * gap), y + height);
         }
         g2d.setColor(Color.WHITE);
     }
-    
+
     public void paintChannelInfo(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         int numOfRow = 4;
         int numOfCol = 4;
-        
+
         int rh = 12;
         int w = getWidth() / numOfCol;
         int h = getHeight() / numOfRow;
@@ -410,8 +415,8 @@ public class MultiWaveViewerPanel extends JPanel {
         String value = "";
         final int valXGap = 50;
         double max, min, cur;
-        for (int c=0; c<numOfRow; c++) {
-            for (int r=0; r<numOfRow; r++) {
+        for (int c = 0; c < numOfRow; c++) {
+            for (int r = 0; r < numOfRow; r++) {
                 int x = 5 + (c * w);
                 int y = 15 + (r * h);
                 int i = (r * numOfCol) + c;
@@ -434,45 +439,46 @@ public class MultiWaveViewerPanel extends JPanel {
                 title = "level:";
                 g2d.drawString(title, x, y);
                 max = 15.875;
-                cur = (double)channel.getToneOverallLevel();
+                cur = (double) channel.getToneOverallLevel();
                 min = 0.0;
-                drawBar(g, x + valXGap, y-10, 10, cur, min, max);
+                drawBar(g, x + valXGap, y - 10, 10, cur, min, max);
                 y += rh;
                 g2d.setColor(Color.WHITE);
                 title = "env:";
-                //value = String.format("%.5f", channel.getToneEnvelopeOffset());
+                // value = String.format("%.5f",
+                // channel.getToneEnvelopeOffset());
                 g2d.drawString(title, x, y);
                 max = 1.0;
-                cur = (double)channel.getToneEnvelopeOffset();
+                cur = (double) channel.getToneEnvelopeOffset();
                 min = 0.0;
-                drawBar(g, x + valXGap, y-10, 10, cur, min, max);
+                drawBar(g, x + valXGap, y - 10, 10, cur, min, max);
                 y += rh;
                 g2d.setColor(Color.WHITE);
                 title = "vel:";
                 g2d.drawString(title, x, y);
-                //value = String.format("%d", channel.getToneVelocity());
+                // value = String.format("%d", channel.getToneVelocity());
                 max = 127.0;
-                cur = (double)channel.getToneVelocity();
+                cur = (double) channel.getToneVelocity();
                 min = 0.0;
-                drawBar(g, x + valXGap, y-10, 10, cur, min, max);
+                drawBar(g, x + valXGap, y - 10, 10, cur, min, max);
                 y += rh;
                 g2d.setColor(Color.WHITE);
                 title = "exp:";
                 value = String.format("%d", channel.getToneExpression());
                 g2d.drawString(title, x, y);
-                //g2d.drawString(value, x + valXGap, y);
+                // g2d.drawString(value, x + valXGap, y);
                 max = 127.0;
-                cur = (double)channel.getToneExpression();
+                cur = (double) channel.getToneExpression();
                 min = 0.0;
-                drawBar(g, x + valXGap, y-10, 10, cur, min, max);
+                drawBar(g, x + valXGap, y - 10, 10, cur, min, max);
                 y += rh;
                 g2d.setColor(Color.WHITE);
                 title = "mod:";
                 g2d.drawString(title, x, y);
                 max = 127.0;
-                cur = (double)channel.getModulator().getDepth();
+                cur = (double) channel.getModulator().getDepth();
                 min = 0.0;
-                drawBar(g, x + valXGap, y-10, 10, cur, min, max);
+                drawBar(g, x + valXGap, y - 10, 10, cur, min, max);
                 y += rh;
                 g2d.setColor(Color.WHITE);
                 title = "pan:";
@@ -480,13 +486,13 @@ public class MultiWaveViewerPanel extends JPanel {
                 max = channel.getFloatControl(FloatControl.Type.PAN).getMaximum();
                 cur = channel.getFloatControl(FloatControl.Type.PAN).getValue();
                 min = channel.getFloatControl(FloatControl.Type.PAN).getMinimum();
-                drawBar(g, x + valXGap, y-10, 10, cur, min, max);
-//                y += rh;
-//                g2d.setColor(Color.WHITE);
-//                title = "NRPN:";
-//                value = String.format("%d", channel.getNRPN(i));
-//                g2d.drawString(title, x, y);
-//                g2d.drawString(value, x + valXGap, y);
+                drawBar(g, x + valXGap, y - 10, 10, cur, min, max);
+                // y += rh;
+                // g2d.setColor(Color.WHITE);
+                // title = "NRPN:";
+                // value = String.format("%d", channel.getNRPN(i));
+                // g2d.drawString(title, x, y);
+                // g2d.drawString(value, x + valXGap, y);
                 y += rh;
                 g2d.setColor(Color.WHITE);
                 title = "pitch:";
@@ -494,8 +500,9 @@ public class MultiWaveViewerPanel extends JPanel {
                 g2d.drawString(title, x, y);
                 max = channel.getPitchBendSenc();
                 cur = channel.getTonePitch();
-                min = -1.0 * channel.getPitchBendSenc();;
-                drawBar(g, x + valXGap, y-10, 10, cur, min, max);
+                min = -1.0 * channel.getPitchBendSenc();
+                ;
+                drawBar(g, x + valXGap, y - 10, 10, cur, min, max);
                 g2d.setColor(Color.WHITE);
                 y += rh;
                 g2d.setColor(Color.WHITE);
@@ -638,15 +645,17 @@ public class MultiWaveViewerPanel extends JPanel {
 
         if (isVisibleWave(ch) == true) {
             if (traceViewMode != TRACE_VIEW_MODE_MERGE) {
-//                g2d.setColor(Color.DARK_GRAY);
-//                g2d.drawString("wave" + (ch + 1), xoffset + 5 + 1, (int) (yCenter - (vHeight / 3)) + 1);
-//                g2d.setColor(waveColor);
-//                g2d.drawString("wave" + (ch + 1), xoffset + 5, (int) (yCenter - (vHeight / 3)));
+                // g2d.setColor(Color.DARK_GRAY);
+                // g2d.drawString("wave" + (ch + 1), xoffset + 5 + 1, (int)
+                // (yCenter - (vHeight / 3)) + 1);
+                // g2d.setColor(waveColor);
+                // g2d.drawString("wave" + (ch + 1), xoffset + 5, (int) (yCenter
+                // - (vHeight / 3)));
                 int x = 5 + ((visibleIndex % col) * vWidth);
                 int y = 15 + ((visibleIndex / col) * vHeight);
                 g2d.setFont(new Font(Font.DIALOG, Font.PLAIN, 14));
                 g2d.setColor(Color.DARK_GRAY);
-                g2d.drawString("CH" + (ch + 1), x+1, y+1);
+                g2d.drawString("CH" + (ch + 1), x + 1, y + 1);
                 g2d.setColor(waveColor);
                 g2d.drawString("CH" + (ch + 1), x, y);
                 g2d.setFont(null);

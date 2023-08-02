@@ -73,6 +73,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setBounds(100, 100, 853, 667);
         contentPane = new JPanel();
+        contentPane.setBackground(new Color(240, 240, 240));
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
 
@@ -321,6 +322,7 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
         leftPanel.add(chckbxWave16);
 
         topPanel = new JPanel();
+        topPanel.setBackground(new Color(240, 240, 240));
         contentPane.add(topPanel, BorderLayout.NORTH);
 
         rdbtnModeDetail = new JRadioButton("Waves");
