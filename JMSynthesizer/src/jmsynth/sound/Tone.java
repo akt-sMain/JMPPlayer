@@ -15,6 +15,7 @@ public class Tone {
     private int overallLevel = 0; // (ベロシティ値 ÷ 8) × (エクスプレッション値 ÷ 127)
     private int velocity = 60; // ベロシティ
     private int expression = 127; // エクスプレッション値
+    private int tempExpression = 127; // エクスプレッション値(リリース用に内部的に保持する)
 
     private int toneStep = 0;
     private double tablePointer = 0;// Waveテーブルのポインタ
@@ -86,7 +87,11 @@ public class Tone {
     }
 
     public void setOverallLevel() {
-        this.overallLevel = (int) (((double) velocity / 8.0) * ((double) expression / 127.0) * (double) envelopeOffset);
+        int exp = expression;
+        if (releaseFlag == true) {
+            exp = tempExpression;
+        }
+        this.overallLevel = (int) (((double) velocity / 8.0) * ((double) exp / 127.0) * (double) envelopeOffset);
 
     }
 
@@ -184,6 +189,9 @@ public class Tone {
 
     public void setReleaseFlag(boolean releaseFlag) {
         this.releaseFlag = releaseFlag;
+        if (this.releaseFlag == true) {
+            tempExpression = expression;
+        }
     }
 
     public void setModulationValue(double modulationValue) {
