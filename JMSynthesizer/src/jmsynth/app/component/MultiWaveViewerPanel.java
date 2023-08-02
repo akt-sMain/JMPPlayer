@@ -373,6 +373,20 @@ public class MultiWaveViewerPanel extends JPanel {
     }
 
     private void drawBar(Graphics g, int x, int y, int height, double cur, double min, double max) {
+        Graphics2D g2d = (Graphics2D) g;
+        Font f = g2d.getFont();
+        
+        Color rowColor = Color.BLUE;
+        Color highColor = Color.RED;
+        Color midColor = Color.GREEN;
+        Color normalColor = Color.WHITE;
+        if (traceViewMode == TRACE_VIEW_MODE_INFO) {
+            rowColor = Color.DARK_GRAY;
+            highColor = Color.DARK_GRAY;
+            midColor = Color.DARK_GRAY;
+            normalColor = Color.DARK_GRAY;
+        }
+        
         int gap = 1;
         int numOfMem = 100;
         if (traceViewMode == TRACE_VIEW_MODE_MERGE) {
@@ -380,26 +394,34 @@ public class MultiWaveViewerPanel extends JPanel {
             numOfMem = 50;
         }
         int mem = 0;
-        Graphics2D g2d = (Graphics2D) g;
         cur -= min;
         max -= min;
         mem = (int) ((double) numOfMem * (cur / max));
         g2d.setColor(Color.GREEN);
         for (int i = 0; i < mem; i++) {
             if (i == 0) {
-                g2d.setColor(Color.BLUE);
+                g2d.setColor(rowColor);
             }
             else if (i == numOfMem - 1) {
-                g2d.setColor(Color.RED);
+                g2d.setColor(highColor);
             }
             else if (i == (numOfMem - 1) / 2) {
-                g2d.setColor(Color.GREEN);
+                g2d.setColor(midColor);
             }
             else {
-                g2d.setColor(Color.WHITE);
+                g2d.setColor(normalColor);
             }
             g2d.drawLine(x + (i * gap), y, x + (i * gap), y + height);
         }
+        
+        if (traceViewMode == TRACE_VIEW_MODE_INFO) {
+            // 情報表示は数値を表示  
+            g2d.setColor(Color.WHITE);
+            g2d.setFont(new Font(Font.DIALOG_INPUT, Font.PLAIN, 14));
+            String sVal = String.format("%.3f", cur);
+            g2d.drawString(sVal, x, y+10);
+        }
+        g2d.setFont(f);
         g2d.setColor(Color.WHITE);
     }
 
@@ -433,7 +455,10 @@ public class MultiWaveViewerPanel extends JPanel {
                 title = "poly:";
                 value = String.format("%d | %d", channel.getNumOfTones(), channel.getNumOfTonePool());
                 g2d.drawString(title, x, y);
+                Font f = g2d.getFont();
+                g2d.setFont(new Font(Font.DIALOG_INPUT, Font.PLAIN, 14));
                 g2d.drawString(value, x + valXGap, y);
+                g2d.setFont(f);
                 y += rh;
                 g2d.setColor(Color.WHITE);
                 title = "level:";
