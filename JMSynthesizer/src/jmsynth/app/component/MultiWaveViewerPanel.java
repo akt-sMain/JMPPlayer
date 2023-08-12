@@ -7,6 +7,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Arrays;
 
 import javax.sound.sampled.FloatControl;
@@ -15,7 +17,7 @@ import javax.swing.JPanel;
 import jmsynth.JMSoftSynthesizer;
 import jmsynth.sound.SoundSourceChannel;
 
-public class MultiWaveViewerPanel extends JPanel {
+public class MultiWaveViewerPanel extends JPanel implements MouseListener {
 
     public static final float WAVE_BOLD = 1.0f;
     public static final int TRACE_VIEW_MODE_DETAIL = 0;
@@ -59,6 +61,11 @@ public class MultiWaveViewerPanel extends JPanel {
     private Thread spectrumMonitorThread = null;
 
     private JMSoftSynthesizer synth;
+    
+    private int pressedX = -1;
+    private int pressedY = -1;
+    private int selectedChannel = -1;
+    private double selectedValue = 0.0;
 
     /**
      * Create the panel.
@@ -183,6 +190,8 @@ public class MultiWaveViewerPanel extends JPanel {
             }
         });
         cinit();
+        
+        this.addMouseListener(this);
     }
 
     public void repaintWavePane() {
@@ -316,6 +325,7 @@ public class MultiWaveViewerPanel extends JPanel {
         }
         else {
             paintChannelInfo(g);
+            //paintControlPanel(g, 0);
         }
     }
 
@@ -372,6 +382,28 @@ public class MultiWaveViewerPanel extends JPanel {
         g2d.setStroke(new BasicStroke());
     }
 
+    private void drawControlBar(Graphics g, int x, int y, int width, int height, double cur, double min, double max) {
+        Graphics2D g2d = (Graphics2D) g;
+        Font f = g2d.getFont();
+        
+        int strOffset = 20;
+        cur -= min;
+        max -= min;
+        int mem = (int) ((double) width * (cur / max));
+        g2d.setColor(Color.GREEN);
+        g2d.fillRect(x, y, mem, height);
+        
+        if (traceViewMode == TRACE_VIEW_MODE_INFO) {
+            // 情報表示は数値を表示  
+            g2d.setColor(Color.WHITE);
+            //g2d.setFont(new Font(Font.DIALOG_INPUT, Font.PLAIN, 14));
+            String sVal = String.format("%.3f", cur);
+            g2d.drawString(sVal, x + width + 10, y + strOffset);
+        }
+        g2d.setFont(f);
+        g2d.setColor(Color.WHITE);
+    }
+    
     private void drawBar(Graphics g, int x, int y, int height, double cur, double min, double max) {
         Graphics2D g2d = (Graphics2D) g;
         Font f = g2d.getFont();
@@ -541,6 +573,166 @@ public class MultiWaveViewerPanel extends JPanel {
                 g2d.setFont(null);
             }
         }
+    }
+    
+    private final static int CONTROL_DRG_ROW = 30;
+    
+    private final static int CONTROL_DRG_X = 50;
+    private final static int CONTROL_DRG_Y = 50;
+    
+    private final static int CONTROL_DRG_BAR_X = 125;
+    private final static int CONTROL_DRG_BAR_Y = CONTROL_DRG_Y + 45;
+    private final static int CONTROL_DRG_BAR_WIDTH = 300;
+    private final static int CONTROL_DRG_BAR_HEIGHT = 20;
+    
+    private final static int CONTROL_DRG_POLY_X = CONTROL_DRG_X + CONTROL_DRG_BAR_X;
+    private final static int CONTROL_DRG_POLY_Y = CONTROL_DRG_BAR_Y + (CONTROL_DRG_ROW * 0);
+    
+    private final static int CONTROL_DRG_LEVEL_X = CONTROL_DRG_X + CONTROL_DRG_BAR_X;
+    private final static int CONTROL_DRG_LEVEL_Y = CONTROL_DRG_BAR_Y + (CONTROL_DRG_ROW * 1);
+    
+    private final static int CONTROL_DRG_ENV_X = CONTROL_DRG_X + CONTROL_DRG_BAR_X;
+    private final static int CONTROL_DRG_ENV_Y = CONTROL_DRG_BAR_Y + (CONTROL_DRG_ROW * 2);
+    
+    private final static int CONTROL_DRG_VEL_X = CONTROL_DRG_X + CONTROL_DRG_BAR_X;
+    private final static int CONTROL_DRG_VEL_Y = CONTROL_DRG_BAR_Y + (CONTROL_DRG_ROW * 3);
+    
+    private final static int CONTROL_DRG_EXP_X = CONTROL_DRG_X + CONTROL_DRG_BAR_X;
+    private final static int CONTROL_DRG_EXP_Y = CONTROL_DRG_BAR_Y + (CONTROL_DRG_ROW * 4);
+    
+    private final static int CONTROL_DRG_MOD_X = CONTROL_DRG_X + CONTROL_DRG_BAR_X;
+    private final static int CONTROL_DRG_MOD_Y = CONTROL_DRG_BAR_Y + (CONTROL_DRG_ROW * 5);
+    
+    private final static int CONTROL_DRG_PAN_X = CONTROL_DRG_X + CONTROL_DRG_BAR_X;
+    private final static int CONTROL_DRG_PAN_Y = CONTROL_DRG_BAR_Y + (CONTROL_DRG_ROW * 6);
+    
+    private final static int CONTROL_DRG_PIT_X = CONTROL_DRG_X + CONTROL_DRG_BAR_X;
+    private final static int CONTROL_DRG_PIT_Y = CONTROL_DRG_BAR_Y + (CONTROL_DRG_ROW * 7);
+    
+    private final static int CONTROL_DRG_VOL_X = CONTROL_DRG_X + CONTROL_DRG_BAR_X;
+    private final static int CONTROL_DRG_VOL_Y = CONTROL_DRG_BAR_Y + (CONTROL_DRG_ROW * 8);
+    
+    public void paintControlPanel(Graphics g, int ch) {
+        if (ch == -1) {
+            return;
+        }
+        final Font titleFont = new Font(Font.DIALOG, Font.PLAIN, 24);
+        
+        Graphics2D g2d = (Graphics2D) g;
+        int drgX = CONTROL_DRG_X;
+        int drgY = CONTROL_DRG_Y;
+        g2d.setColor(Color.BLACK);
+        g2d.fillRect(drgX, drgY, getWidth() - drgX, getHeight() - drgY);
+        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.drawRect(drgX, drgY, getWidth() - (drgX * 2), getHeight() - (drgY * 2));
+        g2d.drawRect(drgX+1, drgY+1, getWidth() - (drgX * 2) - 2, getHeight() - (drgY * 2) - 2);
+        int rh = CONTROL_DRG_ROW;
+        int x = drgX + 10;
+        int y = drgY + 30;
+        int width = 300;
+        int barH = CONTROL_DRG_BAR_HEIGHT;
+        int strOffset = 16;
+        String title = "";
+        String value = "";
+        final int valXGap = 100;
+        double max, min, cur;
+        SoundSourceChannel channel = synth.getChannel(ch);
+        Color waveColor = waveColorTable[channel.getChannel()];
+        g2d.setColor(waveColor);
+        g2d.setFont(new Font(Font.DIALOG, Font.PLAIN, 24));
+        g2d.drawString("CH" + (channel.getChannel() + 1), x, y);
+        g2d.setColor(Color.WHITE);
+        x += 15;
+        y += 30;
+        g2d.setFont(titleFont);
+        g2d.setColor(Color.WHITE);
+        title = "poly:";
+        value = String.format("%d | %d", channel.getNumOfTones(), channel.getNumOfTonePool());
+        g2d.drawString(title, x, y);
+        Font f = g2d.getFont();
+        g2d.setFont(new Font(Font.DIALOG_INPUT, Font.PLAIN, 14));
+        g2d.drawString(value, x + valXGap, y);
+        g2d.setFont(f);
+        y += rh;
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(titleFont);
+        title = "level:";
+        g2d.drawString(title, x, y);
+        max = 15.875;
+        cur = (double) channel.getToneOverallLevel();
+        min = 0.0;
+        drawControlBar(g, CONTROL_DRG_LEVEL_X, CONTROL_DRG_LEVEL_Y, width, barH, cur, min, max);
+        y += rh;
+        g2d.setColor(Color.WHITE);
+        title = "env:";
+        // value = String.format("%.5f",
+        // channel.getToneEnvelopeOffset());
+        g2d.drawString(title, x, y);
+        max = 1.0;
+        cur = (double) channel.getToneEnvelopeOffset();
+        min = 0.0;
+        drawControlBar(g, CONTROL_DRG_ENV_X, CONTROL_DRG_ENV_Y, width, barH, cur, min, max);
+        y += rh;
+        g2d.setColor(Color.WHITE);
+        title = "vel:";
+        g2d.drawString(title, x, y);
+        // value = String.format("%d", channel.getToneVelocity());
+        max = 127.0;
+        cur = (double) channel.getToneVelocity();
+        min = 0.0;
+        drawControlBar(g, CONTROL_DRG_VEL_X, CONTROL_DRG_VEL_Y, width, barH, cur, min, max);
+        y += rh;
+        g2d.setColor(Color.WHITE);
+        title = "exp:";
+        value = String.format("%d", channel.getToneExpression());
+        g2d.drawString(title, x, y);
+        // g2d.drawString(value, x + valXGap, y);
+        max = 127.0;
+        cur = (double) channel.getToneExpression();
+        min = 0.0;
+        drawControlBar(g, CONTROL_DRG_EXP_X, CONTROL_DRG_EXP_Y, width, barH, cur, min, max);
+        y += rh;
+        g2d.setColor(Color.WHITE);
+        title = "mod:";
+        g2d.drawString(title, x, y);
+        max = 127.0;
+        cur = (double) channel.getModulator().getDepth();
+        min = 0.0;
+        drawControlBar(g, CONTROL_DRG_MOD_X, CONTROL_DRG_MOD_Y, width, barH, cur, min, max);
+        y += rh;
+        g2d.setColor(Color.WHITE);
+        title = "pan:";
+        g2d.drawString(title, x, y);
+        max = channel.getFloatControl(FloatControl.Type.PAN).getMaximum();
+        cur = channel.getFloatControl(FloatControl.Type.PAN).getValue();
+        min = channel.getFloatControl(FloatControl.Type.PAN).getMinimum();
+        drawControlBar(g, CONTROL_DRG_PAN_X, CONTROL_DRG_PAN_Y, width, barH, cur, min, max);
+        // y += rh;
+        // g2d.setColor(Color.WHITE);
+        // title = "NRPN:";
+        // value = String.format("%d", channel.getNRPN(i));
+        // g2d.drawString(title, x, y);
+        // g2d.drawString(value, x + valXGap, y);
+        y += rh;
+        g2d.setColor(Color.WHITE);
+        title = "pitch:";
+        value = String.format("%.5f", channel.getTonePitch());
+        g2d.drawString(title, x, y);
+        max = channel.getPitchBendSenc();
+        cur = channel.getTonePitch();
+        min = -1.0 * channel.getPitchBendSenc();
+        drawControlBar(g, CONTROL_DRG_PIT_X, CONTROL_DRG_PIT_Y, width, barH, cur, min, max);
+        g2d.setColor(Color.WHITE);
+        y += rh;
+        g2d.setColor(Color.WHITE);
+        title = "volume:";
+        g2d.drawString(title, x, y);
+        max = channel.getFloatControl(FloatControl.Type.MASTER_GAIN).getMaximum();
+        cur = channel.getFloatControl(FloatControl.Type.MASTER_GAIN).getValue();
+        min = channel.getFloatControl(FloatControl.Type.MASTER_GAIN).getMinimum();
+        drawControlBar(g, CONTROL_DRG_VOL_X, CONTROL_DRG_VOL_Y, width, barH, cur, min, max);
+        g2d.setColor(null);
+        g2d.setFont(null);
     }
 
     public void paintWave(Graphics g, byte[] d, int ch) {
@@ -822,5 +1014,66 @@ public class MultiWaveViewerPanel extends JPanel {
     protected void finalize() throws Throwable {
         super.finalize();
         hispeedSpectrumRunnable = false;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        int mx = e.getX();
+        int my = e.getY();
+        if (CONTROL_DRG_POLY_X <= mx && mx <= CONTROL_DRG_POLY_X + CONTROL_DRG_BAR_WIDTH 
+                && CONTROL_DRG_POLY_Y <= my && my <= CONTROL_DRG_POLY_Y + CONTROL_DRG_BAR_HEIGHT) {
+            
+        }
+        else if (CONTROL_DRG_LEVEL_X <= mx && mx <= CONTROL_DRG_LEVEL_X + CONTROL_DRG_BAR_WIDTH 
+                && CONTROL_DRG_LEVEL_Y <= my && my <= CONTROL_DRG_LEVEL_Y + CONTROL_DRG_BAR_HEIGHT) {
+            
+        }
+        else if (CONTROL_DRG_ENV_X <= mx && mx <= CONTROL_DRG_ENV_X + CONTROL_DRG_BAR_WIDTH 
+                && CONTROL_DRG_ENV_Y <= my && my <= CONTROL_DRG_ENV_Y + CONTROL_DRG_BAR_HEIGHT) {
+            
+        }
+        else if (CONTROL_DRG_VEL_X <= mx && mx <= CONTROL_DRG_VEL_X + CONTROL_DRG_BAR_WIDTH 
+                && CONTROL_DRG_VEL_Y <= my && my <= CONTROL_DRG_VEL_Y + CONTROL_DRG_BAR_HEIGHT) {
+            
+        }
+        else if (CONTROL_DRG_EXP_X <= mx && mx <= CONTROL_DRG_EXP_X + CONTROL_DRG_BAR_WIDTH 
+                && CONTROL_DRG_EXP_Y <= my && my <= CONTROL_DRG_EXP_Y + CONTROL_DRG_BAR_HEIGHT) {
+            
+        }
+        else if (CONTROL_DRG_MOD_X <= mx && mx <= CONTROL_DRG_MOD_X + CONTROL_DRG_BAR_WIDTH 
+                && CONTROL_DRG_MOD_Y <= my && my <= CONTROL_DRG_MOD_Y + CONTROL_DRG_BAR_HEIGHT) {
+            
+        }
+        else if (CONTROL_DRG_PAN_X <= mx && mx <= CONTROL_DRG_PAN_X + CONTROL_DRG_BAR_WIDTH 
+                && CONTROL_DRG_PAN_Y <= my && my <= CONTROL_DRG_PAN_Y + CONTROL_DRG_BAR_HEIGHT) {
+            
+        }
+        else if (CONTROL_DRG_PIT_X <= mx && mx <= CONTROL_DRG_PIT_X + CONTROL_DRG_BAR_WIDTH 
+                && CONTROL_DRG_PIT_Y <= my && my <= CONTROL_DRG_PIT_Y + CONTROL_DRG_BAR_HEIGHT) {
+            
+        }
+        else if (CONTROL_DRG_VOL_X <= mx && mx <= CONTROL_DRG_VOL_X + CONTROL_DRG_BAR_WIDTH 
+                && CONTROL_DRG_VOL_Y <= my && my <= CONTROL_DRG_VOL_Y + CONTROL_DRG_BAR_HEIGHT) {
+            
+        }
+        
+        pressedX = mx;
+        pressedY = my;
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {        
     }
 }

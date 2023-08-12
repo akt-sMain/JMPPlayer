@@ -21,13 +21,16 @@ public class WaveGenerater {
      * @return
      */
     public static byte makeSinWave(double f, int overallLeval, boolean reverse) {
-        double ff = (reverse == false) ? (1.0 - trimF(f)) : trimF(f);
-        return (byte) ((Math.sin(2.0 * Math.PI * ff) * overallLeval));
+        return makeSinWave(f, overallLeval, reverse, 100.0);
     }
 
     public static byte makeSinWaveForLowSampling(double f, int overallLeval, boolean reverse) {
-        double ff = (reverse == false) ? (1.0 - trimF(f, 10.0)) : trimF(f, 10.0);
-        return (byte) ((Math.sin(2.0 * Math.PI * ff) * overallLeval));
+        return makeSinWave(f, overallLeval, reverse, 10.0);
+    }
+    
+    public static byte makeSinWave(double f, int overallLeval, boolean reverse, double samplingRate) {
+        double ff = (reverse == false) ? (1.0 - trimF(f, samplingRate)) : trimF(f, samplingRate);
+        return (byte) ((Math.sin(2.0 * Math.PI * ff) * (double)overallLeval));
     }
 
     /**
@@ -99,7 +102,7 @@ public class WaveGenerater {
      */
     public static byte makeSawWave(double f, int overallLeval, boolean reverse) {
         double ff = (reverse == true) ? (1.0 - trimF(f)) : trimF(f);
-        return (byte) (((2.0 * ff) * overallLeval) - (overallLeval));
+        return (byte) (((2.0 * ff) * (double)overallLeval) - ((double)overallLeval));
     }
 
     /**

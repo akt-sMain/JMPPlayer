@@ -292,6 +292,18 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         FloatControl control = (FloatControl) line.getControl(type);
         return control;
     }
+    
+    public double convertFloatControlValue(float volume, float maximum, float minimum) {
+        if (volume > 1.0f)
+            volume = 1.0f;
+        else if (volume < 0.0f)
+            volume = 0.0f;
+        double max = Math.pow(10.0, maximum / 20.0);
+        double min = Math.pow(10.0, minimum / 20.0);
+        double newValue = (max - min) * (volume * volume) + min;
+        newValue = 20 * Math.log(newValue) / Math.log(10);
+        return newValue;
+    }
 
     /**
      * ボリュームの設定
@@ -300,15 +312,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
      *            0.0 ~ 1.0
      */
     public void setVolume(float volume) {
-        if (volume > 1.0f)
-            volume = 1.0f;
-        else if (volume < 0.0f)
-            volume = 0.0f;
         FloatControl control = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
-        double max = Math.pow(10.0, control.getMaximum() / 20.0);
-        double min = Math.pow(10.0, control.getMinimum() / 20.0);
-        double newValue = (max - min) * (volume * volume) + min;
-        newValue = 20 * Math.log(newValue) / Math.log(10);
+        double newValue = convertFloatControlValue(volume, control.getMaximum(), control.getMinimum());
         control.setValue((float) newValue);
     }
 
@@ -693,22 +698,22 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         return this.oscConfig.isWaveReverse();
     }
 
-    public void setValidFesSimulate(boolean isValidFesSimulate) {
-        setValidFesSimulate(0, isValidFesSimulate);
+    public void setValidNesSimulate(boolean isValidNesSimulate) {
+        setValidNesSimulate(0, isValidNesSimulate);
     }
 
     @Override
-    public void setValidFesSimulate(int ch, boolean isValidFesSimulate) {
-        this.oscConfig.setValidFesSimulate(isValidFesSimulate);
+    public void setValidNesSimulate(int ch, boolean isValidNesSimulate) {
+        this.oscConfig.setValidNesSimulate(isValidNesSimulate);
     }
 
-    public boolean isValidFesSimulate() {
-        return isValidFesSimulate(0);
+    public boolean isValidNesSimulate() {
+        return isValidNesSimulate(0);
     }
 
     @Override
-    public boolean isValidFesSimulate(int ch) {
-        return this.oscConfig.isValidFesSimulate();
+    public boolean isValidNesSimulate(int ch) {
+        return this.oscConfig.isValidNesSimulate();
     }
     
     public int getNumOfTones() {

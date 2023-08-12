@@ -1,5 +1,7 @@
 package jmp.midi.toolkit;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 
@@ -44,6 +47,11 @@ public class DefaultMidiToolkit implements IMidiToolkit {
         }
 
         return devices;
+    }
+    
+    @Override
+    public Sequence readMidiFile(File file) throws InvalidMidiDataException, IOException {
+        return MidiSystem.getSequence(file);
     }
 
     @Override

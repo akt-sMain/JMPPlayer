@@ -3,7 +3,7 @@ package jmsynth.oscillator;
 public class OscillatorConfig {
 
     private boolean isWaveReverse = false;
-    private boolean isValidFesSimulate = false;
+    private boolean isValidNesSimulate = false;
 
     public OscillatorConfig() {
         setWaveReverse(false);
@@ -32,16 +32,16 @@ public class OscillatorConfig {
      *
      * @return
      */
-    public boolean isValidFesSimulate() {
-        return isValidFesSimulate;
+    public boolean isValidNesSimulate() {
+        return isValidNesSimulate;
     }
 
     /**
      * FES風の波形モード
      *
-     * @param isValidFesSimulate
+     * @param isValidNesSimulate
      */
-    public void setValidFesSimulate(boolean isValidFesSimulate) {
-        this.isValidFesSimulate = isValidFesSimulate;
+    public void setValidNesSimulate(boolean isValidNesSimulate) {
+        this.isValidNesSimulate = isValidNesSimulate;
     }
 }

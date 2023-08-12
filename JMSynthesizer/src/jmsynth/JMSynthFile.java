@@ -282,7 +282,7 @@ public class JMSynthFile {
             channelElement.setAttribute(XML_ATTR_CHANNEL, String.valueOf(ch));
             rootElement.appendChild(channelElement);
 
-            apendSynthElement(document, channelElement, synth.getWaveType(ch), synth.isWaveReverse(ch), synth.isValidFesSimulate(ch), synth.getEnvelope(ch), synth.getModulator(ch));
+            apendSynthElement(document, channelElement, synth.getWaveType(ch), synth.isWaveReverse(ch), synth.isValidNesSimulate(ch), synth.getEnvelope(ch), synth.getModulator(ch));
         }
     }
 
@@ -414,7 +414,7 @@ public class JMSynthFile {
                     synth.setWaveReverse(ch, waveElement.getAttribute(XML_ATTR_REVERSE).equalsIgnoreCase(S_TRUE) ? true : false);
                 }
                 if (waveElement.hasAttribute(XML_ATTR_NESSIM) == true) {
-                    synth.setValidFesSimulate(ch, waveElement.getAttribute(XML_ATTR_NESSIM).equalsIgnoreCase(S_TRUE) ? true : false);
+                    synth.setValidNesSimulate(ch, waveElement.getAttribute(XML_ATTR_NESSIM).equalsIgnoreCase(S_TRUE) ? true : false);
                 }
             }
             else if (chChild.getNodeName().equals(XML_NODE_ENVELOPE)) {

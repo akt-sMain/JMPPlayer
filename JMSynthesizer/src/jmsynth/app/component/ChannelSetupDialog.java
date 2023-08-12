@@ -609,7 +609,7 @@ public class ChannelSetupDialog extends JDialog {
         synth.setWaveReverse(ch, waveReverse);
 
         boolean fesSim = checkBoxFESSim.isSelected();
-        synth.setValidFesSimulate(ch, fesSim);
+        synth.setValidNesSimulate(ch, fesSim);
 
         if (e != null) {
             e.setAttackTime(getAttackSli());
@@ -639,7 +639,7 @@ public class ChannelSetupDialog extends JDialog {
 
         chckbxWaveReverse.setSelected(synth.isWaveReverse(ch));
 
-        checkBoxFESSim.setSelected(synth.isValidFesSimulate(ch));
+        checkBoxFESSim.setSelected(synth.isValidNesSimulate(ch));
 
         if (e != null) {
             setAttackSli();

@@ -553,18 +553,37 @@ public class MidiPlayer extends Player {
     }
 
     /**
-     * MIDIファイルを解析
+     * MIDIファイルをシーケンサーにロードする
      *
      * @param file
-     *            Midiファイル
-     * @return Sequence
+     *            MIDIファイル
      * @throws IOException
      * @throws InvalidMidiDataException
+     * @throws Exception
      */
-    public Sequence readMidiFile(File file) throws InvalidMidiDataException, IOException {
-        Sequence seq = null;
-        seq = MidiSystem.getSequence(file);
+    public void loadMidiFile(File file) throws InvalidMidiDataException, IOException {
+        Sequence seq = JMPCore.getSoundManager().getMidiToolkit().readMidiFile(file);
+        loadMidiSequence(seq);
+    }
 
+    /**
+     * MIDIファイルをシーケンサーにロードする
+     *
+     * @param path
+     *            MIDIファイルパス
+     * @throws IOException
+     * @throws InvalidMidiDataException
+     * @throws Exception
+     */
+    public void loadMidiFile(String path) throws InvalidMidiDataException, IOException {
+        File f = new File(path);
+        if (f.exists() == true) {
+            loadMidiFile(f);
+        }
+        return;
+    }
+
+    public void loadMidiSequence(Sequence seq) throws InvalidMidiDataException {
         if (JMPFlags.UseHispeedMidiMessage == true) {
             /* 高速ショートメッセージ使用 */
             Sequence newSeq = new Sequence(seq.getDivisionType(), seq.getResolution());
@@ -588,68 +607,6 @@ public class MidiPlayer extends Player {
             }
             seq = newSeq;
         }
-
-        // JMPMidiReader mr = new JMPMidiReader(file);
-        // try {
-        // mr.read();
-        // }
-        // catch (Exception e) {
-        // System.out.println(function.Error.getMsg(e));
-        // }
-
-        return seq;
-    }
-
-    /**
-     * MIDIファイルを解析
-     *
-     * @param path
-     *            ファイルパス
-     * @return Sequence
-     * @throws IOException
-     * @throws InvalidMidiDataException
-     */
-    public Sequence readMidiFile(String path) throws InvalidMidiDataException, IOException {
-        File f = new File(path);
-        if (f.exists() == false) {
-            // ファイルが存在しない
-            return null;
-        }
-        return readMidiFile(f);
-    }
-
-    /**
-     * MIDIファイルをシーケンサーにロードする
-     *
-     * @param file
-     *            MIDIファイル
-     * @throws IOException
-     * @throws InvalidMidiDataException
-     * @throws Exception
-     */
-    public void loadMidiFile(File file) throws InvalidMidiDataException, IOException {
-        Sequence seq = readMidiFile(file);
-        loadMidiSequence(seq);
-    }
-
-    /**
-     * MIDIファイルをシーケンサーにロードする
-     *
-     * @param path
-     *            MIDIファイルパス
-     * @throws IOException
-     * @throws InvalidMidiDataException
-     * @throws Exception
-     */
-    public void loadMidiFile(String path) throws InvalidMidiDataException, IOException {
-        File f = new File(path);
-        if (f.exists() == true) {
-            loadMidiFile(f);
-        }
-        return;
-    }
-
-    public void loadMidiSequence(Sequence seq) throws InvalidMidiDataException {
         getSequencer().setSequence(seq);
     }
 

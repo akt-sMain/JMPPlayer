@@ -181,7 +181,7 @@ public class MidiInterface implements Receiver {
             OscillatorSet osc = getProgramChangeOscillator(channel, pc);
             controller.setOscillator(channel, osc);
         }
-        controller.setVolume(channel, 1.0f);
+        //controller.setVolume(channel, 1.0f);
     }
 
     private void executeSystemReset() {

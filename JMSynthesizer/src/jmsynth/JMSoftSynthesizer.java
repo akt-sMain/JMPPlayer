@@ -143,7 +143,7 @@ public class JMSoftSynthesizer implements ISynthController {
         if (target != null) {
             target.setOscillator(ch, type);
             target.setWaveReverse(ch, waveReverse);
-            target.setValidFesSimulate(ch, validFesSim);
+            target.setValidNesSimulate(ch, validFesSim);
 
             Envelope env = target.getEnvelope(ch);
             env.setAttackTime(a);
@@ -322,12 +322,12 @@ public class JMSoftSynthesizer implements ISynthController {
     }
 
     @Override
-    public void setValidFesSimulate(int ch, boolean isValidFesSimulate) {
-        channels[ch].setValidFesSimulate(ch, isValidFesSimulate);
+    public void setValidNesSimulate(int ch, boolean isValidFesSimulate) {
+        channels[ch].setValidNesSimulate(ch, isValidFesSimulate);
     }
 
     @Override
-    public boolean isValidFesSimulate(int ch) {
-        return channels[ch].isValidFesSimulate(ch);
+    public boolean isValidNesSimulate(int ch) {
+        return channels[ch].isValidNesSimulate(ch);
     }
 }

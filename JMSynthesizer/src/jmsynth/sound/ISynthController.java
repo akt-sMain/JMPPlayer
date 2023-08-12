@@ -74,7 +74,7 @@ public interface ISynthController {
 
     abstract boolean isWaveReverse(int ch);
 
-    abstract void setValidFesSimulate(int ch, boolean isValidFesSimulate);
+    abstract void setValidNesSimulate(int ch, boolean isValidFesSimulate);
 
-    abstract boolean isValidFesSimulate(int ch);
+    abstract boolean isValidNesSimulate(int ch);
 }

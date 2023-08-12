@@ -1,5 +1,7 @@
 package jlib.midi;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -7,6 +9,7 @@ import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Sequence;
 
 public interface IMidiToolkit {
 
@@ -16,6 +19,15 @@ public interface IMidiToolkit {
      * @return
      */
     abstract List<MidiDevice> getMidiDevices();
+    
+    /**
+     * Midiファイル解析 
+     * 
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    abstract Sequence readMidiFile(File file) throws InvalidMidiDataException, IOException;
 
     /**
      * MIDIデバイス情報一覧取得

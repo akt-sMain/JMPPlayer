@@ -12,6 +12,6 @@ package jmsynth;
  * @author akkut
  *
  */
-public class Version {
+class Version {
     public static String NO = "1.00";
 }
