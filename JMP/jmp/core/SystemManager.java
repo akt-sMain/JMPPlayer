@@ -110,7 +110,7 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     // コンソール出力の1行をキャッシュする
     public static String SLineCache = "";
 
-    private DebugLogConsole console = null;
+    static DebugLogConsole console = null;
 
     public void showConsole() {
         if (console != null) {
@@ -119,8 +119,8 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     }
 
     public void showConsoleForClear() {
+        DebugLogConsole.clear();
         if (console != null) {
-            console.clearText();
             console.setVisible(true);
         }
     }
@@ -132,14 +132,16 @@ public class SystemManager extends AbstractManager implements ISystemManager {
     }
 
     public void consoleOutln(String s) {
+        DebugLogConsole.println(s);
         if (console != null) {
-            console.println(s);
+            console.updateText();
         }
     }
 
     public void consoleOut(String s) {
+        DebugLogConsole.print(s);
         if (console != null) {
-            console.print(s);
+            console.updateText();
         }
     }
 
@@ -161,15 +163,6 @@ public class SystemManager extends AbstractManager implements ISystemManager {
             }
         }
         JOptionPane.showMessageDialog(parent, errorMsg, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    public static void consoleOutSystemInfo() {
-        JMPFlags.Log.cprintln("Date : " + Utility.getCurrentTimeStr(), true);
-        JMPFlags.Log.cprintln("Java : " + Platform.getJavaVersion(), true);
-        JMPFlags.Log.cprintln("OS   : " + Platform.getOSName(), true);
-        JMPFlags.Log.cprintln("SLaF : " + UIManager.getSystemLookAndFeelClassName());
-        JMPFlags.Log.cprintln("CLaF : " + UIManager.getCrossPlatformLookAndFeelClassName());
-        JMPFlags.Log.cprintln(true);
     }
 
     SystemManager() {
@@ -554,14 +547,14 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         // skin
         aPath[PATH_SKIN_DIR] = Utility.pathCombin(currentPath, SKIN_FOLDER_NAME);
 
-        JMPFlags.Log.cprintln("###");
-        JMPFlags.Log.cprintln("## Directory list");
-        JMPFlags.Log.cprintln("##");
-        for (int i = 0; i < NUM_OF_PATH; i++) {
-            JMPFlags.Log.cprintln("[" + i + "]" + aPath[i]);
-        }
-        JMPFlags.Log.cprintln("##");
-        JMPFlags.Log.cprintln();
+//        JMPFlags.Log.cprintln("###");
+//        JMPFlags.Log.cprintln("## Directory list");
+//        JMPFlags.Log.cprintln("##");
+//        for (int i = 0; i < NUM_OF_PATH; i++) {
+//            JMPFlags.Log.cprintln("[" + i + "]" + aPath[i]);
+//        }
+//        JMPFlags.Log.cprintln("##");
+//        JMPFlags.Log.cprintln();
     }
 
     public String getSystemPath(int id) {
@@ -720,6 +713,9 @@ public class SystemManager extends AbstractManager implements ISystemManager {
         }
         if (JmpUtil.checkConfigKey(key, IDataManager.CFG_KEY_YOUTUBEDL_PATH) == true) {
             youtubeDlWrapper.setPath(getYoutubeDlPath());
+        }
+        if (JmpUtil.checkConfigKey(key, IDataManager.CFG_KEY_YOUTUBEDL_COMMAND) == true) {
+            youtubeDlWrapper.setCommand(getYoutubeDlCommand());
         }
         if (JmpUtil.checkConfigKey(key, IDataManager.CFG_KEY_YOUTUBEDL_INSTALLED) == true) {
             youtubeDlWrapper.setYoutubeDlInstalled(isYoutubeDlInstalled());

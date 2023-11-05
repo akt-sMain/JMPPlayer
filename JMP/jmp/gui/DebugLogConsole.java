@@ -3,6 +3,7 @@ package jmp.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -14,14 +15,17 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultCaret;
 
 import function.Platform;
 import function.Utility;
+import jlib.gui.IJmpWindow;
 
-public class DebugLogConsole extends JDialog {
+public class DebugLogConsole extends JDialog implements IJmpWindow {
 
+    private static String SText = "";
     private final JPanel contentPanel = new JPanel();
-    private JTextPane textPane;
+    private JTextPane txtpnTest;
     private JScrollPane scrollPane;
 
     /**
@@ -46,11 +50,15 @@ public class DebugLogConsole extends JDialog {
             scrollPane = new JScrollPane();
             contentPanel.add(scrollPane, BorderLayout.CENTER);
             {
-                textPane = new JTextPane();
-                textPane.setEditable(false);
-                scrollPane.setViewportView(textPane);
-                textPane.setForeground(new Color(51, 204, 204));
-                textPane.setBackground(new Color(0, 0, 0));
+                txtpnTest = new JTextPane();
+                txtpnTest.setText("Test");
+                txtpnTest.setFont(new Font("DejaVu Sans Mono", Font.PLAIN, 12));
+                txtpnTest.setEditable(false);
+                scrollPane.setViewportView(txtpnTest);
+                txtpnTest.setForeground(new Color(60, 179, 113));
+                txtpnTest.setBackground(new Color(0, 0, 0));
+                DefaultCaret crList = (DefaultCaret) txtpnTest.getCaret();
+                crList.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
             }
         }
         {
@@ -73,31 +81,48 @@ public class DebugLogConsole extends JDialog {
 
     @Override
     public void setVisible(boolean b) {
+        updateText();
         super.setVisible(b);
-        if (b == false) {
-            clearText();
-        }
+        // if (b == false) {
+        // clearText();
+        // }
     }
 
-    private static final boolean REVERSE = true;
+    private static final boolean REVERSE = false;
     private static String LN = Platform.getNewLine();
 
-    public void print(String str) {
-        if (isVisible() == false) {
-            return;
-        }
+    public static void print(String str) {
         addText(str, false, REVERSE);
     }
 
-    public void println(String str) {
-        if (isVisible() == false) {
-            return;
-        }
+    public static void println(String str) {
         addText(str, true, REVERSE);
     }
+    
+    public static void clear() {
+        SText = "";
+    }
 
-    private void addText(String str, boolean ln, boolean reverse) {
-        String text = textPane.getText();
+    public static void addText(String str, boolean ln, boolean reverse) {
+        // if (isVisible() == false) {
+        // return;
+        // }
+        //
+        
+        try {
+            int addBites = str.getBytes("UTF-8").length;
+            int currentBites = SText.getBytes("UTF-8").length;
+            if (currentBites + addBites > 1024 * 3) {
+                // 3M以上は記録しない
+                SText = "";
+            }
+            
+        }
+        catch (Exception ex) {
+            SText = "";
+        }
+        
+        String text = SText;
 
         String s1, s2, s3;
         if (reverse == true) {
@@ -111,28 +136,40 @@ public class DebugLogConsole extends JDialog {
             s3 = ln ? LN : "";
         }
         String newText = Utility.stringsCombin(s1, s2, s3);
-        textPane.setText(newText);
-        updateText();
+        SText = newText;
     }
 
     public void clearText() {
-        textPane.setText("");
+        SText = "";
         updateText();
     }
 
     public void updateText() {
-        if (textPane.getText().isEmpty() == false && isVisible() == true) {
-            // textPane.setCaretPosition(textPane.getText().length());
-            // try {
-            // scrollPane.getViewport().scrollRectToVisible(new Rectangle(0,
-            // Integer.MAX_VALUE - 1, 1, 1));
-            // }
-            // catch (Exception e) {
-            // }
-        }
-        // if (isVisible() == true) {
-        // repaint();
-        // }
+        txtpnTest.setText(SText);
+    }
+
+    @Override
+    public void showWindow() {
+        this.setVisible(true);
+    }
+
+    @Override
+    public void hideWindow() {
+        this.setVisible(false);
+    }
+
+    @Override
+    public boolean isWindowVisible() {
+        return this.isVisible();
+    }
+
+    @Override
+    public void setDefaultWindowLocation() {
+    }
+
+    @Override
+    public void repaintWindow() {
+        this.repaint();
     }
 
 }

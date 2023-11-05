@@ -154,6 +154,14 @@ public interface IJmpConfigDatabase {
     default void setSendMidiSystemSetup(boolean isSendMidiSystemSetup) {
         setConfigParamToBoolean(DataManager.CFG_KEY_SEND_MIDI_SYSTEMSETUP, isSendMidiSystemSetup);
     }
+    
+    default String getYoutubeDlCommand() {
+        return getConfigParam(DataManager.CFG_KEY_YOUTUBEDL_COMMAND);
+    }
+
+    default void setYoutubeDlCommand(String cmd) {
+        setConfigParam(DataManager.CFG_KEY_YOUTUBEDL_COMMAND, cmd);
+    }
 
     default String getYoutubeDlPath() {
         return getConfigParam(DataManager.CFG_KEY_YOUTUBEDL_PATH);

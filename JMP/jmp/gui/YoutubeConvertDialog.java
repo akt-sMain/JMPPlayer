@@ -39,6 +39,7 @@ import jmp.gui.ui.JMPDialog;
 import jmp.gui.ui.MultiKeyActionTextField;
 import jmp.lang.DefineLanguage.LangID;
 import jmp.task.ICallbackFunction;
+import jmp.util.JmpUtil;
 import process.IProcessingCallback;
 
 public class YoutubeConvertDialog extends JMPDialog {
@@ -96,6 +97,10 @@ public class YoutubeConvertDialog extends JMPDialog {
                 if (textFieldExePath.isEnabled() == false) {
                     return;
                 }
+                if (JMPCore.getDataManager().isYoutubeDlInstalled() == true) {
+                    return;
+                }
+                
                 setExePath(file.getPath());
             }
         }));
@@ -276,10 +281,10 @@ public class YoutubeConvertDialog extends JMPDialog {
     }
 
     private void updateGuiState() {
-        textFieldExePath.setEnabled(!JMPCore.getDataManager().isYoutubeDlInstalled());
+        //textFieldExePath.setEnabled(!JMPCore.getDataManager().isYoutubeDlInstalled());
         btnOpenExe.setEnabled(!JMPCore.getDataManager().isYoutubeDlInstalled());
         if (JMPCore.getDataManager().isYoutubeDlInstalled() == true) {
-            textFieldExePath.setText("youtube-dl");
+            textFieldExePath.setText(JMPCore.getDataManager().getYoutubeDlCommand());
         }
         else {
             textFieldExePath.setText(JMPCore.getDataManager().getYoutubeDlPath());
@@ -341,7 +346,24 @@ public class YoutubeConvertDialog extends JMPDialog {
         SystemManager system = JMPCore.getSystemManager();
         LanguageManager lm = JMPCore.getLanguageManager();
 
-        dm.setYoutubeDlPath(textFieldExePath.getText());
+        dm.setYoutubeDlInstalled(chckbxInstalled.isSelected());
+        
+        if (JMPCore.getDataManager().isYoutubeDlInstalled() == true) {
+            dm.setYoutubeDlCommand(textFieldExePath.getText());
+        }
+        else {
+            dm.setYoutubeDlPath(textFieldExePath.getText());
+        }
+        
+        String sWebNameType = comboboxNameType.getSelectedItem().toString();
+        if (sWebNameType.isEmpty() == false) {
+            IJ_YoutubeDlFileNameConfig fileNameConf = IJ_YoutubeDlFileNameConfig.IJ_Title;
+            if (sWebNameType.equalsIgnoreCase("ID") == true) {
+                fileNameConf = IJ_YoutubeDlFileNameConfig.IJ_Id;
+            }
+            dm.setYoutubeDlFileNameMode(fileNameConf);
+        }
+        
         if (system.isValidYoutubeDlWrapper() == false) {
             lblStatus.setForeground(Color.RED);
             String name = String.format("\"%s\"", ".exe");
@@ -439,6 +461,9 @@ public class YoutubeConvertDialog extends JMPDialog {
                 });
             }
         });
+        
+        // 非同期のSystemManagerの同期処理を待つためwaitする 
+        JmpUtil.threadSleep(500);
 
         try {
             // ダウンロード実行
@@ -451,7 +476,7 @@ public class YoutubeConvertDialog extends JMPDialog {
     }
 
     public boolean parseUrlFile(File file) {
-        if (Utility.checkExtension(file, "url") == true) {
+        if (JmpUtil.checkExtension(file, "url") == true) {
             /* .urlファイルは開いてURL記述部分を抜粋する */
             String str = "";
             try {
@@ -498,7 +523,12 @@ public class YoutubeConvertDialog extends JMPDialog {
 
     @Override
     public void updateConfig(String key) {
-        textFieldExePath.setText(JMPCore.getDataManager().getYoutubeDlPath());
+        if (JMPCore.getDataManager().isYoutubeDlInstalled() == true) {
+            textFieldExePath.setText(JMPCore.getDataManager().getYoutubeDlCommand());
+        }
+        else {
+            textFieldExePath.setText(JMPCore.getDataManager().getYoutubeDlPath());
+        }
         chckbxInstalled.setSelected(JMPCore.getDataManager().isYoutubeDlInstalled());
         if (Platform.getRunPlatform() != KindOfPlatform.WINDOWS) {
             chckbxInstalled.setEnabled(false);

@@ -4,7 +4,6 @@ import java.io.File;
 
 import jlib.plugin.IPlugin;
 import jmp.core.JMPCore;
-import jmp.core.SystemManager;
 import jmp.core.TaskManager;
 import jmp.file.ConfigDatabaseWrapper;
 import jmp.task.ICallbackFunction;
@@ -26,14 +25,11 @@ class InvokeTask implements Runnable {
     @Override
     public void run() {
 
-        SystemManager.consoleOutSystemInfo();
-
         // ライブラリ初期化処理
         boolean result = JMPLibrary.initCoreAssets(config, standAlonePlugin);
 
         /* 起動準備 */
         if (result == true) {
-
             TaskManager taskManager = JMPCore.getTaskManager();
 
             // コマンド引数で指定されたファイルを開く

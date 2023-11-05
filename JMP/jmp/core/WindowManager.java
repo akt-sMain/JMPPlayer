@@ -55,6 +55,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
             WINDOW_NAME_PLUGIN_MANAGER, //
             WINDOW_NAME_YOUTUBEDL, //
             WINDOW_NAME_FILE_PICKUP, //
+            WINDOW_NAME_CONSOLE, //
     };
 
     private WindowDatabase database = null;
@@ -86,6 +87,7 @@ public class WindowManager extends AbstractManager implements IWindowManager {
         register(WINDOW_NAME_MIDI_SETUP, new SelectSynthsizerDialog(true, true));
         register(WINDOW_NAME_YOUTUBEDL, new YoutubeConvertDialog());
         register(WINDOW_NAME_FILE_PICKUP, new FilePickupDialog());
+        register(WINDOW_NAME_CONSOLE, SystemManager.console);
 
         // メインウィンドウ登録
         registerMainWindow(new JMPPlayerWindow());

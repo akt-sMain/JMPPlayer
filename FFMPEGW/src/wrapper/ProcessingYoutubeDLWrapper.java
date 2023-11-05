@@ -14,8 +14,11 @@ public class ProcessingYoutubeDLWrapper {
         WEB_TITLE, WEB_ID,
     }
 
-    /** FFmpegの実行パス */
+    /** 実行パス指定 */
     protected String path = "";
+    
+    /** 実行コマンド指定 */
+    protected String command = "";
 
     /** 環境変数定義有効 */
     private boolean isYoutubeDlInstalled = false;
@@ -38,6 +41,14 @@ public class ProcessingYoutubeDLWrapper {
 
     public String getPath() {
         return this.path;
+    }
+    
+    public void setCommand(String command) {
+        this.command = new String(command);
+    }
+
+    public String getCommand() {
+        return this.command;
     }
 
     public void setOutput(String path) {
@@ -94,19 +105,7 @@ public class ProcessingYoutubeDLWrapper {
         cmd.add(format);
 
         if (isYoutubeDlInstalled() == true) {
-            boolean isExistsCurrent = false;
-            File exeFile = new File("youtube-dl.exe");
-            if (path.isEmpty() == false && exeFile.exists() == true) {
-                isExistsCurrent = true;
-            }
-
-            if (isExistsCurrent == true) {
-                // カレントに有効なffmpegがあるときはそちらを優先的に使用する
-                cmd.add(0, exeFile.getPath());
-            }
-            else {
-                cmd.add(0, "youtube-dl");
-            }
+            cmd.add(0, getCommand());
         }
         else {
             cmd.add(0, "\"" + path + "\"");

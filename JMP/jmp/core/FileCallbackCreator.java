@@ -1,6 +1,8 @@
 package jmp.core;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 import jmp.JMPFlags;
 import jmp.core.asset.FileLoadCoreAsset;
@@ -160,6 +162,30 @@ public class FileCallbackCreator {
 
             /* 事後処理 */
             if (endResult.status == true) {
+                
+                JMPFlags.Log.cprintln(">> File load success.", true);
+                JMPFlags.Log.cprintln(file.getName(), true);
+                String sFileSize = "?? ";
+                long fileSize = -1;
+                try {
+                    fileSize = Files.size(file.toPath());
+                    if (fileSize < 1024L) {
+                        sFileSize = String.format("%d ", fileSize);
+                    }
+                    else if (fileSize < (1024L * 1000L)) {
+                        sFileSize = String.format("%.3f K", (double)fileSize / 1024.0);
+                    }
+                    else if (fileSize < (1024L * 1000000L)) {
+                        sFileSize = String.format("%.3f M", (double)fileSize / (double)(1024L * 1000));
+                    }
+                    else if (fileSize < (1024L * 1000000000L)) {
+                        sFileSize = String.format("%.3f G", (double)fileSize / (double)(1024L * 1000000L));
+                    }
+                }
+                catch (IOException e) {
+                }
+                JMPFlags.Log.cprintln(sFileSize + "B", true);
+                JMPFlags.Log.cprintln("", true);
 
                 // 履歴に追加
                 if (this.noneHistoryFlag == false) {
@@ -187,6 +213,8 @@ public class FileCallbackCreator {
                 }
             }
             else {
+                JMPFlags.Log.cprintln(">> File load falied.", true);
+                
                 // 前のファイル名に戻す
                 dm.setLoadedFile(tmpFileName);
 

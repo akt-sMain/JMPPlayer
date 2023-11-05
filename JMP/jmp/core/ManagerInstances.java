@@ -70,6 +70,7 @@ public class ManagerInstances {
             put(IDataManager.CFG_KEY_FFMPEG_INSTALLED, new JmpConfigValueType(IJmpConfigDatabase.IJ_TRUE, TypeOfKey.BOOL));
             put(IDataManager.CFG_KEY_SEND_MIDI_SYSTEMSETUP, new JmpConfigValueType(IJmpConfigDatabase.IJ_TRUE, TypeOfKey.BOOL));
             put(IDataManager.CFG_KEY_YOUTUBEDL_PATH, new JmpConfigValueType("youtube-dl.exe"));
+            put(IDataManager.CFG_KEY_YOUTUBEDL_COMMAND, new JmpConfigValueType("youtube-dl"));
             put(IDataManager.CFG_KEY_YOUTUBEDL_INSTALLED, new JmpConfigValueType(IJmpConfigDatabase.IJ_TRUE, TypeOfKey.BOOL));
             put(IDataManager.CFG_KEY_RANDOMPLAY, new JmpConfigValueType(IJmpConfigDatabase.IJ_FALSE, TypeOfKey.BOOL));
             put(IDataManager.CFG_KEY_YOUTUBEDL_FILENAME_MODE, new JmpConfigValueType("ID"));
@@ -107,6 +108,8 @@ public class ManagerInstances {
 
         remakeAsc();
         remakeDesc();
+        
+        JMPFlags.Log.cprintln("");
         JMPFlags.Log.cprintln("###");
         JMPFlags.Log.cprintln("## CORE initializing");
         JMPFlags.Log.cprintln("##");
@@ -115,7 +118,7 @@ public class ManagerInstances {
             if (result == true) {
                 result = am.initFunc();
             }
-            JMPFlags.Log.cprintln(result == true ? "success" : "fail");
+            JMPFlags.Log.cprintln(result == true ? "SUCCESS" : "FAIL");
         }
         JMPFlags.Log.cprintln("## finished");
         JMPFlags.Log.cprintln("");
@@ -132,7 +135,7 @@ public class ManagerInstances {
             if (result == true) {
                 result = am.endFunc();
             }
-            JMPFlags.Log.cprintln(result == true ? "success" : "fail");
+            JMPFlags.Log.cprintln(result == true ? "SUCCESS" : "FAIL");
         }
         JMPFlags.Log.cprintln("## finished");
         return result;

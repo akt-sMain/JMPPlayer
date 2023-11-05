@@ -1,11 +1,38 @@
 package jmp;
 
+import javax.swing.UIManager;
+
+import function.Platform;
+import function.Utility;
 import jlib.plugin.IPlugin;
 import jmp.core.JMPCore;
 import jmp.file.ConfigDatabaseWrapper;
 import jmp.util.JmpUtil;
 
 public class JMPLibrary {
+    
+    private static void consoleOutSystemInfo() {
+        JMPFlags.Log.cprintln("_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/", true);
+        JMPFlags.Log.cprintln("_/############################################_/", true);
+        JMPFlags.Log.cprintln("_/####### ## ##### ##     ####################_/", true);
+        JMPFlags.Log.cprintln("_/####### ## ##### ## ###  ###########  ######_/", true);
+        JMPFlags.Log.cprintln("_/####### ##  ###  ## #### ####   #####  #####_/", true);
+        JMPFlags.Log.cprintln("_/####### ##  ###  ## ###  #############  ####_/", true);
+        JMPFlags.Log.cprintln("_/####### ##   #   ##     ##############  ####_/", true);
+        JMPFlags.Log.cprintln("_/####### ## #   # ## ##################  ####_/", true);
+        JMPFlags.Log.cprintln("_/### ### ## ## ## ## ##################  ####_/", true);
+        JMPFlags.Log.cprintln("_/###  #  ## ## ## ## #########   #####  #####_/", true);
+        JMPFlags.Log.cprintln("_/####   ### ##### ## ################  ######_/", true);
+        JMPFlags.Log.cprintln("_/############################################_/", true);
+        JMPFlags.Log.cprintln("_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/", true);
+        JMPFlags.Log.cprintln("App  : " + JMPCore.APPLICATION_NAME + "(" + JMPCore.APPLICATION_VERSION + ")");
+        JMPFlags.Log.cprintln("Date : " + Utility.getCurrentTimeStr(), true);
+        JMPFlags.Log.cprintln("Java : " + Platform.getJavaVersion(), true);
+        JMPFlags.Log.cprintln("OS   : " + Platform.getOSName(), true);
+        JMPFlags.Log.cprintln("SLaF : " + UIManager.getSystemLookAndFeelClassName());
+        JMPFlags.Log.cprintln("CLaF : " + UIManager.getCrossPlatformLookAndFeelClassName());
+        JMPFlags.Log.cprintln(true);
+    }
 
     /**
      * 終了
@@ -38,6 +65,8 @@ public class JMPLibrary {
     public static boolean initCoreAssets(ConfigDatabaseWrapper config, IPlugin plugin) {
         boolean result = false;
         try {
+            consoleOutSystemInfo();
+            
             result = JMPCore.initFunc(config, plugin);
         }
         catch (Exception e) {

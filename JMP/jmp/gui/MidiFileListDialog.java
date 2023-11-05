@@ -666,11 +666,6 @@ public class MidiFileListDialog extends JMPFrame {
         midiFileMap = JMPCore.getFileManager().getFileMap(file);
         removeAllRows();
 
-        boolean validFFmpegPlayer = false;
-        if (JMPCore.getSystemManager().isValidFFmpegWrapper() == true) {
-            validFFmpegPlayer = true;
-        }
-
         SystemManager system = JMPCore.getSystemManager();
         String[] exMIDI = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_MIDI));
         String[] exWAV = JmpUtil.genStr2Extensions(system.getCommonRegisterValue(SystemManager.COMMON_REGKEY_NO_EXTENSION_WAV));
@@ -744,15 +739,13 @@ public class MidiFileListDialog extends JMPFrame {
                 }
             }
             // Music
-            if (validFFmpegPlayer == true) {
-                for (Object key : keys) {
-                    String sKey = key.toString();
-                    File f = midiFileMap.get(sKey);
-                    if (f.isFile() == true) {
-                        if (Utility.checkExtensions(sKey, exMUSIC) == true) {
-                            if (midiFileMap.containsKey(sKey) == true) {
-                                list.add(f);
-                            }
+            for (Object key : keys) {
+                String sKey = key.toString();
+                File f = midiFileMap.get(sKey);
+                if (f.isFile() == true) {
+                    if (Utility.checkExtensions(sKey, exMUSIC) == true) {
+                        if (midiFileMap.containsKey(sKey) == true) {
+                            list.add(f);
                         }
                     }
                 }
@@ -822,7 +815,7 @@ public class MidiFileListDialog extends JMPFrame {
                             model.addRow(row);
                         }
                     }
-                    else if ((Utility.checkExtensions(name, exMUSIC) == true) && (validFFmpegPlayer == true)) {
+                    else if (Utility.checkExtensions(name, exMUSIC) == true) {
                         if (filterDatabase.get(FileFilterType.MUSIC) == true) {
                             Object[] row = createFileListRows(musicIcon, "MU", name);
                             model.addRow(row);

@@ -157,6 +157,7 @@ public class JMSoftSynthesizer implements ISynthController {
             Modulator mod = target.getModulator(ch);
             mod.setDepth(modDepth);
         }
+        target.systemReset();
     }
 
     public int getNumberOfChannel() {
