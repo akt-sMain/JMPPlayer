@@ -30,6 +30,7 @@ public class TaskOfMidiEvent extends TaskOfBase {
     }
 
     private List<JmpMidiPacket> stack = null;
+    private Object mutex = new Object();
 
     public TaskOfMidiEvent() {
         super(20, true);
@@ -51,7 +52,7 @@ public class TaskOfMidiEvent extends TaskOfBase {
             packet = new JmpMidiPacket(message, timeStamp, senderType);
         }
 
-        synchronized (stack) {
+        synchronized (mutex) {
             // プラグインに送信するパケットを発行
             stack.add(packet);
         }
@@ -60,7 +61,7 @@ public class TaskOfMidiEvent extends TaskOfBase {
     @Override
     public void clearQue() {
         super.clearQue();
-        synchronized (stack) {
+        synchronized (mutex) {
             stack.clear();
         }
     }
@@ -75,7 +76,7 @@ public class TaskOfMidiEvent extends TaskOfBase {
         PluginManager pm = JMPCore.getPluginManager();
         IMidiEventListener midiEventMonitor = (IMidiEventListener) wm.getWindow(WindowManager.WINDOW_NAME_MIDI_MONITOR);
 
-        synchronized (stack) {
+        synchronized (mutex) {
             // スタックされたパケットをプラグインに送信
             Iterator<JmpMidiPacket> i = stack.iterator();
             while (i.hasNext()) {

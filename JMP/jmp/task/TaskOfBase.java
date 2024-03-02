@@ -1,6 +1,5 @@
 package jmp.task;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,15 +45,18 @@ public abstract class TaskOfBase implements ITask, Runnable {
     }
 
     class SynchronizedTaskQueue extends TaskQueue {
+        private Object mutex = new Object();
+        
         @Override
         protected void createInstance() {
-            this.lst = Collections.synchronizedList(new LinkedList<TaskPacket>());
+            this.lst = new LinkedList<TaskPacket>();
+            //this.lst = Collections.synchronizedList(new LinkedList<TaskPacket>());
         }
 
         @Override
         public TaskPacket pop() {
             TaskPacket ret = null;
-            synchronized (lst) {
+            synchronized (mutex) {
                 ret = super.pop();
             }
             return ret;
@@ -63,7 +65,7 @@ public abstract class TaskOfBase implements ITask, Runnable {
         @Override
         public boolean push(TaskPacket o) {
             boolean ret = false;
-            synchronized (lst) {
+            synchronized (mutex) {
                 ret = super.push(o);
             }
             return ret;
@@ -71,7 +73,7 @@ public abstract class TaskOfBase implements ITask, Runnable {
 
         @Override
         public void clear() {
-            synchronized (lst) {
+            synchronized (mutex) {
                 super.clear();
             }
         }

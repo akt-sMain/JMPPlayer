@@ -15,13 +15,16 @@ public class TaskOfTimer extends TaskOfBase {
     // public static final long CYCLIC_TIMER_TASK_TIME = 100;
 
     private ArrayList<CallbackPackage> callbackPackages = new ArrayList<CallbackPackage>();
+    private Object mutex = new Object();
 
     public TaskOfTimer() {
         super(100, true);
     }
 
     public void addCallbackPackage(CallbackPackage pakage) {
-        callbackPackages.add(pakage);
+        synchronized (mutex) {
+            callbackPackages.add(pakage);
+        }
     }
 
     @Override
@@ -30,7 +33,7 @@ public class TaskOfTimer extends TaskOfBase {
 
     @Override
     void loop() {
-        synchronized (callbackPackages) {
+        synchronized (mutex) {
             // スタックされたコールバックを呼び出し
             Iterator<CallbackPackage> i = callbackPackages.iterator();
             while (i.hasNext()) {
@@ -47,6 +50,8 @@ public class TaskOfTimer extends TaskOfBase {
     @Override
     void end() {
         // コールバック関数のクリア
-        callbackPackages.clear();
+        synchronized (mutex) {
+            callbackPackages.clear();
+        }
     }
 }

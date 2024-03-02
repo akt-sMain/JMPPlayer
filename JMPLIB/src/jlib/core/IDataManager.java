@@ -38,6 +38,8 @@ public interface IDataManager {
     public static final String CFG_KEY_RANDOMPLAY = "RANDOMPLAY";
     /** YoutubeDLファイル名指定モード(TITLE or ID) */
     public static final String CFG_KEY_YOUTUBEDL_FILENAME_MODE = "YOUTUBEDL_FILENAME_MODE";
+    /** Plugin準拠バージョンの確認 */
+    public static final String CFG_KEY_CHECK_PLUGIN_VERSION = "CHECK_PLUGIN_VERSION";
 
     /**
      * コンフィグ変更

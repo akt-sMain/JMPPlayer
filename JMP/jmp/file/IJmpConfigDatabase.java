@@ -214,4 +214,12 @@ public interface IJmpConfigDatabase {
         }
         setConfigParam(DataManager.CFG_KEY_YOUTUBEDL_FILENAME_MODE, s);
     }
+    
+    default boolean isCheckPluginVersion() {
+        return getConfigParamToBoolean(DataManager.CFG_KEY_CHECK_PLUGIN_VERSION, false);
+    }
+
+    default void setCheckPluginVersion(boolean isChecked) {
+        setConfigParamToBoolean(DataManager.CFG_KEY_CHECK_PLUGIN_VERSION, isChecked);
+    }
 }

@@ -19,13 +19,14 @@ public class JmsProperty {
     private File res;
     private File jar;
     private String version = "";
+    private String versionName = "";
     private boolean isDeleteRequest = false;
 
     private String pluginDir = "";
     private String dataDir = "";
     private String resDir = "";
 
-    public JmsProperty(String pluginDir, String dataDir, String resDir, File jar, File data, File res, String version) {
+    public JmsProperty(String pluginDir, String dataDir, String resDir, File jar, File data, File res, String version, String versionName) {
         setPluginDir(pluginDir);
         setDataDir(dataDir);
         setResDir(resDir);
@@ -33,6 +34,7 @@ public class JmsProperty {
         setData(data);
         setJar(jar);
         setVersion(version);
+        setVersionName(versionName);
         this.isDeleteRequest = false;
     }
 
@@ -53,6 +55,7 @@ public class JmsProperty {
             boolean isData = false;
             boolean isRes = false;
             String version = "";
+            String versionName = "";
 
             while ((line = reader.readLine()) != null) {
                 /* コメントを除外 */
@@ -84,6 +87,9 @@ public class JmsProperty {
                     else if (key.equalsIgnoreCase(MakeJmpLib.JMS_KEY_VERSION) == true) {
                         version = param;
                     }
+                    else if (key.equalsIgnoreCase(MakeJmpLib.JMS_KEY_VERSION_NAME) == true) {
+                        versionName = param;
+                    }
                 }
             }
 
@@ -98,7 +104,7 @@ public class JmsProperty {
                 resFile = new File(resPath);
             }
 
-            jms = new JmsProperty(pluginDir, dataDir, resDir, pluginFile, dataFile, resFile, version);
+            jms = new JmsProperty(pluginDir, dataDir, resDir, pluginFile, dataFile, resFile, version, versionName);
 
             String fileName = Utility.getFileNameAndExtension(jmsFile);
             if (fileName.startsWith(MakeJmpLib.JMS_REMOVE_TAG) == true) {
@@ -177,5 +183,13 @@ public class JmsProperty {
 
     public void setResDir(String resDir) {
         this.resDir = resDir;
+    }
+
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
     }
 }

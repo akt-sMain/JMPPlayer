@@ -26,8 +26,9 @@ public class MakeJmpConfig {
     protected boolean addData = false;
     protected String output = "";
     protected String version = "";
+    protected String versionName = "";
 
-    public MakeJmpConfig(String pluginName, String jar, String res, boolean addData, String data, String output, String version) {
+    public MakeJmpConfig(String pluginName, String jar, String res, boolean addData, String data, String output, String version, String versionName) {
         this.pluginName = pluginName;
         this.jar = jar;
         this.res = res;
@@ -35,6 +36,7 @@ public class MakeJmpConfig {
         this.addData = addData;
         this.output = output;
         this.version = version;
+        this.versionName = versionName;
     }
 
     public MakeJmpConfig(File file) throws IOException {
@@ -70,6 +72,10 @@ public class MakeJmpConfig {
 
     public String getVersion() {
         return version;
+    }
+    
+    public String getVersionName() {
+        return versionName;
     }
 
     public void write(File file) throws FileNotFoundException, UnsupportedEncodingException {
@@ -116,6 +122,7 @@ public class MakeJmpConfig {
 
         // version新規発行
         version = JMPLIB.BUILD_VERSION;
+        versionName = JMPLIB.VERSION_NAME;
     }
 
 }

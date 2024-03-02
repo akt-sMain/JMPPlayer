@@ -238,6 +238,11 @@ public class PluginManager extends AbstractManager {
             // 制限なし
             return true;
         }
+        
+        if (JMPCore.getDataManager().isCheckPluginVersion() == false) {
+            // 制限なし
+            return true;
+        }
 
         JmsProperty jms = getJmsProparty(f);
         if (JMPCore.LIBRALY_VERSION.equals(jms.getVersion()) == true) {
@@ -425,13 +430,17 @@ public class PluginManager extends AbstractManager {
                 if (jms.getVersion() != null) {
                     ver = jms.getVersion();
                 }
+                String verName = "";
+                if (jms.getVersionName() != null) {
+                    verName = jms.getVersionName();
+                }
 
                 if (Utility.isExsistFile(data) == true) {
                     // DATA無
-                    MakeJmpLib.exportPackageForBlankData(jar, res, Utility.getFileNameNotExtension(f), dirPath, ver);
+                    MakeJmpLib.exportPackageForBlankData(jar, res, Utility.getFileNameNotExtension(f), dirPath, ver, verName);
                 }
                 else {
-                    MakeJmpLib.exportPackage(jar, data, res, Utility.getFileNameNotExtension(f), dirPath, ver);
+                    MakeJmpLib.exportPackage(jar, data, res, Utility.getFileNameNotExtension(f), dirPath, ver, verName);
                 }
             }
         }

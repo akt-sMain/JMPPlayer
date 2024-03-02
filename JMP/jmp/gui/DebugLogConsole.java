@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -13,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
@@ -20,6 +23,11 @@ import javax.swing.text.DefaultCaret;
 import function.Platform;
 import function.Utility;
 import jlib.gui.IJmpWindow;
+import jmp.core.DataManager;
+import jmp.core.JMPCommand;
+import jmp.core.JMPCore;
+import jmp.core.WindowManager;
+import jmp.util.JmpUtil;
 
 public class DebugLogConsole extends JDialog implements IJmpWindow {
 
@@ -57,6 +65,52 @@ public class DebugLogConsole extends JDialog implements IJmpWindow {
                 scrollPane.setViewportView(txtpnTest);
                 txtpnTest.setForeground(new Color(60, 179, 113));
                 txtpnTest.setBackground(new Color(0, 0, 0));
+                {
+                    inpuTextField = new JTextField();
+                    inpuTextField.addKeyListener(new KeyAdapter() {
+                        String mnemLog = "";
+                        int mnemIndex = -1;
+                        
+                        @Override
+                        public void keyTyped(KeyEvent e) {
+                        }
+                        @Override
+                        public void keyPressed(KeyEvent e) {
+                            if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN) {
+                                int amount = e.getKeyCode() == KeyEvent.VK_UP ? 1 : -1;
+                                if (mnemIndex == -1) {
+                                    mnemIndex = 0;
+                                    if (mnemLog.isEmpty() == false) {
+                                        inpuTextField.setText(mnemLog);
+                                        return;
+                                    }
+                                }
+                                else {
+                                    mnemIndex += amount;
+                                    if (mnemIndex < 0) {
+                                        mnemIndex = JMPCommand.SMnemonicList.size() - 1;
+                                    }
+                                    else if (mnemIndex >= JMPCommand.SMnemonicList.size()) {
+                                        mnemIndex = 0;
+                                    }
+                                }
+                                String cmd = JMPCommand.SMnemonicList.get(mnemIndex);
+                                inpuTextField.setText(cmd);
+                            }
+                            else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                                String cmd = inpuTextField.getText();
+                                JMPCommand.parse(cmd);
+                                mnemLog = cmd;
+                                mnemIndex = -1;
+                                inpuTextField.setText("");
+                            }
+                        }
+                    });
+                    inpuTextField.setFont(new Font("DejaVu Sans Mono", Font.PLAIN, 12));
+                    inpuTextField.setForeground(new Color(0, 100, 0));
+                    contentPanel.add(inpuTextField, BorderLayout.SOUTH);
+                    inpuTextField.setColumns(10);
+                }
                 DefaultCaret crList = (DefaultCaret) txtpnTest.getCaret();
                 crList.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
             }
@@ -81,6 +135,7 @@ public class DebugLogConsole extends JDialog implements IJmpWindow {
 
     @Override
     public void setVisible(boolean b) {
+        updateConfig(DataManager.CFG_KEY_LANGUAGE);
         updateText();
         super.setVisible(b);
         // if (b == false) {
@@ -90,6 +145,7 @@ public class DebugLogConsole extends JDialog implements IJmpWindow {
 
     private static final boolean REVERSE = false;
     private static String LN = Platform.getNewLine();
+    private JTextField inpuTextField;
 
     public static void print(String str) {
         addText(str, false, REVERSE);
@@ -170,6 +226,16 @@ public class DebugLogConsole extends JDialog implements IJmpWindow {
     @Override
     public void repaintWindow() {
         this.repaint();
+    }
+    
+    @Override
+    public void updateConfig(String key) {
+        if (JmpUtil.checkConfigKey(key, DataManager.CFG_KEY_LANGUAGE) == true) {
+            WindowManager wm = JMPCore.getWindowManager();
+            txtpnTest.setFont(wm.getCurrentFont(txtpnTest.getFont()));
+            inpuTextField.setFont(wm.getCurrentFont(inpuTextField.getFont()));
+        }
+        IJmpWindow.super.updateConfig(key);
     }
 
 }

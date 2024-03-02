@@ -74,6 +74,7 @@ public class ManagerInstances {
             put(IDataManager.CFG_KEY_YOUTUBEDL_INSTALLED, new JmpConfigValueType(IJmpConfigDatabase.IJ_TRUE, TypeOfKey.BOOL));
             put(IDataManager.CFG_KEY_RANDOMPLAY, new JmpConfigValueType(IJmpConfigDatabase.IJ_FALSE, TypeOfKey.BOOL));
             put(IDataManager.CFG_KEY_YOUTUBEDL_FILENAME_MODE, new JmpConfigValueType("ID"));
+            put(IDataManager.CFG_KEY_CHECK_PLUGIN_VERSION, new JmpConfigValueType(IJmpConfigDatabase.IJ_FALSE, TypeOfKey.BOOL));
         }
     };
 
@@ -118,7 +119,7 @@ public class ManagerInstances {
             if (result == true) {
                 result = am.initFunc();
             }
-            JMPFlags.Log.cprintln(result == true ? "SUCCESS" : "FAIL");
+            JMPFlags.Log.cprintln(result == true ? "Done!" : "##Error##");
         }
         JMPFlags.Log.cprintln("## finished");
         JMPFlags.Log.cprintln("");
@@ -135,7 +136,7 @@ public class ManagerInstances {
             if (result == true) {
                 result = am.endFunc();
             }
-            JMPFlags.Log.cprintln(result == true ? "SUCCESS" : "FAIL");
+            JMPFlags.Log.cprintln(result == true ? "Done!" : "##Error##");
         }
         JMPFlags.Log.cprintln("## finished");
         return result;

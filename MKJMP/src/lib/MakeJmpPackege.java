@@ -41,6 +41,7 @@ public class MakeJmpPackege extends JFrame {
     private JCheckBox chckbxAddBlankData;
     private JButton btnRead;
     private JTextField textFieldCompVersion;
+    private JTextField textField_vname;
 
     /**
      * Launch the application.
@@ -79,7 +80,7 @@ public class MakeJmpPackege extends JFrame {
     /**
      * Create the frame.
      */
-    public MakeJmpPackege(String jar, String data, String res, String out, boolean appExitFlag, boolean showExploler, String version) {
+    public MakeJmpPackege(String jar, String data, String res, String out, boolean appExitFlag, boolean showExploler, String version, String versionName) {
         setTitle("mkJMP");
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -289,6 +290,16 @@ public class MakeJmpPackege extends JFrame {
         loadFileRes(res);
         loadFileOutput(out);
         textFieldCompVersion.setText(JMPLIB.BUILD_VERSION);
+        
+        JLabel lblVersionName = new JLabel("Name");
+        lblVersionName.setBounds(94, 78, 50, 13);
+        panel.add(lblVersionName);
+        
+        textField_vname = new JTextField();
+        textField_vname.setColumns(10);
+        textField_vname.setBounds(138, 75, 96, 19);
+        textField_vname.setText(JMPLIB.VERSION_NAME);
+        panel.add(textField_vname);
     }
 
     public void export() {
@@ -298,8 +309,9 @@ public class MakeJmpPackege extends JFrame {
         String plg = textFieldPluginName.getText();
         String out = textFieldOutput.getText();
         String ver = textFieldCompVersion.getText();
+        String verName = textField_vname.getText();
 
-        MakeJmpConfig config = new MakeJmpConfig(plg, jar, res, chckbxAddBlankData.isSelected(), data, out, ver);
+        MakeJmpConfig config = new MakeJmpConfig(plg, jar, res, chckbxAddBlankData.isSelected(), data, out, ver, verName);
         MakeJmpLib.exportPackage(config);
     }
 
@@ -340,7 +352,8 @@ public class MakeJmpPackege extends JFrame {
 
     public void saveFileMkj(String path) {
         MakeJmpConfig cfg = new MakeJmpConfig(textFieldPluginName.getText(), textFieldJarPath.getText(), textFieldResPath.getText(),
-                chckbxAddBlankData.isSelected(), textFieldDataPath.getText(), textFieldOutput.getText(), textFieldCompVersion.getText());
+                chckbxAddBlankData.isSelected(), textFieldDataPath.getText(), textFieldOutput.getText(), textFieldCompVersion.getText(),
+                textField_vname.getText());
         try {
             cfg.write(new File(path));
         }
