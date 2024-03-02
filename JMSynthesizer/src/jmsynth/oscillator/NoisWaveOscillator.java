@@ -103,4 +103,9 @@ public class NoisWaveOscillator implements IOscillator {
         return -1;
     }
 
+    @Override
+    public byte makeWave(double f, int overallLevel, OscillatorConfig oscConfig) {
+        return 0;
+    }
+
 }

@@ -10,7 +10,7 @@ public class OscillatorSet {
     public static final OscillatorSet DRUM_OSCILLATOR_SET = new OscillatorSet(0.0, 0.25, 0.0, 0.0, WaveType.LONG_NOISE);
 
     public static enum WaveType {
-        SINE, LOW_SINE, SAW, SQUARE, TRIANGLE, PULSE_25, PULSE_12_5, LONG_NOISE, SHORT_NOISE,
+        NONE, SINE, LOW_SINE, SAW, SQUARE, TRIANGLE, PULSE_25, PULSE_12_5, LONG_NOISE, SHORT_NOISE,
     }
 
     // 複数のオシレータ設計を考慮（出力側は未実装）
@@ -26,6 +26,8 @@ public class OscillatorSet {
     private long maxReleaseMills = 1000;
 
     public OscillatorSet(WaveType... osc) {
+        oscs = new ArrayList<WaveType>();
+        oscs.clear();
         setOscillators(osc);
         attackTime = EnvelopeFactory.DEFAULT_A;
         decayTime = EnvelopeFactory.DEFAULT_D;
@@ -37,6 +39,8 @@ public class OscillatorSet {
     }
 
     public OscillatorSet(double a, double d, double s, double r, WaveType... osc) {
+        oscs = new ArrayList<WaveType>();
+        oscs.clear();
         setOscillators(osc);
         attackTime = a;
         decayTime = d;
@@ -48,6 +52,8 @@ public class OscillatorSet {
     }
 
     public OscillatorSet(double a, double d, double s, double r, long ma, long md, long mr, WaveType... osc) {
+        oscs = new ArrayList<WaveType>();
+        oscs.clear();
         setOscillators(osc);
         attackTime = a;
         decayTime = d;
@@ -58,8 +64,12 @@ public class OscillatorSet {
         maxReleaseMills = mr;
     }
 
+    public void addOscillators(WaveType osc) {
+        oscs.add(osc);
+    }
+    
     public void setOscillators(WaveType... osc) {
-        oscs = new ArrayList<WaveType>();
+        oscs.clear();
         for (int i = 0; i < osc.length; i++) {
             oscs.add(osc[i]);
         }

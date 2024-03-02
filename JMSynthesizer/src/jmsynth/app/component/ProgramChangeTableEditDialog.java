@@ -190,7 +190,7 @@ public class ProgramChangeTableEditDialog extends JDialog {
     private void synthToTable(int ch, int no) {
         OscillatorSet set = new OscillatorSet(synth.getEnvelope(ch).getAttackTime(), synth.getEnvelope(ch).getDecayTime(),
                 synth.getEnvelope(ch).getSustainLevel(), synth.getEnvelope(ch).getReleaseTime(), synth.getEnvelope(ch).getMaxAttackMills(),
-                synth.getEnvelope(ch).getMaxDecayMills(), synth.getEnvelope(ch).getMaxReleaseMills(), synth.getWaveType(ch));
+                synth.getEnvelope(ch).getMaxDecayMills(), synth.getEnvelope(ch).getMaxReleaseMills(), synth.getWaveType(ch, 0));
         pcTable.setOscillatorSet(no, set);
         resetList();
     }
@@ -204,7 +204,7 @@ public class ProgramChangeTableEditDialog extends JDialog {
         synth.getEnvelope(ch).setMaxAttackMills(set.getMaxAttackMills());
         synth.getEnvelope(ch).setMaxDecayMills(set.getMaxDecayMills());
         synth.getEnvelope(ch).setMaxReleaseMills(set.getMaxReleaseMills());
-        synth.setOscillator(ch, set.getOscillator());
+        synth.setOscillator(ch, set);
     }
 
     private void setTableValue(int no) {

@@ -21,6 +21,8 @@ public interface IOscillator {
      */
     public int makeTone(byte[] _data, int bufSize, Tone tone, OscillatorConfig oscConfig);
 
+    abstract byte makeWave(double f, int overallLevel, OscillatorConfig oscConfig);
+    
     /**
      * 発音時に再生ポインタを初期化せずに続きから再生するか？<br>
      * （ループ音源はtrue推奨）

@@ -2,6 +2,7 @@ package jmsynth.app.component;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
+import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -17,21 +18,25 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.Arrays;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import jmsynth.JMSoftSynthesizer;
 import jmsynth.JMSynthFile;
 import jmsynth.envelope.Envelope;
 import jmsynth.modulate.Modulator;
+import jmsynth.oscillator.OscillatorSet;
 import jmsynth.oscillator.OscillatorSet.WaveType;
 
 public class ChannelSetupDialog extends JDialog {
@@ -47,8 +52,11 @@ public class ChannelSetupDialog extends JDialog {
     private JComboBox comboBoxWaveType;
     private JSlider sliderR;
     private JButton btnTest;
+    private DefaultListModel listModel;
 
     private static final String[] WAVE_STR_ITEMS = JMSynthFile.WAVE_STR_ITEMS;
+    private static final String[] WAVE_STR_ITEMS_TONE_ONRY = JMSynthFile.WAVE_STR_ITEMS_TONE_ONRY;
+    private static final String[] WAVE_STR_ITEMS_NOISE_ONRY = JMSynthFile.WAVE_STR_ITEMS_NOISE_ONRY;
 
     private static WaveType toWaveType(String sWave) {
         return JMSynthFile.toWaveType(sWave);
@@ -99,7 +107,7 @@ public class ChannelSetupDialog extends JDialog {
             }
 
             if (chckbxRealTime.isSelected() == false) {
-                wave = getWaveStr(synth.getWaveType(ch));
+                wave = getWaveStr(synth.getWaveType(ch, 0));
                 isWaveReverse = synth.isWaveReverse(ch);
                 a = env.getAttackTime();
                 d = env.getDecayTime();
@@ -109,7 +117,7 @@ public class ChannelSetupDialog extends JDialog {
                 md = env.getMaxDecayMills();
                 mr = env.getMaxReleaseMills();
                 modDepth = mod.getDepth();
-                paintWave(g, synth.getWaveType(ch), isWaveReverse, Color.GRAY);
+                paintWave(g, synth.getOscillatorSet(ch), isWaveReverse, Color.GRAY);
                 paintCurve(g, a, d, s, r, ma, md, mr, Color.GRAY);
                 paintInfo(g, w - 110, 90, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, modDepth, wave,
                         Color.GRAY);
@@ -125,7 +133,7 @@ public class ChannelSetupDialog extends JDialog {
             md = getMaxDecaySli();
             mr = getMaxReleaseSli();
             modDepth = getModSli();
-            paintWave(g, toWaveType(wave), isWaveReverse, Color.YELLOW);
+            paintWave(g, parseOscText(getWaveText()), isWaveReverse, Color.YELLOW);
             paintCurve(g, a, d, s, r, ma, md, mr, Color.MAGENTA);
             paintInfo(g, w - 110 + 1, 16, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, modDepth, wave,
                     Color.DARK_GRAY);
@@ -155,7 +163,7 @@ public class ChannelSetupDialog extends JDialog {
             // g2d.drawString("osc = " + wave, fx, fy);
         }
 
-        private void paintWave(Graphics g, WaveType type, boolean isReverse, Color lineColor) {
+        private void paintWave(Graphics g, OscillatorSet oscSet, boolean isReverse, Color lineColor) {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setColor(lineColor);
 
@@ -167,7 +175,7 @@ public class ChannelSetupDialog extends JDialog {
             int right = w - (mergin);
             int top = 2;
             int under = h - 4;
-
+            
             int length = right - left + (mergin * 2);
             byte[] data = new byte[100];
             Arrays.fill(data, (byte) 0x00);
@@ -185,7 +193,13 @@ public class ChannelSetupDialog extends JDialog {
                     xPoint[i] = i;
 
                     double f = (double) (i - mergin) / (double) (length - (mergin * 2));
-                    int mwy = toYCord(type, f, overallLeval, isReverse);
+                    int mwy = 0;
+                    for (int j = 0; j < oscSet.size(); j++) {
+                        mwy += toYCord(oscSet.getOscillator(j), f, overallLeval, isReverse);
+                        if (j > 0) {
+                            mwy /= 2;
+                        }
+                    }
                     if (mwy != -1) {
                         yPoint[i] = mwy + cy;
                     }
@@ -262,9 +276,10 @@ public class ChannelSetupDialog extends JDialog {
      * Create the dialog.
      */
     public ChannelSetupDialog(JMSoftSynthesizer synth) {
+        setResizable(false);
         this.synth = synth;
         setTitle("Channel setting");
-        setBounds(100, 100, 485, 518);
+        setBounds(100, 100, 710, 518);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -278,7 +293,7 @@ public class ChannelSetupDialog extends JDialog {
             }
         });
         comboBoxWaveType.setModel(new DefaultComboBoxModel(WAVE_STR_ITEMS));
-        comboBoxWaveType.setBounds(12, 10, 136, 21);
+        comboBoxWaveType.setBounds(571, 43, 111, 21);
         contentPanel.add(comboBoxWaveType);
 
         comboBoxChannel = new JComboBox<String>();
@@ -297,7 +312,7 @@ public class ChannelSetupDialog extends JDialog {
         });
         comboBoxChannel
                 .setModel(new DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16" }));
-        comboBoxChannel.setBounds(160, 10, 106, 21);
+        comboBoxChannel.setBounds(12, 10, 75, 21);
         contentPanel.add(comboBoxChannel);
 
         EnvelopeViewPanel panelEnvelopeView = new EnvelopeViewPanel();
@@ -425,6 +440,105 @@ public class ChannelSetupDialog extends JDialog {
         });
         checkBoxFESSim.setBounds(8, 40, 103, 21);
         panel_2.add(checkBoxFESSim);
+        
+        btnAddWave = new JButton("Add");
+        btnAddWave.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String sWave = comboBoxWaveType.getSelectedItem().toString();
+                listModel.addElement(sWave);
+                repaint();
+            }
+        });
+        btnAddWave.setBounds(617, 74, 65, 21);
+        contentPanel.add(btnAddWave);
+        
+        listWave = new JList();
+        listModel = new DefaultListModel();
+        listWave.setModel(listModel);
+        listWave.setBorder(new LineBorder(new Color(0, 0, 0)));
+        listWave.setBounds(470, 76, 135, 362);
+        contentPanel.add(listWave);
+        
+        btnDown = new JButton("↓");
+        btnDown.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selected = listWave.getSelectedIndex();
+                if (selected == -1) {
+                    return;
+                }
+                
+                if (selected + 1 >= listModel.getSize()) {
+                    return;
+                }
+                
+                String str = listModel.getElementAt(selected).toString();
+                listModel.remove(selected);
+                listModel.add(selected + 1, str);
+                
+                listWave.setSelectedIndex(selected + 1);
+                repaint();
+            }
+        });
+        btnDown.setBounds(617, 286, 65, 21);
+        contentPanel.add(btnDown);
+        
+        btnUp = new JButton("↑");
+        btnUp.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selected = listWave.getSelectedIndex();
+                if (selected == -1) {
+                    return;
+                }
+                
+                if (selected - 1 < 0) {
+                    return;
+                }
+                
+                String str = listModel.getElementAt(selected).toString();
+                listModel.remove(selected);
+                listModel.add(selected - 1, str);
+                
+                listWave.setSelectedIndex(selected - 1);
+                repaint();
+            }
+        });
+        btnUp.setBounds(617, 237, 65, 21);
+        contentPanel.add(btnUp);
+        
+        btnDeleteWave = new JButton("Delete");
+        btnDeleteWave.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selected = listWave.getSelectedIndex();
+                if (selected == -1) {
+                    return;
+                }
+                
+                listModel.remove(selected);
+                repaint();
+            }
+        });
+        btnDeleteWave.setBounds(617, 120, 65, 21);
+        contentPanel.add(btnDeleteWave);
+        
+        btnClearWave = new JButton("Clear");
+        btnClearWave.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listModel.clear();
+                repaint();
+            }
+        });
+        btnClearWave.setBounds(617, 151, 65, 21);
+        contentPanel.add(btnClearWave);
+        
+        checkboxNoiseOsc = new Checkbox("Noise");
+        checkboxNoiseOsc.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                remakeWaveItems();
+                repaint();
+            }
+        });
+        checkboxNoiseOsc.setBounds(474, 41, 91, 23);
+        contentPanel.add(checkboxNoiseOsc);
         lblMod.setVisible(true);
         sliderMod.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
@@ -553,6 +667,13 @@ public class ChannelSetupDialog extends JDialog {
     private JSlider sliderMR;
     private JCheckBox chckbxWaveReverse;
     private JCheckBox checkBoxFESSim;
+    private JButton btnAddWave;
+    private JButton btnUp;
+    private JButton btnDown;
+    private JList listWave;
+    private JButton btnClearWave;
+    private JButton btnDeleteWave;
+    private Checkbox checkboxNoiseOsc;
 
     private void testSoundAction() {
         if (testOn == false) {
@@ -593,6 +714,40 @@ public class ChannelSetupDialog extends JDialog {
         }
         return ch;
     }
+    
+    public String getWaveText() {
+        String str = "";
+        if (checkboxNoiseOsc.getState() == true) {
+            str = comboBoxWaveType.getSelectedItem().toString();
+        }
+        else {
+            for (int i  = 0; i < listModel.getSize(); i++) {
+                if (i != 0) {
+                    str += ",";
+                }
+                str += listModel.getElementAt(i);
+            }
+        }
+        return str;
+    }
+    
+    public OscillatorSet parseOscText(String str) {
+        String[] ss = str.split(",");
+        
+        OscillatorSet oscSet = new OscillatorSet();
+        for (int i  = 0; i < ss.length; i++) {
+            WaveType waveType = toWaveType(ss[i]);
+            if (waveType == WaveType.NONE) {
+            }
+            else if (waveType == WaveType.LONG_NOISE || waveType == WaveType.SHORT_NOISE) {
+                return new OscillatorSet(waveType);
+            }
+            else {
+                oscSet.addOscillators(waveType);
+            }
+        }
+        return oscSet;
+    }
 
     public void sync() {
         int ch = getChannel();
@@ -602,9 +757,14 @@ public class ChannelSetupDialog extends JDialog {
         /*
          * SAW TRIANGLE SQUARE PULSE SINE NOIS
          */
-        String sWave = comboBoxWaveType.getSelectedItem().toString();
-        synth.setOscillator(ch, toWaveType(sWave));
-
+        String sText = getWaveText();
+        OscillatorSet oscSet = parseOscText(sText);
+        synth.clearOscillator(ch);
+        for (int i  = 0; i < oscSet.size(); i++) {
+            WaveType waveType = oscSet.getOscillator(i);
+            synth.addOscillator(ch, waveType);
+        }
+        
         boolean waveReverse = chckbxWaveReverse.isSelected();
         synth.setWaveReverse(ch, waveReverse);
 
@@ -625,6 +785,29 @@ public class ChannelSetupDialog extends JDialog {
         }
         reset();
     }
+    
+    private void remakeWaveItems() {
+        DefaultComboBoxModel<String> cmModel = (DefaultComboBoxModel)comboBoxWaveType.getModel();
+        cmModel.removeAllElements();
+        boolean ena = true;
+        if (checkboxNoiseOsc.getState() == true) {
+            for (String str : WAVE_STR_ITEMS_NOISE_ONRY) {
+                cmModel.addElement(str);
+            }
+            ena = false;
+        }
+        else {
+            for (String str : WAVE_STR_ITEMS_TONE_ONRY) {
+                cmModel.addElement(str);
+            }
+            ena = true;
+        }
+        listWave.setEnabled(ena);
+        btnDeleteWave.setEnabled(ena);
+        btnClearWave.setEnabled(ena);
+        btnDown.setEnabled(ena);
+        btnUp.setEnabled(ena);
+    }
 
     public void reset() {
         int ch = getChannel();
@@ -634,9 +817,27 @@ public class ChannelSetupDialog extends JDialog {
         /*
          * SAW TRIANGLE SQUARE PULSE SINE NOIS
          */
-        String sWave = getWaveStr(synth.getWaveType(ch));
-        comboBoxWaveType.setSelectedItem(sWave);
-
+        listModel.clear();
+        OscillatorSet oscSet = synth.getOscillatorSet(ch);
+        if (oscSet.getOscillator(0) == WaveType.SHORT_NOISE || oscSet.getOscillator(0) == WaveType.LONG_NOISE) {
+            checkboxNoiseOsc.setState(true);
+            remakeWaveItems();
+            String sWave = getWaveStr(oscSet.getOscillator(0));
+            comboBoxWaveType.setSelectedItem(sWave);
+        }
+        else {
+            checkboxNoiseOsc.setState(false);
+            remakeWaveItems();
+            for (int i = 0; i < oscSet.size(); i++) {
+                if (oscSet.getOscillator(i) == WaveType.NONE) {
+                }
+                else {
+                    String sWave = getWaveStr(oscSet.getOscillator(i));
+                    listModel.addElement(sWave);
+                }
+            }
+        }
+                
         chckbxWaveReverse.setSelected(synth.isWaveReverse(ch));
 
         checkBoxFESSim.setSelected(synth.isValidNesSimulate(ch));

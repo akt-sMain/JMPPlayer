@@ -44,8 +44,12 @@ public interface ISynthController {
 
     abstract void setVolume(int ch, float volume);
 
-    abstract void setOscillator(int ch, WaveType oscType);
+    abstract void addOscillator(int ch, WaveType osc);
 
+    abstract void clearOscillator(int ch);
+    
+    abstract OscillatorSet getOscillatorSet(int ch);
+    
     default void setOscillator(int ch, OscillatorSet oscSet) {
         Envelope e = getEnvelope(ch);
         if (e != null) {
@@ -57,10 +61,14 @@ public interface ISynthController {
             e.setMaxDecayMills(oscSet.getMaxDecayMills());
             e.setMaxReleaseMills(oscSet.getMaxReleaseMills());
         }
-        setOscillator(ch, oscSet.getOscillator());
+        
+        clearOscillator(ch);
+        for (int i = 0; i < oscSet.size(); i++) {
+            addOscillator(ch, oscSet.getOscillator(i));
+        }
     }
 
-    abstract WaveType getWaveType(int ch);
+    abstract WaveType getWaveType(int ch, int index);
 
     abstract Envelope getEnvelope(int ch);
 

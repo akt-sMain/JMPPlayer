@@ -6,7 +6,7 @@ public class TriWaveOscillator extends AbstractWaveGenOscillator {
     }
 
     @Override
-    byte makeWave(double f, int overallLevel, OscillatorConfig oscConfig) {
+    public byte makeWave(double f, int overallLevel, OscillatorConfig oscConfig) {
         return WaveGenerater.makeTriangleWave(f, overallLevel, oscConfig.isWaveReverse(), oscConfig.isValidNesSimulate());
     }
 

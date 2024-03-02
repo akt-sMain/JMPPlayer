@@ -1,8 +1,6 @@
 package jmsynth.sound;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -16,17 +14,10 @@ import javax.sound.sampled.SourceDataLine;
 import jmsynth.app.component.IWaveRepaintListener;
 import jmsynth.envelope.Envelope;
 import jmsynth.modulate.Modulator;
-import jmsynth.oscillator.IOscillator;
-import jmsynth.oscillator.LongNoisWaveOscillator;
-import jmsynth.oscillator.LowSamplingSinWaveOscillator;
 import jmsynth.oscillator.OscillatorConfig;
+import jmsynth.oscillator.OscillatorManager;
+import jmsynth.oscillator.OscillatorSet;
 import jmsynth.oscillator.OscillatorSet.WaveType;
-import jmsynth.oscillator.PulseWaveOscillator;
-import jmsynth.oscillator.SawWaveOscillator;
-import jmsynth.oscillator.ShortNoisWaveOscillator;
-import jmsynth.oscillator.SinWaveOscillator;
-import jmsynth.oscillator.SquareWaveOscillator;
-import jmsynth.oscillator.TriWaveOscillator;
 
 public class SoundSourceChannel extends Thread implements ISynthController {
     public static final float SAMPLE_RATE = 44100.0f; // サンプルレート
@@ -54,9 +45,6 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     private int channel;
     public boolean isRunnable;
 
-    /* オシレータ */
-    private IOscillator oscillator;
-
     private OscillatorConfig oscConfig;
 
     private int NRPN = 0;
@@ -76,7 +64,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
 
     private IWaveRepaintListener waveRepaintListener = null;
 
-    private WaveType waveType = WaveType.SINE;
+    private OscillatorManager oscManager = null;
 
     protected Envelope envelope = null;
     protected Modulator modulator = null;
@@ -93,35 +81,15 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         init(channel, oscType, polyphony, null, null);
     }
 
-    private static Map<WaveType, IOscillator> oscMap = new HashMap<WaveType, IOscillator>() {
-        {
-            put(WaveType.SINE, new SinWaveOscillator());
-            put(WaveType.LOW_SINE, new LowSamplingSinWaveOscillator());
-            put(WaveType.SAW, new SawWaveOscillator());
-            put(WaveType.SQUARE, new SquareWaveOscillator());
-            put(WaveType.TRIANGLE, new TriWaveOscillator());
-            put(WaveType.PULSE_25, new PulseWaveOscillator(0.25));
-            put(WaveType.PULSE_12_5, new PulseWaveOscillator(0.125));
-            put(WaveType.LONG_NOISE, new LongNoisWaveOscillator());
-            put(WaveType.SHORT_NOISE, new ShortNoisWaveOscillator());
-        }
-    };
-
-    private IOscillator toOscillator(WaveType type) {
-        if (oscMap.containsKey(type) == false) {
-            return oscMap.get(WaveType.SINE);
-        }
-        return oscMap.get(type);
-    }
-
     private void init(int channel, WaveType oscType, int polyphony, Envelope envelope, Modulator modulator) {
         this.audioFormat = new AudioFormat(SAMPLE_RATE, SAMPLE_SIZE, CHANNEL, SIGNED, BIG_ENDIAN);
 
         this.channel = channel;
 
         this.oscConfig = new OscillatorConfig();
-
-        setOscillator(oscType);
+        
+        this.oscManager = new OscillatorManager();
+        this.oscManager.addWaveType(oscType);
 
         // ライン情報取得
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, this.audioFormat, BUF_SIZE);
@@ -187,7 +155,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         for (int i = 0; i < activeTones.size(); i++) {
             try {
                 Tone tone = (Tone) activeTones.get(i);
-                oscillator.makeTone(data, length, tone, this.oscConfig);
+                oscManager.makeTone(data, length, tone, this.oscConfig);
 
                 if (envelope.getReleaseTime() > 0.0) {
                     // リリース処理
@@ -407,7 +375,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                         tone.setReleaseFlag(false);
                         tone.setVelocity(0);
                         playingTones[note] = null;
-                        if (!oscillator.isToneSync()) {
+                        if (!oscManager.isToneSync()) {
                             tone.setTablePointer(0);
                         }
                     }
@@ -457,7 +425,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                 activeTones.remove(tone);
                 tonePool.push(tone);
                 playingTones[note] = null;
-                if (!oscillator.isToneSync()) {
+                if (!oscManager.isToneSync()) {
                     tone.setTablePointer(0);
                 }
             }
@@ -517,7 +485,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
                 activeTones.remove(tone);
                 tonePool.push(tone);
                 playingTones[i] = null;
-                if (!oscillator.isToneSync()) {
+                if (!oscManager.isToneSync()) {
                     tone.setTablePointer(0);
                 }
             }
@@ -595,26 +563,31 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         this.waveRepaintListener = waveRepaintListener;
     }
 
-    public void setOscillator(IOscillator oscillator) {
-        this.oscillator = oscillator;
+    public WaveType getWaveType(int index) {
+        return getWaveType(0, index);
     }
 
-    public WaveType getWaveType() {
-        return getWaveType(0);
-    }
-
-    public WaveType getWaveType(int ch) {
-        return waveType;
-    }
-
-    public void setOscillator(WaveType oscType) {
-        this.waveType = oscType;
-        setOscillator(toOscillator(oscType));
+    public WaveType getWaveType(int ch, int index) {
+        return oscManager.getWaveType(index);
     }
 
     @Override
-    public void setOscillator(int ch, WaveType oscType) {
-        setOscillator(oscType);
+    public void addOscillator(int ch, WaveType osc) {
+        oscManager.addWaveType(osc);
+    }
+    
+    @Override
+    public void clearOscillator(int ch) {
+        oscManager.clearWave();
+    }
+    
+    @Override
+    public OscillatorSet getOscillatorSet(int ch) {
+        OscillatorSet oscSet = new OscillatorSet();
+        for (int i = 0; i < oscManager.getWaveCount(); i++) {
+            oscSet.addOscillators(oscManager.getWaveType(i));
+        }
+        return oscSet;
     }
 
     @Override

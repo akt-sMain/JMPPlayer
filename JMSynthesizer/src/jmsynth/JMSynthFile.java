@@ -20,6 +20,7 @@ import org.w3c.dom.NodeList;
 
 import jmsynth.envelope.Envelope;
 import jmsynth.modulate.Modulator;
+import jmsynth.oscillator.OscillatorSet;
 import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.oscillator.WaveGenerater;
 
@@ -27,6 +28,7 @@ public class JMSynthFile {
 
     public static final String EXTENSION_CONFIG = "jst";
 
+    public static final String WAVE_STR_NONE = "NONE";
     public static final String WAVE_STR_SAW = "SAW";
     public static final String WAVE_STR_TRIANGLE = "TRIANGLE";
     public static final String WAVE_STR_SQUARE = "SQUARE";
@@ -38,13 +40,26 @@ public class JMSynthFile {
     public static final String WAVE_STR_SHORT_NOIS = "SHORT_NOIS";
 
     public static final String[] WAVE_STR_ITEMS = new String[] { //
+            WAVE_STR_NONE, //
             WAVE_STR_SINE, //
-            // WAVE_STR_LOW_SINE, //
             WAVE_STR_SAW, //
             WAVE_STR_TRIANGLE, //
             WAVE_STR_SQUARE, //
             WAVE_STR_PULSE_25, //
             WAVE_STR_PULSE_12_5, //
+            WAVE_STR_LONG_NOIS, //
+            WAVE_STR_SHORT_NOIS //
+    };//
+    public static final String[] WAVE_STR_ITEMS_TONE_ONRY = new String[] { //ノイズ無し 
+            WAVE_STR_NONE, //
+            WAVE_STR_SINE, //
+            WAVE_STR_SAW, //
+            WAVE_STR_TRIANGLE, //
+            WAVE_STR_SQUARE, //
+            WAVE_STR_PULSE_25, //
+            WAVE_STR_PULSE_12_5, //
+    };//
+    public static final String[] WAVE_STR_ITEMS_NOISE_ONRY = new String[] { //ノイズのみ 
             WAVE_STR_LONG_NOIS, //
             WAVE_STR_SHORT_NOIS //
     };//
@@ -75,8 +90,11 @@ public class JMSynthFile {
         else if (sWave.equalsIgnoreCase(WAVE_STR_LONG_NOIS) == true) {
             type = WaveType.LONG_NOISE;
         }
-        else {
+        else if (sWave.equalsIgnoreCase(WAVE_STR_SHORT_NOIS) == true) {
             type = WaveType.SHORT_NOISE;
+        }
+        else {
+            type = WaveType.NONE;
         }
         return type;
     }
@@ -112,6 +130,7 @@ public class JMSynthFile {
                 sWave = WAVE_STR_TRIANGLE;
                 break;
             default:
+                sWave = WAVE_STR_NONE;
                 break;
         }
         return sWave;
@@ -282,14 +301,22 @@ public class JMSynthFile {
             channelElement.setAttribute(XML_ATTR_CHANNEL, String.valueOf(ch));
             rootElement.appendChild(channelElement);
 
-            apendSynthElement(document, channelElement, synth.getWaveType(ch), synth.isWaveReverse(ch), synth.isValidNesSimulate(ch), synth.getEnvelope(ch), synth.getModulator(ch));
+            apendSynthElement(document, channelElement, synth.getOscillatorSet(ch), synth.isWaveReverse(ch), synth.isValidNesSimulate(ch), synth.getEnvelope(ch), synth.getModulator(ch));
         }
     }
 
-    private static void apendSynthElement(Document document, Element rootElement, WaveType waveType, boolean waveReverse, boolean nesSim, Envelope env, Modulator mod) {
+    private static void apendSynthElement(Document document, Element rootElement, OscillatorSet waveSet, boolean waveReverse, boolean nesSim, Envelope env, Modulator mod) {
         // wave
         Element waveElement = document.createElement(XML_NODE_WAVE);
-        waveElement.setAttribute(XML_ATTR_TYPE, String.valueOf(toWaveStr(waveType)));
+        
+        String str = "";
+        for (int i = 0; i < waveSet.size(); i++) {
+            if (i != 0) {
+                str += ",";
+            }
+            str += toWaveStr(waveSet.getOscillator(i));
+        }
+        waveElement.setAttribute(XML_ATTR_TYPE, str);
         waveElement.setAttribute(XML_ATTR_REVERSE, waveReverse ? S_TRUE : S_FALSE);
         waveElement.setAttribute(XML_ATTR_NESSIM, nesSim ? S_TRUE : S_FALSE);
         rootElement.appendChild(waveElement);
@@ -382,6 +409,24 @@ public class JMSynthFile {
             }
         }
     }
+    
+    public static OscillatorSet parseOscText(String str) {
+        String[] ss = str.split(",");
+        
+        OscillatorSet oscSet = new OscillatorSet();
+        for (int i  = 0; i < ss.length; i++) {
+            WaveType waveType = toWaveType(ss[i]);
+            if (waveType == WaveType.NONE) {
+            }
+            else if (waveType == WaveType.LONG_NOISE || waveType == WaveType.SHORT_NOISE) {
+                return new OscillatorSet(waveType);
+            }
+            else {
+                oscSet.addOscillators(waveType);
+            }
+        }
+        return oscSet;
+    }
 
     private static void readNodeChannel(Node node, JMSoftSynthesizer synth) {
         if (!(node instanceof Element)) {
@@ -408,7 +453,10 @@ public class JMSynthFile {
             if (chChild.getNodeName().equals(XML_NODE_WAVE)) {
                 Element waveElement = (Element) chChild;
                 if (waveElement.hasAttribute(XML_ATTR_TYPE) == true) {
-                    synth.setOscillator(ch, toWaveType(waveElement.getAttribute(XML_ATTR_TYPE)));
+                    synth.clearOscillator(ch);
+                    
+                    OscillatorSet oscSet = parseOscText(waveElement.getAttribute(XML_ATTR_TYPE));
+                    synth.setOscillator(ch, oscSet);
                 }
                 if (waveElement.hasAttribute(XML_ATTR_REVERSE) == true) {
                     synth.setWaveReverse(ch, waveElement.getAttribute(XML_ATTR_REVERSE).equalsIgnoreCase(S_TRUE) ? true : false);

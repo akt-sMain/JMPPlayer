@@ -5,6 +5,7 @@ import jmsynth.envelope.Envelope;
 import jmsynth.envelope.EnvelopeFactory;
 import jmsynth.modulate.Modulator;
 import jmsynth.modulate.ModulatorFactory;
+import jmsynth.oscillator.OscillatorSet;
 import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.sound.DrumSoundSourceChannel;
 import jmsynth.sound.ISynthController;
@@ -114,7 +115,7 @@ public class JMSoftSynthesizer implements ISynthController {
         SoundSourceChannel target = channels[ch];
         WaveType type = WaveType.SINE;
         boolean waveReverse = false;
-        boolean validFesSim = true;
+        boolean validFesSim = false;
         double a = EnvelopeFactory.DEFAULT_A;
         double d = EnvelopeFactory.DEFAULT_D;
         double s = EnvelopeFactory.DEFAULT_S;
@@ -141,7 +142,9 @@ public class JMSoftSynthesizer implements ISynthController {
         }
 
         if (target != null) {
-            target.setOscillator(ch, type);
+            target.clearOscillator(ch);
+            target.addOscillator(ch, WaveType.SINE);
+            
             target.setWaveReverse(ch, waveReverse);
             target.setValidNesSimulate(ch, validFesSim);
 
@@ -281,8 +284,18 @@ public class JMSoftSynthesizer implements ISynthController {
     }
 
     @Override
-    public void setOscillator(int ch, WaveType oscType) {
-        channels[ch].setOscillator(ch, oscType);
+    public void addOscillator(int ch, WaveType osc) {
+        channels[ch].addOscillator(ch, osc);
+    }
+    
+    @Override
+    public void clearOscillator(int ch) {
+        channels[ch].clearOscillator(ch);
+    }
+    
+    @Override
+    public OscillatorSet getOscillatorSet(int ch) {
+        return channels[ch].getOscillatorSet(ch);
     }
 
     @Override
@@ -291,8 +304,8 @@ public class JMSoftSynthesizer implements ISynthController {
     }
 
     @Override
-    public WaveType getWaveType(int ch) {
-        return channels[ch].getWaveType(ch);
+    public WaveType getWaveType(int ch, int index) {
+        return channels[ch].getWaveType(ch, index);
     }
 
     @Override

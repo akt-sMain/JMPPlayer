@@ -9,8 +9,6 @@ public abstract class AbstractWaveGenOscillator implements IOscillator {
     public AbstractWaveGenOscillator() {
     }
 
-    abstract byte makeWave(double f, int overallLevel, OscillatorConfig oscConfig);
-
     @Override
     public int makeTone(byte[] data, int sampleRate, Tone tone, OscillatorConfig oscConfig) {
         int length = sampleRate;// ネイティブに変数ロード
