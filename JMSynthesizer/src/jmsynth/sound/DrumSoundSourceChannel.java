@@ -2,7 +2,7 @@ package jmsynth.sound;
 
 import jmsynth.envelope.Envelope;
 import jmsynth.modulate.Modulator;
-import jmsynth.oscillator.OscillatorSet.WaveType;
+import jmsynth.oscillator.IOscillator;
 
 public class DrumSoundSourceChannel extends SoundSourceChannel {
 
@@ -51,17 +51,17 @@ public class DrumSoundSourceChannel extends SoundSourceChannel {
 
     private TimeoutNoteOffThread thread = null;
 
-    public DrumSoundSourceChannel(int channel, WaveType oscType, int polyphony, Envelope envelope, Modulator modulator) {
+    public DrumSoundSourceChannel(int channel, IOscillator oscType, int polyphony, Envelope envelope, Modulator modulator) {
         super(channel, oscType, polyphony, envelope, modulator);
         thread = new TimeoutNoteOffThread();
     }
 
-    public DrumSoundSourceChannel(int channel, WaveType oscType, int polyphony, Envelope envelope) {
+    public DrumSoundSourceChannel(int channel, IOscillator oscType, int polyphony, Envelope envelope) {
         super(channel, oscType, polyphony, envelope);
         thread = new TimeoutNoteOffThread();
     }
 
-    public DrumSoundSourceChannel(int channel, WaveType oscType, int polyphony) {
+    public DrumSoundSourceChannel(int channel, IOscillator oscType, int polyphony) {
         super(channel, oscType, polyphony);
         thread = new TimeoutNoteOffThread();
     }

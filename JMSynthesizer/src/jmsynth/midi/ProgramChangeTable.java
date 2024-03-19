@@ -1,7 +1,8 @@
 package jmsynth.midi;
 
+import jmsynth.oscillator.IOscillator;
+import jmsynth.oscillator.OscillatorFactory;
 import jmsynth.oscillator.OscillatorSet;
-import jmsynth.oscillator.OscillatorSet.WaveType;
 
 public class ProgramChangeTable {
 
@@ -139,9 +140,10 @@ public class ProgramChangeTable {
     protected OscillatorSet[] sets = null;
 
     public ProgramChangeTable() {
+        OscillatorFactory ofc = new OscillatorFactory();
         sets = new OscillatorSet[PC_MAX];
         for (int i = 0; i < sets.length; i++) {
-            sets[i] = new OscillatorSet(WaveType.SINE);
+            sets[i] = new OscillatorSet(ofc.createOscillator(OscillatorFactory.OSCILLATOR_NAME_SINE));
         }
     }
 
@@ -162,6 +164,8 @@ public class ProgramChangeTable {
     }
 
     public OscillatorSet getDrumOscillatorSet(int pc) {
-        return OscillatorSet.DRUM_OSCILLATOR_SET;
+        OscillatorFactory ofc = new OscillatorFactory();
+        IOscillator osc = ofc.createOscillator(OscillatorFactory.OSCILLATOR_NAME_NOISE_L);
+        return new OscillatorSet(0.0, 0.25, 0.0, 0.0, osc);
     }
 }

@@ -5,8 +5,9 @@ import jmsynth.envelope.Envelope;
 import jmsynth.envelope.EnvelopeFactory;
 import jmsynth.modulate.Modulator;
 import jmsynth.modulate.ModulatorFactory;
+import jmsynth.oscillator.IOscillator;
+import jmsynth.oscillator.OscillatorFactory;
 import jmsynth.oscillator.OscillatorSet;
-import jmsynth.oscillator.OscillatorSet.WaveType;
 import jmsynth.sound.DrumSoundSourceChannel;
 import jmsynth.sound.ISynthController;
 import jmsynth.sound.SoundSourceChannel;
@@ -85,17 +86,20 @@ public class JMSoftSynthesizer implements ISynthController {
         SoundSourceChannel ret = null;
         Envelope env = envelopeFactory.newEnvelopeInstance();
         Modulator mod = modulatorFactory.newModulatorInstance();
+        OscillatorFactory oscFc = new OscillatorFactory();
 
         switch (CHANNEL_TYPE_LIST[ch]) {
             case CHANNEL_TYPE_DRUM:
                 /* ドラム音源 */
-                ret = new DrumSoundSourceChannel(ch, WaveType.SINE, polyphony, env, mod);
+                ret = new DrumSoundSourceChannel(ch, oscFc.createOscillator(OscillatorFactory.OSCILLATOR_NAME_SINE), 
+                        polyphony, env, mod);
                 break;
 
             case CHANNEL_TYPE_SOUND:
             default:
                 /* 通常音源 */
-                ret = new SoundSourceChannel(ch, WaveType.SINE, polyphony, env, mod);
+                ret = new SoundSourceChannel(ch, oscFc.createOscillator(OscillatorFactory.OSCILLATOR_NAME_SINE), 
+                        polyphony, env, mod);
                 break;
         }
         return ret;
@@ -112,8 +116,9 @@ public class JMSoftSynthesizer implements ISynthController {
             return;
         }
 
+        IOscillator osc = null;
         SoundSourceChannel target = channels[ch];
-        WaveType type = WaveType.SINE;
+        OscillatorFactory oscFc = new OscillatorFactory();
         boolean waveReverse = false;
         boolean validFesSim = false;
         double a = EnvelopeFactory.DEFAULT_A;
@@ -128,7 +133,7 @@ public class JMSoftSynthesizer implements ISynthController {
         switch (CHANNEL_TYPE_LIST[ch]) {
             case CHANNEL_TYPE_DRUM:
                 /* ドラム音源 */
-                type = WaveType.LONG_NOISE;
+                osc = oscFc.createOscillator(OscillatorFactory.OSCILLATOR_NAME_NOISE_L);
                 a = 0.0;
                 d = 0.25;
                 s = 0.0;
@@ -138,12 +143,13 @@ public class JMSoftSynthesizer implements ISynthController {
             case CHANNEL_TYPE_SOUND:
             default:
                 /* 通常音源 */
+                osc = oscFc.createOscillator(OscillatorFactory.OSCILLATOR_NAME_SINE);
                 break;
         }
 
         if (target != null) {
             target.clearOscillator(ch);
-            target.addOscillator(ch, WaveType.SINE);
+            target.addOscillator(ch, osc);
             
             target.setWaveReverse(ch, waveReverse);
             target.setValidNesSimulate(ch, validFesSim);
@@ -284,7 +290,7 @@ public class JMSoftSynthesizer implements ISynthController {
     }
 
     @Override
-    public void addOscillator(int ch, WaveType osc) {
+    public void addOscillator(int ch, IOscillator osc) {
         channels[ch].addOscillator(ch, osc);
     }
     
@@ -304,8 +310,8 @@ public class JMSoftSynthesizer implements ISynthController {
     }
 
     @Override
-    public WaveType getWaveType(int ch, int index) {
-        return channels[ch].getWaveType(ch, index);
+    public IOscillator getOscillator(int ch, int index) {
+        return channels[ch].getOscillator(ch, index);
     }
 
     @Override

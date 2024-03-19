@@ -14,10 +14,10 @@ import javax.sound.sampled.SourceDataLine;
 import jmsynth.app.component.IWaveRepaintListener;
 import jmsynth.envelope.Envelope;
 import jmsynth.modulate.Modulator;
+import jmsynth.oscillator.IOscillator;
 import jmsynth.oscillator.OscillatorConfig;
 import jmsynth.oscillator.OscillatorManager;
 import jmsynth.oscillator.OscillatorSet;
-import jmsynth.oscillator.OscillatorSet.WaveType;
 
 public class SoundSourceChannel extends Thread implements ISynthController {
     public static final float SAMPLE_RATE = 44100.0f; // サンプルレート
@@ -69,19 +69,19 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     protected Envelope envelope = null;
     protected Modulator modulator = null;
 
-    public SoundSourceChannel(int channel, WaveType oscType, int polyphony, Envelope envelope, Modulator modulator) {
+    public SoundSourceChannel(int channel, IOscillator oscType, int polyphony, Envelope envelope, Modulator modulator) {
         init(channel, oscType, polyphony, envelope, modulator);
     }
 
-    public SoundSourceChannel(int channel, WaveType oscType, int polyphony, Envelope envelope) {
+    public SoundSourceChannel(int channel, IOscillator oscType, int polyphony, Envelope envelope) {
         init(channel, oscType, polyphony, envelope, null);
     }
 
-    public SoundSourceChannel(int channel, WaveType oscType, int polyphony) {
+    public SoundSourceChannel(int channel, IOscillator oscType, int polyphony) {
         init(channel, oscType, polyphony, null, null);
     }
 
-    private void init(int channel, WaveType oscType, int polyphony, Envelope envelope, Modulator modulator) {
+    private void init(int channel, IOscillator oscType, int polyphony, Envelope envelope, Modulator modulator) {
         this.audioFormat = new AudioFormat(SAMPLE_RATE, SAMPLE_SIZE, CHANNEL, SIGNED, BIG_ENDIAN);
 
         this.channel = channel;
@@ -89,7 +89,7 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         this.oscConfig = new OscillatorConfig();
         
         this.oscManager = new OscillatorManager();
-        this.oscManager.addWaveType(oscType);
+        this.oscManager.addOscillator(oscType);
 
         // ライン情報取得
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, this.audioFormat, BUF_SIZE);
@@ -563,17 +563,17 @@ public class SoundSourceChannel extends Thread implements ISynthController {
         this.waveRepaintListener = waveRepaintListener;
     }
 
-    public WaveType getWaveType(int index) {
-        return getWaveType(0, index);
+    public IOscillator getOscillator(int index) {
+        return getOscillator(0, index);
     }
 
-    public WaveType getWaveType(int ch, int index) {
-        return oscManager.getWaveType(index);
+    public IOscillator getOscillator(int ch, int index) {
+        return oscManager.getOscillator(index);
     }
 
     @Override
-    public void addOscillator(int ch, WaveType osc) {
-        oscManager.addWaveType(osc);
+    public void addOscillator(int ch, IOscillator osc) {
+        oscManager.addOscillator(osc);
     }
     
     @Override
@@ -584,8 +584,8 @@ public class SoundSourceChannel extends Thread implements ISynthController {
     @Override
     public OscillatorSet getOscillatorSet(int ch) {
         OscillatorSet oscSet = new OscillatorSet();
-        for (int i = 0; i < oscManager.getWaveCount(); i++) {
-            oscSet.addOscillators(oscManager.getWaveType(i));
+        for (int i = 0; i < oscManager.getOscillatorCount(); i++) {
+            oscSet.addOscillators(oscManager.getOscillator(i));
         }
         return oscSet;
     }

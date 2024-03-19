@@ -60,16 +60,16 @@ public class WaveGenerater {
      */
     public static byte makePulseWave(double f, int overallLevel, double duty, boolean reverse, boolean lowRes) {
         double ff = (reverse == true) ? (1.0 - trimF(f)) : trimF(f);
-
+        double dutyThresh = (lowRes == true) ? DUTY_THRESHOLD : 0.00;
         byte y = 0;
         /* 矩形波を少しゆがませる */
         if (ff > duty) {
-            if (((1.0 - DUTY_THRESHOLD) < ff) || (ff < (duty + DUTY_THRESHOLD))) {
+            if (((1.0 - dutyThresh) < ff) || (ff < (duty + dutyThresh))) {
                 y = (byte) (overallLevel * DUTY_OFFSET);
             }
             else {
                 if (lowRes == true) {
-                    y = (byte) (overallLevel - ((ff - (duty + DUTY_THRESHOLD)) * 4.0));
+                    y = (byte) (overallLevel - ((ff - (duty + dutyThresh)) * 4.0));
                 }
                 else {
                     y = (byte) (overallLevel);
@@ -77,12 +77,12 @@ public class WaveGenerater {
             }
         }
         else {
-            if (((duty - DUTY_THRESHOLD) < ff) || (ff < (0.0 + DUTY_THRESHOLD))) {
+            if (((duty - dutyThresh) < ff) || (ff < (0.0 + dutyThresh))) {
                 y = (byte) (-overallLevel * DUTY_OFFSET);
             }
             else {
                 if (lowRes == true) {
-                    y = (byte) (-(overallLevel - ((ff - DUTY_THRESHOLD) * 4.0)));
+                    y = (byte) (-(overallLevel - ((ff - dutyThresh) * 4.0)));
                 }
                 else {
                     y = (byte) (-(overallLevel));

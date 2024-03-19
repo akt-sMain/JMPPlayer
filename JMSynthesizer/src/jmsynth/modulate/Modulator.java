@@ -36,7 +36,7 @@ public class Modulator {
             }
             double f = (double) t / (double) MODULATION_RATE_TIME;
             double base = (double)MODULATION_MAX_VALUE / (double)2.0;
-            int value = (int) ((double) makeTriangleWave(f, (int)base, false));
+            int value = (int) ((double) makeSinWave(f, (int)base, false));
             double fVal = (double) value / base * depthOffset;
             for (int i = 0; i < targetTones.length; i++) {
                 try {

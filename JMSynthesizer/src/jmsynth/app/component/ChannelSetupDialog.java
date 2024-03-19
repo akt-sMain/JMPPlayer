@@ -36,8 +36,9 @@ import jmsynth.JMSoftSynthesizer;
 import jmsynth.JMSynthFile;
 import jmsynth.envelope.Envelope;
 import jmsynth.modulate.Modulator;
+import jmsynth.oscillator.IOscillator;
+import jmsynth.oscillator.OscillatorFactory;
 import jmsynth.oscillator.OscillatorSet;
-import jmsynth.oscillator.OscillatorSet.WaveType;
 
 public class ChannelSetupDialog extends JDialog {
 
@@ -58,15 +59,16 @@ public class ChannelSetupDialog extends JDialog {
     private static final String[] WAVE_STR_ITEMS_TONE_ONRY = JMSynthFile.WAVE_STR_ITEMS_TONE_ONRY;
     private static final String[] WAVE_STR_ITEMS_NOISE_ONRY = JMSynthFile.WAVE_STR_ITEMS_NOISE_ONRY;
 
-    private static WaveType toWaveType(String sWave) {
-        return JMSynthFile.toWaveType(sWave);
+    private static IOscillator toOscillatorType(String sWave) {
+        OscillatorFactory ofc = new OscillatorFactory();
+        return ofc.createOscillator(sWave);
     }
 
-    private static String getWaveStr(WaveType type) {
+    private static String getOscillatorStr(IOscillator type) {
         return JMSynthFile.toWaveStr(type);
     }
 
-    private static int toYCord(WaveType type, double f, int overallLeval, boolean isReverse) {
+    private static int toYCord(IOscillator type, double f, int overallLeval, boolean isReverse) {
         return JMSynthFile.toYCord(type, f, overallLeval, isReverse);
     }
 
@@ -107,7 +109,7 @@ public class ChannelSetupDialog extends JDialog {
             }
 
             if (chckbxRealTime.isSelected() == false) {
-                wave = getWaveStr(synth.getWaveType(ch, 0));
+                wave = getOscillatorStr(synth.getOscillator(ch, 0));
                 isWaveReverse = synth.isWaveReverse(ch);
                 a = env.getAttackTime();
                 d = env.getDecayTime();
@@ -175,7 +177,7 @@ public class ChannelSetupDialog extends JDialog {
             int right = w - (mergin);
             int top = 2;
             int under = h - 4;
-            
+
             int length = right - left + (mergin * 2);
             byte[] data = new byte[100];
             Arrays.fill(data, (byte) 0x00);
@@ -440,7 +442,7 @@ public class ChannelSetupDialog extends JDialog {
         });
         checkBoxFESSim.setBounds(8, 40, 103, 21);
         panel_2.add(checkBoxFESSim);
-        
+
         btnAddWave = new JButton("Add");
         btnAddWave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -451,14 +453,14 @@ public class ChannelSetupDialog extends JDialog {
         });
         btnAddWave.setBounds(617, 74, 65, 21);
         contentPanel.add(btnAddWave);
-        
+
         listWave = new JList();
         listModel = new DefaultListModel();
         listWave.setModel(listModel);
         listWave.setBorder(new LineBorder(new Color(0, 0, 0)));
         listWave.setBounds(470, 76, 135, 362);
         contentPanel.add(listWave);
-        
+
         btnDown = new JButton("↓");
         btnDown.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -466,22 +468,22 @@ public class ChannelSetupDialog extends JDialog {
                 if (selected == -1) {
                     return;
                 }
-                
+
                 if (selected + 1 >= listModel.getSize()) {
                     return;
                 }
-                
+
                 String str = listModel.getElementAt(selected).toString();
                 listModel.remove(selected);
                 listModel.add(selected + 1, str);
-                
+
                 listWave.setSelectedIndex(selected + 1);
                 repaint();
             }
         });
         btnDown.setBounds(617, 286, 65, 21);
         contentPanel.add(btnDown);
-        
+
         btnUp = new JButton("↑");
         btnUp.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -489,22 +491,22 @@ public class ChannelSetupDialog extends JDialog {
                 if (selected == -1) {
                     return;
                 }
-                
+
                 if (selected - 1 < 0) {
                     return;
                 }
-                
+
                 String str = listModel.getElementAt(selected).toString();
                 listModel.remove(selected);
                 listModel.add(selected - 1, str);
-                
+
                 listWave.setSelectedIndex(selected - 1);
                 repaint();
             }
         });
         btnUp.setBounds(617, 237, 65, 21);
         contentPanel.add(btnUp);
-        
+
         btnDeleteWave = new JButton("Delete");
         btnDeleteWave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -512,14 +514,14 @@ public class ChannelSetupDialog extends JDialog {
                 if (selected == -1) {
                     return;
                 }
-                
+
                 listModel.remove(selected);
                 repaint();
             }
         });
         btnDeleteWave.setBounds(617, 120, 65, 21);
         contentPanel.add(btnDeleteWave);
-        
+
         btnClearWave = new JButton("Clear");
         btnClearWave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -529,7 +531,7 @@ public class ChannelSetupDialog extends JDialog {
         });
         btnClearWave.setBounds(617, 151, 65, 21);
         contentPanel.add(btnClearWave);
-        
+
         checkboxNoiseOsc = new Checkbox("Noise");
         checkboxNoiseOsc.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
@@ -714,14 +716,14 @@ public class ChannelSetupDialog extends JDialog {
         }
         return ch;
     }
-    
+
     public String getWaveText() {
         String str = "";
         if (checkboxNoiseOsc.getState() == true) {
             str = comboBoxWaveType.getSelectedItem().toString();
         }
         else {
-            for (int i  = 0; i < listModel.getSize(); i++) {
+            for (int i = 0; i < listModel.getSize(); i++) {
                 if (i != 0) {
                     str += ",";
                 }
@@ -730,20 +732,21 @@ public class ChannelSetupDialog extends JDialog {
         }
         return str;
     }
-    
+
     public OscillatorSet parseOscText(String str) {
         String[] ss = str.split(",");
-        
+
         OscillatorSet oscSet = new OscillatorSet();
-        for (int i  = 0; i < ss.length; i++) {
-            WaveType waveType = toWaveType(ss[i]);
-            if (waveType == WaveType.NONE) {
+        for (int i = 0; i < ss.length; i++) {
+            IOscillator oscType = toOscillatorType(ss[i]);
+            if (oscType == null) {
             }
-            else if (waveType == WaveType.LONG_NOISE || waveType == WaveType.SHORT_NOISE) {
-                return new OscillatorSet(waveType);
+            else if (oscType.getOscillatorName().equals(OscillatorFactory.OSCILLATOR_NAME_NOISE_L)
+                    || oscType.getOscillatorName().equals(OscillatorFactory.OSCILLATOR_NAME_NOISE_S)) {
+                return new OscillatorSet(oscType);
             }
             else {
-                oscSet.addOscillators(waveType);
+                oscSet.addOscillators(oscType);
             }
         }
         return oscSet;
@@ -760,11 +763,11 @@ public class ChannelSetupDialog extends JDialog {
         String sText = getWaveText();
         OscillatorSet oscSet = parseOscText(sText);
         synth.clearOscillator(ch);
-        for (int i  = 0; i < oscSet.size(); i++) {
-            WaveType waveType = oscSet.getOscillator(i);
+        for (int i = 0; i < oscSet.size(); i++) {
+            IOscillator waveType = oscSet.getOscillator(i);
             synth.addOscillator(ch, waveType);
         }
-        
+
         boolean waveReverse = chckbxWaveReverse.isSelected();
         synth.setWaveReverse(ch, waveReverse);
 
@@ -785,9 +788,9 @@ public class ChannelSetupDialog extends JDialog {
         }
         reset();
     }
-    
+
     private void remakeWaveItems() {
-        DefaultComboBoxModel<String> cmModel = (DefaultComboBoxModel)comboBoxWaveType.getModel();
+        DefaultComboBoxModel<String> cmModel = (DefaultComboBoxModel) comboBoxWaveType.getModel();
         cmModel.removeAllElements();
         boolean ena = true;
         if (checkboxNoiseOsc.getState() == true) {
@@ -819,25 +822,27 @@ public class ChannelSetupDialog extends JDialog {
          */
         listModel.clear();
         OscillatorSet oscSet = synth.getOscillatorSet(ch);
-        if (oscSet.getOscillator(0) == WaveType.SHORT_NOISE || oscSet.getOscillator(0) == WaveType.LONG_NOISE) {
+        if (oscSet.size() > 0 
+                && (oscSet.getOscillator(0).getOscillatorName().equals(OscillatorFactory.OSCILLATOR_NAME_NOISE_L)
+                || oscSet.getOscillator(0).getOscillatorName().equals(OscillatorFactory.OSCILLATOR_NAME_NOISE_S))) {
             checkboxNoiseOsc.setState(true);
             remakeWaveItems();
-            String sWave = getWaveStr(oscSet.getOscillator(0));
+            String sWave = getOscillatorStr(oscSet.getOscillator(0));
             comboBoxWaveType.setSelectedItem(sWave);
         }
         else {
             checkboxNoiseOsc.setState(false);
             remakeWaveItems();
             for (int i = 0; i < oscSet.size(); i++) {
-                if (oscSet.getOscillator(i) == WaveType.NONE) {
+                if (oscSet.getOscillator(i) == null) {
                 }
                 else {
-                    String sWave = getWaveStr(oscSet.getOscillator(i));
+                    String sWave = getOscillatorStr(oscSet.getOscillator(i));
                     listModel.addElement(sWave);
                 }
             }
         }
-                
+
         chckbxWaveReverse.setSelected(synth.isWaveReverse(ch));
 
         checkBoxFESSim.setSelected(synth.isValidNesSimulate(ch));

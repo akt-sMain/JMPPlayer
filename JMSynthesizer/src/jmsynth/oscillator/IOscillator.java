@@ -5,6 +5,8 @@ import jmsynth.sound.Tone;
 public interface IOscillator {
 
     public static double COMMON_LEVEL_OFFSET = 1.0;
+    
+    public default String getOscillatorName() { return ""; };
 
     /**
      * 音色生成メソッド SampleRate：44100 Channels：1 SampleSizeInBits：16

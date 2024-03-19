@@ -53,6 +53,11 @@ public class MultiWaveViewerPanel extends JPanel implements MouseListener {
 
     private Color[] waveColorTable = null;
     private Color[] backupWaveColorTable = null;
+    private Color ingStrColor = DEFAULT_COLOR;
+    private Color ingRowColor = Color.BLUE;
+    private Color ingMidColor = Color.ORANGE;
+    private Color ingCurColor = Color.RED;
+    private Color ingNomColor = Color.WHITE;
 
     private static boolean hispeedSpectrum = false;
     private boolean hispeedSpectrumRunnable = true;
@@ -211,6 +216,7 @@ public class MultiWaveViewerPanel extends JPanel implements MouseListener {
             waveColorTable[i] = DEFAULT_COLOR;
             backupWaveColorTable[i] = DEFAULT_COLOR;
         }
+        setRestoreColorTable();
 
         if (hispeedSpectrum == true) {
             spectrumMonitorThread = new Thread(new Runnable() {
@@ -408,14 +414,16 @@ public class MultiWaveViewerPanel extends JPanel implements MouseListener {
         Graphics2D g2d = (Graphics2D) g;
         Font f = g2d.getFont();
         
-        Color rowColor = Color.BLUE;
-        Color highColor = Color.RED;
-        Color midColor = Color.GREEN;
-        Color normalColor = Color.WHITE;
+        Color strColor = ingStrColor;
+        Color rowColor = ingRowColor;
+        Color midColor = ingMidColor;
+        Color curColor = ingCurColor;
+        Color normalColor = ingNomColor;
         if (traceViewMode == TRACE_VIEW_MODE_INFO) {
+            strColor = Color.WHITE;
             rowColor = Color.DARK_GRAY;
-            highColor = Color.DARK_GRAY;
             midColor = Color.DARK_GRAY;
+            curColor = Color.DARK_GRAY;
             normalColor = Color.DARK_GRAY;
         }
         
@@ -434,9 +442,6 @@ public class MultiWaveViewerPanel extends JPanel implements MouseListener {
             if (i == 0) {
                 g2d.setColor(rowColor);
             }
-            else if (i == numOfMem - 1) {
-                g2d.setColor(highColor);
-            }
             else if (i == (numOfMem - 1) / 2) {
                 g2d.setColor(midColor);
             }
@@ -445,16 +450,20 @@ public class MultiWaveViewerPanel extends JPanel implements MouseListener {
             }
             g2d.drawLine(x + (i * gap), y, x + (i * gap), y + height);
         }
+        if (mem > 0) {
+            g2d.setColor(curColor);
+            g2d.drawLine(x + (mem - 1) * gap, y, x + (mem - 1) * gap, y + height);
+        }
         
         if (traceViewMode == TRACE_VIEW_MODE_INFO) {
             // 情報表示は数値を表示  
-            g2d.setColor(Color.WHITE);
+            g2d.setColor(strColor);
             g2d.setFont(new Font(Font.DIALOG_INPUT, Font.PLAIN, 14));
             String sVal = String.format("%.3f", cur);
             g2d.drawString(sVal, x, y+10);
         }
         g2d.setFont(f);
-        g2d.setColor(Color.WHITE);
+        g2d.setColor(strColor);
     }
 
     public void paintChannelInfo(Graphics g) {
@@ -485,7 +494,7 @@ public class MultiWaveViewerPanel extends JPanel implements MouseListener {
                 g2d.setFont(new Font(Font.DIALOG, Font.PLAIN, 12));
                 g2d.setColor(Color.WHITE);
                 title = "poly:";
-                value = String.format("%d | %d", channel.getNumOfTones(), channel.getNumOfTonePool());
+                value = String.format("%d|%d", channel.getNumOfTones(), channel.getNumOfTonePool());
                 g2d.drawString(title, x, y);
                 Font f = g2d.getFont();
                 g2d.setFont(new Font(Font.DIALOG_INPUT, Font.PLAIN, 14));
@@ -891,12 +900,22 @@ public class MultiWaveViewerPanel extends JPanel implements MouseListener {
         for (int i = 0; i < waveColorTable.length; i++) {
             this.waveColorTable[i] = DEFAULT_COLOR;
         }
+        ingStrColor = Color.LIGHT_GRAY;
+        ingRowColor = Color.LIGHT_GRAY;
+        ingMidColor = Color.LIGHT_GRAY;
+        ingCurColor = Color.GRAY;
+        ingNomColor = Color.LIGHT_GRAY;
     }
 
     public void setRestoreColorTable() {
         for (int i = 0; i < waveColorTable.length; i++) {
             this.waveColorTable[i] = this.backupWaveColorTable[i];
         }
+        ingStrColor = DEFAULT_COLOR;
+        ingRowColor = Color.BLUE;
+        ingMidColor = Color.ORANGE;
+        ingCurColor = Color.MAGENTA;
+        ingNomColor = Color.WHITE;
     }
 
     public void setWaveColorTable(Color[] waveColorTable) {
@@ -904,6 +923,11 @@ public class MultiWaveViewerPanel extends JPanel implements MouseListener {
             this.waveColorTable[i] = waveColorTable[i];
             this.backupWaveColorTable[i] = waveColorTable[i];
         }
+        ingStrColor = DEFAULT_COLOR;
+        ingRowColor = Color.BLUE;
+        ingMidColor = Color.ORANGE;
+        ingCurColor = Color.MAGENTA;
+        ingNomColor = Color.WHITE;
     }
 
     int width, height; // グラフ描画領域の幅と高さ

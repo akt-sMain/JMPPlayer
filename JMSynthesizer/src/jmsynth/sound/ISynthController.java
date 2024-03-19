@@ -2,8 +2,8 @@ package jmsynth.sound;
 
 import jmsynth.envelope.Envelope;
 import jmsynth.modulate.Modulator;
+import jmsynth.oscillator.IOscillator;
 import jmsynth.oscillator.OscillatorSet;
-import jmsynth.oscillator.OscillatorSet.WaveType;
 
 public interface ISynthController {
     abstract void openDevice();
@@ -44,7 +44,7 @@ public interface ISynthController {
 
     abstract void setVolume(int ch, float volume);
 
-    abstract void addOscillator(int ch, WaveType osc);
+    abstract void addOscillator(int ch, IOscillator osc);
 
     abstract void clearOscillator(int ch);
     
@@ -68,7 +68,7 @@ public interface ISynthController {
         }
     }
 
-    abstract WaveType getWaveType(int ch, int index);
+    abstract IOscillator getOscillator(int ch, int index);
 
     abstract Envelope getEnvelope(int ch);
 

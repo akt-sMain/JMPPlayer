@@ -7,6 +7,12 @@ public class LongNoisWaveOscillator extends NoisWaveOscillator {
     public LongNoisWaveOscillator() {
         super();
     }
+    
+    @Override
+    public String getOscillatorName() {
+        // Factoryの識別名を返す  
+        return OscillatorFactory.OSCILLATOR_NAME_NOISE_L;
+    }
 
     @Override
     protected double generateNoiseCoefficient() {

@@ -1,6 +1,8 @@
 package jmsynth;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,24 +22,25 @@ import org.w3c.dom.NodeList;
 
 import jmsynth.envelope.Envelope;
 import jmsynth.modulate.Modulator;
+import jmsynth.oscillator.IOscillator;
+import jmsynth.oscillator.OscillatorConfig;
+import jmsynth.oscillator.OscillatorFactory;
 import jmsynth.oscillator.OscillatorSet;
-import jmsynth.oscillator.OscillatorSet.WaveType;
-import jmsynth.oscillator.WaveGenerater;
 
 public class JMSynthFile {
 
     public static final String EXTENSION_CONFIG = "jst";
 
     public static final String WAVE_STR_NONE = "NONE";
-    public static final String WAVE_STR_SAW = "SAW";
-    public static final String WAVE_STR_TRIANGLE = "TRIANGLE";
-    public static final String WAVE_STR_SQUARE = "SQUARE";
-    public static final String WAVE_STR_PULSE_25 = "PULSE_25";
-    public static final String WAVE_STR_PULSE_12_5 = "PULSE_12_5";
-    public static final String WAVE_STR_SINE = "SINE";
-    public static final String WAVE_STR_LOW_SINE = "LOW_SINE";
-    public static final String WAVE_STR_LONG_NOIS = "LONG_NOIS";
-    public static final String WAVE_STR_SHORT_NOIS = "SHORT_NOIS";
+    public static final String WAVE_STR_SAW = OscillatorFactory.OSCILLATOR_NAME_SAW;
+    public static final String WAVE_STR_TRIANGLE = OscillatorFactory.OSCILLATOR_NAME_TRIANGLE;
+    public static final String WAVE_STR_SQUARE = OscillatorFactory.OSCILLATOR_NAME_SQUARE;
+    public static final String WAVE_STR_PULSE_25 = OscillatorFactory.OSCILLATOR_NAME_PULSE25;
+    public static final String WAVE_STR_PULSE_12_5 = OscillatorFactory.OSCILLATOR_NAME_PULSE125;
+    public static final String WAVE_STR_SINE = OscillatorFactory.OSCILLATOR_NAME_SINE;
+    public static final String WAVE_STR_LOW_SINE = OscillatorFactory.OSCILLATOR_NAME_SINE;
+    public static final String WAVE_STR_LONG_NOIS = OscillatorFactory.OSCILLATOR_NAME_NOISE_L;
+    public static final String WAVE_STR_SHORT_NOIS = OscillatorFactory.OSCILLATOR_NAME_NOISE_S;
 
     public static final String[] WAVE_STR_ITEMS = new String[] { //
             WAVE_STR_NONE, //
@@ -63,140 +66,48 @@ public class JMSynthFile {
             WAVE_STR_LONG_NOIS, //
             WAVE_STR_SHORT_NOIS //
     };//
+    
+    private static OscillatorFactory sOscFc = new OscillatorFactory();
+    static Map<String, IOscillator> oscMap = new HashMap<String, IOscillator>() {
+        {
+            put(WAVE_STR_NONE, null);
+            put(WAVE_STR_SINE, sOscFc.createOscillator(OscillatorFactory.OSCILLATOR_NAME_SINE));
+            put(WAVE_STR_SAW, sOscFc.createOscillator(OscillatorFactory.OSCILLATOR_NAME_SAW));
+            put(WAVE_STR_TRIANGLE, sOscFc.createOscillator(OscillatorFactory.OSCILLATOR_NAME_TRIANGLE));
+            put(WAVE_STR_SQUARE, sOscFc.createOscillator(OscillatorFactory.OSCILLATOR_NAME_SQUARE));
+            put(WAVE_STR_PULSE_25, sOscFc.createOscillator(OscillatorFactory.OSCILLATOR_NAME_PULSE25));
+            put(WAVE_STR_PULSE_12_5, sOscFc.createOscillator(OscillatorFactory.OSCILLATOR_NAME_PULSE125));
+            put(WAVE_STR_LONG_NOIS, sOscFc.createOscillator(OscillatorFactory.OSCILLATOR_NAME_NOISE_L));
+            put(WAVE_STR_SHORT_NOIS, sOscFc.createOscillator(OscillatorFactory.OSCILLATOR_NAME_NOISE_S));
+        }
+    };
 
-    public static WaveType toWaveType(String sWave) {
-        WaveType type = WaveType.SINE;
-        if (sWave.equalsIgnoreCase(WAVE_STR_SAW) == true) {
-            type = WaveType.SAW;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_TRIANGLE) == true) {
-            type = WaveType.TRIANGLE;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_SQUARE) == true) {
-            type = WaveType.SQUARE;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_PULSE_25) == true) {
-            type = WaveType.PULSE_25;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_PULSE_12_5) == true) {
-            type = WaveType.PULSE_12_5;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_SINE) == true) {
-            type = WaveType.SINE;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_LOW_SINE) == true) {
-            type = WaveType.LOW_SINE;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_LONG_NOIS) == true) {
-            type = WaveType.LONG_NOISE;
-        }
-        else if (sWave.equalsIgnoreCase(WAVE_STR_SHORT_NOIS) == true) {
-            type = WaveType.SHORT_NOISE;
-        }
-        else {
-            type = WaveType.NONE;
-        }
+    public static IOscillator toOscillator(String sWave) {
+        IOscillator type = oscMap.get(sWave);
         return type;
     }
 
-    public static String toWaveStr(WaveType type) {
+    public static String toWaveStr(IOscillator type) {
         String sWave = WAVE_STR_LONG_NOIS;
-        switch (type) {
-            case LONG_NOISE:
-                sWave = WAVE_STR_LONG_NOIS;
-                break;
-            case SHORT_NOISE:
-                sWave = WAVE_STR_SHORT_NOIS;
-                break;
-            case PULSE_25:
-                sWave = WAVE_STR_PULSE_25;
-                break;
-            case PULSE_12_5:
-                sWave = WAVE_STR_PULSE_12_5;
-                break;
-            case SAW:
-                sWave = WAVE_STR_SAW;
-                break;
-            case SINE:
-                sWave = WAVE_STR_SINE;
-                break;
-            case LOW_SINE:
-                sWave = WAVE_STR_LOW_SINE;
-                break;
-            case SQUARE:
-                sWave = WAVE_STR_SQUARE;
-                break;
-            case TRIANGLE:
-                sWave = WAVE_STR_TRIANGLE;
-                break;
-            default:
-                sWave = WAVE_STR_NONE;
-                break;
+        if (type == null) {
+            return "";
+        }
+        
+        for (String s : oscMap.keySet()) {
+            IOscillator o = oscMap.get(s);
+            if (o.getOscillatorName().equals(type.getOscillatorName()) == true) {
+                return s;
+            }
         }
         return sWave;
     }
 
     // グラフィック用
-    public static int toYCord(WaveType type, double f, int overallLeval, boolean isReverse) {
+    public static int toYCord(IOscillator type, double f, int overallLeval, boolean isReverse) {
         int y = -1;
-        switch (type) {
-            case SAW:
-                y = WaveGenerater.makeSawWave(f, overallLeval, isReverse);
-                break;
-            case SINE:
-                y = WaveGenerater.makeSinWave(f, overallLeval, isReverse);
-                break;
-            case LOW_SINE:
-                y = WaveGenerater.makeSinWaveForLowSampling(f, overallLeval, isReverse);
-                break;
-            case SQUARE:
-                y = WaveGenerater.makeSquareWave(f, overallLeval, isReverse, false);
-                break;
-            case PULSE_25:
-                y = WaveGenerater.makePulseWave(f, overallLeval, 0.25, isReverse, false);
-                break;
-            case PULSE_12_5:
-                y = WaveGenerater.makePulseWave(f, overallLeval, 0.125, isReverse, false);
-                break;
-            case TRIANGLE:
-                y = WaveGenerater.makeTriangleWave(f, overallLeval, isReverse, false);
-                break;
-            case LONG_NOISE: {
-                double[] ft = { 0.00, 0.05, 0.10, 0.15, 0.25, 0.35, 0.50, 0.55, 0.70, 0.85, 0.95, 1.00 };
-                double[] lt = { 0.20, 0.30, 0.40, 1.00, 0.95, 0.85, 1.00, 0.50, 0.70, 0.40, 0.30, 0.20 };
-                int sign = 1;
-                for (int i = 0; i < ft.length; i++) {
-                    if (f > ft[i]) {
-                        y = (int) ((double) overallLeval * lt[i]) * sign;
-                    }
-                    sign *= -1;
-                }
-            }
-                break;
-            case SHORT_NOISE: {
-                double[] lt = { 0.20, 1.00, 0.40 };
-                int ilt = 0;
-                double cf = 0.0;
-                int sign = 1;
-                while (cf <= 1.00) {
-                    if (f <= cf) {
-                        y = (int) ((double) overallLeval * lt[ilt]) * sign;
-                        break;
-                    }
-                    else {
-                        sign *= -1;
-                        cf += 0.05;
-                        ilt++;
-                        if (ilt >= lt.length) {
-                            ilt = 0;
-                        }
-                    }
-                }
-            }
-                break;
-            default:
-                break;
-        }
+        OscillatorConfig oscConfig = new OscillatorConfig();
+        oscConfig.setWaveReverse(isReverse);
+        y = type.makeWave(f, overallLeval, oscConfig);
         return y;
     }
 
@@ -415,10 +326,10 @@ public class JMSynthFile {
         
         OscillatorSet oscSet = new OscillatorSet();
         for (int i  = 0; i < ss.length; i++) {
-            WaveType waveType = toWaveType(ss[i]);
-            if (waveType == WaveType.NONE) {
+            IOscillator waveType = toOscillator(ss[i]);
+            if (waveType == null) {
             }
-            else if (waveType == WaveType.LONG_NOISE || waveType == WaveType.SHORT_NOISE) {
+            else if (waveType.getOscillatorName() == WAVE_STR_LONG_NOIS || waveType.getOscillatorName() == WAVE_STR_SHORT_NOIS) {
                 return new OscillatorSet(waveType);
             }
             else {

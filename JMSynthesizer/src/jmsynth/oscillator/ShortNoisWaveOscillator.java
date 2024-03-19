@@ -7,6 +7,12 @@ public class ShortNoisWaveOscillator extends NoisWaveOscillator {
     public ShortNoisWaveOscillator() {
         super();
     }
+    
+    @Override
+    public String getOscillatorName() {
+        // Factoryの識別名を返す  
+        return OscillatorFactory.OSCILLATOR_NAME_NOISE_S;
+    }
 
     @Override
     protected double generateNoiseCoefficient() {
