@@ -140,7 +140,7 @@ public class ChannelSetupDialog extends JDialog {
             paintInfo(g, w - 110 + 1, 16, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, modDepth, wave,
                     Color.DARK_GRAY);
             paintInfo(g, w - 110, 15, 10, (int) ((double) ma * a), (int) ((double) md * d), s, (int) ((double) mr * r), ma, md, mr, modDepth, wave,
-                    Color.GREEN);
+                    Color.MAGENTA);
         }
 
         private void paintInfo(Graphics g, int x, int y, int fontSize, int aInt, int dInt, double s, int rInt, long maInt, long mdInt, long mrInt, int mod,

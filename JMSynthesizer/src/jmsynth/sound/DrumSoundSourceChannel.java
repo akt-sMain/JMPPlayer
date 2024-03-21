@@ -70,7 +70,7 @@ public class DrumSoundSourceChannel extends SoundSourceChannel {
     public void noteOff(int ch, int note) {
         /* ノートオフ */
         if (envelope.getSustainLevel() > 0.0) {
-            super.noteOff(ch, note);
+           super.noteOff(ch, note);
         }
     }
 

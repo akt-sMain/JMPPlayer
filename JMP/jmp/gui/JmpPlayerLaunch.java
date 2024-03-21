@@ -216,6 +216,7 @@ public class JmpPlayerLaunch extends JPanel implements MouseListener, MouseMotio
             imgX = (imgX < 0) ? 0 : imgX;
             imgY = (imgY < 0) ? 0 : imgY;
             g.drawImage(img, imgX, imgY, null);
+            g.drawImage(img, x, y, null);
         }
     }
 
