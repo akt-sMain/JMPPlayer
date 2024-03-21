@@ -4,7 +4,7 @@ public class DefineReadme {
     static final String README_JA = ""//
             +"=##= 著作権表示 =##="+VBA.NL//
             +""+VBA.NL//
-            +"Copyright(c) 2020, あくと(Akt)"+VBA.NL//
+            +"Copyright(c) 2020, Suka"+VBA.NL//
             +"All rights reserved."+VBA.NL//
             +""+VBA.NL//
             +"=##= 使用許諾 =##="+VBA.NL//
@@ -23,7 +23,7 @@ public class DefineReadme {
     static final String README_EN = ""//
             +"=##= Copyright notice =##="+VBA.NL//
             +""+VBA.NL//
-            +"Copyright (c) 2020, あくと (Akt)"+VBA.NL//
+            +"Copyright (c) 2020, Suka"+VBA.NL//
             +"All rights reserved."+VBA.NL//
             +""+VBA.NL//
             +"=##= License Agreement =##="+VBA.NL//

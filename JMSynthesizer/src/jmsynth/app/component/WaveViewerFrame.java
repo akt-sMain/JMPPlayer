@@ -395,6 +395,11 @@ public class WaveViewerFrame extends JFrame implements ActionListener {
                 }
             }
         });
+        
+        // 非公開機能 
+        btnSaveButton.setVisible(false);
+        btnLoad.setVisible(false);
+        btnTable.setVisible(false);
 
         _init();
     }

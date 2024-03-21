@@ -3,9 +3,9 @@ package jlib;
 public class JMPLIB {
 
     /** ビルドバージョン */
-    public static final String BUILD_VERSION = "0.01";
+    public static final String BUILD_VERSION = "1.00";
     
     /* バージョン名 */
-    public static final String VERSION_NAME = "Beta";
+    public static final String VERSION_NAME = "";
 
 }
